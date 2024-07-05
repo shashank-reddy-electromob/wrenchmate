@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/home_controller.dart';
+import '../../data/providers/notifications_provider.dart';
 
 class NotificationPage extends StatelessWidget {
   @override
@@ -8,7 +9,24 @@ class NotificationPage extends StatelessWidget {
     final HomeController controller = Get.find();
     return Scaffold(
       appBar: AppBar(title: Text('Notifications')),
-      body: Center(child: Text('Notification Page')),
+      body: ListView.builder(
+        itemCount: dummyNotifications.length,
+        itemBuilder: (context, index) {
+          return Row(
+            children: [
+              // Icon based on category
+              Icon(Icons.notifications),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(dummyNotifications[index].title),
+                  Text(dummyNotifications[index].description),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

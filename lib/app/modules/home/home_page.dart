@@ -4,6 +4,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/offers_slider.dart'
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
+import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import '../../controllers/home_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -66,7 +67,9 @@ class _HomePageState extends State<HomePage> {
           ),
           child: IconButton(
             icon: Icon(Icons.notifications_none_outlined,color: Color(0xff515151),),
-            onPressed:(){},
+            onPressed:(){
+              Get.toNamed(AppRoutes.NOTIFICATIONS);
+            },
           ),
         ),
           Container(width: 20,)
