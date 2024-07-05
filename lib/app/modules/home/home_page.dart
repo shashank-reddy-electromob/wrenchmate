@@ -72,15 +72,18 @@ class _HomePageState extends State<HomePage> {
           Container(width: 20,)
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 12,),
-          searchbar(),
-          SizedBox(height: 12,),
-          offersSliders(),
-          serviceswidgit(),
-          toprecommendedservices(),
-        ],
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            SizedBox(height: 12,),
+            searchbar(),
+            SizedBox(height: 12,),
+            offersSliders(),
+            serviceswidgit(),
+            toprecommendedservices(),
+          ],
+        ),
       ),
     );
   }
