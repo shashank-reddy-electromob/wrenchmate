@@ -8,19 +8,17 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _phonenumbercontroller = TextEditingController();
 
   void _login() {
     final AuthController controller = Get.find();
     controller.login(
-      _usernameController.text,
-      _passwordController.text,
+      _phonenumbercontroller.text,
     );
   }
   void _googlelogin() {
     final AuthController controller = Get.find();
-    controller.googlelogin();
+    controller.googleLogin();
   }
 
   @override
@@ -33,18 +31,10 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
-              controller: _usernameController,
+              controller: _phonenumbercontroller,
               decoration: InputDecoration(
                 labelText: 'Username',
               ),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-              ),
-              obscureText: true,
             ),
             SizedBox(height: 32.0),
             ElevatedButton(

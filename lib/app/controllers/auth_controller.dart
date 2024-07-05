@@ -6,42 +6,95 @@ import '../routes/app_routes.dart';
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
   var verificationid = ''.obs;
+  int? resendToken;
 
-  //update this code.
-  void login(String username, String password) async{
-       await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: username,
-          verificationCompleted: (PhoneAuthCredential credential) async {
-            var usercred=await FirebaseAuth.instance.signInWithCredential(credential);
-            print("aryaniscool$usercred");
-            Get.toNamed(AppRoutes.HOME);
-          },
-          verificationFailed: (FirebaseAuthException e) {
-            print(e.message);
-          },
-          codeSent: (verificationId, resendtk) {
-            this.verificationid.value = verificationId;
-          },
-          codeAutoRetrievalTimeout: (verificationId) {
-            this.verificationid.value = verificationId;
-          });
+  void login(String phoneNumber) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          try {
+            await FirebaseAuth.instance.signInWithCredential(credential);
+            Get.toNamed(AppRoutes.BOTTOMNAV);
+          } catch (e) {
+            print("Auto sign-in failed: $e");
+            Get.snackbar("Error", "Auto sign-in failed: ${e.toString()}");
+          }
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print("Verification failed: ${e.message}");
+          Get.snackbar("Error", e.message ?? "Verification failed");
+        },
+        codeSent: (String verificationId, int? resendtk) {
+          print("OTP sent: $verificationId");
+          Get.toNamed(AppRoutes.OTP);
+          this.verificationid.value = verificationId;
+          this.resendToken = resendToken;
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          this.verificationid.value = verificationId;
+        });
+  }
+
+  void resendOTP(String phoneNumber) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      forceResendingToken: resendToken,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // Auto sign-in logic
+        try {
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          Get.toNamed(AppRoutes.BOTTOMNAV);
+        } catch (e) {
+          print("Auto sign-in failed: $e");
+          Get.snackbar("Error", "Auto sign-in failed: ${e.toString()}");
+        }
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        // Handle verification failure
+        print("Verification failed: ${e.message}");
+        Get.snackbar("Error", e.message ?? "Verification failed");
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        // OTP sent successfully
+        print("OTP resent: $verificationId");
+        Get.toNamed(AppRoutes.OTP);
+        this.verificationid.value = verificationId;
+        this.resendToken = resendToken; // Update the resend token
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        // Handle timeout
+        this.verificationid.value = verificationId;
+      },
+    );
   }
 
   void verifyOTP(otp) async {
-    var credential = await FirebaseAuth.instance.signInWithCredential(
-        PhoneAuthProvider.credential(verificationId: this.verificationid.value, smsCode: otp));
-    credential.user != null ? Get.toNamed(AppRoutes.HOME) : false;
+    try {
+      print(verificationid);
+      PhoneAuthCredential credential = await PhoneAuthProvider.credential(
+          verificationId: verificationid.toString(), smsCode: otp);
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Get.toNamed(AppRoutes.BOTTOMNAV);
+    } catch (e) {
+      print("OTP verification failed: $e");
+      Get.snackbar("Error", "OTP verification failed: ${e.toString()}");
+    }
   }
 
-  void googlelogin()async{
-    GoogleAuthProvider _googleauthpoviider =  GoogleAuthProvider();
-    var userCredentials= await FirebaseAuth.instance.signInWithProvider(_googleauthpoviider);
-    bool? isNewUser = userCredentials.additionalUserInfo?.isNewUser;
-    if (isNewUser==true){
-      Get.toNamed(AppRoutes.REGISTER);
-    }
-    else {
-      Get.toNamed(AppRoutes.HOME);
+  void googleLogin() async {
+    try {
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithProvider(googleProvider);
+      bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
+      if (isNewUser == true) {
+        Get.toNamed(AppRoutes.REGISTER);
+      } else {
+        Get.toNamed(AppRoutes.HOME);
+      }
+    } catch (e) {
+      print("Google Sign-In failed: $e");
+      Get.snackbar("Error", "Google Sign-In failed: ${e.toString()}");
     }
   }
 }

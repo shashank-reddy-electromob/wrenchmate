@@ -11,6 +11,7 @@ import '../bindings/car_binding.dart';
 import '../bindings/support_binding.dart';
 import '../bindings/tracking_binding.dart';
 import '../modules/auth/login_page.dart';
+import '../modules/auth/otp_page.dart';
 import '../modules/auth/register_page.dart';
 import '../modules/home/home_page.dart';
 import '../modules/home/notification_page.dart';
@@ -33,6 +34,7 @@ class AppPages {
 
   static final routes = [
     GetPage(name: AppRoutes.LOGIN, page: () => LoginPage(), binding: AuthBinding()),
+    GetPage(name: AppRoutes.OTP, page: () => optpage(), binding: AuthBinding()),
     GetPage(name: AppRoutes.REGISTER, page: () => RegisterPage(), binding: AuthBinding()),
     GetPage(name: AppRoutes.HOME, page: () => HomePage(), binding: HomeBinding(),),//middlewares: [AuthCheckMiddleware()]),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationPage(), binding: HomeBinding()),
