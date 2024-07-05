@@ -14,7 +14,13 @@ class AuthController extends GetxController {
         verificationCompleted: (PhoneAuthCredential credential) async {
           try {
             await FirebaseAuth.instance.signInWithCredential(credential);
-            Get.toNamed(AppRoutes.BOTTOMNAV);
+            // Check if the user is new or existing
+            bool isNewUser = FirebaseAuth.instance.currentUser!.metadata.creationTime == FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
+            if (isNewUser) {
+              Get.toNamed(AppRoutes.REGISTER);
+            } else {
+              Get.toNamed(AppRoutes.BOTTOMNAV);
+            }
           } catch (e) {
             print("Auto sign-in failed: $e");
             Get.snackbar("Error", "Auto sign-in failed: ${e.toString()}");
@@ -43,7 +49,13 @@ class AuthController extends GetxController {
         // Auto sign-in logic
         try {
           await FirebaseAuth.instance.signInWithCredential(credential);
-          Get.toNamed(AppRoutes.BOTTOMNAV);
+          // Check if the user is new or existing
+          bool isNewUser = FirebaseAuth.instance.currentUser!.metadata.creationTime == FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
+          if (isNewUser) {
+            Get.toNamed(AppRoutes.REGISTER);
+          } else {
+            Get.toNamed(AppRoutes.BOTTOMNAV);
+          }
         } catch (e) {
           print("Auto sign-in failed: $e");
           Get.snackbar("Error", "Auto sign-in failed: ${e.toString()}");
@@ -74,7 +86,13 @@ class AuthController extends GetxController {
       PhoneAuthCredential credential = await PhoneAuthProvider.credential(
           verificationId: verificationid.toString(), smsCode: otp);
       await FirebaseAuth.instance.signInWithCredential(credential);
-      Get.toNamed(AppRoutes.BOTTOMNAV);
+      // Check if the user is new or existing
+      bool isNewUser = FirebaseAuth.instance.currentUser!.metadata.creationTime == FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
+      if (isNewUser) {
+        Get.toNamed(AppRoutes.REGISTER);
+      } else {
+        Get.toNamed(AppRoutes.BOTTOMNAV);
+      }
     } catch (e) {
       print("OTP verification failed: $e");
       Get.snackbar("Error", "OTP verification failed: ${e.toString()}");
