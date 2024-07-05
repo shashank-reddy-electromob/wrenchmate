@@ -1,7 +1,7 @@
 import '../models/notification_model.dart';
 
 List<Notification> dummyNotifications = [
-  Notification(category: 'General', title: 'Welcome', description: 'Welcome to the app!'),
-  Notification(category: 'Sales', title: 'Special Offer', description: 'Check out our latest offers.'),
-  Notification(category: 'News', title: 'Breaking News', description: 'Stay updated with the latest news.'),
+  Notification(category: 'General', title: 'Welcome', description: 'We’re pleased to introduce the latest service in our templating experience in our app.'),
+  Notification(category: 'Sales', title: 'Special Offer', description: 'We’re pleased to introduce the latest service in our templating experience in our app.'),
+  Notification(category: 'News', title: 'Breaking News', description: 'We’re pleased to introduce the latest service in our templating experience in our app.'),
 ];
