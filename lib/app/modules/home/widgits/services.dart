@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
+import '../../../routes/app_routes.dart';
+import '../../service/service_page.dart';
 import 'header.dart';
 
 class serviceswidgit extends StatefulWidget {
@@ -24,36 +28,54 @@ class _serviceswidgitState extends State<serviceswidgit> {
               ServicesType(
                 text: "Car Wash",
                 borderSides: [BorderSideEnum.bottom, BorderSideEnum.right],
+                imagePath: 'assets/services/car wash.png',
+                onTap: () => navigateToServicePage("Car Wash"),
               ),
               ServicesType(
                 text: "Detailing",
                 borderSides: [BorderSideEnum.right, BorderSideEnum.bottom],
+                imagePath: 'assets/services/detailing.png',
+                onTap: () => navigateToServicePage("Detailing"),
               ),
               ServicesType(
-                text: "Painting",
+                text: "Denting and Painting",
                 borderSides: [BorderSideEnum.bottom, BorderSideEnum.right],
-              ),ServicesType(
-                text: "repairing",
+                imagePath: 'assets/services/painting.png',
+                onTap: () => navigateToServicePage("Denting and Painting"),
+              ),
+              ServicesType(
+                text: "Repairing",
                 borderSides: [BorderSideEnum.bottom],
+                imagePath: 'assets/services/repair.png',
+                onTap: () => navigateToServicePage("Repairing"),
               ),
             ],
           ),
           Row(
             children: [
               ServicesType(
-                text: "Car Wash",
+                text: "Accessories",
                 borderSides: [BorderSideEnum.right],
+                imagePath: 'assets/services/accessories.png',
+                onTap: () => navigateToServicePage("Accessories"),
               ),
               ServicesType(
-                text: "Detailing",
-                borderSides: [BorderSideEnum.right,],
+                text: "Wheel Service",
+                borderSides: [BorderSideEnum.right],
+                imagePath: 'assets/services/wheelservice.png',
+                onTap: () => navigateToServicePage("Wheel Service"),
               ),
               ServicesType(
-                text: "Denting and Painting",
-                borderSides: [ BorderSideEnum.right],
-              ),ServicesType(
-                text: "repairing",
+                text: "Body Parts",
+                borderSides: [BorderSideEnum.right],
+                imagePath: 'assets/services/body parts.png',
+                onTap: () => navigateToServicePage("Body Parts"),
+              ),
+              ServicesType(
+                text: "General Service",
                 borderSides: [],
+                imagePath: 'assets/services/general service.png',
+                onTap: () => navigateToServicePage("General Service"),
               ),
             ],
           ),
@@ -61,13 +83,20 @@ class _serviceswidgitState extends State<serviceswidgit> {
       ),
     );
   }
+  void navigateToServicePage(String service) {
+    Get.toNamed(AppRoutes.SERVICE, arguments: service);
+  }
 }
+
 
 class ServicesType extends StatelessWidget {
   final String text;
   final List<BorderSideEnum> borderSides;
   final Color borderColor;
   final double borderWidth;
+  final String imagePath;
+  final VoidCallback onTap;
+
 
   const ServicesType({
     Key? key,
@@ -75,23 +104,32 @@ class ServicesType extends StatelessWidget {
     this.borderSides = const [], // Default to no borders
     this.borderColor = const Color(0xffE7E7E7),
     this.borderWidth = 1.0,
+    required this.imagePath,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.width / 4 - 10,
-      width: MediaQuery.of(context).size.width / 4 - 10,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        border: _createBorder(),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(text),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: MediaQuery.of(context).size.width / 4 - 10,
+        width: MediaQuery.of(context).size.width / 4 - 10,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: _createBorder(),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+            ),
+            Text(text,textAlign: TextAlign.center,),
+          ],
+        ),
       ),
     );
   }

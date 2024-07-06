@@ -14,7 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   void _login() {
     final AuthController controller = Get.find();
     controller.login(
-      _phonenumbercontroller.text,
+      '+91${_phonenumbercontroller.text}',
     );
   }
   void _googlelogin() {
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                           controller: _phonenumbercontroller,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            hintText: 'Enter number with +91',
+                            hintText: 'Enter number',
                             hintStyle: TextStyle(color: Colors.grey, fontSize: 22.0), // Increased hint text size
                             border: OutlineInputBorder(
                               borderSide: BorderSide.none,
