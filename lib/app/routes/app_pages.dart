@@ -30,7 +30,7 @@ import '../modules/tracking/tracking_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
-  static const INITIAL = AppRoutes.LOGIN ;
+  static const INITIAL = AppRoutes.BOTTOMNAV ;
 
   static final routes = [
     GetPage(name: AppRoutes.LOGIN, page: () => LoginPage(), binding: AuthBinding()),

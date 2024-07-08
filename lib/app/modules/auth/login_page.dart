@@ -9,7 +9,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _phonenumbercontroller = TextEditingController();
-  String _selectedCountryCode = '+91';
 
   void _login() {
     final AuthController controller = Get.find();
