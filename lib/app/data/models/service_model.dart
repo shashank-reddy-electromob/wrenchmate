@@ -15,12 +15,12 @@ class Review {
 class FAQ {
   final String question;
   final String answer;
-  bool isExpanded;
+  bool isFavourite;
 
   FAQ({
     required this.question,
     required this.answer,
-    this.isExpanded = false,
+    this.isFavourite = false,
   });
 }
 

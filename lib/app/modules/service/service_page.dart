@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
+import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart';
 
 import '../../data/models/service_model.dart';
@@ -207,15 +208,7 @@ class _ServicePageState extends State<ServicePage> {
                                     width: 80,
                                     top: MediaQuery.of(context).size.height * 0.18,
                                     right: MediaQuery.of(context).size.width * 0.04,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xff3778F2), // Background color
-                                        foregroundColor: Colors.white,
-                                        elevation: 0
-                                      ),
-                                      onPressed: () {},
-                                      child: Text('+Add',style: TextStyle(fontSize: 14),),
-                                    ),
+                                    child: CustomElevatedButton(onPressed: () {  },)
                                   ),
                                 ],
                               ),
