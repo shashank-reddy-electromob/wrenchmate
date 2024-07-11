@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:wrenchmate_user_app/app/modules/home/home_page.dart';
 
+import '../../controllers/home_controller.dart';
 import '../booking/booking_page.dart';
 import '../car/car_page.dart';
 import '../subscription/subscription_page.dart';
@@ -31,6 +34,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
   }
   @override
   Widget build(BuildContext context) {
+    Get.put(HomeController());
     return Scaffold(
       backgroundColor: Colors.white,
       body: _widgetOptions.elementAt(_selectedIndex),

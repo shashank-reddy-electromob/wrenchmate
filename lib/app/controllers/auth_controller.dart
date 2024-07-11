@@ -92,7 +92,7 @@ class AuthController extends GetxController {
       if (isNewUser == true) {
         Get.toNamed(AppRoutes.REGISTER);
       } else {
-        Get.toNamed(AppRoutes.HOME);
+        Get.toNamed(AppRoutes.BOTTOMNAV);
       }
     } catch (e) {
       print("Google Sign-In failed: $e");
