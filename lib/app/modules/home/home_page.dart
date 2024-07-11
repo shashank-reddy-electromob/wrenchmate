@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/offers_slider.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  //final user = FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
     final HomeController controller = Get.find();
@@ -37,7 +39,8 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Hi firstname",
+                  //"Hi ${user.phoneNumber}",
+                  "Hi babe",
                   style:
                   TextStyle(fontSize: 22, color: Colors.black),
                 ),
