@@ -28,8 +28,8 @@ class _HomePageState extends State<HomePage> {
       // Swiping in right direction
       setState(() {
         xOffSet = 230;
-        yOffSet = MediaQuery.of(context).size.height * 0.2;
-        scaleFactor = 0.6;
+        yOffSet = MediaQuery.of(context).size.height * 0.15;
+        scaleFactor = 0.7;
         isDrawerOpen = true;
       });
     } else if (details.primaryDelta! < 0) {
@@ -62,16 +62,18 @@ class _HomePageState extends State<HomePage> {
             onHorizontalDragUpdate: _onHorizontalDragUpdate,
             onTap: isDrawerOpen ? _onTap : null,
             child: AnimatedContainer(
-              decoration: BoxDecoration(
+              decoration: isDrawerOpen?BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 10,
-                    blurRadius: 25,
+                    spreadRadius: 20,
+                    blurRadius: 35,
                   ),
                 ],
+              ):BoxDecoration(
+                color: Colors.white
               ),
               duration: Duration(microseconds: 100),
               transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
@@ -81,13 +83,15 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   children: [
                     Container(
-                      height: 50,
+                      height: 40,
                     ),
+                    //appbar
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          //icon and name
                           Row(
                             children: [
                               GestureDetector(
@@ -96,8 +100,8 @@ class _HomePageState extends State<HomePage> {
                                     xOffSet = 230;
                                     yOffSet =
                                         MediaQuery.of(context).size.height *
-                                            0.2;
-                                    scaleFactor = 0.6;
+                                            0.15;
+                                    scaleFactor = 0.8;
                                   });
                                 },
                                 child: ClipOval(
@@ -117,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                                   children: [
                                     Text(
                                       //"Hi ${user.phoneNumber}",
-                                      "Hi babe",
+                                      "Hi firstname",
                                       style: TextStyle(
                                           fontSize: 22, color: Colors.black),
                                     ),
@@ -139,6 +143,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ],
                           ),
+                          //notification
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,

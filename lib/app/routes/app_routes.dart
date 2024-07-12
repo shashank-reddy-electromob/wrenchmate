@@ -4,6 +4,7 @@ class AppRoutes {
   static const REGISTER = '/register';
   static const HOME = '/home';
   static const NOTIFICATIONS = '/notifications';
+  static const TERMSANDCONDITIONS = '/termsAndConditions';
   static const SERVICE = '/service';
   static const SERVICE_DETAIL = '/service-detail';
   static const SUBSCRIPTION = '/subscription';

@@ -15,6 +15,7 @@ import '../modules/auth/otp_page.dart';
 import '../modules/auth/register_page.dart';
 import '../modules/home/home_page.dart';
 import '../modules/home/notification_page.dart';
+import '../modules/home/termsAndConditions.dart';
 import '../modules/service/service_page.dart';
 import '../modules/service/service_detail_page.dart';
 import '../modules/subscription/subscription_page.dart';
@@ -38,6 +39,7 @@ class AppPages {
     GetPage(name: AppRoutes.REGISTER, page: () => RegisterPage(), binding: AuthBinding()),
     GetPage(name: AppRoutes.HOME, page: () => HomePage(), binding: HomeBinding(),),//middlewares: [AuthCheckMiddleware()]),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationPage(), binding: HomeBinding()),
+    GetPage(name: AppRoutes.TERMSANDCONDITIONS, page: () => termsAndConditions(), binding: HomeBinding()),
     GetPage(name: AppRoutes.BOTTOMNAV, page: () => bottomnavigation(), binding: bottomnavigationBindings()),
     GetPage(name: AppRoutes.SERVICE, page: () => ServicePage(), binding: ServiceBinding()),
     GetPage(name: AppRoutes.SERVICE_DETAIL, page: () => ServiceDetailPage(), binding: ServiceBinding()),
