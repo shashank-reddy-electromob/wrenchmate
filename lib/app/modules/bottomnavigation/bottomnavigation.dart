@@ -1,3 +1,4 @@
+import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:get/get.dart';
@@ -5,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:wrenchmate_user_app/app/modules/home/home_page.dart';
 
 import '../../controllers/home_controller.dart';
+import '../../routes/app_routes.dart';
 import '../booking/booking_page.dart';
 import '../car/car_page.dart';
 import '../subscription/subscription_page.dart';
@@ -37,7 +39,27 @@ class _bottomnavigationState extends State<bottomnavigation> {
     Get.put(HomeController());
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: _widgetOptions.elementAt(_selectedIndex),
+      // floatingActionButton: DraggableFab(
+      //   child:ClipOval(
+      //     child: Material(
+      //       color: Colors.blue, // Button color
+      //       child: InkWell(
+      //         splashColor: Colors.blueAccent, // Splash color
+      //         onTap: () {
+      //           Get.toNamed(AppRoutes.TRACKING);
+      //         },
+      //         child: SizedBox(
+      //           width: 60,
+      //           height: 60,
+      //         ),
+      //       ),
+      //     ),
+      //   )
+      //
+      //
+      // ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -80,6 +102,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
         elevation: 0,
+
 
       ),
     );

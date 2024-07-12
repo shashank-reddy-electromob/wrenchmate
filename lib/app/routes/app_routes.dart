@@ -13,6 +13,7 @@ class AppRoutes {
   static const BOOKING_DETAILS = '/booking-details';
   static const BOOKING = '/booking';
   static const BOOKING_DETAIL = '/booking-detail';
+  static const REVIEW = '/review';
   static const CAR = '/car';
   static const SUPPORT = '/support';
   static const CONTACT_US = '/contact-us';

@@ -55,6 +55,8 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   flutter_xlider: ^3.5.0
   intl: ^0.19.0
+  timeline_tile: ^2.0.0
+  draggable_fab: ^0.1.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -13,6 +13,7 @@ import '../bindings/tracking_binding.dart';
 import '../modules/auth/login_page.dart';
 import '../modules/auth/otp_page.dart';
 import '../modules/auth/register_page.dart';
+import '../modules/booking/review_page.dart';
 import '../modules/home/home_page.dart';
 import '../modules/home/notification_page.dart';
 import '../modules/home/termsAndConditions.dart';
@@ -21,7 +22,6 @@ import '../modules/service/service_detail_page.dart';
 import '../modules/subscription/subscription_page.dart';
 import '../modules/subscription/payment_page.dart';
 import '../modules/cart/cart_page.dart';
-import '../modules/cart/booking_detail_page.dart';
 import '../modules/booking/booking_page.dart';
 import '../modules/booking/booking_detail_page.dart';
 import '../modules/car/car_page.dart';
@@ -49,6 +49,7 @@ class AppPages {
     GetPage(name: AppRoutes.BOOKING_DETAILS, page: () => BookingDetailPage(), binding: CartBinding()),
     GetPage(name: AppRoutes.BOOKING, page: () => BookingPage(), binding: BookingBinding()),
     GetPage(name: AppRoutes.BOOKING_DETAIL, page: () => BookingDetailPage(), binding: BookingBinding()),
+    GetPage(name: AppRoutes.REVIEW, page: () => reviewPage(), binding: BookingBinding()),
     GetPage(name: AppRoutes.CAR, page: () => CarPage(), binding: CarBinding()),
     GetPage(name: AppRoutes.SUPPORT, page: () => SupportPage(), binding: SupportBinding()),
     GetPage(name: AppRoutes.CONTACT_US, page: () => ContactUsPage(), binding: SupportBinding()),

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../widgets/blueButton.dart';
+
 class termsAndConditions extends StatefulWidget {
   const termsAndConditions({super.key});
 
@@ -87,7 +89,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                 SizedBox(height: 8),
                 Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.',
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 20),
                 ),
                 SizedBox(height: 16),
                 Text(
@@ -100,7 +102,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                 SizedBox(height: 8),
                 Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.',
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 20),
                 ),
                 SizedBox(height: 16),
                 Text(
@@ -113,31 +115,13 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                 SizedBox(height: 8),
                 Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.',
-                  style: TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 20),
                 ),
                 SizedBox(height: 24),
                //accept
                 Align(
                   alignment: Alignment.center,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 40,
-                    child: ElevatedButton(
-                      onPressed:(){},
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 4),
-                        child: Text(
-                          'ACCEPT',
-                          style: TextStyle(fontSize: 24, color: Colors.white),
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        backgroundColor: Color(0XFF1671D8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0), // Adjust the radius to make it more rectangular
-                        ),),
-                    ),
-                  ),
+                  child: blueButton(text: 'ACCEPT', onTap: (){},)
                 ),
                 SizedBox(height: 90)
               ],
