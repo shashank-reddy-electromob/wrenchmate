@@ -13,7 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   void _login() {
     final AuthController controller = Get.find();
     controller.login(
-      '+91${_phonenumbercontroller.text}',
+      '+91${_phonenumbercontroller.text}',_phonenumbercontroller
     );
   }
   void _googlelogin() {

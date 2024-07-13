@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../routes/app_routes.dart';
@@ -8,8 +9,16 @@ class AuthController extends GetxController {
   var verificationid = ''.obs;
   int? resendToken;
 
-  Future<void> _handleSignIn(PhoneAuthCredential credential) async {
+  Future<void> _handleSignIn(PhoneAuthCredential credential, TextEditingController otpcontroller) async {
     try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        verificationCompleted: (PhoneAuthCredential credential) {
+          otpcontroller.text = credential.smsCode ?? '';
+        },
+        verificationFailed: (FirebaseAuthException e) {},
+        codeSent: (String verificationId, int? resendToken) {},
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
       await FirebaseAuth.instance.signInWithCredential(credential);
       bool isNewUser = FirebaseAuth.instance.currentUser!.metadata.creationTime ==
           FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
@@ -24,17 +33,17 @@ class AuthController extends GetxController {
     }
   }
 
-  void login(String phoneNumber) async {
+  void login(String phoneNumber, TextEditingController otpcontroller) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
-      verificationCompleted: _handleSignIn,
+      verificationCompleted: (PhoneAuthCredential credential) => _handleSignIn(credential, otpcontroller),
       verificationFailed: (FirebaseAuthException e) {
         print("Verification failed: ${e.message}");
         Get.snackbar("Error", e.message ?? "Verification failed");
       },
       codeSent: (String verificationId, int? resendtk) {
         print("OTP sent: $verificationId");
-        Get.toNamed(AppRoutes.OTP);
+        Get.toNamed(AppRoutes.OTP, arguments: phoneNumber);
         this.verificationid.value = verificationId;
         this.resendToken = resendtk;
       },
@@ -44,11 +53,11 @@ class AuthController extends GetxController {
     );
   }
 
-  void resendOTP(String phoneNumber) async {
+  void resendOTP(String phoneNumber, TextEditingController otpcontroller) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       forceResendingToken: resendToken,
-      verificationCompleted: _handleSignIn,
+      verificationCompleted: (PhoneAuthCredential credential) => _handleSignIn(credential, otpcontroller),
       verificationFailed: (FirebaseAuthException e) {
         print("Verification failed: ${e.message}");
         Get.snackbar("Error", e.message ?? "Verification failed");
@@ -65,7 +74,7 @@ class AuthController extends GetxController {
     );
   }
 
-  void verifyOTP(String otp) async {
+  void verifyOTP(String otp, String phoneNumber, TextEditingController otpcontroller) async {
     try {
       print(verificationid);
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
@@ -74,7 +83,7 @@ class AuthController extends GetxController {
       bool isNewUser = FirebaseAuth.instance.currentUser!.metadata.creationTime ==
           FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
       if (isNewUser) {
-        Get.toNamed(AppRoutes.REGISTER);
+        Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV);
       }

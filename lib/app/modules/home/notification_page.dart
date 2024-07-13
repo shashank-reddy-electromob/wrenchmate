@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import '../../controllers/home_controller.dart';
 import '../../data/providers/notifications_provider.dart';
 
@@ -14,12 +15,7 @@ class NotificationPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(CupertinoIcons.back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        leading: Custombackbutton(),
         title: Text(
           'Notifications',
           style: TextStyle(fontWeight: FontWeight.w500),

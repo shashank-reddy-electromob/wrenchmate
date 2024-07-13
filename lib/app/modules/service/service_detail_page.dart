@@ -5,6 +5,7 @@ import 'package:wrenchmate_user_app/app/modules/service/widgits/desc_faq_review.
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/seperator.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/servicecardiconswidget.dart';
+import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import '../../controllers/service_controller.dart';
 import '../../data/models/service_model.dart';
 
@@ -31,22 +32,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       appBar: AppBar(backgroundColor: Colors.white,
       leading: Padding(
         padding: const EdgeInsets.all(6.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xffF6F6F5),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: IconButton(
-            icon: Icon(
-              CupertinoIcons.back,
-              color: Color(0xff1E1E1E),
-              size: 22,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        child: Custombackbutton(),
       ),
         actions: [
           Padding(

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/payment_details.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/timelineTile.dart';
+import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import '../../controllers/booking_controller.dart';
 import '../../data/models/booking_model.dart';
 import '../../routes/app_routes.dart';
@@ -40,22 +41,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                 Row(
                   children: [
                     //back button
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xffF6F6F5),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          CupertinoIcons.back,
-                          color: Color(0xff1E1E1E),
-                          size: 22,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
+                    Custombackbutton(),
                     SizedBox(
                       width: 30,
                     ),

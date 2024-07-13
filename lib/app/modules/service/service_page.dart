@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart';
+import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 
 import '../../data/models/service_model.dart';
 import '../../data/providers/service_provider.dart';
@@ -36,22 +37,7 @@ class _ServicePageState extends State<ServicePage> {
           ),
           leading: Padding(
             padding: const EdgeInsets.all(6.0),
-            child: Container(
-              decoration: BoxDecoration(
-              color: Color(0xffF6F6F5),
-              borderRadius: BorderRadius.circular(30),
-            ),
-              child: IconButton(
-                icon: Icon(
-                  CupertinoIcons.back,
-                  color: Color(0xff1E1E1E),
-                  size: 22,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
+            child: Custombackbutton()
           ),
         ),
         body: Column(
