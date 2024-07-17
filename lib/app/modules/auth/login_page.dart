@@ -25,8 +25,16 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        padding: EdgeInsets.all(16),
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xff9DB3E5), Color(0xffFFFFFF), Color(0xffFFFFFF), Color(0xffFFFFFF)],
+            begin: Alignment.bottomRight,
+            end: Alignment.topLeft,
+          ),
+        ),
         child: SingleChildScrollView(scrollDirection: Axis.vertical,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           style: TextStyle(fontSize: 22.0), // Increased entered text size
                         )
-
+        
                       ),
                     ],
                   ),
@@ -146,8 +154,8 @@ class _LoginPageState extends State<LoginPage> {
               //google
               Container(width: MediaQuery.of(context).size.width*0.8,height: 60,
                 child: ElevatedButton(
-
-                  style: ElevatedButton.styleFrom(elevation: 2,
+        
+                  style: ElevatedButton.styleFrom(elevation: 1,
                     foregroundColor: Colors.white, backgroundColor: Colors.white, // Text color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0),
@@ -177,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(width: MediaQuery.of(context).size.width*0.8,height: 60,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    elevation: 2,
+                    elevation: 1,
                     foregroundColor: Colors.white, backgroundColor: Colors.white, // Text color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0),

@@ -1,13 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
 import '../routes/app_routes.dart';
 
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
   var verificationid = ''.obs;
   int? resendToken;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
 
   Future<void> _handleSignIn(PhoneAuthCredential credential, TextEditingController otpcontroller) async {
     try {
@@ -106,6 +109,32 @@ class AuthController extends GetxController {
     } catch (e) {
       print("Google Sign-In failed: $e");
       Get.snackbar("Error", "Google Sign-In failed: ${e.toString()}");
+    }
+  }
+
+  Future<void> addUserToFirestore({
+    required String name,
+    required String number,
+    required String alternateNumber,
+    required String email,
+    String? address,
+    String? profileImagePath,
+  }) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      print(userId);
+      await _firestore.collection('User').doc(userId).set({
+        'User_name': name,
+        'User_number': [number, alternateNumber],
+        'User_email': email,
+        if (address != null && address.isNotEmpty) 'User_address': address,
+        if (profileImagePath != null && profileImagePath.isNotEmpty) 'User_profile_image': profileImagePath,
+      });
+      print("User added to Firestore");
+      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: userId);
+    } catch (e) {
+      print("Failed to add user: $e");
+      Get.snackbar("Error", "Failed to add user: ${e.toString()}");
     }
   }
 }

@@ -21,7 +21,7 @@ class _optpageState extends State<optpage> {
   final otpcontroller = TextEditingController();
   final user = FirebaseAuth.instance.currentUser!;
   final number = Get.arguments;
-  int _start = 20;
+  int _start = 60;
   late Timer _timer;
   bool buttonVisiblity = false;
 
@@ -54,13 +54,13 @@ class _optpageState extends State<optpage> {
 
   void _verifyotp() {
     final AuthController controller = Get.find();
-    controller.verifyOTP(otpcontroller.text, number, otpcontroller);
+    controller.verifyOTP(otpcontroller.text.toString(), number, otpcontroller);
   }
 
   void _resendotp() {
     setState(() {
       buttonVisiblity=false;
-      _start = 20;
+      _start = 60;
     });
     final AuthController controller = Get.find();
     controller.resendOTP(number, otpcontroller);

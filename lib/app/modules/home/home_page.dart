@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   double scaleFactor = 1;
   bool isDrawerOpen = false;
 
+
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
     if (details.primaryDelta! > 0) {
       // Swiping in right direction
@@ -51,6 +52,8 @@ class _HomePageState extends State<HomePage> {
       isDrawerOpen = false;
     });
   }
+  String? userId = FirebaseAuth.instance.currentUser!.phoneNumber;
+
   @override
   Widget build(BuildContext context) {
     final HomeController controller = Get.find();
@@ -96,6 +99,7 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
+                                  print(userId);
                                   setState(() {
                                     xOffSet = 230;
                                     yOffSet =
@@ -121,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                                   children: [
                                     Text(
                                       //"Hi ${user.phoneNumber}",
-                                      "Hi firstname",
+                                      "Hi",
                                       style: TextStyle(
                                           fontSize: 22, color: Colors.black),
                                     ),
