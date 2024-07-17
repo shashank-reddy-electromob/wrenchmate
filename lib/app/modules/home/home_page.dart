@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
       isDrawerOpen = false;
     });
   }
-  String? userId = FirebaseAuth.instance.currentUser!.phoneNumber;
+  String? phonenumber = FirebaseAuth.instance.currentUser!.phoneNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  print(userId);
+                                  print(phonenumber);
                                   setState(() {
                                     xOffSet = 230;
                                     yOffSet =

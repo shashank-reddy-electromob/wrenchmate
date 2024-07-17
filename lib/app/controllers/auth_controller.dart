@@ -11,7 +11,6 @@ class AuthController extends GetxController {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
   Future<void> _handleSignIn(PhoneAuthCredential credential, TextEditingController otpcontroller) async {
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
@@ -112,14 +111,12 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> addUserToFirestore({
-    required String name,
+  Future<void> addUserToFirestore({required String name,
     required String number,
     required String alternateNumber,
     required String email,
     String? address,
-    String? profileImagePath,
-  }) async {
+    String? profileImagePath,}) async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       print(userId);
@@ -135,6 +132,17 @@ class AuthController extends GetxController {
     } catch (e) {
       print("Failed to add user: $e");
       Get.snackbar("Error", "Failed to add user: ${e.toString()}");
+    }
+  }
+
+  void logout() async {
+    try {
+      print("logout in lauth controller");
+      await FirebaseAuth.instance.signOut();
+      Get.toNamed(AppRoutes.LOGIN);
+    } catch (e) {
+      print("Logout failed: $e");
+      Get.snackbar("Error", "Logout failed: ${e.toString()}");
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/drawer/tabs.dart';
 
+import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
 
 class drawerPage extends StatefulWidget {
@@ -37,6 +38,18 @@ class _drawerPageState extends State<drawerPage> {
     else{}
 
   }
+  void logout() async {
+    try {
+      print("in logout in drawer");
+      final AuthController controller = Get.find();
+      controller.logout();
+      Get.toNamed(AppRoutes.LOGIN);
+    } catch (e) {
+      print("Logout failed: $e");
+      Get.snackbar("Error", "Logout failed: ${e.toString()}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -66,7 +79,9 @@ class _drawerPageState extends State<drawerPage> {
                     style: TextStyle(
                         fontSize: 22, color: Colors.black),
                   ),
-                  IconButton(onPressed: (){}, icon: Icon(Icons.edit,color: Colors.green,size: 20,)),
+                  IconButton(onPressed: (){
+                    Get.toNamed(AppRoutes.EDITPROFILE);
+                  }, icon: Icon(Icons.edit,color: Colors.green,size: 20,)),
                 ],
               ),
               Text(
@@ -122,7 +137,7 @@ class _drawerPageState extends State<drawerPage> {
         ),
         Padding(padding: EdgeInsets.only(left: 30,top: 60),
           child: GestureDetector(
-          onTap: (){},
+          onTap: logout,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             width: MediaQuery.of(context).size.width * 0.24,

@@ -19,7 +19,6 @@ class optpage extends StatefulWidget {
 
 class _optpageState extends State<optpage> {
   final otpcontroller = TextEditingController();
-  final user = FirebaseAuth.instance.currentUser!;
   final number = Get.arguments;
   int _start = 60;
   late Timer _timer;
