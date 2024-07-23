@@ -1,43 +1,20 @@
-class Review {
-  final String name;
-  final String profileImage;
-  final String reviewText;
-  final double rating;
+import 'package:wrenchmate_user_app/app/data/models/review_model.dart';
 
-  Review({
-    required this.name,
-    required this.profileImage,
-    required this.reviewText,
-    required this.rating,
-  });
-}
-
-class FAQ {
-  final String question;
-  final String answer;
-  bool isFavourite;
-
-  FAQ({
-    required this.question,
-    required this.answer,
-    this.isFavourite = false,
-  });
-}
-
+import 'faq_model.dart';
 class Service {
-  final String imagePath;
+  final String? imagePath;//
   final String name;
   final String price;
   final String description;
-  final List<Review> reviews;
+  final List<Review> reviews;//
   final int numberOfReviews;
   final String time;
   final String warrantyDuration;
-  final List<FAQ> faqs;
+  final List<FAQ> faqs;//
   final String category;
 
   Service({
-    required this.imagePath,
+     this.imagePath,
     required this.name,
     required this.price,
     required this.description,

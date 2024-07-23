@@ -7,7 +7,8 @@ import 'package:wrenchmate_user_app/app/modules/service/widgits/seperator.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/servicecardiconswidget.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import '../../controllers/service_controller.dart';
-import '../../data/models/service_model.dart';
+import '../../data/models/Service_Firebase.dart';
+import '../../data/models/user_module.dart';
 
 class ServiceDetailPage extends StatefulWidget {
   @override
@@ -18,12 +19,26 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   String selectedTab = 'description';
   late List<bool> _isVisibleList;
   final ServiceController controller = Get.find();
-  final Service service = Get.arguments;
+  late ServiceFirebase service;
 
   @override
   void initState() {
     super.initState();
-    _isVisibleList = List.generate(service.faqs.length, (index) => false);
+    service = Get.arguments;
+    fetchData(service);
+    _isVisibleList = List<bool>.filled(controller.faqs.length, false);
+  }
+
+  void fetchData(ServiceFirebase service) async {
+    await controller.fetchReviewsForService(service);
+    await controller.fetchFAQsForService(service.id);
+    
+    // Fetch user data for each review
+    for (var review in controller.reviews) {
+      await controller.fetchUser(review.userId);
+    }
+
+    _isVisibleList = List<bool>.filled(controller.faqs.length, false);
   }
 
   Widget build(BuildContext context) {
@@ -56,88 +71,93 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          children: [
-            //service card
-            Container(
-              height: MediaQuery.of(context).size.height*0.49,
-              child: Stack(
-                  children:[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        service.imagePath,
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                    Positioned(
-                      top: 200,
-                        left: 20,
-                        child: serviceCard()),
-              ]),
-            ),
-            // Tabs
-            Padding(
-              padding: const EdgeInsets.only(left: 20,right: 20,top: 8),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Color(0xffF6F6F5),
-                  borderRadius: BorderRadius.circular(15),
+      body: Obx(() {
+        if (controller.loading.value) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              children: [
+                //service card
+                Container(
+                  height: MediaQuery.of(context).size.height*0.49,
+                  child: Stack(
+                      children:[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network("https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
+                            fit: BoxFit.fitWidth,
+                          )
+                        ),
+                        Positioned(
+                          top: 200,
+                            left: 20,
+                            child: serviceCard()),
+                  ]),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    descFaqReview(
-                      text: 'Description',
-                      isSelected: selectedTab == 'description',
-                      onTap: () {
-                        setState(() {
-                          selectedTab = 'description';
-                        });
-                      },
+                // Tabs
+                Padding(
+                  padding: const EdgeInsets.only(left: 20,right: 20,top: 8),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: Color(0xffF6F6F5),
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    descFaqReview(
-                      text: 'FAQs',
-                      isSelected: selectedTab == 'faq',
-                      onTap: () {
-                        setState(() {
-                          selectedTab = 'faq';
-                        });
-                      },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        descFaqReview(
+                          text: 'Description',
+                          isSelected: selectedTab == 'description',
+                          onTap: () {
+                            setState(() {
+                              selectedTab = 'description';
+                            });
+                          },
+                        ),
+                        descFaqReview(
+                          text: 'FAQs',
+                          isSelected: selectedTab == 'faq',
+                          onTap: () {
+                            setState(() {
+                              selectedTab = 'faq';
+                            });
+                          },
+                        ),
+                        descFaqReview(
+                          text: 'Review',
+                          isSelected: selectedTab == 'review',
+                          onTap: () {
+                            setState(() {
+                              selectedTab = 'review';
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                    descFaqReview(
-                      text: 'Review',
-                      isSelected: selectedTab == 'review',
-                      onTap: () {
-                        setState(() {
-                          selectedTab = 'review';
-                        });
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                // Content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                    child: selectedTab == 'faq'
+                        ? ExpandingListFAQs()
+                        : selectedTab == 'description'
+                         ? DescriptionWidget()
+                        : selectedTab == 'review'
+                        ? ReviewWidget()
+                        : Container(),
+                  ),
+                ),
+              ],
             ),
-            // Content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-                child: selectedTab == 'faq'
-                    ? ExpandingListFAQs()
-                    : selectedTab == 'description'
-                     ? DescriptionWidget()
-                    : selectedTab == 'review'
-                    ? ReviewWidget()
-                    : Container(),
-              ),
-            ),
-          ],
-        ),
-      ),
+          );
+        }
+      }),
     );
   }
 
@@ -186,7 +206,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                       DurationWidget(
                         icon: CupertinoIcons.checkmark_shield,
                         titleText: "Warrnaty:",
-                        durationText: service.warrantyDuration, subtitleText: '',
+                        durationText: service.warranty, subtitleText: '',
                       ),
                       DurationWidget(
                         icon: CupertinoIcons.star,
@@ -198,6 +218,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 ],
               ),
             ),
+            //button
             Positioned(
                 width: 80,
                 top: MediaQuery.of(context).size.height * 0.055,
@@ -213,7 +234,6 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
             ),
           ]
       ),
-
     );
   }
 
@@ -269,12 +289,17 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
 
   Widget DescriptionWidget() {
     return Container(
-      color: Color(0xffF6F6F5),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Color(0xffF6F6F5),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: Text(
           service.description,
           style: TextStyle(color: Color(0xff6D6D6D), fontSize: 16),
+          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -282,14 +307,15 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
 
   Widget ExpandingListFAQs() {
     return ListView.builder(
-      itemCount: _isVisibleList.length,
+      itemCount: controller.faqs.length,
       itemBuilder: (context, serviceIndex) {
+        var faq = controller.faqs[serviceIndex];
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
               title: Text(
-                service.faqs[serviceIndex].question,
+                faq.question, // Use FAQ model
                 style: TextStyle(
                     color: _isVisibleList[serviceIndex]
                         ? Color(0xff3778F2)
@@ -297,18 +323,8 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                     fontSize: 16),
               ),
               trailing: _isVisibleList[serviceIndex]
-                  ? Icon(
-                      Icons.arrow_drop_up,
-                      color: _isVisibleList[serviceIndex]
-                          ? Color(0xff3778F2)
-                          : Color(0xff7B7B7B),
-                    )
-                  : Icon(
-                      Icons.arrow_drop_down,
-                      color: _isVisibleList[serviceIndex]
-                          ? Color(0xff3778F2)
-                          : Color(0xff7B7B7B),
-                    ),
+                  ? Icon(Icons.arrow_drop_up, color: Color(0xff3778F2))
+                  : Icon(Icons.arrow_drop_down, color: Color(0xff7B7B7B)),
               onTap: () {
                 setState(() {
                   _isVisibleList[serviceIndex] = !_isVisibleList[serviceIndex];
@@ -322,16 +338,11 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 color: Color(0xffF6F6F5),
                 width: double.infinity,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          service.faqs[serviceIndex].answer,
-                          style:
-                              TextStyle(color: Color(0xff6D6D6D), fontSize: 14),
-                        )
-                      ]),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
+                  child: Text(
+                    faq.answer, // Use FAQ model
+                    style: TextStyle(color: Color(0xff6D6D6D), fontSize: 14),
+                  ),
                 ),
               ),
             ),
@@ -342,53 +353,67 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   }
 
   Widget ReviewWidget() {
-      return ListView.builder(
-        itemCount: service.reviews.length,
-        itemBuilder: (context, serviceIndex) {
-          return Container(
-            color: Color(0xffF6F6F5) ,
-            child: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        ClipOval(
-                          child: Image.asset(
-                            service.reviews[serviceIndex].profileImage,
-                            fit: BoxFit.cover,
-                            height: 45.0,
-                            width: 45.0,
-                          ),
-                        ),
-                        SizedBox(width: 16,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(service.reviews[serviceIndex].name,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 20),),
-                            Row(
-                              children: List.generate(5, (index) {
-                                return Icon(
-                                  index < service.reviews[serviceIndex].rating
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  color: Colors.yellow,
-                                  size: 20,
-                                );
-                              }),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 10,),
-                    Text(service.reviews[serviceIndex].reviewText,style: TextStyle(color: Color(0xff575757),fontSize: 16),),
-                  ]),
-            ),
-          );
-        },
-      );
-    }
+    return ListView.builder(
+      itemCount: controller.reviews.length,
+      itemBuilder: (context, serviceIndex) {
+        var review = controller.reviews[serviceIndex];
+        var user = controller.users.firstWhere(
+          (user) => user.userEmail == review.userId, // Updated to match userEmail
+          orElse: () => User(
+            userAddress: '',
+            userEmail: 'Unknown',
+            userName: '',
+            userNumber: [],
+            userProfileImage: '',
+          ),
+        );
 
+        return Container(
+          color: Color(0xffF6F6F5),
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    ClipOval(
+                      child: user.userProfileImage.isNotEmpty
+                          ? Image.network(
+                              user.userProfileImage,
+                              fit: BoxFit.cover,
+                              height: 45.0,
+                              width: 45.0,
+                            )
+                          : Icon(Icons.account_circle, size: 45.0),
+                    ),
+                    SizedBox(width: 16,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(user.userName.isNotEmpty ? user.userName : 'Unknown', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20),),
+                        Row(
+                          children: List.generate(5, (index) {
+                            return Icon(
+                              index < review.rating
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: Colors.yellow,
+                              size: 20,
+                            );
+                          }),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(height: 10,),
+                Text(review.message, style: TextStyle(color: Color(0xff575757), fontSize: 16),),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

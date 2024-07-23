@@ -1,14 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/data/models/Service_Firebase.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
-
-import '../../data/models/service_model.dart';
-import '../../data/providers/service_provider.dart';
 import '../../routes/app_routes.dart';
+import '../../controllers/service_controller.dart';
 
 class ServicePage extends StatefulWidget {
   @override
@@ -17,18 +16,25 @@ class ServicePage extends StatefulWidget {
 
 class _ServicePageState extends State<ServicePage> {
   String selectedCategory = 'Show All';
-  final String service = Get.arguments;
+  late String service;
+  final ServiceController serviceController = Get.put(ServiceController());
 
-  List<Service> get filteredServices {
+  void initState() {
+    super.initState();
+    service = Get.arguments;
+    serviceController.fetchServices(service); // Call the fetchServices function here
+  }
+
+  List<ServiceFirebase> get filteredServices {
     if (selectedCategory == 'Show All') {
-      return services;
+      return serviceController.services;
     } else {
-      return services.where((service) => service.category == selectedCategory).toList();
+      return serviceController.services.where((service) => service.category == selectedCategory).toList();
     }
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -95,114 +101,120 @@ class _ServicePageState extends State<ServicePage> {
                 child: Column(
                   children: [
                     subservices(),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: filteredServices.length,
-                      itemBuilder: (context, index) {
-                        final service = filteredServices[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: GestureDetector(
-                            onTap: (){
-                              Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: service);
-                            },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: Color(0xffF7F7F7)),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          service.imagePath,
-                                          fit: BoxFit.fitWidth,
-                                          width: MediaQuery.of(context).size.width-32,
-                                          height: MediaQuery.of(context).size.height * 0.17,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 8.0),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
+                    Obx(() {
+                      if (serviceController.loading.value) {
+                        return Center(child: CircularProgressIndicator(
+                          color: Colors.blue,
+                        ));
+                      } else {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: serviceController.services.length,
+                          itemBuilder: (context, index) {
+                            final service = serviceController.services[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: service);
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(vertical: 10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: Color(0xffF7F7F7)),
+                                  child: Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Image.network("https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
+                                              fit: BoxFit.fitWidth,
+                                              width: MediaQuery.of(context).size.width-32,
+                                              height: MediaQuery.of(context).size.height * 0.17,),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Text(
-                                                    service.name,
-                                                    style: TextStyle(fontSize: 24,fontWeight: FontWeight.w500),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 8  ),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    '\₹${service.price}  ',
-                                                    style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500),
-                                                  ),
-                                                  Icon(CupertinoIcons.star,size: 16,color: Color(0xffFFE262),),
-                                                  Text(
-                                                    ' ${service.averageRating.toStringAsFixed(1)}',
-                                                    style: TextStyle(fontSize: 20, color: Color(0xff636363)),
-                                                  ),
-                                                  Text(
-                                                    ' (${service.numberOfReviews} reviews)',
-                                                    style: TextStyle(fontSize: 18,color: Color(0xff858585)),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 8),
-                                              //TIME AND WARRANTY
-                                              Row (
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  //TIME
                                                   Row(
                                                     children: [
-                                                      Icon(CupertinoIcons.clock,size: 16,color: Color(0xff797979),),
                                                       Text(
-                                                        ' Takes ${service.time} Hours',
-                                                        style: TextStyle(fontSize: 16,color: Color(0xff797979),),
+                                                        service.name,
+                                                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
                                                       ),
                                                     ],
                                                   ),
-                                                  //WARRANTY
+                                                  SizedBox(height: 8),
                                                   Row(
                                                     children: [
-                                                      Icon(CupertinoIcons.checkmark_shield,size: 18,color: Color(0xff797979),),
                                                       Text(
-                                                        ' ${service.warrantyDuration} Warranty',
-                                                        style: TextStyle(fontSize: 16,color: Color(0xff797979),),
+                                                        '\₹${service.price}  ',
+                                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                                                      ),
+                                                      Icon(CupertinoIcons.star, size: 16, color: Color(0xffFFE262)),
+                                                      Text(
+                                                        ' ${service.averageRating.toStringAsFixed(1)}',
+                                                        style: TextStyle(fontSize: 20, color: Color(0xff636363)),
+                                                      ),
+                                                      Text(
+                                                        ' (${service.totalReviews} reviews)',
+                                                        style: TextStyle(fontSize: 18, color: Color(0xff858585)),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 8),
+                                                  //TIME AND WARRANTY
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      //TIME
+                                                      Row(
+                                                        children: [
+                                                          Icon(CupertinoIcons.clock, size: 16, color: Color(0xff797979)),
+                                                          Text(
+                                                            ' Takes ${service.time} Hours',
+                                                            style: TextStyle(fontSize: 16, color: Color(0xff797979)),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      //WARRANTY
+                                                      Row(
+                                                        children: [
+                                                          Icon(CupertinoIcons.checkmark_shield, size: 18, color: Color(0xff797979)),
+                                                          Text(
+                                                            ' ${service.warranty} Warranty',
+                                                            style: TextStyle(fontSize: 16, color: Color(0xff797979)),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),
                                                 ],
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      //add button
+                                      Positioned(
+                                        width: 80,
+                                        top: MediaQuery.of(context).size.height * 0.18,
+                                        right: MediaQuery.of(context).size.width * 0.04,
+                                        child: CustomElevatedButton(onPressed: () {}),
+                                      ),
+                                    ],
                                   ),
-                                  //add button
-                                  Positioned(
-                                    width: 80,
-                                    top: MediaQuery.of(context).size.height * 0.18,
-                                    right: MediaQuery.of(context).size.width * 0.04,
-                                    child: CustomElevatedButton(onPressed: () {  },)
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         );
-                      },
-                    ),
+                      }
+                    }),
                   ],
                 ),
               ),
@@ -211,6 +223,7 @@ class _ServicePageState extends State<ServicePage> {
         )
     );
   }
+
   Widget subservices() {
     return Padding(
       padding: const EdgeInsets.all(12.0),

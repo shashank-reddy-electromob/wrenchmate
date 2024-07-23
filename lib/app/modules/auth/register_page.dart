@@ -56,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
     } else if (email == null) {
       Get.snackbar('Error', 'Email field is empty');
     } else if (address == null) {
-      Get.snackbar('Error', 'Address field is empty');
+      address='';
     } else {
       await controller.addUserToFirestore(
         name: name,

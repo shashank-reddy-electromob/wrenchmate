@@ -7,6 +7,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import '../../controllers/home_controller.dart';
+import '../../controllers/service_controller.dart';
 import 'drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -53,10 +54,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
   String? phonenumber = FirebaseAuth.instance.currentUser!.phoneNumber;
+@override
+
 
   @override
   Widget build(BuildContext context) {
-    final HomeController controller = Get.find();
     return Scaffold(
       body: Stack(
         children: [
@@ -100,7 +102,8 @@ class _HomePageState extends State<HomePage> {
                               GestureDetector(
                                 onTap: () {
                                   print(phonenumber);
-                                  setState(() {
+                                
+                                    setState(() {
                                     xOffSet = 230;
                                     yOffSet =
                                         MediaQuery.of(context).size.height *

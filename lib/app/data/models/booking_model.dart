@@ -1,18 +1,5 @@
+import 'package:wrenchmate_user_app/app/data/models/payment_summary_model.dart';
 import 'package:wrenchmate_user_app/app/data/models/service_model.dart';
-
-class PaymentSummary {
-  final double amount;
-  final double tax;
-  final double discount;
-
-  PaymentSummary({
-    required this.amount,
-    required this.tax,
-    required this.discount,
-  });
-
-  double get totalAmount => amount + tax - discount;
-}
 
 enum BookingStatus {
   confirmed,
