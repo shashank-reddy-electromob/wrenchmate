@@ -1,6 +1,8 @@
 import 'package:wrenchmate_user_app/app/data/providers/service_provider.dart';
 import 'package:wrenchmate_user_app/app/data/models/booking_model.dart';
 
+import '../models/payment_summary_model.dart';
+
 final paymentSummary1 = PaymentSummary(
   amount: 25.0,
   tax: 2.5,
