@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:wrenchmate_user_app/app/modules/home/home_page.dart';
+import 'package:flutter/services.dart'; // Import this for SystemNavigator
 
 import '../../controllers/home_controller.dart';
 import '../booking/booking_page.dart';
@@ -31,72 +32,88 @@ class _bottomnavigationState extends State<bottomnavigation> {
       _selectedIndex = index;
     });
   }
+
+  Future<bool> _onWillPop() async {
+    if (_selectedIndex != 0) {
+      setState(() {
+        _selectedIndex = 0;
+      });
+      return false;
+    } else {
+      SystemNavigator.pop(); // Exits the app
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: _widgetOptions.elementAt(_selectedIndex),
-      // floatingActionButton: DraggableFab(
-      //   child:ClipOval(
-      //     child: Material(
-      //       color: Colors.blue, // Button color
-      //       child: InkWell(
-      //         splashColor: Colors.blueAccent, // Splash color
-      //         onTap: () {
-      //           Get.toNamed(AppRoutes.TRACKING);
-      //         },
-      //         child: SizedBox(
-      //           width: 60,
-      //           height: 60,
-      //         ),
-      //       ),
-      //     ),
-      //   )
-      //
-      //
-      // ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined,size: 30,),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book_outlined,size: 30,),
-            label: 'Bookings',
-          ),
-          BottomNavigationBarItem(
-            icon: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                shape: BoxShape.circle,
-                color: Colors.blue,
-              ),
-              padding: EdgeInsets.all(8),
-              child: Icon(Icons.directions_car, color: Colors.white,size: 30,),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: _widgetOptions.elementAt(_selectedIndex),
+        // floatingActionButton: DraggableFab(
+        //   child:ClipOval(
+        //     child: Material(
+        //       color: Colors.blue, // Button color
+        //       child: InkWell(
+        //         splashColor: Colors.blueAccent, // Splash color
+        //         onTap: () {
+        //           Get.toNamed(AppRoutes.TRACKING);
+        //         },
+        //         child: SizedBox(
+        //           width: 60,
+        //           height: 60,
+        //         ),
+        //       ),
+        //     ),
+        //   )
+        //
+        //
+        // ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined,size: 30,),
+              label: 'Home',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.call,size: 30,),
-            label: 'Support',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.subscriptions_outlined,size: 30,),
-            label: 'Subscription',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xff2C6DE7),
-        unselectedItemColor: Color(0xff323232),
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+            BottomNavigationBarItem(
+              icon: Icon(Icons.book_outlined,size: 30,),
+              label: 'Bookings',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  shape: BoxShape.circle,
+                  color: Colors.blue,
+                ),
+                padding: EdgeInsets.all(8),
+                child: Icon(Icons.directions_car, color: Colors.white,size: 30,),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.call,size: 30,),
+              label: 'Support',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.subscriptions_outlined,size: 30,),
+              label: 'Subscription',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Color(0xff2C6DE7),
+          unselectedItemColor: Color(0xff323232),
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
       ),
     );
   }

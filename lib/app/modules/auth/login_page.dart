@@ -9,16 +9,51 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _phonenumbercontroller = TextEditingController();
+   bool _isLoading=false;
+   bool _isLoadingGoogle=false;
 
-  void _login() {
+  void _login() async {
+    setState(() {
+      _isLoading = true;
+    });
     final AuthController controller = Get.find();
-    controller.login(
-      '+91${_phonenumbercontroller.text}',_phonenumbercontroller
-    );
+    try {
+      print("calling the controller functions");
+      bool success = await controller.login(
+          '+91${_phonenumbercontroller.text}', _phonenumbercontroller
+      );
+      print("true ya false: "+success.toString());
+      if (!success) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Exception caught in _login: $e");
+      setState(() {
+        _isLoading = false;
+      });
+      Get.snackbar("Error", e.toString());
+    }
   }
-  void _googlelogin() {
+
+
+  void _googlelogin() async {
+    setState(() {
+      _isLoadingGoogle = true; // Show loader
+    });
     final AuthController controller = Get.find();
-    controller.googleLogin();
+    try {
+      await controller.googleLogin();
+    } catch (e) {
+      // Handle exception and reset the button state
+      print("Exception caught in _googlelogin: $e");
+      Get.snackbar("Error", e.toString());
+    } finally {
+      setState(() {
+        _isLoadingGoogle = false; // Hide loader
+      });
+    }
   }
 
   @override
@@ -35,11 +70,12 @@ class _LoginPageState extends State<LoginPage> {
             end: Alignment.topLeft,
           ),
         ),
-        child: SingleChildScrollView(scrollDirection: Axis.vertical,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 128,),
+              SizedBox(height: 128),
               //logo
               Image.asset(
                 'assets/images/wrench_mate_logo.png',
@@ -47,9 +83,15 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 32.0),
               //text
-              Text("Log In",style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold,color: Color(0xff120D26)),),
+              Text(
+                "Log In",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xff120D26)),
+              ),
               SizedBox(height: 12.0),
-              Text("Hello, Welcome back to your account.",style: TextStyle(fontSize: 16,color: Color(0xff969696)),),
+              Text(
+                "Hello, Welcome back to your account.",
+                style: TextStyle(fontSize: 16, color: Color(0xff969696)),
+              ),
               //textfield
               SizedBox(height: 24.0),
               Padding(
@@ -61,52 +103,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: Row(
                     children: [
-                      // DropdownButtonHideUnderline(
-                      //   child: DropdownButton<String>(
-                      //     value: _selectedCountryCode,
-                      //     items: [
-                      //       DropdownMenuItem<String>(
-                      //         value: '+91',
-                      //         child: Row(
-                      //           children: [
-                      //             ClipOval(
-                      //               child: Image.asset(
-                      //                 'assets/images/indian_flag.png',
-                      //                 width: 24,
-                      //                 height: 24,
-                      //                 fit: BoxFit.cover,
-                      //               ),
-                      //             ),
-                      //             SizedBox(width: 8),
-                      //             Text('+91',style: TextStyle(color: Colors.grey, fontSize: 20.0),),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //       DropdownMenuItem<String>(
-                      //         value: '+1',
-                      //         child: Row(
-                      //           children: [
-                      //             ClipOval(
-                      //               child: Image.asset(
-                      //                 'assets/images/indian_flag.png',
-                      //                 width: 24,
-                      //                 height: 24,
-                      //                 fit: BoxFit.cover,
-                      //               ),
-                      //             ),
-                      //             SizedBox(width: 8),
-                      //             Text('+1',style: TextStyle(color: Colors.grey, fontSize: 20.0),),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ],
-                      //     onChanged: (String? newValue) {
-                      //       setState(() {
-                      //         _selectedCountryCode = newValue!;
-                      //       });
-                      //     },
-                      //   ),
-                      // ),
                       Expanded(
                         child: TextField(
                           controller: _phonenumbercontroller,
@@ -121,8 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                             fillColor: Colors.transparent,
                           ),
                           style: TextStyle(fontSize: 22.0), // Increased entered text size
-                        )
-        
+                        ),
                       ),
                     ],
                   ),
@@ -130,80 +125,90 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 32.0),
               //submit
-              Container(width: MediaQuery.of(context).size.width*0.8,height: 60,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.blue, backgroundColor: Color(0xff1671D8), // Text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                  ),
-                  onPressed:
-                    _login,
-                  child: Text(
-                    'REQUEST OTP',
-                    style: TextStyle(
-                      color: Colors.white,fontSize: 20
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 32.0),
-              Text("OR",style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold,color: Color(0xff969696)),),
-              SizedBox(height: 32.0),
-              //google
-              Container(width: MediaQuery.of(context).size.width*0.8,height: 60,
-                child: ElevatedButton(
-        
-                  style: ElevatedButton.styleFrom(elevation: 1,
-                    foregroundColor: Colors.white, backgroundColor: Colors.white, // Text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                  ),
-                  onPressed:
-                    _googlelogin,
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/google logo.png',
-                        fit: BoxFit.cover,
-                      ),
-                      SizedBox(width: 8,),
-                      Text(
-                        'Login With Google',
-                        style: TextStyle(
-                          color: Color(0xff120D26),fontSize: 20
+              Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 60,
+                child: _isLoading
+                    ? Center(child: CircularProgressIndicator(color:  Color(0xff1671D8),)) // Show loader
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.blue,
+                          backgroundColor: Color(0xff1671D8), // Text color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                        ),
+                        onPressed: _login,
+                        child: Text(
+                          'REQUEST OTP',
+                          style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
-                    ],
-                  ),
-                ),
+              ),
+              SizedBox(height: 32.0),
+              Text(
+                "OR",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xff969696)),
+              ),
+              SizedBox(height: 32.0),
+              //google
+              Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 60,
+                child: _isLoadingGoogle
+                    ? Center(child: CircularProgressIndicator(color: Color(0xff1671D8),)) // Show loader
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 1,
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.white, // Text color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                        ),
+                        onPressed: _googlelogin,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/google logo.png',
+                              fit: BoxFit.cover,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Login With Google',
+                              style: TextStyle(color: Color(0xff120D26), fontSize: 20),
+                            ),
+                          ],
+                        ),
+                      ),
               ),
               SizedBox(height: 16.0),
               //facebook
-              Container(width: MediaQuery.of(context).size.width*0.8,height: 60,
+              Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 60,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     elevation: 1,
-                    foregroundColor: Colors.white, backgroundColor: Colors.white, // Text color
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.white, // Text color
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                   ),
-                  onPressed:(){},
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
                         'assets/images/facebok_logo.png',
                         fit: BoxFit.cover,
                       ),
-                      SizedBox(width: 8,),
+                      SizedBox(width: 8),
                       Text(
                         'Login With Facebook',
-                        style: TextStyle(
-                            color: Color(0xff120D26),fontSize: 20
-                        ),
+                        style: TextStyle(color: Color(0xff120D26), fontSize: 20),
                       ),
                     ],
                   ),

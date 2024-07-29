@@ -8,8 +8,8 @@ class ServiceFirebase {
   String serviceProviderId;
   String time;
   String warranty;
-  double averageRating; // New field
-  int totalReviews;     // New field
+  double averageReview;
+  int numberOfReviews;
 
   ServiceFirebase({
     required this.id,
@@ -21,8 +21,8 @@ class ServiceFirebase {
     required this.serviceProviderId,
     required this.time,
     required this.warranty,
-    this.averageRating = 0.0, // Initialize with default value
-    this.totalReviews = 0,    // Initialize with default value
+    required this.averageReview,
+    required this.numberOfReviews,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,8 +35,8 @@ class ServiceFirebase {
       'serviceProviderId': serviceProviderId,
       'time': time,
       'warranty': warranty,
-      'averageRating': averageRating,
-      'totalReviews': totalReviews,
+      'averageReview': averageReview,
+      'numberOfReviews': numberOfReviews,
     };
   }
 }

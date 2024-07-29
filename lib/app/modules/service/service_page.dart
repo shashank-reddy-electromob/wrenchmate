@@ -22,7 +22,7 @@ class _ServicePageState extends State<ServicePage> {
   void initState() {
     super.initState();
     service = Get.arguments;
-    serviceController.fetchServices(service); // Call the fetchServices function here
+    serviceController.fetchServices(service);
   }
 
   List<ServiceFirebase> get filteredServices {
@@ -157,11 +157,11 @@ class _ServicePageState extends State<ServicePage> {
                                                       ),
                                                       Icon(CupertinoIcons.star, size: 16, color: Color(0xffFFE262)),
                                                       Text(
-                                                        ' ${service.averageRating.toStringAsFixed(1)}',
+                                                        ' ${service.averageReview.toStringAsFixed(1)}',
                                                         style: TextStyle(fontSize: 20, color: Color(0xff636363)),
                                                       ),
                                                       Text(
-                                                        ' (${service.totalReviews} reviews)',
+                                                        ' (${service.numberOfReviews} reviews)',
                                                         style: TextStyle(fontSize: 18, color: Color(0xff858585)),
                                                       ),
                                                     ],

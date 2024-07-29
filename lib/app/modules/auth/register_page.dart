@@ -43,8 +43,8 @@ class _RegisterPageState extends State<RegisterPage> {
     String? name = nameController.text.isNotEmpty ? nameController.text : null;
     String? number = numberController.text.isNotEmpty ? numberController.text : null;
     String? alternateNumber = alternateNumberController.text.isNotEmpty ? alternateNumberController.text : null;
-    String? email = emailController.text.isNotEmpty ? emailController.text : null;
-    String? address = addressController.text.isNotEmpty ? addressController.text : null;
+    String? email = emailController.text.isNotEmpty ? emailController.text : "";
+    String? address = addressController.text.isNotEmpty ? addressController.text : "";
     String profileImagePath = _image?.path ?? '';
 
     if (name == null) {

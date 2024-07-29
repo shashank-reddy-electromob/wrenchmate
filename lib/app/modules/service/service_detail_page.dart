@@ -30,25 +30,30 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   }
 
   void fetchData(ServiceFirebase service) async {
+    // Clear previous reviews
+    controller.reviews.clear(); // Clear the reviews list
+
     await controller.fetchReviewsForService(service);
     await controller.fetchFAQsForService(service.id);
-    
-    // Fetch user data for each review
-    for (var review in controller.reviews) {
-      await controller.fetchUser(review.userId);
-    }
 
     _isVisibleList = List<bool>.filled(controller.faqs.length, false);
+  }
+
+  @override
+  void dispose() {
+    controller.reviews.clear(); // Clear reviews when the page is disposed
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.white,
-      leading: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: Custombackbutton(),
-      ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: Custombackbutton(),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(6.0),
@@ -81,24 +86,20 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               children: [
                 //service card
                 Container(
-                  height: MediaQuery.of(context).size.height*0.49,
-                  child: Stack(
-                      children:[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network("https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
-                            fit: BoxFit.fitWidth,
-                          )
-                        ),
-                        Positioned(
-                          top: 200,
-                            left: 20,
-                            child: serviceCard()),
+                  height: MediaQuery.of(context).size.height * 0.49,
+                  child: Stack(children: [
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          "https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
+                          fit: BoxFit.fitWidth,
+                        )),
+                    Positioned(top: 200, left: 20, child: serviceCard()),
                   ]),
                 ),
                 // Tabs
                 Padding(
-                  padding: const EdgeInsets.only(left: 20,right: 20,top: 8),
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 8),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 70,
@@ -143,14 +144,15 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 // Content
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 12),
                     child: selectedTab == 'faq'
                         ? ExpandingListFAQs()
                         : selectedTab == 'description'
-                         ? DescriptionWidget()
-                        : selectedTab == 'review'
-                        ? ReviewWidget()
-                        : Container(),
+                            ? DescriptionWidget()
+                            : selectedTab == 'review'
+                                ? ReviewWidget()
+                                : Container(),
                   ),
                 ),
               ],
@@ -161,10 +163,10 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     );
   }
 
-  Widget serviceCard(){
+  Widget serviceCard() {
     return Container(
-      width: MediaQuery.of(context).size.width*0.82,
-      height: MediaQuery.of(context).size.height*0.23,
+      width: MediaQuery.of(context).size.width * 0.82,
+      height: MediaQuery.of(context).size.height * 0.23,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         color: Colors.white,
@@ -176,68 +178,93 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           ),
         ],
       ),
-      child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(children: [
+        Padding(
+          padding: EdgeInsets.all(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Text("Service  ",style: TextStyle(fontSize: 16)),
-                      Icon(CupertinoIcons.greaterthan,size: 12,),
-                      Text('  ${service.name}',style: TextStyle(color: Color(0xff3778F2),fontSize: 16),)
-                    ],
+                  Text("Service  ", style: TextStyle(fontSize: 16)),
+                  Icon(
+                    CupertinoIcons.greaterthan,
+                    size: 12,
                   ),
-                  SizedBox(height: 10,),
-                  Text(service.name,style: TextStyle(color: Colors.black,fontSize: 22,fontWeight: FontWeight.w500),),
-                  Text("₹ ${service.price}",style: TextStyle(color: Colors.black,fontSize: 22,fontWeight: FontWeight.w500),),
-                  SizedBox(height: 10,),
-                  MySeparator(),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      DurationWidget(
-                        icon: CupertinoIcons.clock,
-                        titleText: "Duration:",
-                        subtitleText: "Hours",
-                        durationText: service.time,
-                      ),
-                      DurationWidget(
-                        icon: CupertinoIcons.checkmark_shield,
-                        titleText: "Warrnaty:",
-                        durationText: service.warranty, subtitleText: '',
-                      ),
-                      DurationWidget(
-                        icon: CupertinoIcons.star,
-                        titleText: "Rating",
-                        durationText: service.averageRating.toString(), subtitleText: '',
-                      ),
-                    ],
+                  Text(
+                    '  ${service.name}',
+                    style: TextStyle(color: Color(0xff3778F2), fontSize: 16),
                   )
                 ],
               ),
-            ),
-            //button
-            Positioned(
-                width: 80,
-                top: MediaQuery.of(context).size.height * 0.055,
-                right: MediaQuery.of(context).size.width * 0.04,
-                child: CustomElevatedButton(onPressed: () {
-                  showModalBottomSheet(
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                service.name,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500),
+              ),
+              Text(
+                "₹ ${service.price}",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              MySeparator(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  DurationWidget(
+                    icon: CupertinoIcons.clock,
+                    titleText: "Duration:",
+                    subtitleText: "Hours",
+                    durationText: service.time,
+                  ),
+                  DurationWidget(
+                    icon: CupertinoIcons.checkmark_shield,
+                    titleText: "Warrnaty:",
+                    durationText: service.warranty,
+                    subtitleText: '',
+                  ),
+                  DurationWidget(
+                    icon: CupertinoIcons.star,
+                    titleText: "Rating",
+                    durationText: service.averageReview.toString(),
+                    subtitleText: '',
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+        //button
+        Positioned(
+            width: 80,
+            top: MediaQuery.of(context).size.height * 0.055,
+            right: MediaQuery.of(context).size.width * 0.04,
+            child: CustomElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   builder: (context) {
                     return BottomSheet();
                   },
-                ); },)
-            ),
-          ]
-      ),
+                );
+              },
+            )),
+      ]),
     );
   }
 
-  Widget BottomSheet(){
+  Widget BottomSheet() {
     return Container(
       height: MediaQuery.of(context).size.height * 0.3,
       width: double.infinity,
@@ -259,24 +286,47 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          SizedBox(height: 18,),
-          Text("Choose a Service Type",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 24),),
-          SizedBox(height: 36,),
+          SizedBox(
+            height: 18,
+          ),
+          Text(
+            "Choose a Service Type",
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+          ),
+          SizedBox(
+            height: 36,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18.0),
             child: Column(
               children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Showroom Quality\n ₹ ${service.price}",style: TextStyle(color: Colors.black,fontSize: 22,fontWeight: FontWeight.w400),),
-                    CustomElevatedButton(onPressed: (){}),
+                    Text(
+                      "Showroom Quality\n ₹ ${service.price}",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w400),
+                    ),
+                    CustomElevatedButton(onPressed: () {}),
                   ],
                 ),
-                SizedBox(height: 18,),
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                SizedBox(
+                  height: 18,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Normal Quality\n ₹ ${service.price}",style: TextStyle(color: Colors.black,fontSize: 22,fontWeight: FontWeight.w400),),
-                    CustomElevatedButton(onPressed: (){}),
+                    Text(
+                      "Normal Quality\n ₹ ${service.price}",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w400),
+                    ),
+                    CustomElevatedButton(onPressed: () {}),
                   ],
                 ),
               ],
@@ -338,7 +388,8 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 color: Color(0xffF6F6F5),
                 width: double.infinity,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Text(
                     faq.answer, // Use FAQ model
                     style: TextStyle(color: Color(0xff6D6D6D), fontSize: 14),
@@ -357,17 +408,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       itemCount: controller.reviews.length,
       itemBuilder: (context, serviceIndex) {
         var review = controller.reviews[serviceIndex];
-        var user = controller.users.firstWhere(
-          (user) => user.userEmail == review.userId, // Updated to match userEmail
-          orElse: () => User(
-            userAddress: '',
-            userEmail: 'Unknown',
-            userName: '',
-            userNumber: [],
-            userProfileImage: '',
-          ),
-        );
-
+        var user = controller.users[serviceIndex];
         return Container(
           color: Color(0xffF6F6F5),
           child: Padding(
@@ -378,20 +419,25 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 Row(
                   children: [
                     ClipOval(
-                      child: user.userProfileImage.isNotEmpty
-                          ? Image.network(
-                              user.userProfileImage,
-                              fit: BoxFit.cover,
-                              height: 45.0,
-                              width: 45.0,
-                            )
-                          : Icon(Icons.account_circle, size: 45.0),
+                        child: user.userProfileImage.isNotEmpty
+                            ? Icon(Icons.account_circle, size: 45.0)
+                            : Image.network(
+                                user.userProfileImage,
+                                fit: BoxFit.cover,
+                                height: 45.0,
+                                width: 45.0,
+                              )),
+                    SizedBox(
+                      width: 16,
                     ),
-                    SizedBox(width: 16,),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(user.userName.isNotEmpty ? user.userName : 'Unknown', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20),),
+                        Text(
+                          user.userName.isNotEmpty ? user.userName : 'Unknown',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 18),
+                        ),
                         Row(
                           children: List.generate(5, (index) {
                             return Icon(
@@ -407,8 +453,13 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 10,),
-                Text(review.message, style: TextStyle(color: Color(0xff575757), fontSize: 16),),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  review.message,
+                  style: TextStyle(color: Color(0xff575757), fontSize: 16),
+                ),
               ],
             ),
           ),

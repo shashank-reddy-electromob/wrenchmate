@@ -23,6 +23,7 @@ class _optpageState extends State<optpage> {
   int _start = 60;
   late Timer _timer;
   bool buttonVisiblity = false;
+  bool _isLoading = false; // Add loading state
 
   void startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -51,9 +52,21 @@ class _optpageState extends State<optpage> {
     super.dispose();
   }
 
-  void _verifyotp() {
+  void _verifyotp() async {
+    setState(() {
+      _isLoading = true; // Show loader
+    });
     final AuthController controller = Get.find();
-    controller.verifyOTP(otpcontroller.text.toString(), number, otpcontroller);
+    try {
+      await controller.verifyOTP(otpcontroller.text.toString(), number, otpcontroller);
+    } catch (e) {
+      print("Exception caught in _verifyotp: $e");
+      Get.snackbar("Error", e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false; // Hide loader
+      });
+    }
   }
 
   void _resendotp() {
@@ -88,7 +101,7 @@ class _optpageState extends State<optpage> {
               height: 10,
             ),
             Text(
-              "We’ve send you the verification \ncode on ${number}",
+              "We've send you the verification \ncode on ${number}",
               style: TextStyle(fontSize: 20, color: Color(0xff969696)),
             ),
             Container(
@@ -124,11 +137,11 @@ class _optpageState extends State<optpage> {
             Container(
               height: 20,
             ),
+            _isLoading?Center(child: CircularProgressIndicator(color: Color(0xff1671D8))):
             blueButton(
-                text: "VERIFY",
-                onTap: () {
-                  _verifyotp();
-                }),
+              text: "VERIFY",
+              onTap: _isLoading ? null : _verifyotp,
+            ),
             Container(
               height: 20,
             ),

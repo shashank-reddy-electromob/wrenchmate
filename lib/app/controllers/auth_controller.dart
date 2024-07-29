@@ -35,24 +35,32 @@ class AuthController extends GetxController {
     }
   }
 
-  void login(String phoneNumber, TextEditingController otpcontroller) async {
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) => _handleSignIn(credential, otpcontroller),
-      verificationFailed: (FirebaseAuthException e) {
-        print("Verification failed: ${e.message}");
-        Get.snackbar("Error", e.message ?? "Verification failed");
-      },
-      codeSent: (String verificationId, int? resendtk) {
-        print("OTP sent: $verificationId");
-        Get.toNamed(AppRoutes.OTP, arguments: phoneNumber);
-        this.verificationid.value = verificationId;
-        this.resendToken = resendtk;
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        this.verificationid.value = verificationId;
-      },
-    );
+  Future<bool> login(String phoneNumber, TextEditingController otpcontroller) async {
+    try {
+      print("login function in auth controller");
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) => _handleSignIn(credential, otpcontroller),
+        verificationFailed: (FirebaseAuthException e) {
+          print("Verification failed: ${e.message}");
+          Get.snackbar("Error", "Login failed: ${e.toString()}");
+
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          print("OTP sent: $verificationId");
+          Get.toNamed(AppRoutes.OTP, arguments: phoneNumber);
+          this.verificationid.value = verificationId;
+          this.resendToken = resendToken;
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          this.verificationid.value = verificationId;
+        },
+      );
+      return true;
+    } catch (e) {
+      Get.snackbar("Error", "Login failed: ${e.toString()}");
+      return false;
+    }
   }
 
   void resendOTP(String phoneNumber, TextEditingController otpcontroller) async {
@@ -76,7 +84,7 @@ class AuthController extends GetxController {
     );
   }
 
-  void verifyOTP(String otp, String phoneNumber, TextEditingController otpcontroller) async {
+  Future<void> verifyOTP(String otp, String phoneNumber, TextEditingController otpcontroller) async {
     try {
       print(verificationid);
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
@@ -95,21 +103,22 @@ class AuthController extends GetxController {
     }
   }
 
-  void googleLogin() async {
-    try {
-      GoogleAuthProvider googleProvider = GoogleAuthProvider();
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(googleProvider);
-      bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
-      if (isNewUser == true) {
-        Get.toNamed(AppRoutes.REGISTER);
-      } else {
-        Get.toNamed(AppRoutes.BOTTOMNAV);
-      }
-    } catch (e) {
-      print("Google Sign-In failed: $e");
-      Get.snackbar("Error", "Google Sign-In failed: ${e.toString()}");
+ Future<void> googleLogin() async {
+  try {
+    GoogleAuthProvider googleProvider = GoogleAuthProvider();
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(googleProvider);
+    bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
+    if (isNewUser == true) {
+      Get.toNamed(AppRoutes.REGISTER);
+    } else {
+      Get.toNamed(AppRoutes.BOTTOMNAV);
     }
+  } catch (e) {
+    print("Google Sign-In failed: $e");
+    Get.snackbar("Error", "Google Sign-In failed: ${e.toString()}");
+    throw e; // Ensure the exception is thrown
   }
+}
 
   Future<void> addUserToFirestore({required String name,
     required String number,

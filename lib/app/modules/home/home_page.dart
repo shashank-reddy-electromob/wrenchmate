@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,8 +9,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.da
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
-import '../../controllers/home_controller.dart';
-import '../../controllers/service_controller.dart';
+import 'package:google_api_availability/google_api_availability.dart';
 import 'drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,7 +20,53 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //final user = FirebaseAuth.instance.currentUser!;
+  late final user;
+  late final profileImageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    print("initstate");
+    user = FirebaseAuth.instance.currentUser!;
+    print("userid: "+user.uid);
+    fetchUserProfileImage();
+    checkGooglePlayServices();
+  }
+
+  void checkGooglePlayServices() async {
+    GoogleApiAvailability apiAvailability = GoogleApiAvailability.instance;
+    final status = await apiAvailability.checkGooglePlayServicesAvailability();
+    if (status == GooglePlayServicesAvailability.success) {
+      print("Google Play Services are available.");
+    } else {
+      print("Google Play Services are not available: $status");
+    }
+  }
+
+  void fetchUserProfileImage() async {
+    try {
+      print("Fetching User Profile Image...");
+
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('User')
+          .doc("8QgqTctzQnS2jjmHJ0baH4MQ0hv2")
+          .get();
+
+      if (userSnapshot.exists) {
+        // Accessing only the User_profile_image field
+        profileImageUrl = userSnapshot.get('User_profile_image');
+        print("User Profile Image URL: $profileImageUrl");
+      } else {
+        print("No such document found.");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    }
+  }
+
+
+
+
   double xOffSet = 0;
   double yOffSet = 0;
   double scaleFactor = 1;
@@ -53,7 +101,6 @@ class _HomePageState extends State<HomePage> {
       isDrawerOpen = false;
     });
   }
-  String? phonenumber = FirebaseAuth.instance.currentUser!.phoneNumber;
 @override
 
 
@@ -101,8 +148,6 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  print(phonenumber);
-                                
                                     setState(() {
                                     xOffSet = 230;
                                     yOffSet =
@@ -123,12 +168,12 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(width: 10),
                               Container(
                                 height: 45,
-                                child: Column(
+                                child: const Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      //"Hi ${user.phoneNumber}",
-                                      "Hi",
+                                      //"Hi ${user.uid}",
+                                      'helo',
                                       style: TextStyle(
                                           fontSize: 22, color: Colors.black),
                                     ),

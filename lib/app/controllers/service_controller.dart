@@ -37,17 +37,10 @@ class ServiceController extends GetxController {
           serviceProviderId: data['serviceProviderId'] ?? '',
           time: data['time'] ?? '',
           warranty: data['warranty'] ?? '',
+          averageReview: data['averageReview']?.toDouble() ?? 0.0,
+          numberOfReviews: data['numberOfReviews'] ?? 0,
         );
-      }).toList();
-
-      for (var service in services) {
-        await fetchReviewsForService(service);
-        print("Fetched reviews for service: ${service.id}");
-      }
-
-      for (var review in reviews) {
-        await fetchUser(review.userId);
-      }
+      }).toList() as List<ServiceFirebase>; // Ensure the list type is correct
 
     } catch (e) {
       print("Error fetching services: $e");
@@ -65,6 +58,8 @@ class ServiceController extends GetxController {
           .get();
       print("Number of reviews fetched for service ${service.id}: ${reviewSnapshot.size}");
 
+      List<String> userIds = []; // Collect user IDs
+
       for (var doc in reviewSnapshot.docs) {
         var reviewData = doc.data() as Map<String, dynamic>;
         print("Review Data for service ${service.id}: $reviewData");
@@ -74,12 +69,11 @@ class ServiceController extends GetxController {
           message: reviewData['message'],
           rating: (reviewData['rating'] is int) ? (reviewData['rating'] as int).toDouble() : reviewData['rating'] as double,
         ));
+        userIds.add(reviewData['userId']); // Add user ID to the list
       }
 
-      // Calculate average rating
-      double totalRating = reviews.fold(0, (sum, review) => sum + review.rating);
-      service.averageRating = reviews.isNotEmpty ? totalRating / reviews.length : 0.0;
-      service.totalReviews = reviews.length;
+      // Fetch user data for all user IDs
+      await fetchUsers(userIds);
 
     } catch (e) {
       print("Error fetching reviews: $e");
@@ -109,6 +103,13 @@ class ServiceController extends GetxController {
     }
   }
 
+  // Function to fetch user data for multiple user IDs
+  Future<void> fetchUsers(List<String> userIds) async {
+    for (String userId in userIds) {
+      await fetchUser(userId);
+    }
+  }
+
   // Function to fetch user data
   Future<void> fetchUser(String userId) async {
     try {
@@ -121,13 +122,16 @@ class ServiceController extends GetxController {
         var userData = userSnapshot.data() as Map<String, dynamic>;
         print("User Data for user $userId: $userData");
 
-        // Check if the user already exists in the list
         if (!users.any((user) => user.userEmail == userData['User_email'])) {
           users.add(User(
             userAddress: userData['User_address'] ?? '',
             userEmail: userData['User_email'] ?? '',
             userName: userData['User_name'] ?? '',
-            userNumber: List<int>.from(userData['User_number'].map((num) => num is int ? num : int.parse(num.toString()))), // Convert to List<int>
+            userNumber: List<int>.from(userData['User_number'].map((num) {
+              // Ensure each number is parsed correctly
+              if (num is int) return num;
+              return int.tryParse(num.toString()) ?? 0; // Handle parsing errors
+            })), // Convert to List<int>
             userProfileImage: userData['User_profile_image'] ?? '',
           ));
         }
@@ -151,6 +155,8 @@ class ServiceController extends GetxController {
       var data = doc.data() as Map<String, dynamic>;
       print("returned $data ");
       selectedService.value = ServiceFirebase(
+        averageReview: data['averageReview']?.toDouble() ?? 0.0, // Ensure this is a double
+        numberOfReviews: data['numberOfReviews'] ?? 0, // Ensure this is an int
         id: doc.id,
         category: data['category'] ?? '',
         description: data['description'] ?? '',
@@ -161,6 +167,7 @@ class ServiceController extends GetxController {
         time: data['time'] ?? '',
         warranty: data['warranty'] ?? '',
       );
+      print("calling fetchReviews");
       await fetchReviewsForService(selectedService.value!);
       print("Fetched reviews for service: ${selectedService.value!.id}");
       await fetchFAQsForService(serviceId);
