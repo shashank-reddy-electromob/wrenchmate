@@ -4,6 +4,7 @@ class ServiceFirebase {
   String description;
   int discount;
   String name;
+  String image;
   double price;
   String serviceProviderId;
   String time;
@@ -17,6 +18,7 @@ class ServiceFirebase {
     required this.description,
     required this.discount,
     required this.name,
+    required this.image,
     required this.price,
     required this.serviceProviderId,
     required this.time,
@@ -31,6 +33,7 @@ class ServiceFirebase {
       'description': description,
       'discount': discount,
       'name': name,
+      'image':image,
       'price': price,
       'serviceProviderId': serviceProviderId,
       'time': time,

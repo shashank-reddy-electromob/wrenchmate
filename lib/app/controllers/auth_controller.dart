@@ -44,7 +44,6 @@ class AuthController extends GetxController {
         verificationFailed: (FirebaseAuthException e) {
           print("Verification failed: ${e.message}");
           Get.snackbar("Error", "Login failed: ${e.toString()}");
-
         },
         codeSent: (String verificationId, int? resendToken) {
           print("OTP sent: $verificationId");
@@ -58,7 +57,7 @@ class AuthController extends GetxController {
       );
       return true;
     } catch (e) {
-      Get.snackbar("Error", "Login failed: ${e.toString()}");
+      Get.snackbar("Error snackbar", "Login failed: ${e.toString()}");
       return false;
     }
   }

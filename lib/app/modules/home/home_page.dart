@@ -46,10 +46,9 @@ class _HomePageState extends State<HomePage> {
   void fetchUserProfileImage() async {
     try {
       print("Fetching User Profile Image...");
-
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
           .collection('User')
-          .doc("8QgqTctzQnS2jjmHJ0baH4MQ0hv2")
+          .doc(user.uid)
           .get();
 
       if (userSnapshot.exists) {
@@ -63,8 +62,6 @@ class _HomePageState extends State<HomePage> {
       print("Error occurred: $e");
     }
   }
-
-
 
 
   double xOffSet = 0;
@@ -111,7 +108,11 @@ class _HomePageState extends State<HomePage> {
         children: [
           drawerPage(),
           GestureDetector(
-            onHorizontalDragUpdate: _onHorizontalDragUpdate,
+            onHorizontalDragUpdate: (details) {
+              if (details.delta.dx.abs() > details.delta.dy.abs()) {
+                _onHorizontalDragUpdate(details);
+              }
+            },
             onTap: isDrawerOpen ? _onTap : null,
             child: AnimatedContainer(
               decoration: isDrawerOpen?BoxDecoration(
@@ -158,7 +159,8 @@ class _HomePageState extends State<HomePage> {
                                 },
                                 child: ClipOval(
                                   child: Image.asset(
-                                    'assets/images/weekend.png',
+                                     'assets/images/weekend.png',
+                                    //profileImageUrl,
                                     fit: BoxFit.cover,
                                     height: 45.0,
                                     width: 45.0,
@@ -172,7 +174,6 @@ class _HomePageState extends State<HomePage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      //"Hi ${user.uid}",
                                       'helo',
                                       style: TextStyle(
                                           fontSize: 22, color: Colors.black),

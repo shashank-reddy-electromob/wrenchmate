@@ -88,6 +88,7 @@ flutter:
     - assets/images/
     - assets/services/
     - assets/services/repair/
+    - assets/services/accessories/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

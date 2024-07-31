@@ -33,6 +33,7 @@ class ServiceController extends GetxController {
           description: data['description'] ?? '',
           discount: data['discount'] ?? 0,
           name: data['name'] ?? '',
+          image: data['image'] ?? '',
           price: (data['price'] is int) ? (data['price'] as int).toDouble() : data['price']?.toDouble() ?? 0.0,
           serviceProviderId: data['serviceProviderId'] ?? '',
           time: data['time'] ?? '',
@@ -40,7 +41,7 @@ class ServiceController extends GetxController {
           averageReview: data['averageReview']?.toDouble() ?? 0.0,
           numberOfReviews: data['numberOfReviews'] ?? 0,
         );
-      }).toList() as List<ServiceFirebase>; // Ensure the list type is correct
+      }).toList(); // Ensure the list type is correct
 
     } catch (e) {
       print("Error fetching services: $e");
@@ -162,6 +163,7 @@ class ServiceController extends GetxController {
         description: data['description'] ?? '',
         discount: data['discount'] ?? 0,
         name: data['name'] ?? '',
+        image: data['image'] ?? '',
         price: (data['price'] is int) ? (data['price'] as int).toDouble() : data['price']?.toDouble() ?? 0.0,
         serviceProviderId: data['serviceProviderId'] ?? '',
         time: data['time'] ?? '',

@@ -22,6 +22,7 @@ class _ServicePageState extends State<ServicePage> {
   void initState() {
     super.initState();
     service = Get.arguments;
+    print(service);
     serviceController.fetchServices(service);
   }
 
@@ -35,8 +36,8 @@ class _ServicePageState extends State<ServicePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
+    return Scaffold(backgroundColor: Colors.white,
+        appBar: AppBar(backgroundColor: Colors.transparent,
           title: Text(
             service,
             style: TextStyle(fontWeight: FontWeight.w500),
@@ -100,7 +101,8 @@ class _ServicePageState extends State<ServicePage> {
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: [
-                    subservices(),
+                    service == 'Repairing'?subservicesRepairing():Container(),
+                    service == 'Accessories'?subservicesAccessories():Container(),
                     Obx(() {
                       if (serviceController.loading.value) {
                         return Center(child: CircularProgressIndicator(
@@ -131,7 +133,9 @@ class _ServicePageState extends State<ServicePage> {
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Image.network("https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
+                                            Image.network(
+                                              //"https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
+                                              service.image,
                                               fit: BoxFit.fitWidth,
                                               width: MediaQuery.of(context).size.width-32,
                                               height: MediaQuery.of(context).size.height * 0.17,),
@@ -224,7 +228,7 @@ class _ServicePageState extends State<ServicePage> {
     );
   }
 
-  Widget subservices() {
+  Widget subservicesRepairing() {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: SingleChildScrollView(
@@ -299,6 +303,180 @@ class _ServicePageState extends State<ServicePage> {
               onTap: () {
                 setState(() {
                   selectedCategory = 'Suspension';
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget subservicesAccessories() {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SubService(
+              imagePath: "assets/services/accessories/showall.png",
+              text: "Show All",
+              isSelected: selectedCategory == 'Show All',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'Show All';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/seatcover.png",
+              text: "Seat Cover",
+              isSelected: selectedCategory == 'seatcover',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'seatcover';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/floormats.png",
+              text: "Floor mats",
+              isSelected: selectedCategory == 'floormats',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'floormats';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/blinds.png",
+              text: "Blinds",
+              isSelected: selectedCategory == 'blinds',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'blinds';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/guards.png",
+              text: "Guards",
+              isSelected: selectedCategory == 'guards',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'guards';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/entertain.png",
+              text: "Entertainment display",
+              isSelected: selectedCategory == 'entertainmentdisplay',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'entertainmentdisplay';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/led.png",
+              text: "LED Lights",
+              isSelected: selectedCategory == 'ledlights',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'ledlights';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/solartoys.png",
+              text: "Solar Toys",
+              isSelected: selectedCategory == 'solartoys',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'solartoys';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/airfresh.png",
+              text: "Air Freshener",
+              isSelected: selectedCategory == 'airfreshener',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'airfreshener';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/cushion.png",
+              text: "Cushion",
+              isSelected: selectedCategory == 'cushion',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'cushion';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/chrome.png",
+              text: "Chrome Fitting",
+              isSelected: selectedCategory == 'chromefitting',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'chromefitting';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/cables.png",
+              text: "Cables",
+              isSelected: selectedCategory == 'cables',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'cables';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/doordamp.png",
+              text: "Door Damping",
+              isSelected: selectedCategory == 'doordamping',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'doordamping';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/wiper.png",
+              text: "Wipers",
+              isSelected: selectedCategory == 'wipers',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'wipers';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/rain.png",
+              text: "Rain Visors",
+              isSelected: selectedCategory == 'rainvisors',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'rainvisors';
+                });
+              },
+            ),
+            SubService(
+              imagePath: "assets/services/accessories/sun.png",
+              text: "Sun Protection Film",
+              isSelected: selectedCategory == 'sunprotectionfilm',
+              onTap: () {
+                setState(() {
+                  selectedCategory = 'sunprotectionfilm';
                 });
               },
             ),
