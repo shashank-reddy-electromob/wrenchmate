@@ -45,7 +45,6 @@ import 'app_routes.dart';
 class AppPages {
   static const INITIAL = AppRoutes.LOGIN;
   static const BOTTOMNAV = AppRoutes.BOTTOMNAV;
-  static const REGISTER = AppRoutes.REGISTER;
 
   static final routes = [
     GetPage(
