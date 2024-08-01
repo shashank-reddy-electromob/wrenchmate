@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      initialRoute: FirebaseAuth.instance.currentUser == null ? AppPages.INITIAL : AppPages.REGISTER,
+      initialRoute: FirebaseAuth.instance.currentUser == null ? AppPages.INITIAL : AppPages.BOTTOMNAV,
       getPages: AppPages.routes,
     );
   }
