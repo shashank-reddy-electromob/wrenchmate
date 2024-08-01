@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,8 +20,6 @@ class _RegisterPageState extends State<RegisterPage> {
   String? userId;
   late final AuthController controller;
 
-
-
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
   final TextEditingController alternateNumberController = TextEditingController();
@@ -28,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController addressController = TextEditingController();
 
   File? _image;
+  bool _isLoading = false;
 
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -39,34 +39,70 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  Future<String?> _uploadImageToStorage(File image) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      final storageReference = FirebaseStorage.instance.ref('/Users');
+      final fileName= image.path.split('/').last;
+      final dateStamp = DateTime.now().microsecondsSinceEpoch;
+      final uploadReference =  storageReference.child('$userId/ProfileImage/$dateStamp-$fileName');
+      final metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+      );
+      TaskSnapshot taskSnapshot = await uploadReference.putFile(image,metadata);
+      return await taskSnapshot.ref.getDownloadURL();
+    } catch (e) {
+      print("Failed to upload image: $e");
+      return null;
+    }
+  }
+
   Future<void> register() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     String? name = nameController.text.isNotEmpty ? nameController.text : null;
     String? number = numberController.text.isNotEmpty ? numberController.text : null;
     String? alternateNumber = alternateNumberController.text.isNotEmpty ? alternateNumberController.text : null;
     String? email = emailController.text.isNotEmpty ? emailController.text : "";
     String? address = addressController.text.isNotEmpty ? addressController.text : "";
-    String profileImagePath = _image?.path ?? '';
+    String? profileImagePath;
 
-    if (name == null) {
-      Get.snackbar('Error', 'Name field is empty');
-    } else if (number == null) {
-      Get.snackbar('Error', 'Number field is empty');
-    } else if (alternateNumber == null) {
-      Get.snackbar('Error', 'Alternate Number field is empty');
-    } else if (email == null) {
-      Get.snackbar('Error', 'Email field is empty');
-    } else if (address == null) {
-      address='';
-    } else {
-      await controller.addUserToFirestore(
-        name: name,
-        number: number,
-        alternateNumber: alternateNumber,
-        email: email,
-        address: address,
-        profileImagePath: profileImagePath.isNotEmpty ? profileImagePath : null,
-      );
+    if (_image != null) {
+      profileImagePath = await _uploadImageToStorage(_image!);
     }
+
+    if (name == null || !RegExp(r'^[a-zA-Z\s]+$').hasMatch(name)) {
+      Get.snackbar('Error', 'Invalid or empty name field');
+    } else if (number == null || !RegExp(r'^\d{10}$').hasMatch(number)) {
+      Get.snackbar('Error', 'Invalid or empty number field');
+    } else if (alternateNumber == null || !RegExp(r'^\d{10}$').hasMatch(alternateNumber)) {
+      Get.snackbar('Error', 'Invalid or empty alternate number field');
+    } else if (email == null || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+      Get.snackbar('Error', 'Invalid or empty email field');
+    } else if (address == null) {
+      address = '';
+    } else {
+      try {
+        await controller.addUserToFirestore(
+          name: name,
+          number: number,
+          alternateNumber: alternateNumber,
+          email: email,
+          address: address,
+          profileImagePath: profileImagePath,
+        );
+        Get.toNamed(AppRoutes.BOTTOMNAV);
+      } catch (e) {
+        print("Failed to add user to Firestore: $e");
+        Get.snackbar('Error', 'Failed to register user. Please try again.');
+      }
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -74,8 +110,8 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
     userId = FirebaseAuth.instance.currentUser!.phoneNumber;
     controller = Get.find();
-    if (userId != null){
-      numberController.text=userId!;
+    if (userId != null) {
+      numberController.text = userId!;
     }
   }
 
@@ -124,13 +160,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     backgroundImage: _image != null ? FileImage(_image!) : null,
                     child: _image == null
                         ? ClipOval(
-                      child: Image.asset(
-                        'assets/images/person.png',
-                        fit: BoxFit.cover,
-                        height: 100.0,
-                        width: 100.0,
-                      ),
-                    )
+                            child: Image.asset(
+                              'assets/images/person.png',
+                              fit: BoxFit.cover,
+                              height: 100.0,
+                              width: 100.0,
+                            ),
+                          )
                         : null,
                   ),
                 ),
@@ -153,16 +189,17 @@ class _RegisterPageState extends State<RegisterPage> {
                 hintText: 'Email Address',
               ),
               SizedBox(height: 20),
-              blueButton(
-                text: "CONTINUE",
-                onTap: () async {
-                  await register();
-                },
-              ),
+              _isLoading
+                  ? CircularProgressIndicator(color: Color(0xff1671D8))
+                  : blueButton(
+                      text: "CONTINUE",
+                      onTap: () async {
+                        await register();
+                      },
+                    ),
               Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: GestureDetector(
-                  //skip functionality
                   onTap: () {
                     Get.toNamed(AppRoutes.BOTTOMNAV);
                   },

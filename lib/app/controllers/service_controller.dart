@@ -35,7 +35,6 @@ class ServiceController extends GetxController {
           name: data['name'] ?? '',
           image: data['image'] ?? '',
           price: (data['price'] is int) ? (data['price'] as int).toDouble() : data['price']?.toDouble() ?? 0.0,
-          serviceProviderId: data['serviceProviderId'] ?? '',
           time: data['time'] ?? '',
           warranty: data['warranty'] ?? '',
           averageReview: data['averageReview']?.toDouble() ?? 0.0,
@@ -165,7 +164,6 @@ class ServiceController extends GetxController {
         name: data['name'] ?? '',
         image: data['image'] ?? '',
         price: (data['price'] is int) ? (data['price'] as int).toDouble() : data['price']?.toDouble() ?? 0.0,
-        serviceProviderId: data['serviceProviderId'] ?? '',
         time: data['time'] ?? '',
         warranty: data['warranty'] ?? '',
       );

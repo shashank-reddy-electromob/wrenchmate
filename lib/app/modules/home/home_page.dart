@@ -21,7 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final user;
-  late final profileImageUrl;
+  Future<String>? profileImageUrlFuture;
 
   @override
   void initState() {
@@ -29,8 +29,31 @@ class _HomePageState extends State<HomePage> {
     print("initstate");
     user = FirebaseAuth.instance.currentUser!;
     print("userid: "+user.uid);
-    fetchUserProfileImage();
+    profileImageUrlFuture = fetchUserProfileImage();
     checkGooglePlayServices();
+  }
+
+  Future<String> fetchUserProfileImage() async {
+    try {
+      print("Fetching User Profile Image...");
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('User')
+          .doc(user.uid)
+          .get();
+
+      if (userSnapshot.exists) {
+        // Accessing only the User_profile_image field
+        String profileImageUrl = userSnapshot.get('User_profile_image');
+        print("User Profile Image URL: $profileImageUrl");
+        return profileImageUrl;
+      } else {
+        print("No such document found.");
+        return '';
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+      return '';
+    }
   }
 
   void checkGooglePlayServices() async {
@@ -42,27 +65,6 @@ class _HomePageState extends State<HomePage> {
       print("Google Play Services are not available: $status");
     }
   }
-
-  void fetchUserProfileImage() async {
-    try {
-      print("Fetching User Profile Image...");
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('User')
-          .doc(user.uid)
-          .get();
-
-      if (userSnapshot.exists) {
-        // Accessing only the User_profile_image field
-        profileImageUrl = userSnapshot.get('User_profile_image');
-        print("User Profile Image URL: $profileImageUrl");
-      } else {
-        print("No such document found.");
-      }
-    } catch (e) {
-      print("Error occurred: $e");
-    }
-  }
-
 
   double xOffSet = 0;
   double yOffSet = 0;
@@ -98,8 +100,6 @@ class _HomePageState extends State<HomePage> {
       isDrawerOpen = false;
     });
   }
-@override
-
 
   @override
   Widget build(BuildContext context) {
@@ -158,12 +158,29 @@ class _HomePageState extends State<HomePage> {
                                   });
                                 },
                                 child: ClipOval(
-                                  child: Image.asset(
-                                     'assets/images/weekend.png',
-                                    //profileImageUrl,
-                                    fit: BoxFit.cover,
-                                    height: 45.0,
-                                    width: 45.0,
+                                  child: FutureBuilder<String>(
+                                    future: profileImageUrlFuture,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return CircularProgressIndicator(color: Color(0xff1671D8));
+                                      } else if (snapshot.hasError) {
+                                        return Icon(Icons.error);
+                                      } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                                        return Image.network(
+                                          snapshot.data!,
+                                          fit: BoxFit.cover,
+                                          height: 45.0,
+                                          width: 45.0,
+                                        );
+                                      } else {
+                                        return Image.asset(
+                                         'assets/images/person.png',
+                                          fit: BoxFit.cover,
+                                          height: 45.0,
+                                          width: 45.0,
+                                        );
+                                      }
+                                    },
                                   ),
                                 ),
                               ),
