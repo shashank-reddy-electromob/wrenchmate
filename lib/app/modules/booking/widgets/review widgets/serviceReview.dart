@@ -105,11 +105,7 @@ class _serviceReviewState extends State<serviceReview> {
                 ),
               ),
             ),
-
-
-
             SizedBox(height: 10),
-
           ],
         ),
       ),
