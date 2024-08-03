@@ -2,15 +2,15 @@ import 'package:wrenchmate_user_app/app/data/models/review_model.dart';
 
 import 'faq_model.dart';
 class Service {
-  final String? imagePath;//
+  final String? imagePath;
   final String name;
   final String price;
   final String description;
-  final List<Review> reviews;//
+  final List<Review> reviews;
   final int numberOfReviews;
   final String time;
   final String warrantyDuration;
-  final List<FAQ> faqs;//
+  final List<FAQ> faqs;
   final String category;
 
   Service({

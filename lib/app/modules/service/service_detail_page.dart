@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,9 +7,11 @@ import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.d
 import 'package:wrenchmate_user_app/app/modules/service/widgits/seperator.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/servicecardiconswidget.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
+import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
 import '../../data/models/Service_Firebase.dart';
 import '../../data/models/user_module.dart';
+import '../../routes/app_routes.dart';
 
 class ServiceDetailPage extends StatefulWidget {
   @override
@@ -20,28 +23,35 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   late List<bool> _isVisibleList;
   final ServiceController controller = Get.find();
   late ServiceFirebase service;
-
+  bool addtocart=false;
+  late CartController cartController;
+  
   @override
   void initState() {
     super.initState();
     service = Get.arguments;
+    cartController = Get.put(CartController());
     fetchData(service);
     _isVisibleList = List<bool>.filled(controller.faqs.length, false);
   }
 
   void fetchData(ServiceFirebase service) async {
-    // Clear previous reviews
-    controller.reviews.clear(); // Clear the reviews list
-
+    controller.reviews.clear();
     await controller.fetchReviewsForService(service);
     await controller.fetchFAQsForService(service.id);
 
     _isVisibleList = List<bool>.filled(controller.faqs.length, false);
   }
 
+  Future<void> addToCart(ServiceFirebase service) async{
+    print("adding to cart");
+    await cartController.addToCart(serviceId: service.id);
+    print("added to cart");
+  }
+
   @override
   void dispose() {
-    controller.reviews.clear(); // Clear reviews when the page is disposed
+    controller.reviews.clear();
     super.dispose();
   }
 
@@ -90,10 +100,13 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                   child: Stack(children: [
                     ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          "https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
-                          fit: BoxFit.fitWidth,
-                        )),
+                        child:
+                      ExtendedImage.network(
+                        "https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
+                        //service.image,
+                        fit: BoxFit.fitWidth,
+                        cache: true,
+                    ),),
                     Positioned(top: 200, left: 20, child: serviceCard()),
                   ]),
                 ),
@@ -246,7 +259,6 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
         ),
         //button
         Positioned(
-            width: 80,
             top: MediaQuery.of(context).size.height * 0.055,
             right: MediaQuery.of(context).size.width * 0.04,
             child: CustomElevatedButton(
@@ -258,8 +270,9 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                     return BottomSheet();
                   },
                 );
-              },
-            )),
+              }, text: '+Add',
+            )
+        ),
       ]),
     );
   }
@@ -275,64 +288,83 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           topRight: Radius.circular(20.0),
         ),
       ),
-      child: Column(
-        children: [
-          Container(
-            height: 6,
-            margin: EdgeInsets.only(top: 8),
-            width: 80,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          SizedBox(
-            height: 18,
-          ),
-          Text(
-            "Choose a Service Type",
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-          ),
-          SizedBox(
-            height: 36,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+          return Column(
+            children: [
+              Container(
+                height: 6,
+                margin: EdgeInsets.only(top: 8),
+                width: 80,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              SizedBox(height: 18),
+              Text(
+                "Choose a Service Type",
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+              ),
+              SizedBox(height: 36),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Column(
                   children: [
-                    Text(
-                      "Showroom Quality\n ₹ ${service.price}",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w400),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Showroom Quality\n ₹ ${service.price}",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400),
+                        ),
+                        (addtocart == false)
+                            ? CustomElevatedButton(onPressed: () {
+                                addToCart(service);
+                                setState(() {
+                                  addtocart = true;
+                                });
+                              }, text: '+Add',)
+                            : CustomElevatedButton(onPressed: () {
+                          Navigator.pop(context);
+                          Get.toNamed(AppRoutes.CART);
+                        }, text: 'Go to cart',),
+                      ],
                     ),
-                    CustomElevatedButton(onPressed: () {}),
+                    SizedBox(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Normal Quality\n ₹ ${service.price}",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400),
+                        ),
+                        (addtocart == false)
+                            ? CustomElevatedButton(onPressed: () {
+                          addToCart(service);
+                          setState(() {
+                            addtocart = true;
+                          });
+                        }, text: '+Add',)
+                            : CustomElevatedButton(onPressed: () {
+                          Navigator.pop(context);
+                          Get.toNamed(AppRoutes.CART);
+                        }, text: 'Go to cart',),
+
+                      ],
+                    ),
                   ],
                 ),
-                SizedBox(
-                  height: 18,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Normal Quality\n ₹ ${service.price}",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w400),
-                    ),
-                    CustomElevatedButton(onPressed: () {}),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }

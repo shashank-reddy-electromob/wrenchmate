@@ -21,7 +21,7 @@ class _serviceswidgitState extends State<serviceswidgit> {
       padding: const EdgeInsets.all(20.0),
       child: Column(
         children: [
-          Header(text: "Services", onTap: () {},),
+          Header(text: "Services", ),
           SizedBox(height: 12,),
           Row(
             children: [

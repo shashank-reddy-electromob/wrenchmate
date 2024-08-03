@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -133,10 +134,19 @@ class _ServicePageState extends State<ServicePage> {
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Image.network(
+                                            // Image.network(
+                                            //   //"https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
+                                            //   service.image,
+                                            //   //"https://drive.google.com/file/d/1w2J5kLlvbJXM9CMUEI5-BhT4RMyFLf68",
+                                            //   fit: BoxFit.fitWidth,
+                                            //   width: MediaQuery.of(context).size.width-32,
+                                            //   height: MediaQuery.of(context).size.height * 0.17,),
+                                            ExtendedImage.network(
                                               //"https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
                                               service.image,
+                                              //"https://drive.google.com/file/d/1w2J5kLlvbJXM9CMUEI5-BhT4RMyFLf68",
                                               fit: BoxFit.fitWidth,
+                                              cache: true,
                                               width: MediaQuery.of(context).size.width-32,
                                               height: MediaQuery.of(context).size.height * 0.17,),
                                             Padding(
@@ -208,7 +218,7 @@ class _ServicePageState extends State<ServicePage> {
                                         width: 80,
                                         top: MediaQuery.of(context).size.height * 0.18,
                                         right: MediaQuery.of(context).size.width * 0.04,
-                                        child: CustomElevatedButton(onPressed: () {}),
+                                        child: CustomElevatedButton(onPressed: () {}, text: '+Add',),
                                       ),
                                     ],
                                   ),

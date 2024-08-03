@@ -183,4 +183,36 @@ class ServiceController extends GetxController {
       loading.value = false; // Stop loading
     }
   }
+
+  Future<void> fetchServiceDataById(String serviceId) async {
+    try {
+      print("Fetching service data by ID: $serviceId");
+      loading.value = true; // Start loading
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('Service')
+          .doc(serviceId)
+          .get();
+      var data = doc.data() as Map<String, dynamic>;
+      print("Returned service data: $data");
+
+      // Add the fetched service to the services list
+      services.add(ServiceFirebase(
+        averageReview: data['averageReview']?.toDouble() ?? 0.0,
+        numberOfReviews: data['numberOfReviews'] ?? 0,
+        id: doc.id,
+        category: data['category'] ?? '',
+        description: data['description'] ?? '',
+        discount: data['discount'] ?? 0,
+        name: data['name'] ?? '',
+        image: data['image'] ?? '',
+        price: (data['price'] is int) ? (data['price'] as int).toDouble() : data['price']?.toDouble() ?? 0.0,
+        time: data['time'] ?? '',
+        warranty: data['warranty'] ?? '',
+      ));
+    } catch (e) {
+      print("Error fetching service data by ID: $e");
+    } finally {
+      loading.value = false; // Stop loading
+    }
+  }
 }

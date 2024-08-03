@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget {
   final String text;
+  final String? seeall;
   final VoidCallback? onTap;
 
   const Header({
     Key? key,
     required this.text,
+    this.seeall,
     this.onTap,
   }) : super(key: key);
 
@@ -22,7 +24,7 @@ class Header extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Text(
-            "See all",
+            (seeall==null)?'':seeall!,
             style: TextStyle(color: Color(0xffFF5402)),
           ),
         ),
