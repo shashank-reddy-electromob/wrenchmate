@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/bindings/initial_binding.dart';
-
 import 'app/routes/app_pages.dart';
 import 'firebase_options.dart';
 
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      initialRoute: FirebaseAuth.instance.currentUser == null ? AppPages.INITIAL : AppPages.BOTTOMNAV,
+      initialRoute: FirebaseAuth.instance.currentUser == null ? AppPages.INITIAL : AppPages.CAR_REGISTER,
       getPages: AppPages.routes,
     );
   }

@@ -57,6 +57,8 @@
 // }
 
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
+import 'package:wrenchmate_user_app/app/modules/auth/car_register.dart';
 import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
 import '../bindings/auth_binding.dart';
 import '../bindings/bottomnav_bindings.dart';
@@ -91,6 +93,7 @@ import 'app_routes.dart';
 class AppPages {
   static const INITIAL = AppRoutes.LOGIN;
   static const BOTTOMNAV = AppRoutes.BOTTOMNAV;
+  static const  CAR_REGISTER= AppRoutes.CAR_REGISTER;
 
   static final routes = [
     GetPage(name: AppRoutes.LOGIN, page: () => LoginPage(), binding: AuthBinding()),
@@ -110,6 +113,8 @@ class AppPages {
     GetPage(name: AppRoutes.BOOKING_DETAIL, page: () => BookingDetailPage(), binding: BookingBinding()),
     GetPage(name: AppRoutes.REVIEW, page: () => reviewPage(), binding: BookingBinding()),
     GetPage(name: AppRoutes.CAR, page: () => CarPage(), binding: CarBinding()),
+    GetPage(name: AppRoutes.CAR_REGISTER, page: () => CarRegister(), binding: CarBinding()),
+    GetPage(name: AppRoutes.CAR_DETALS, page: () => CarDetails(), binding: CarBinding()),
     GetPage(name: AppRoutes.SUPPORT, page: () => SupportPage(), binding: SupportBinding()),
     GetPage(name: AppRoutes.CONTACT_US, page: () => ContactUsPage(), binding: SupportBinding()),
     GetPage(name: AppRoutes.TRACKING, page: () => TrackingPage(), binding: TrackingBinding()),
