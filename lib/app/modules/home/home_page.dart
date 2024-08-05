@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -149,11 +147,10 @@ class _HomePageState extends State<HomePage> {
                               GestureDetector(
                                 onTap: () {
                                     setState(() {
-                                    xOffSet = 230;
-                                    yOffSet =
-                                        MediaQuery.of(context).size.height *
-                                            0.15;
-                                    scaleFactor = 0.8;
+                                      xOffSet = 230;
+                                      yOffSet = MediaQuery.of(context).size.height * 0.15;
+                                      scaleFactor = 0.7;
+                                      isDrawerOpen = true;
                                   });
                                 },
                                 child: ClipOval(

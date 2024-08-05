@@ -1,13 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wrenchmate_user_app/app/modules/auth/register_page.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import '../../controllers/home_controller.dart';
 import '../auth/widgets/CustomTextField.dart';
-import 'package:image_picker/image_picker.dart'; // Import the image_picker package
-import 'dart:io'; // Import dart:io to use File
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -23,8 +20,8 @@ class _EditProfileState extends State<EditProfile> {
   final HomeController homeController = Get.put(HomeController());
 
   Map<String, dynamic>? userData;
-  File? _image; // Variable to hold the selected image
-  bool _isLoading = false; // Add this variable
+  File? _image;
+  bool _isLoading = false; 
 
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
