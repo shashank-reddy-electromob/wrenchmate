@@ -42,7 +42,6 @@ class _HomePageState extends State<HomePage> {
           .get();
 
       if (userSnapshot.exists) {
-        // Accessing only the User_profile_image field
         String profileImageUrl = userSnapshot.get('User_profile_image');
         print("User Profile Image URL: $profileImageUrl");
         return profileImageUrl;

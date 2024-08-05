@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:wrenchmate_user_app/app/controllers/home_controller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/drawer/tabs.dart';
 
 import '../../controllers/auth_controller.dart';
@@ -16,6 +17,22 @@ class drawerPage extends StatefulWidget {
 
 class _drawerPageState extends State<drawerPage> {
   int? _selectedIndex;
+  HomeController? controller;
+  Map<String, dynamic>? userData;
+
+  @override
+  void initState() {
+    super.initState();
+    print("initstate");
+    controller = Get.put(HomeController());
+    fetchUserData(); // Call the fetchUserData method
+  }
+
+  Future<void> fetchUserData() async {
+    userData = await controller?.fetchUserData() as Map<String, dynamic>?;
+    setState(() {});
+  }
+
   void _onTabTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -63,21 +80,20 @@ class _drawerPageState extends State<drawerPage> {
             children: [
               Container(
                 child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/weekend.png',
+                  child: (userData?['User_profile_image']) != null?Image.network(
+                   userData?['User_profile_image'],
                     fit: BoxFit.cover,
                     height: 85.0,
                     width: 85.0,
-                  ),
+                  ):Image.asset("assets/images/person.png"),
                 ),
               ),
               Row(
                 children: [
                   Text(
-                    //"Hi ${user.phoneNumber}",
-                    "Firstname",
+                    userData?['User_name'],
                     style: TextStyle(
-                        fontSize: 22, color: Colors.black),
+                        fontSize:20, color: Colors.black),
                   ),
                   IconButton(onPressed: (){
                     Get.toNamed(AppRoutes.EDITPROFILE);
@@ -85,14 +101,12 @@ class _drawerPageState extends State<drawerPage> {
                 ],
               ),
               Text(
-                //"Hi ${user.phoneNumber}",
-                "9999999999",
+    userData?['User_number'][0],
                 style: TextStyle(
                     fontSize: 16, color: Colors.grey),
               ),
               Text(
-                //"Hi ${user.phoneNumber}",
-                "email@string.com",
+                userData?['User_email'],
                 style: TextStyle(
                     fontSize: 16, color: Colors.grey),
               ),

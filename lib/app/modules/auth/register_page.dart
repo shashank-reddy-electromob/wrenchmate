@@ -39,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Future<String?> _uploadImageToStorage(File image) async {
+  Future<String?> uploadImageToStorage(File image) async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       final storageReference = FirebaseStorage.instance.ref('/Users');
@@ -70,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
     String? profileImagePath;
 
     if (_image != null) {
-      profileImagePath = await _uploadImageToStorage(_image!);
+      profileImagePath = await uploadImageToStorage(_image!);
     }
 
     if (name == null || !RegExp(r'^[a-zA-Z\s]+$').hasMatch(name)) {
