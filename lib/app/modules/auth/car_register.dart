@@ -122,7 +122,7 @@ class _CarRegisterState extends State<CarRegister> {
               ),
               Spacer(),
               blueButton(text: "CONTINUE", onTap: (){
-                Get.toNamed(AppRoutes.CAR_DETALS,);
+                Get.toNamed(AppRoutes.CAR_DETALS,arguments:_selectedCardIndex);
               }),
               SizedBox(height: 8),
             ],
