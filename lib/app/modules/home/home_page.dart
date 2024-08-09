@@ -125,6 +125,8 @@ class _HomePageState extends State<HomePage> {
               ):BoxDecoration(
                 color: Colors.white
               ),
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
               duration: Duration(microseconds: 100),
               transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
                 ..scale(scaleFactor),

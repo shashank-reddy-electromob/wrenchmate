@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
       // home: MapScreen(),
-      initialRoute: FirebaseAuth.instance.currentUser == null ? AppPages.INITIAL : AppPages.INITIAL,
+      initialRoute: FirebaseAuth.instance.currentUser == null ? AppPages.INITIAL : AppPages.BOTTOMNAV,
       getPages: AppPages.routes,
     );
   }
