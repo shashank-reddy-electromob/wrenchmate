@@ -93,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
           address: address,
           profileImagePath: profileImagePath,
         );
-        Get.toNamed(AppRoutes.CAR_REGISTER);
+        Get.toNamed(AppRoutes.MAPSCREEN);
       } catch (e) {
         print("Failed to add user to Firestore: $e");
         Get.snackbar('Error', 'Failed to register user. Please try again.');

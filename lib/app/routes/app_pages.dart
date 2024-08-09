@@ -60,6 +60,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_register.dart';
 import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
+import '../modules/auth/MapScreen.dart';
 import '../bindings/auth_binding.dart';
 import '../bindings/bottomnav_bindings.dart';
 import '../bindings/home_binding.dart';
@@ -92,13 +93,12 @@ import 'app_routes.dart';
 
 class AppPages {
   static const INITIAL = AppRoutes.LOGIN;
-  static const BOTTOMNAV = AppRoutes.BOTTOMNAV;
-  static const  CAR_REGISTER= AppRoutes.CAR_REGISTER;
 
   static final routes = [
     GetPage(name: AppRoutes.LOGIN, page: () => LoginPage(), binding: AuthBinding()),
     GetPage(name: AppRoutes.OTP, page: () => optpage(), binding: AuthBinding()),
     GetPage(name: AppRoutes.REGISTER, page: () => RegisterPage(), binding: AuthBinding()),
+    GetPage(name: AppRoutes.MAPSCREEN, page: () => MapScreen(), binding: AuthBinding()),
     GetPage(name: AppRoutes.EDITPROFILE, page: () => EditProfile(), binding: AuthBinding()),
     GetPage(name: AppRoutes.NOTIFICATIONS, page: () => NotificationPage(), binding: HomeBinding()),
     GetPage(name: AppRoutes.TERMSANDCONDITIONS, page: () => termsAndConditions(), binding: HomeBinding()),

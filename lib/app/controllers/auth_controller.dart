@@ -143,6 +143,21 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<bool> updateUserAddress(String address) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      await _firestore.collection('User').doc(userId).update({
+        'User_address': address,
+      });
+      print("User address updated");
+      return true; // Indicate success
+    } catch (e) {
+      print("Failed to update address: $e");
+      Get.snackbar("Error", "Failed to update address: ${e.toString()}");
+      return false; // Indicate failure
+    }
+  }
+
   void logout() async {
     try {
       print("logout in lauth controller");
