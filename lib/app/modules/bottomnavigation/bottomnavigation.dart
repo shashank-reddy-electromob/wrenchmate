@@ -85,7 +85,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
                 AssetImage('assets/icons/bookings.png'),
                 size: 30,
               ),
-              label: 'Bookings',
+              label: 'Booking',
             ),
             BottomNavigationBarItem(
               icon: Container(
@@ -112,7 +112,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
                 AssetImage('assets/icons/support.png'),
                 size: 30,
               ),
-              label: 'Support',
+              label: 'Help',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
