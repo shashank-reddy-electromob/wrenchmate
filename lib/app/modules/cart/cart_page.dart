@@ -5,6 +5,7 @@ import 'package:wrenchmate_user_app/app/modules/cart/widgets/containerButton.dar
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/pricing.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
+import '../../controllers/booking_controller.dart'; // Import the BookingController
 import '../../widgets/custombackbutton.dart'; // Import the ServiceController
 
 class CartPage extends StatefulWidget {
@@ -15,7 +16,8 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.find();
   final ServiceController serviceController = Get.find();
-  
+  final BookingController bookingController = Get.find(); // Get the BookingController instance
+
   double? totalAmount;
   double? tax ;
   double? finalAmount;
@@ -271,6 +273,28 @@ class _CartPageState extends State<CartPage> {
                         ),
                       ),
                       onPressed: () async {
+                        try {
+                          List<String> serviceIds = List<String>.from(
+                            cartController.cartItems.map((item) => item['serviceId']),
+                          );
+
+                          await bookingController.addBooking(
+                            serviceIds, // Pass the converted list
+                            'confirmed', // status
+                            DateTime.now(), // confirmation_date
+                            null, // outForService_date
+                            null, // completed_date
+                            '', // confirmation_note
+                            '', // outForService_note
+                            '', // completed_note
+                          );
+
+                          // Optionally show a success message
+                          Get.snackbar("Success", "Booking confirmed successfully!");
+                        } catch (e) {
+                          // Handle the error
+                          Get.snackbar("Error", "Failed to confirm booking: $e");
+                        }
                       },
                       child: Text(
                         "Proceed to Pay",
