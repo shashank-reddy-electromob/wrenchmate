@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 
-class CarPage extends StatelessWidget {
+class CarPage extends StatefulWidget {
+  @override
+  _CarPageState createState() => _CarPageState();
+}
+
+class _CarPageState extends State<CarPage> {
+  bool isEditing = false;
+
+  final TextEditingController regYearController =
+      TextEditingController(text: '2019');
+  final TextEditingController regNoController =
+      TextEditingController(text: '19HY7983298989');
+  final TextEditingController insuranceExpController =
+      TextEditingController(text: '20/12/2024');
+  final TextEditingController pucExpController =
+      TextEditingController(text: '20/08/2024');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('CarPage'),
-      // ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 46),
@@ -58,6 +71,7 @@ class CarPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'Car Detail',
@@ -66,18 +80,23 @@ class CarPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Spacer(),
-                        IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            // Edit action
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            // Delete action
-                          },
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                setState(() {
+                                  isEditing = !isEditing;
+                                });
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                // Delete action
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -96,7 +115,16 @@ class CarPage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Text('2019'),
+                            isEditing
+                                ? TextField(
+                                    controller: regYearController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      isDense:
+                                          true, // Reduces the height of the text field
+                                    ),
+                                  )
+                                : Text(regYearController.text),
                           ],
                         ),
                         Column(
@@ -109,7 +137,15 @@ class CarPage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Text('19HY7983298989'),
+                            isEditing
+                                ? TextField(
+                                    controller: regNoController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      isDense: true,
+                                    ),
+                                  )
+                                : Text(regNoController.text),
                           ],
                         ),
                       ],
@@ -128,7 +164,15 @@ class CarPage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Text('20/12/2024'),
+                            isEditing
+                                ? TextField(
+                                    controller: insuranceExpController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      isDense: true,
+                                    ),
+                                  )
+                                : Text(insuranceExpController.text),
                           ],
                         ),
                         Column(
@@ -141,7 +185,15 @@ class CarPage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Text('20/08/2024'),
+                            isEditing
+                                ? TextField(
+                                    controller: pucExpController,
+                                    decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      isDense: true,
+                                    ),
+                                  )
+                                : Text(pucExpController.text),
                           ],
                         ),
                       ],
@@ -153,16 +205,6 @@ class CarPage extends StatelessWidget {
 
               Row(
                 children: [
-                  // ServiceCard(
-                  //   serviceName: "General Wash",
-                  //   price: "1,400",
-                  //   rating: 4.9,
-                  //   imagePath: 'assets/car/toprecommended1.png',
-                  //   colors: [
-                  //     Color(0xff9DB3E5),
-                  //     Color(0xff3E31BF)
-                  //   ], // Make sure you have an image in your assets
-                  // ),
                   GradientContainer(
                     width: MediaQuery.of(context).size.width / 2 - 36,
                     height: 120,
@@ -170,7 +212,6 @@ class CarPage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.asset(
                             'assets/images/addnewcar.png',
@@ -191,7 +232,6 @@ class CarPage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Image.asset(
                             'assets/images/servicehistroy.png',
@@ -205,44 +245,12 @@ class CarPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // ServiceCard(
-                  //   serviceName: "General Check-up",
-                  //   price: "1,400",
-                  //   rating: 4.9,
-                  //   imagePath: 'assets/car/toprecommended2.png',
-                  //   colors: [
-                  //     Color(0xffFEA563),
-                  //     Color(0xffFF5F81)
-                  //   ], // Make sure you have an image in your assets
-                  // ),
-                  // GradientContainer(
-                  //   width: MediaQuery.of(context).size.width / 2 - 36,
-                  //   height: 120,
-                  //   colors: [
-                  //     Color(0xffFEA563),
-                  //     Color(0xffFF5F81)
-                  //   ], // Define the gradient colors
-                  //   child: Text(""),
-                  // ),
                 ],
               ),
             ],
           ),
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   items: [
-      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Product'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.car_rental), label: 'Car'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.help), label: 'Help'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.subscriptions), label: 'Subscription'),
-      //   ],
-      //   currentIndex: 2,
-      //   onTap: (index) {
-      //     // Handle navigation
-      //   },
-      // ),
     );
   }
 }
