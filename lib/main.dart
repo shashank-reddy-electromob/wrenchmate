@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      home: PaymentScreen(),
-      // initialRoute: FirebaseAuth.instance.currentUser == null ? AppPages.INITIAL : AppPages.CAR_REGISTER,
+      // home: PaymentScreen(),
+      initialRoute: FirebaseAuth.instance.currentUser == null ? AppPages.INITIAL : AppPages.CAR_REGISTER,
       getPages: AppPages.routes,
     );
   }

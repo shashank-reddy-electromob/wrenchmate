@@ -101,110 +101,112 @@ class OfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // height and width can be set based on the available space or made flexible
-      // height: 150,
-      // width: 330,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: AssetImage(imagePath),
-          fit: BoxFit.cover,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        // height and width can be set based on the available space or made flexible
+        // height: 150,
+        // width: 330,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          image: DecorationImage(
+            image: AssetImage(imagePath),
+            fit: BoxFit.fitHeight,
+          ),
         ),
-      ),
-      child: Padding(
-        // decoration: BoxDecoration(
-        //   borderRadius: BorderRadius.circular(20),
-        //   gradient: LinearGradient(
-        //     colors: [
-        //       Colors.black.withOpacity(0.7),
-        //       Colors.transparent,
-        //     ],
-        //     begin: Alignment.centerLeft,
-        //     end: Alignment.centerRight,
-        //   ),
-        // ),
-        padding: EdgeInsets.symmetric(vertical: 26, horizontal: 18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              decoration: BoxDecoration(
-                color: Color(0xffF7FAFF),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'Latest Offer',
-                style: TextStyle(
-                  color: Color(0xff00246B),
-                  fontWeight: FontWeight.bold,
+        child: Padding(
+          // decoration: BoxDecoration(
+          //   borderRadius: BorderRadius.circular(20),
+          //   gradient: LinearGradient(
+          //     colors: [
+          //       Colors.black.withOpacity(0.7),
+          //       Colors.transparent,
+          //     ],
+          //     begin: Alignment.centerLeft,
+          //     end: Alignment.centerRight,
+          //   ),
+          // ),
+          padding: EdgeInsets.symmetric(vertical: 26, horizontal: 18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: Color(0xffF7FAFF),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  offerTitle,
+                child: Text(
+                  'Latest Offer',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+                    color: Color(0xff00246B),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 5),
-                Row(
-                  children: [
-                    Text(
-                      'Get upto ',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                      ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    offerTitle,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Text(
-                      discountText,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  ),
+                  SizedBox(height: 5),
+                  Row(
+                    children: [
+                      Text(
+                        'Get upto ',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
                         ),
                       ),
-                      child: Text(
-                        'Book Now',
-                        style: TextStyle(color: Colors.white),
+                      Text(
+                        discountText,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
                       ),
-                    ),
-                    
-                    Text(
-                      'All washing services included | T&C applied',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 5,
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Book Now',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                      maxLines: 1, // Avoid overflow with ellipsis
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+                      Text(
+                        'All washing services included | T&C applied',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 5,
+                        ),
+                        maxLines: 1, // Avoid overflow with ellipsis
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
