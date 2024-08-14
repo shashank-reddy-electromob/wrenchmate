@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 
 class CarPage extends StatefulWidget {
@@ -10,19 +11,21 @@ class _CarPageState extends State<CarPage> {
   bool isEditing = false;
 
   final TextEditingController regYearController =
-  TextEditingController(text: '2019');
+      TextEditingController(text: '2019');
   final TextEditingController regNoController =
-  TextEditingController(text: '19HY7983298989');
+      TextEditingController(text: '19HY7983298989');
   final TextEditingController insuranceExpController =
-  TextEditingController(text: '20/12/2024');
+      TextEditingController(text: '20/12/2024');
   final TextEditingController pucExpController =
-  TextEditingController(text: '20/08/2024');
+      TextEditingController(text: '20/08/2024');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0,),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -52,16 +55,21 @@ class _CarPageState extends State<CarPage> {
                   ],
                 ),
                 Spacer(),
-                Icon(Icons.chevron_right),
+                Row(
+                  children: [
+                    Icon(Icons.chevron_left),
+                    Icon(Icons.chevron_right),
+                  ],
+                ),
               ],
             ),
             SizedBox(height: 20),
             Center(
-              // child: Image.asset(
-              //   'assets/car/imageofcar.png',
-              //   height: 150,
-              // ),
-            ),
+                // child: Image.asset(
+                //   'assets/car/imageofcar.png',
+                //   height: 150,
+                // ),
+                ),
             SizedBox(height: 20),
 
             // Car Detail Section
@@ -82,74 +90,66 @@ class _CarPageState extends State<CarPage> {
                       ),
                       Row(
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              setState(() {
-                                isEditing = !isEditing;
-                              });
-                            },
+                          GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isEditing = !isEditing;
+                                });
+                              },
+                              child: SvgPicture.asset(
+                                  'assets/icons/edit_icon.svg')),
+                          // IconButton(
+                          //   icon: Icon(Icons.edit),
+                          //   onPressed: () {
+                          //     setState(() {
+                          //       isEditing = !isEditing;
+                          //     });
+                          //   },
+                          // ),
+                          SizedBox(
+                            width: 10,
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              // Delete action
-                            },
-                          ),
+                          SvgPicture.asset('assets/icons/delete_icon.svg'),
+
+                          // IconButton(
+                          //   icon: Icon(Icons.delete, color: Colors.red),
+                          //   onPressed: () {
+                          //     // Delete action
+                          //   },
+                          // ),
                         ],
                       ),
                     ],
                   ),
                   Divider(),
                   SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Reg Year :',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          isEditing
-                              ? TextField(
-                            controller: regYearController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              isDense:
-                              true, // Reduces the height of the text field
-                            ),
-                          )
-                              : Text(regYearController.text),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Reg No:',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          isEditing
-                              ? TextField(
-                            controller: regNoController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              isDense: true,
-                            ),
-                          )
-                              : Text(regNoController.text),
-                        ],
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         Text(
+                  //           'Reg Year :',
+                  //           style: TextStyle(
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ),
+                  //         SizedBox(height: 4),
+                  //         isEditing
+                  //             ? TextField(
+                  //                 controller: regYearController,
+                  //                 decoration: InputDecoration(
+                  //                   border: OutlineInputBorder(),
+                  //                   isDense:
+                  //                       true, // Reduces the height of the text field
+                  //                 ),
+                  //               )
+                  //             : Text(regYearController.text),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
                   SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,43 +157,102 @@ class _CarPageState extends State<CarPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Insurance Exp. :',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Reg Year :',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              isEditing
+                                  ? TextField(
+                                      controller: regYearController,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        isDense:
+                                            true, // Reduces the height of the text field
+                                      ),
+                                    )
+                                  : Text(regYearController.text),
+                            ],
                           ),
-                          SizedBox(height: 4),
-                          isEditing
-                              ? TextField(
-                            controller: insuranceExpController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              isDense: true,
-                            ),
-                          )
-                              : Text(insuranceExpController.text),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Insurance Exp. :',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              isEditing
+                                  ? TextField(
+                                      controller: insuranceExpController,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        isDense: true,
+                                      ),
+                                    )
+                                  : Text(insuranceExpController.text),
+                            ],
+                          ),
                         ],
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'PUC Exp Date :',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Reg No:',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              isEditing
+                                  ? TextField(
+                                      controller: regNoController,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        isDense: true,
+                                      ),
+                                    )
+                                  : Text(regNoController.text),
+                            ],
                           ),
-                          SizedBox(height: 4),
-                          isEditing
-                              ? TextField(
-                            controller: pucExpController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              isDense: true,
-                            ),
-                          )
-                              : Text(pucExpController.text),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'PUC Exp Date :',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              isEditing
+                                  ? TextField(
+                                      controller: pucExpController,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        isDense: true,
+                                      ),
+                                    )
+                                  : Text(pucExpController.text),
+                            ],
+                          ),
                         ],
                       ),
                     ],
@@ -201,7 +260,7 @@ class _CarPageState extends State<CarPage> {
                 ],
               ),
             ),
-      Spacer(),
+            Spacer(),
             Row(
               children: [
                 GradientContainer(

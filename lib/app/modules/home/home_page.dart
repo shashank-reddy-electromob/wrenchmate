@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     print("initstate");
     user = FirebaseAuth.instance.currentUser!;
-    print("userid: "+user.uid);
+    print("userid: " + user.uid);
     profileImageUrlFuture = fetchUserProfileImage();
     checkGooglePlayServices();
   }
@@ -67,7 +67,6 @@ class _HomePageState extends State<HomePage> {
   double yOffSet = 0;
   double scaleFactor = 1;
   bool isDrawerOpen = false;
-
 
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
     if (details.primaryDelta! > 0) {
@@ -112,21 +111,19 @@ class _HomePageState extends State<HomePage> {
             },
             onTap: isDrawerOpen ? _onTap : null,
             child: AnimatedContainer(
-              decoration: isDrawerOpen?BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 20,
-                    blurRadius: 35,
-                  ),
-                ],
-              ):BoxDecoration(
-                color: Colors.white
-              ),
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
+              decoration: isDrawerOpen
+                  ? BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 20,
+                          blurRadius: 35,
+                        ),
+                      ],
+                    )
+                  : BoxDecoration(color: Colors.white),
               duration: Duration(microseconds: 100),
               transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
                 ..scale(scaleFactor),
@@ -148,22 +145,27 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                    setState(() {
-                                      xOffSet = 230;
-                                      yOffSet = MediaQuery.of(context).size.height * 0.15;
-                                      scaleFactor = 0.7;
-                                      isDrawerOpen = true;
+                                  setState(() {
+                                    xOffSet = 230;
+                                    yOffSet =
+                                        MediaQuery.of(context).size.height *
+                                            0.15;
+                                    scaleFactor = 0.7;
+                                    isDrawerOpen = true;
                                   });
                                 },
                                 child: ClipOval(
                                   child: FutureBuilder<String>(
                                     future: profileImageUrlFuture,
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return CircularProgressIndicator(color: Color(0xff1671D8));
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return CircularProgressIndicator(
+                                            color: Color(0xff1671D8));
                                       } else if (snapshot.hasError) {
                                         return Icon(Icons.error);
-                                      } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                                      } else if (snapshot.hasData &&
+                                          snapshot.data!.isNotEmpty) {
                                         return Image.network(
                                           snapshot.data!,
                                           fit: BoxFit.cover,
@@ -172,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                                         );
                                       } else {
                                         return Image.asset(
-                                         'assets/images/person.png',
+                                          'assets/images/person.png',
                                           fit: BoxFit.cover,
                                           height: 45.0,
                                           width: 45.0,

@@ -102,28 +102,16 @@ class OfferCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height and width can be set based on the available space or made flexible
-      // height: 150,
+      margin: EdgeInsets.all(12),
       // width: 330,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
           image: AssetImage(imagePath),
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
         ),
       ),
       child: Padding(
-        // decoration: BoxDecoration(
-        //   borderRadius: BorderRadius.circular(20),
-        //   gradient: LinearGradient(
-        //     colors: [
-        //       Colors.black.withOpacity(0.7),
-        //       Colors.transparent,
-        //     ],
-        //     begin: Alignment.centerLeft,
-        //     end: Alignment.centerRight,
-        //   ),
-        // ),
         padding: EdgeInsets.symmetric(vertical: 26, horizontal: 18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,7 +161,7 @@ class OfferCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -190,7 +178,6 @@ class OfferCard extends StatelessWidget {
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
-
                     Text(
                       'All washing services included | T&C applied',
                       style: TextStyle(
