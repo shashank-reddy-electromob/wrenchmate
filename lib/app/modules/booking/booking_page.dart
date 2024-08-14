@@ -5,6 +5,7 @@ import 'package:wrenchmate_user_app/app/modules/booking/widgets/tabButton.dart';
 import '../../controllers/booking_controller.dart';
 import '../../controllers/service_controller.dart';
 import '../../data/models/Service_Firebase.dart';
+import '../../data/models/booking_model.dart';
 import '../../routes/app_routes.dart';
 
 String formatDateTime(DateTime dateTime) {
@@ -46,6 +47,8 @@ class _BookingPageState extends State<BookingPage> {
       }
     }
 
+    print('History Services Count: ${historyServices.length}');
+print('Current Services Count: ${currentServices.length}');
     setState(() {}); // Update the UI
   }
 
@@ -120,7 +123,18 @@ class _BookingPageState extends State<BookingPage> {
               itemCount: selectedTab == 'currBooking' ? currentServices.length : historyServices.length,
               itemBuilder: (context, index) {
                 final service = selectedTab == 'currBooking' ? currentServices[index] : historyServices[index];
-                return BookingTile(service: service); // Pass the service to BookingTile
+                
+                // Ensure bookingIndex is calculated correctly
+                final bookingIndex = selectedTab == 'currBooking' ? index : index; // Adjusted for history
+                
+                // Check if bookingIndex is valid
+                if (bookingIndex < bookings.length) {
+                  final bookingMap = bookings[bookingIndex]; // Access the booking
+                  final booking = Booking.fromMap(bookingMap); // Convert to Booking object
+                  return BookingTile(service: service, booking: booking, selectedTab: selectedTab,); // Pass the Booking object
+                } else {
+                  return SizedBox.shrink(); // Handle out of bounds
+                }
               },
             ),
           ],
@@ -132,8 +146,10 @@ class _BookingPageState extends State<BookingPage> {
 
 class BookingTile extends StatelessWidget {
   final ServiceFirebase service; // Change to accept ServiceFirebase
+  final Booking booking; // Change to accept Booking
+  final String selectedTab; // Change to accept Booking
 
-  const BookingTile({Key? key, required this.service}) : super(key: key);
+  const BookingTile({Key? key, required this.service, required this.booking, required this.selectedTab}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +157,7 @@ class BookingTile extends StatelessWidget {
       padding: const EdgeInsets.only(left: 18.0, top: 8.0),
       child: GestureDetector(
         onTap: () {
-          Get.toNamed(AppRoutes.BOOKING_DETAIL, arguments: service);
+          Get.toNamed(AppRoutes.BOOKING_DETAIL, arguments: {'service': service, 'booking': booking});
         },
         child: Container(
           decoration: BoxDecoration(
@@ -160,7 +176,7 @@ class BookingTile extends StatelessWidget {
                 height: 150,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Color(0xff4CD964), // Use a default color
+                  color: selectedTab == 'currBooking' ? Color(0xff4CD964) : Color(0xff3778F2), // Conditional color
                 ),
               ),
               Positioned(
