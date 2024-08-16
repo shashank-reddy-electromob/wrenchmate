@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 
 class searchbar extends StatefulWidget {
-  const searchbar({super.key});
+  final bool showFilter;
+  const searchbar({super.key, this.showFilter = true});
 
   @override
   State<searchbar> createState() => _searchbarState();
@@ -13,8 +14,11 @@ class _searchbarState extends State<searchbar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.05),
+      padding: widget.showFilter
+          ? EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.05)
+          : EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -36,22 +40,23 @@ class _searchbarState extends State<searchbar> {
                 ),
               )),
           //filter
-          CustomIconButton(
-            icon: Icon(
-              Icons.filter_list,
-              color: Colors.white,
-              size: 24,
+          if (widget.showFilter)
+            CustomIconButton(
+              icon: Icon(
+                Icons.filter_list,
+                color: Colors.white,
+                size: 24,
+              ),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return BottomSheet();
+                  },
+                );
+              },
             ),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) {
-                  return BottomSheet();
-                },
-              );
-            },
-          ),
         ],
       ),
     );
@@ -86,8 +91,8 @@ class BottomSheet extends StatefulWidget {
 
 class _BottomSheetState extends State<BottomSheet> {
   List<String> selectedServices = [];
-  String selecteddiscount='';
-  String selectedrating='';
+  String selecteddiscount = '';
+  String selectedrating = '';
 
   List<String> services = [
     "Car Wash",
@@ -144,7 +149,8 @@ class _BottomSheetState extends State<BottomSheet> {
   }
 
   Widget servicetypes() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Service Type",
@@ -174,9 +180,8 @@ class _BottomSheetState extends State<BottomSheet> {
                 child: Text(
                   service,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black,
-                    fontSize: 18
-                  ),
+                      color: isSelected ? Colors.white : Colors.black,
+                      fontSize: 18),
                 ),
               ),
             );
@@ -185,8 +190,10 @@ class _BottomSheetState extends State<BottomSheet> {
       ],
     );
   }
+
   Widget discounttypes() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Discount",
@@ -206,13 +213,17 @@ class _BottomSheetState extends State<BottomSheet> {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                 decoration: BoxDecoration(
-                  color: selecteddiscount == discount ? Colors.blue : Colors.grey[200],
+                  color: selecteddiscount == discount
+                      ? Colors.blue
+                      : Colors.grey[200],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   discount,
                   style: TextStyle(
-                    color: selecteddiscount == discount ? Colors.white : Colors.black,
+                      color: selecteddiscount == discount
+                          ? Colors.white
+                          : Colors.black,
                       fontSize: 18),
                 ),
               ),
@@ -222,8 +233,10 @@ class _BottomSheetState extends State<BottomSheet> {
       ],
     );
   }
+
   Widget ratingtypes() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Rating",
@@ -243,13 +256,16 @@ class _BottomSheetState extends State<BottomSheet> {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                 decoration: BoxDecoration(
-                  color: selectedrating == rating ? Colors.blue : Colors.grey[200],
+                  color:
+                      selectedrating == rating ? Colors.blue : Colors.grey[200],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   rating,
                   style: TextStyle(
-                    color: selectedrating == rating ? Colors.white : Colors.black,
+                      color: selectedrating == rating
+                          ? Colors.white
+                          : Colors.black,
                       fontSize: 18),
                 ),
               ),
@@ -259,23 +275,27 @@ class _BottomSheetState extends State<BottomSheet> {
       ],
     );
   }
-  Widget clearallApply(){
+
+  Widget clearallApply() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Container(width: MediaQuery.of(context).size.width*0.45,height: 70,
+        Container(
+          width: MediaQuery.of(context).size.width * 0.45,
+          height: 70,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.blue, backgroundColor: Colors.white, // Text color
+              foregroundColor: Colors.blue,
+              backgroundColor: Colors.white, // Text color
               side: BorderSide(color: Colors.blue), // Border color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
             onPressed: () {
-              selectedrating='';
-              selecteddiscount='';
-              selectedServices=[];
+              selectedrating = '';
+              selecteddiscount = '';
+              selectedServices = [];
               Navigator.of(context).pop();
             },
             child: Text(
@@ -287,10 +307,13 @@ class _BottomSheetState extends State<BottomSheet> {
           ),
         ),
         SizedBox(width: 10), // Space between buttons
-        Container(width: MediaQuery.of(context).size.width*0.45,height: 70,
+        Container(
+          width: MediaQuery.of(context).size.width * 0.45,
+          height: 70,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white, backgroundColor: Colors.blue, // Text color
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.blue, // Text color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -301,7 +324,6 @@ class _BottomSheetState extends State<BottomSheet> {
               print(selecteddiscount);
               print(selectedrating);
               Navigator.of(context).pop();
-
             },
             child: Text('APPLY'),
           ),
