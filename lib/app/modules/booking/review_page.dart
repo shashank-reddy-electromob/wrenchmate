@@ -55,8 +55,6 @@ class _reviewPageState extends State<reviewPage> {
     }
   }
 
-
-  // Method to print the value of the service review
   void _printServiceReview(String review, double rating) {
     //handeling is remaining
     if (review.isNotEmpty && rating > 0) {
