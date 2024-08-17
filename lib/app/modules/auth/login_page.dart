@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import '../../controllers/auth_controller.dart';
 
 class LoginPage extends StatefulWidget {
@@ -127,23 +128,9 @@ class _LoginPageState extends State<LoginPage> {
               //submit
               Container(
                 width: MediaQuery.of(context).size.width * 0.8,
-                height: 60,
                 child: _isLoading
                     ? Center(child: CircularProgressIndicator(color:  Color(0xff1671D8),)) // Show loader
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue,
-                          backgroundColor: Color(0xff1671D8), // Text color
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                        ),
-                        onPressed: _login,
-                        child: Text(
-                          'REQUEST OTP',
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                      ),
+                :blueButton(text: 'REQUEST OTP', onTap: _login)
               ),
               SizedBox(height: 32.0),
               Text(

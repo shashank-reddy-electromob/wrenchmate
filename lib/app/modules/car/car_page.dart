@@ -11,13 +11,13 @@ class _CarPageState extends State<CarPage> {
   bool isEditing = false;
 
   final TextEditingController regYearController =
-      TextEditingController(text: '2019');
+  TextEditingController(text: '2019');
   final TextEditingController regNoController =
-      TextEditingController(text: '19HY7983298989');
+  TextEditingController(text: '19HY7983298989');
   final TextEditingController insuranceExpController =
-      TextEditingController(text: '20/12/2024');
+  TextEditingController(text: '20/12/2024');
   final TextEditingController pucExpController =
-      TextEditingController(text: '20/08/2024');
+  TextEditingController(text: '20/08/2024');
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +25,7 @@ class _CarPageState extends State<CarPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 16.0,
+          vertical: 16
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,11 +66,11 @@ class _CarPageState extends State<CarPage> {
             ),
             SizedBox(height: 20),
             Center(
-                // child: Image.asset(
-                //   'assets/car/imageofcar.png',
-                //   height: 150,
-                // ),
-                ),
+              child: Image.asset(
+                'assets/car/suv.png',
+                height: 150,
+              ),
+            ),
             SizedBox(height: 20),
 
             // Car Detail Section
@@ -169,13 +170,13 @@ class _CarPageState extends State<CarPage> {
                               SizedBox(height: 4),
                               isEditing
                                   ? TextField(
-                                      controller: regYearController,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        isDense:
-                                            true, // Reduces the height of the text field
-                                      ),
-                                    )
+                                controller: regYearController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  isDense:
+                                  true, // Reduces the height of the text field
+                                ),
+                              )
                                   : Text(regYearController.text),
                             ],
                           ),
@@ -194,12 +195,12 @@ class _CarPageState extends State<CarPage> {
                               SizedBox(height: 4),
                               isEditing
                                   ? TextField(
-                                      controller: insuranceExpController,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        isDense: true,
-                                      ),
-                                    )
+                                controller: insuranceExpController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
+                                ),
+                              )
                                   : Text(insuranceExpController.text),
                             ],
                           ),
@@ -220,12 +221,12 @@ class _CarPageState extends State<CarPage> {
                               SizedBox(height: 4),
                               isEditing
                                   ? TextField(
-                                      controller: regNoController,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        isDense: true,
-                                      ),
-                                    )
+                                controller: regNoController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
+                                ),
+                              )
                                   : Text(regNoController.text),
                             ],
                           ),
@@ -244,12 +245,12 @@ class _CarPageState extends State<CarPage> {
                               SizedBox(height: 4),
                               isEditing
                                   ? TextField(
-                                      controller: pucExpController,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        isDense: true,
-                                      ),
-                                    )
+                                controller: pucExpController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
+                                ),
+                              )
                                   : Text(pucExpController.text),
                             ],
                           ),

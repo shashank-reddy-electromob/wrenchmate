@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/subscription_controller.dart';
+import '../../routes/app_routes.dart';
 
 class SubscriptionPage extends StatefulWidget {
   @override
@@ -220,7 +221,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   ),
                   padding: EdgeInsets.zero,
                 ),
-                onPressed: () {},
+                onPressed: () {Get.toNamed(AppRoutes.PAYMENT);},
                 child: Ink(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
