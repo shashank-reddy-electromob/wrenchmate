@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
+import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:wrenchmate_user_app/app/widgets/bluebuttoncircular.dart';
 
@@ -9,6 +10,7 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+  Color borderColor = Color(0xffF5F5F5);
   int _selectedCardIndex = 1;
   int _selectedUpiIndex = 1;
   final TextEditingController nameController = TextEditingController();
@@ -19,17 +21,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
-        ),
-        title: Text(
-          'Payment',
-          style: TextStyle(color: Colors.black),
-        ),
+      appBar: CustomAppBar(
+        title: 'Payment',
+        onBackButtonPressed: () {
+          Navigator.of(context).pop();
+        },
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -42,6 +38,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
             SizedBox(height: 10),
             Card(
+              color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
@@ -51,7 +48,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: borderColor),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       child: ListTile(
@@ -76,7 +73,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: borderColor),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       child: ListTile(
@@ -101,10 +98,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
                         dense: true,
-                        leading:
-                            Icon(Icons.add_circle_outline, color: Colors.blue),
+                        leading: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xffD2EAFF),
+
+                            // border: Border.all(color: borderColor),
+                            borderRadius: BorderRadius.circular(6.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.add, color: Colors.blue),
+                          ),
+                        ),
                         title: Text('Add New Cards',
-                            style: TextStyle(color: Colors.blue)),
+                            style: TextStyle(
+                                color: Color(0xff606060), fontSize: 14)),
                         onTap: () {
                           _showAddCardBottomSheet(context);
                         },
@@ -113,14 +121,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ),
             SizedBox(height: 20),
-
-            // UPI Section
             Text(
               'UPI',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Card(
+              color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
@@ -130,7 +137,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: borderColor),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       child: ListTile(
@@ -156,7 +163,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: borderColor),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       child: ListTile(
@@ -179,30 +186,39 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      dense: true,
-                      leading:
-                          Icon(Icons.add_circle_outline, color: Colors.blue),
-                      title: Text('Add New UPI ID',
-                          style: TextStyle(color: Colors.blue)),
-                      onTap: () {
-                        _showAddUpiBottomSheet(context);
-                      },
-                    ),
-                  ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        dense: true,
+                        leading: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xffD2EAFF),
+
+                            // border: Border.all(color: borderColor),
+                            borderRadius: BorderRadius.circular(6.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.add, color: Colors.blue),
+                          ),
+                        ),
+                        title: Text('Add New UPI',
+                            style: TextStyle(
+                                color: Color(0xff606060), fontSize: 14)),
+                        onTap: () {
+                          _showAddUpiBottomSheet(context);
+                        },
+                      )),
                 ],
               ),
             ),
-
             SizedBox(height: 20),
-
             Text(
               'More Payment Options',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Card(
+              color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
@@ -212,7 +228,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: borderColor),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       child: ListTile(
@@ -229,7 +245,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: borderColor),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       child: ListTile(
@@ -245,7 +261,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ),
             SizedBox(height: 20),
-
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
@@ -267,7 +282,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Expanded(
                     child: blueButton(
                       buttonHeight: 8,
-                      text: "VERIFY",
+                      text: "Proceed",
                       onTap: () {},
                     ),
                   ),
