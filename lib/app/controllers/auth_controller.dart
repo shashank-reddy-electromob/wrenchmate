@@ -11,7 +11,7 @@ class AuthController extends GetxController {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> _handleSignIn(PhoneAuthCredential credential, TextEditingController otpcontroller) async {
+  Future<void> handleSignIn(PhoneAuthCredential credential, TextEditingController otpcontroller) async {
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
         verificationCompleted: (PhoneAuthCredential credential) {
@@ -35,15 +35,14 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<bool> login(String phoneNumber, TextEditingController otpcontroller) async {
-    try {
+  Future<void> login(String phoneNumber, TextEditingController otpcontroller) async {
       print("login function in auth controller");
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) => _handleSignIn(credential, otpcontroller),
+        verificationCompleted: (PhoneAuthCredential credential) => handleSignIn(credential, otpcontroller),
         verificationFailed: (FirebaseAuthException e) {
           print("Verification failed: ${e.message}");
-          Get.snackbar("Error", "Login failed: ${e.toString()}");
+          Get.snackbar("Error aaya hai", "Login failed: ${e.toString()}");
         },
         codeSent: (String verificationId, int? resendToken) {
           print("OTP sent: $verificationId");
@@ -55,18 +54,13 @@ class AuthController extends GetxController {
           this.verificationid.value = verificationId;
         },
       );
-      return true;
-    } catch (e) {
-      Get.snackbar("Error snackbar", "Login failed: ${e.toString()}");
-      return false;
-    }
   }
 
   void resendOTP(String phoneNumber, TextEditingController otpcontroller) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       forceResendingToken: resendToken,
-      verificationCompleted: (PhoneAuthCredential credential) => _handleSignIn(credential, otpcontroller),
+      verificationCompleted: (PhoneAuthCredential credential) => handleSignIn(credential, otpcontroller),
       verificationFailed: (FirebaseAuthException e) {
         print("Verification failed: ${e.message}");
         Get.snackbar("Error", e.message ?? "Verification failed");
@@ -84,7 +78,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> verifyOTP(String otp, String phoneNumber, TextEditingController otpcontroller) async {
-    try {
+
       print(verificationid);
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationid.toString(), smsCode: otp);
@@ -96,10 +90,7 @@ class AuthController extends GetxController {
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV);
       }
-    } catch (e) {
-      print("OTP verification failed: $e");
-      Get.snackbar("Error", "OTP verification failed: ${e.toString()}");
-    }
+
   }
 
  Future<void> googleLogin() async {

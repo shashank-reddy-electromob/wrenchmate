@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import '../../controllers/auth_controller.dart';
+import '../../routes/app_routes.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,30 +14,38 @@ class _LoginPageState extends State<LoginPage> {
   final _phonenumbercontroller = TextEditingController();
    bool _isLoading=false;
    bool _isLoadingGoogle=false;
+  final AuthController controller = Get.find();
 
   void _login() async {
     setState(() {
       _isLoading = true;
     });
-    final AuthController controller = Get.find();
-    try {
-      print("calling the controller functions");
-      bool success = await controller.login(
-          '+91${_phonenumbercontroller.text}', _phonenumbercontroller
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+91${_phonenumbercontroller.text}',
+        verificationCompleted: (PhoneAuthCredential credential) => controller.handleSignIn(credential, _phonenumbercontroller),
+        verificationFailed: (FirebaseAuthException e) {
+          print("Verification failed: ${e.message}");
+          Get.snackbar("Error aaya hai", "Login failed: ${e.toString()}");
+          setState(() {
+            _isLoading = false;
+          });
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            _isLoading = true;
+          });
+          Get.toNamed(AppRoutes.OTP, arguments: '+91${_phonenumbercontroller.text}');
+          setState(() {
+            _isLoading = false;
+          });
+          },
+        codeAutoRetrievalTimeout: (String verificationId) {},
       );
-      print("true ya false: "+success.toString());
-      if (!success) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      print("Exception caught in _login: $e");
-      setState(() {
-        _isLoading = false;
-      });
-      Get.snackbar("Error", e.toString());
-    }
+  }
+
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
 
@@ -130,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: _isLoading
                     ? Center(child: CircularProgressIndicator(color:  Color(0xff1671D8),)) // Show loader
-                :blueButton(text: 'REQUEST OTP', onTap: _login)
+                :blueButton(text: 'REQUEST OTP', onTap:  _isLoading ? null : _login)
               ),
               SizedBox(height: 32.0),
               Text(

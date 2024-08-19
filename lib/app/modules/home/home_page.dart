@@ -35,10 +35,7 @@ class _HomePageState extends State<HomePage> {
     try {
       print("Fetching User Profile Image...");
       DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('User')
-          .doc(user.uid)
-          .get();
-
+          .collection('User').doc(user.uid).get();
       if (userSnapshot.exists) {
         String profileImageUrl = userSnapshot.get('User_profile_image');
         print("User Profile Image URL: $profileImageUrl");
