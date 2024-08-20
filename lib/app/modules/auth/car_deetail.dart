@@ -52,7 +52,7 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
-    String selectedCarName = carNames[selectedIndex!];
+    String selectedCarType = carNames[selectedIndex!];
     String selectedCarImage = carImages[selectedIndex!];
     return Scaffold(
       backgroundColor: Colors.white,
@@ -105,7 +105,7 @@ void initState() {
                           SizedBox(width: 16,),
                           Image.asset(selectedCarImage,height: 90,),
                           SizedBox(width: 16,),
-                          Text(selectedCarName,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 24),)
+                          Text(selectedCarType,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 24),)
                         ],
                       ),
                     ),
@@ -174,13 +174,14 @@ void initState() {
                     Spacer(),
                     blueButton(text: 'COMPLETED', onTap: () async{
                       print("tapped");
-                      // await carController?.addCarTo500x(
+                      // await carController?.addCar(
                       //   fuelType: 'Petrol',
                       //   registrationNumber: 'ABC1234',
                       //   registrationYear: 2021,
                       //   pucExpiration: DateTime(2022, 12, 31),
                       //   insuranceExpiration: DateTime(2023, 12, 31),
-                      //   transmission: 'Automatic',
+                      //   transmission: 'Automatic', carType: selectedCarType,
+                      //   carModel: '', //make changes here
                       // );
                       Get.toNamed(AppRoutes.BOTTOMNAV);
                     }),

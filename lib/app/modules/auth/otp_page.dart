@@ -54,7 +54,7 @@ class _optpageState extends State<optpage> {
 
   void _verifyotp() async {
     setState(() {
-      _isLoading = true; // Show loader
+      _isLoading = true;
     });
     final AuthController controller = Get.find();
     try {
@@ -62,9 +62,8 @@ class _optpageState extends State<optpage> {
     } catch (e) {
       print("Exception caught in _verifyotp: $e");
       Get.snackbar("Error", e.toString());
-    } finally {
       setState(() {
-        _isLoading = false; // Hide loader
+        _isLoading = false;
       });
     }
   }
@@ -137,7 +136,8 @@ class _optpageState extends State<optpage> {
             Container(
               height: 20,
             ),
-            _isLoading?Center(child: CircularProgressIndicator(color: Color(0xff1671D8))):
+            _isLoading?
+            Center(child: CircularProgressIndicator(color: Color(0xff1671D8))):
             blueButton(
               text: "VERIFY",
               onTap: _isLoading ? null : _verifyotp,

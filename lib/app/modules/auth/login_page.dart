@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import '../../controllers/auth_controller.dart';
+import '../../routes/app_routes.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,6 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   final _phonenumbercontroller = TextEditingController();
    bool _isLoading=false;
    bool _isLoadingGoogle=false;
+  final AuthController controller = Get.find();
 
   void _login() async {
     setState(() {
@@ -35,6 +39,10 @@ class _LoginPageState extends State<LoginPage> {
       });
       Get.snackbar("Error", e.toString());
     }
+  }
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
 
@@ -127,23 +135,9 @@ class _LoginPageState extends State<LoginPage> {
               //submit
               Container(
                 width: MediaQuery.of(context).size.width * 0.8,
-                height: 60,
                 child: _isLoading
                     ? Center(child: CircularProgressIndicator(color:  Color(0xff1671D8),)) // Show loader
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.blue,
-                          backgroundColor: Color(0xff1671D8), // Text color
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                        ),
-                        onPressed: _login,
-                        child: Text(
-                          'REQUEST OTP',
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                      ),
+                :blueButton(text: 'REQUEST OTP', onTap:  _isLoading ? null : _login)
               ),
               SizedBox(height: 32.0),
               Text(

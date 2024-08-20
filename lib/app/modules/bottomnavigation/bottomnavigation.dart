@@ -76,21 +76,23 @@ class _bottomnavigationState extends State<bottomnavigation> {
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home_outlined,
+              icon: ImageIcon(
+                AssetImage('assets/icons/home.png'),
                 size: 30,
               ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.book_outlined,
+              icon: ImageIcon(
+                AssetImage('assets/icons/bookings.png'),
                 size: 30,
               ),
-              label: 'Bookings',
+              label: 'Booking',
             ),
             BottomNavigationBarItem(
               icon: Container(
+                height: 60,
+                width: 60,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
@@ -98,27 +100,25 @@ class _bottomnavigationState extends State<bottomnavigation> {
                     end: Alignment.bottomCenter,
                   ),
                   shape: BoxShape.circle,
-                  color: Colors.blue,
                 ),
-                padding: EdgeInsets.all(8),
-                child: Icon(
-                  Icons.directions_car,
+                padding: EdgeInsets.all(12),
+                child: ImageIcon(
+                  AssetImage('assets/icons/car.png'),
                   color: Colors.white,
-                  size: 30,
                 ),
               ),
               label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.call,
+              icon: ImageIcon(
+                AssetImage('assets/icons/support.png'),
                 size: 30,
               ),
-              label: 'Support',
+              label: 'Help',
             ),
             BottomNavigationBarItem(
-              icon: Icon(
-                Icons.subscriptions_outlined,
+              icon: ImageIcon(
+                AssetImage('assets/icons/subscription.png'),
                 size: 30,
               ),
               label: 'Subscription',
@@ -132,6 +132,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
+
       ),
     );
   }

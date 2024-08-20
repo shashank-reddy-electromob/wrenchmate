@@ -13,6 +13,7 @@ class ServiceController extends GetxController {
   var loading = true.obs; // Loading state
   var selectedService = Rxn<ServiceFirebase>(); // To store the selected service
 
+
   void fetchServices(String category) async {
     try {
       loading.value = true; // Start loading
@@ -213,6 +214,23 @@ class ServiceController extends GetxController {
       print("Error fetching service data by ID: $e");
     } finally {
       loading.value = false; // Stop loading
+    }
+  }
+
+  // Function to add a new review
+  Future<void> addReview(String serviceId, String userId, String message, double rating) async {
+    try {
+      // Create a new review document
+      await FirebaseFirestore.instance.collection('Review').add({
+        'serviceId': serviceId,
+        'userId': userId,
+        'message': message,
+        'rating': rating,
+      });
+      print("Review added successfully.");
+    } catch (e) {
+      print("Error adding review: $e");
+      // Handle error appropriately (e.g., show a message to the user)
     }
   }
 }

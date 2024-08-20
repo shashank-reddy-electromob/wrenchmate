@@ -43,7 +43,7 @@ class _drawerPageState extends State<drawerPage> {
       Get.toNamed(AppRoutes.SUPPORT);
     } else if (index == 4) {
       print("rate us");
-    }
+    } else {}
   }
 
   void logout() async {
@@ -58,42 +58,36 @@ class _drawerPageState extends State<drawerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragEnd: (details) {
-        if (details.primaryVelocity! > 0) {
-          if (Scaffold.of(context).isDrawerOpen) {
-            Navigator.of(context).pop(); // Close the drawer on left swipe
-          }
-        }
-      },
-      child: Container(
-        color: Colors.white60,
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 30.0, top: 60),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipOval(
-                    child: (userData?['User_profile_image']) != null
+    return Container(
+      color: Colors.white60,
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 30.0, top: 60),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: ClipOval(
+                    child: (userData?['User_profile_image'] != null)
                         ? Image.network(
-                            userData?['User_profile_image'],
+                            userData!['User_profile_image'] ?? '',
                             fit: BoxFit.cover,
                             height: 85.0,
                             width: 85.0,
                           )
                         : Image.asset("assets/images/person.png"),
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        userData?['User_name'] ?? 'NA',
-                        style: TextStyle(fontSize: 20, color: Colors.black),
-                      ),
-                      IconButton(
+                ),
+                Row(
+                  children: [
+                    Text(
+                      userData?['User_name'] ?? 'Unknown User',
+                      style: TextStyle(fontSize: 20, color: Colors.black),
+                    ),
+                    IconButton(
                         onPressed: () {
                           Get.toNamed(AppRoutes.EDITPROFILE);
                         },
@@ -101,95 +95,98 @@ class _drawerPageState extends State<drawerPage> {
                           Icons.edit,
                           color: Colors.green,
                           size: 20,
-                        ),
-                      ),
-                    ],
+                        )),
+                  ],
+                ),
+                Text(
+                  userData?['User_number'] != null &&
+                          userData!['User_number'].isNotEmpty
+                      ? userData!['User_number'][0]
+                      : 'No number available',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                Text(
+                  userData?['User_email'] ?? 'No email available',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          MenuTab(
+            index: 0,
+            selectedIndex: _selectedIndex,
+            onTap: _onTabTapped,
+            icon: Icons.description,
+            text: 'Car Documents',
+          ),
+          MenuTab(
+            index: 1,
+            selectedIndex: _selectedIndex,
+            onTap: _onTabTapped,
+            icon: Icons.subscriptions,
+            text: 'Your Subscription',
+          ),
+          MenuTab(
+            index: 2,
+            selectedIndex: _selectedIndex,
+            onTap: _onTabTapped,
+            icon: Icons.article,
+            text: 'Terms & Conditions',
+          ),
+          MenuTab(
+            index: 3,
+            selectedIndex: _selectedIndex,
+            onTap: _onTabTapped,
+            icon: Icons.contact_phone,
+            text: 'Contact us',
+          ),
+          MenuTab(
+            index: 4,
+            selectedIndex: _selectedIndex,
+            onTap: _onTabTapped,
+            icon: Icons.star,
+            text: 'Rate us',
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 30, top: 20),
+            child: GestureDetector(
+              onTap: logout,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                width: MediaQuery.of(context).size.width * 0.3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: [Color(0xff3576EE), Color(0xff3C80FF)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-                  Text(
-                    userData?['User_number'][0] ?? 'NA',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  Text(
-                    userData?['User_email'] ?? 'NA',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 10),
-            MenuTab(
-              index: 0,
-              selectedIndex: _selectedIndex,
-              onTap: _onTabTapped,
-              icon: Icons.description,
-              text: 'Car Documents',
-            ),
-            MenuTab(
-              index: 1,
-              selectedIndex: _selectedIndex,
-              onTap: _onTabTapped,
-              icon: Icons.subscriptions,
-              text: 'Your Subscription',
-            ),
-            MenuTab(
-              index: 2,
-              selectedIndex: _selectedIndex,
-              onTap: _onTabTapped,
-              icon: Icons.article,
-              text: 'Terms & Conditions',
-            ),
-            MenuTab(
-              index: 3,
-              selectedIndex: _selectedIndex,
-              onTap: _onTabTapped,
-              icon: Icons.contact_phone,
-              text: 'Contact us',
-            ),
-            MenuTab(
-              index: 4,
-              selectedIndex: _selectedIndex,
-              onTap: _onTabTapped,
-              icon: Icons.star,
-              text: 'Rate us',
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 30, top: 40),
-              child: GestureDetector(
-                onTap: logout,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    gradient: LinearGradient(
-                      colors: [Color(0xff3576EE), Color(0xff3C80FF)],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.logout_rounded,
+                      color: Colors.white,
+                      size: 18,
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.logout_rounded,
+                    Text(
+                      textAlign: TextAlign.center,
+                      " Log out",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                         color: Colors.white,
-                        size: 18,
                       ),
-                      Text(
-                        textAlign: TextAlign.center,
-                        " Log out",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

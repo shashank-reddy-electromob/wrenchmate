@@ -2,6 +2,7 @@ class AppRoutes {
   static const LOGIN = '/login';
   static const OTP = '/otp';
   static const REGISTER = '/register';
+  static const MAPSCREEN = '/mapscreen';
   static const EDITPROFILE = '/editprofile';
   static const NOTIFICATIONS = '/notifications';
   static const TERMSANDCONDITIONS = '/termsAndConditions';

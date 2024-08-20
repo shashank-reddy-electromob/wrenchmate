@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class blueButton extends StatelessWidget {
   final String text;
   final double buttonHeight;
+  // final double buttonHeight;
   final onTap;
   const blueButton(
       {super.key,
@@ -13,8 +14,8 @@ class blueButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
+    return Container(
+      width: MediaQuery.of(context).size.width - 40,
       child: ElevatedButton(
         onPressed: onTap,
         child: Padding(
