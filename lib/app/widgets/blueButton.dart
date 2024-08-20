@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class blueButton extends StatelessWidget {
   final String text;
   final double buttonHeight;
-  final double buttonHeight;
+  // final double buttonHeight;
   final onTap;
   const blueButton(
       {super.key,
