@@ -29,37 +29,22 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> updateUserProfile({
-    required String name,
-    required String email,
-    required String primaryNumber,
-    required String alternateNumber,
-    File? profileImage,
-  }) async {
+  Future<void> updateUserProfile(Map<String, dynamic> updatedData) async {
     try {
       print("in update user profile");
       String userId = FirebaseAuth.instance.currentUser!.uid;
       String? profileImagePath;
 
-      if (profileImage != null) {
-        profileImagePath = await uploadImageToStorage(profileImage);
-        print("imagepath: $profileImagePath");
+      // Check if a new image was provided and upload it
+      if (updatedData.containsKey('User_profile_image')) {
+        profileImagePath = await uploadImageToStorage(updatedData['User_profile_image']);
+        updatedData['User_profile_image'] = profileImagePath ?? '';
       }
 
-      await _firestore.collection('User').doc(userId).update({
-        'User_name': name,
-        'User_email': email,
-        'User_number': [primaryNumber, alternateNumber],
-        'User_profile_image': profileImagePath ?? '',
-      });
+      await _firestore.collection('User').doc(userId).update(updatedData);
 
-      // Update the observable userData with all fields
-      userData.value['User_name'] = name;
-      userData.value['User_email'] = email;
-      userData.value['User_number'] = [primaryNumber, alternateNumber];
-      if (profileImagePath != null) {
-        userData.value['profileImagePath'] = profileImagePath;
-      }
+      // Update the observable userData with changed fields
+      userData.value.addAll(updatedData);
 
       print("User profile updated successfully.");
       Get.snackbar("Success", "Profile updated successfully.");

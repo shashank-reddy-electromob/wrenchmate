@@ -22,6 +22,8 @@ class _EditProfileState extends State<EditProfile> {
   File? _image;
   bool _isLoading = false;
 
+  Map<String, dynamic>? originalUserData;
+
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
 
@@ -35,13 +37,47 @@ class _EditProfileState extends State<EditProfile> {
   Future<Map<String, dynamic>> _fetchUserData() async {
     Map<String, dynamic> data = await homeController.fetchUserData() as Map<String, dynamic>;
 
-    // Populate the controllers with fetched data
+    // Populate the controllers with fetched data and store original data
     nameController.text = data['User_name'] ?? '';
     numberController.text = data['User_number'][0] ?? '';
     alternateNumberController.text = data['User_number'][1] ?? '';
     emailController.text = data['User_email'] ?? '';
 
+    // Save the original data for comparison
+    originalUserData = Map<String, dynamic>.from(data);
+
     return data;
+  }
+
+  Future<void> _updateUserProfile() async {
+    Map<String, dynamic> updatedData = {};
+
+    // Compare current values with original values and add only changed fields
+    if (nameController.text != originalUserData?['User_name']) {
+      updatedData['User_name'] = nameController.text;
+    }
+    if (emailController.text != originalUserData?['User_email']) {
+      updatedData['User_email'] = emailController.text;
+    }
+    if (numberController.text != originalUserData?['User_number'][0]) {
+      updatedData['User_number'] = [numberController.text, alternateNumberController.text];
+    }
+    if (alternateNumberController.text != originalUserData?['User_number'][1]) {
+      updatedData['User_number'] = [numberController.text, alternateNumberController.text];
+    }
+
+    // Check if a new image was selected and is different from the original image
+    if (_image != null) {
+      // Assuming `originalUserData['User_profile_image']` contains the original image URL or path
+      String originalImagePath = originalUserData?['User_profile_image'] ?? '';
+      if (_image!.path != originalImagePath) {
+        updatedData['User_profile_image'] = _image;
+      }
+    }
+
+    if (updatedData.isNotEmpty) {
+      await homeController.updateUserProfile(updatedData);
+    }
   }
 
   @override
@@ -115,13 +151,7 @@ class _EditProfileState extends State<EditProfile> {
                         setState(() {
                           _isLoading = true;
                         });
-                        await homeController.updateUserProfile(
-                          name: nameController.text,
-                          email: emailController.text,
-                          primaryNumber: numberController.text,
-                          alternateNumber: alternateNumberController.text,
-                          profileImage: _image,
-                        );
+                        await _updateUserProfile();
                         setState(() {
                           _isLoading = false;
                         });
