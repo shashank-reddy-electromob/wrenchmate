@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
@@ -587,7 +588,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       Center(
                         child: blueButtonCircular(
                           text: "Save",
-                          onTap: () {},
+                          onTap: () {
+                            _showCongratulationsDialog(context);
+                          },
                         ),
                       ),
                       SizedBox(height: 20),
@@ -601,5 +604,140 @@ class _PaymentScreenState extends State<PaymentScreen> {
       },
     );
   }
+
+  void _showCongratulationsDialog(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: Duration(milliseconds: 500),
+      pageBuilder: (context, animation1, animation2) {
+        return CongratulationsDialog();
+      },
+    );
+  }
 // }
+}
+
+class CongratulationsDialog extends StatefulWidget {
+  @override
+  _CongratulationsDialogState createState() => _CongratulationsDialogState();
+}
+
+class _CongratulationsDialogState extends State<CongratulationsDialog>
+    with SingleTickerProviderStateMixin {
+  double _imageSize = 0;
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _imageSize = 150;
+      });
+      _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black.withOpacity(0.5),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            // alignment: Alignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.ios_share,
+                    ),
+                    color: Colors.white,
+                    onPressed: () {
+                      // Navigator.pop(context);
+                    },
+                  ),
+                  // Icon(
+                  //   Icons.ios_share,
+                  //   color: Colors.white,
+                  // )
+                ],
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 6,
+              ),
+              AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeOut,
+                width: _imageSize,
+                height: _imageSize,
+                child: Image.asset(
+                  'assets/images/congratulations.jpg',
+                  // fit: BoxFit.contain,
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Column(
+                children: [
+                  Text(
+                    'Ta-da!',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Congratulations',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'You’re now part of our family, enjoy your special offers.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

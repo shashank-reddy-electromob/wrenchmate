@@ -2,6 +2,7 @@ import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:wrenchmate_user_app/app/modules/home/drawer.dart';
 import 'package:wrenchmate_user_app/app/modules/home/home_page.dart';
 import 'package:flutter/services.dart'; // Import this for SystemNavigator
 
@@ -21,7 +22,7 @@ class bottomnavigation extends StatefulWidget {
 
 class _bottomnavigationState extends State<bottomnavigation> {
   int _selectedIndex = 0;
-  static  List<Widget> _widgetOptions = [
+  static List<Widget> _widgetOptions = [
     HomePage(),
     BookingPage(),
     CarPage(),
@@ -52,6 +53,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        // drawer: drawerPage(),
         backgroundColor: Colors.white,
         body: _widgetOptions.elementAt(_selectedIndex),
         // floatingActionButton: DraggableFab(
@@ -74,11 +76,17 @@ class _bottomnavigationState extends State<bottomnavigation> {
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined,size: 30,),
+              icon: Icon(
+                Icons.home_outlined,
+                size: 30,
+              ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.book_outlined,size: 30,),
+              icon: Icon(
+                Icons.book_outlined,
+                size: 30,
+              ),
               label: 'Bookings',
             ),
             BottomNavigationBarItem(
@@ -93,16 +101,26 @@ class _bottomnavigationState extends State<bottomnavigation> {
                   color: Colors.blue,
                 ),
                 padding: EdgeInsets.all(8),
-                child: Icon(Icons.directions_car, color: Colors.white,size: 30,),
+                child: Icon(
+                  Icons.directions_car,
+                  color: Colors.white,
+                  size: 30,
+                ),
               ),
               label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.call,size: 30,),
+              icon: Icon(
+                Icons.call,
+                size: 30,
+              ),
               label: 'Support',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.subscriptions_outlined,size: 30,),
+              icon: Icon(
+                Icons.subscriptions_outlined,
+                size: 30,
+              ),
               label: 'Subscription',
             ),
           ],
