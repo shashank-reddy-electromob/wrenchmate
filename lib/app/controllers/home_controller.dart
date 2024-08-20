@@ -53,6 +53,7 @@ class HomeController extends GetxController {
         'User_profile_image': profileImagePath ?? '',
       });
 
+      // Update the observable userData with all fields
       userData.value['User_name'] = name;
       userData.value['User_email'] = email;
       userData.value['User_number'] = [primaryNumber, alternateNumber];
@@ -62,7 +63,7 @@ class HomeController extends GetxController {
 
       print("User profile updated successfully.");
       Get.snackbar("Success", "Profile updated successfully.");
-      fetchUserData();
+      fetchUserData(); // Fetch updated data
     } catch (e) {
       print("Failed to update user profile: $e");
       Get.snackbar("Error", "Failed to update profile: ${e.toString()}");

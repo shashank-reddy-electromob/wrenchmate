@@ -20,29 +20,26 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _isLoading = true;
     });
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: '+91${_phonenumbercontroller.text}',
-        verificationCompleted: (PhoneAuthCredential credential) => controller.handleSignIn(credential, _phonenumbercontroller),
-        verificationFailed: (FirebaseAuthException e) {
-          print("Verification failed: ${e.message}");
-          Get.snackbar("Error aaya hai", "Login failed: ${e.toString()}");
-          setState(() {
-            _isLoading = false;
-          });
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          setState(() {
-            _isLoading = true;
-          });
-          Get.toNamed(AppRoutes.OTP, arguments: '+91${_phonenumbercontroller.text}');
-          setState(() {
-            _isLoading = false;
-          });
-          },
-        codeAutoRetrievalTimeout: (String verificationId) {},
+    final AuthController controller = Get.find();
+    try {
+      print("calling the controller functions");
+      bool success = await controller.login(
+          '+91${_phonenumbercontroller.text}', _phonenumbercontroller
       );
+      print("true ya false: "+success.toString());
+      if (!success) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Exception caught in _login: $e");
+      setState(() {
+        _isLoading = false;
+      });
+      Get.snackbar("Error", e.toString());
+    }
   }
-
   void dispose() {
     controller.dispose();
     super.dispose();

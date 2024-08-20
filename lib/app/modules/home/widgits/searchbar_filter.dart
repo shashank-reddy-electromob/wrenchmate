@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../../../controllers/auth_controller.dart';
+import '../../../routes/app_routes.dart';
 
 class searchbar extends StatefulWidget {
   const searchbar({super.key});
@@ -43,6 +48,9 @@ class _searchbarState extends State<searchbar> {
               size: 24,
             ),
             onPressed: () {
+              final AuthController controller = Get.find();
+              controller.logout();
+              Get.toNamed(AppRoutes.LOGIN);
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,

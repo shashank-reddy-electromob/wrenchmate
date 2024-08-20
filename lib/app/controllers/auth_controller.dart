@@ -1,3 +1,5 @@
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +13,7 @@ class AuthController extends GetxController {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> handleSignIn(PhoneAuthCredential credential, TextEditingController otpcontroller) async {
+  Future<void> _handleSignIn(PhoneAuthCredential credential, TextEditingController otpcontroller) async {
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
         verificationCompleted: (PhoneAuthCredential credential) {
@@ -35,14 +37,15 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> login(String phoneNumber, TextEditingController otpcontroller) async {
+  Future<bool> login(String phoneNumber, TextEditingController otpcontroller) async {
+    try {
       print("login function in auth controller");
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) => handleSignIn(credential, otpcontroller),
+        verificationCompleted: (PhoneAuthCredential credential) => _handleSignIn(credential, otpcontroller),
         verificationFailed: (FirebaseAuthException e) {
           print("Verification failed: ${e.message}");
-          Get.snackbar("Error aaya hai", "Login failed: ${e.toString()}");
+          Get.snackbar("Error", "Login failed: ${e.toString()}");
         },
         codeSent: (String verificationId, int? resendToken) {
           print("OTP sent: $verificationId");
@@ -54,13 +57,32 @@ class AuthController extends GetxController {
           this.verificationid.value = verificationId;
         },
       );
+      return true;
+    } catch (e) {
+      Get.snackbar("Error snackbar", "Login failed: ${e.toString()}");
+      return false;
+    }
+  }
+  Future<bool> updateUserAddress(String address) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      await _firestore.collection('User').doc(userId).update({
+        'User_address': address,
+      });
+      print("User address updated");
+      return true; // Indicate success
+    } catch (e) {
+      print("Failed to update address: $e");
+      Get.snackbar("Error", "Failed to update address: ${e.toString()}");
+      return false; // Indicate failure
+    }
   }
 
   void resendOTP(String phoneNumber, TextEditingController otpcontroller) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       forceResendingToken: resendToken,
-      verificationCompleted: (PhoneAuthCredential credential) => handleSignIn(credential, otpcontroller),
+      verificationCompleted: (PhoneAuthCredential credential) => _handleSignIn(credential, otpcontroller),
       verificationFailed: (FirebaseAuthException e) {
         print("Verification failed: ${e.message}");
         Get.snackbar("Error", e.message ?? "Verification failed");
@@ -78,7 +100,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> verifyOTP(String otp, String phoneNumber, TextEditingController otpcontroller) async {
-
+    try {
       print(verificationid);
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationid.toString(), smsCode: otp);
@@ -90,25 +112,28 @@ class AuthController extends GetxController {
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV);
       }
-
-  }
-
- Future<void> googleLogin() async {
-  try {
-    GoogleAuthProvider googleProvider = GoogleAuthProvider();
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(googleProvider);
-    bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
-    if (isNewUser == true) {
-      Get.toNamed(AppRoutes.REGISTER);
-    } else {
-      Get.toNamed(AppRoutes.BOTTOMNAV);
+    } catch (e) {
+      print("OTP verification failed: $e");
+      Get.snackbar("Error", "OTP verification failed: ${e.toString()}");
     }
-  } catch (e) {
-    print("Google Sign-In failed: $e");
-    Get.snackbar("Error", "Google Sign-In failed: ${e.toString()}");
-    throw e; // Ensure the exception is thrown
   }
-}
+
+  Future<void> googleLogin() async {
+    try {
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(googleProvider);
+      bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
+      if (isNewUser == true) {
+        Get.toNamed(AppRoutes.REGISTER);
+      } else {
+        Get.toNamed(AppRoutes.BOTTOMNAV);
+      }
+    } catch (e) {
+      print("Google Sign-In failed: $e");
+      Get.snackbar("Error", "Google Sign-In failed: ${e.toString()}");
+      throw e; // Ensure the exception is thrown
+    }
+  }
 
   Future<void> addUserToFirestore({required String name,
     required String number,
@@ -131,21 +156,6 @@ class AuthController extends GetxController {
     } catch (e) {
       print("Failed to add user: $e");
       Get.snackbar("Error", "Failed to add user: ${e.toString()}");
-    }
-  }
-
-  Future<bool> updateUserAddress(String address) async {
-    try {
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      await _firestore.collection('User').doc(userId).update({
-        'User_address': address,
-      });
-      print("User address updated");
-      return true; // Indicate success
-    } catch (e) {
-      print("Failed to update address: $e");
-      Get.snackbar("Error", "Failed to update address: ${e.toString()}");
-      return false; // Indicate failure
     }
   }
 
