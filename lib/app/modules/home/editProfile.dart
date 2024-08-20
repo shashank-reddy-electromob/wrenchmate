@@ -19,9 +19,8 @@ class _EditProfileState extends State<EditProfile> {
 
   final HomeController homeController = Get.put(HomeController());
 
-  Map<String, dynamic>? userData;
   File? _image;
-  bool _isLoading = false; 
+  bool _isLoading = false;
 
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -33,103 +32,108 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    homeController.fetchUserData().then((data) {
-      setState(() {
-        userData = data as Map<String, dynamic>?;
-      });
-    });
+  Future<Map<String, dynamic>> _fetchUserData() async {
+    Map<String, dynamic> data = await homeController.fetchUserData() as Map<String, dynamic>;
+
+    // Populate the controllers with fetched data
+    nameController.text = data['User_name'] ?? '';
+    numberController.text = data['User_number'][0] ?? '';
+    alternateNumberController.text = data['User_number'][1] ?? '';
+    emailController.text = data['User_email'] ?? '';
+
+    return data;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('User Profile'),
       ),
-      body: Obx(() {
-        if (homeController.userData.isEmpty) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          nameController.text = userData?['User_name'] ?? '';
-          numberController.text =  userData?['User_number'][0] ?? '';
-          alternateNumberController.text = userData?['User_number'][1] ?? '';
-          emailController.text =   userData?['User_email'] ?? '';
-          return SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height-100,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: GestureDetector( // Make the image clickable
-                        onTap: _pickImage, // Call the image picker on tap
-                        child: ClipOval(
-                          child: _image != null
-                            ? Image.file(
-                                File(_image!.path), // Use Image.file for local images
-                                fit: BoxFit.cover,
-                                height: 85.0,
-                                width: 85.0,
-                              )
-                            : Image.network(
-                                userData?['User_profile_image'], // Fallback to fetched image
-                                fit: BoxFit.cover,
-                                height: 85.0,
-                                width: 85.0,
-                              ),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: _fetchUserData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error fetching user data'));
+          } else {
+            return SingleChildScrollView(
+              child: Container(
+                height: MediaQuery.of(context).size.height - 100,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: GestureDetector(
+                          onTap: _pickImage,
+                          child: ClipOval(
+                            child: _image != null
+                                ? Image.file(
+                              _image!,
+                              fit: BoxFit.cover,
+                              height: 95.0,
+                              width: 95.0,
+                            )
+                                : Image.network(
+                              snapshot.data?['User_profile_image'],
+                              fit: BoxFit.cover,
+                              height: 95.0,
+                              width: 95.0,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    CustomTextField(
-                      controller: nameController,
-                      hintText: 'Name',
-                    ),
-                    SizedBox(height: 10),
-                    CustomTextField(
-                      controller: emailController,
-                      hintText: 'Email',
-                    ),
-                    SizedBox(height: 10),
-                    CustomTextField(
-                      controller: numberController,
-                      hintText: 'Primary Number',
-                    ),
-                    SizedBox(height: 10),
-                    CustomTextField(
-                      controller: alternateNumberController,
-                      hintText: 'Alternate Number',
-                    ),
-                    Spacer(),
-                    _isLoading
-                        ? Center(child: CircularProgressIndicator(color: Color(0xff1671D8)))
-                        : blueButton(text: "EDIT", onTap: () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            await homeController.updateUserProfile(
-                              name: nameController.text,
-                              email: emailController.text,
-                              primaryNumber: numberController.text,
-                              alternateNumber: alternateNumberController.text,
-                              profileImage: _image,
-                            );
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }),
-                  ],
+                      SizedBox(height: 20),
+                      CustomTextField(
+                        controller: nameController,
+                        hintText: 'Name',
+                      ),
+                      SizedBox(height: 10),
+                      CustomTextField(
+                        controller: emailController,
+                        hintText: 'Email',
+                      ),
+                      SizedBox(height: 10),
+                      CustomTextField(
+                        controller: numberController,
+                        hintText: 'Primary Number',
+                      ),
+                      SizedBox(height: 10),
+                      CustomTextField(
+                        controller: alternateNumberController,
+                        hintText: 'Alternate Number',
+                      ),
+                      Spacer(),
+                      _isLoading
+                          ? Center(child: CircularProgressIndicator(color: Color(0xff1671D8)))
+                          : blueButton(text: "EDIT", onTap: () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        await homeController.updateUserProfile(
+                          name: nameController.text,
+                          email: emailController.text,
+                          primaryNumber: numberController.text,
+                          alternateNumber: alternateNumberController.text,
+                          profileImage: _image,
+                        );
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }
-      }),
+            );
+          }
+        },
+      ),
     );
   }
 }

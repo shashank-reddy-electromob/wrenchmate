@@ -30,13 +30,15 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     final args = Get.arguments; // Get all arguments
     service = args['service']; // Retrieve service
     booking = args['booking']; // Retrieve booking
+
+    print("Current status: ${booking.status ?? "unknown"}"); // Debugging line
   }
 
   @override
   Widget build(BuildContext context) {
     // Use the booking and service details
     final String serviceName = service.name; // Use service name
-    final String statusName = booking.status ?? "unknown"; // Use booking status
+    final String statusName = booking.status ?? "unknown";
     final double servicePrice = service.price; // Use service price
     final String bookingDate = booking.confirmationDate != null 
         ? formatDateTime(booking.confirmationDate!) 

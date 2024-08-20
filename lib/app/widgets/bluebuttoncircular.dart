@@ -1,16 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class blueButton extends StatelessWidget {
+class blueButtonCircular extends StatelessWidget {
   final String text;
-  final double buttonHeight;
-  final double buttonHeight;
   final onTap;
-  const blueButton(
-      {super.key,
-      required this.text,
-      required this.onTap,
-      this.buttonHeight = 16.0});
+  const blueButtonCircular(
+      {super.key, required this.text, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +21,10 @@ class blueButton extends StatelessWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: buttonHeight),
+          padding: EdgeInsets.symmetric(vertical: 8.0),
           backgroundColor: Color(0XFF1671D8),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-                18.0), // Adjust the radius to make it more rectangular
+            borderRadius: BorderRadius.circular(56),
           ),
         ),
       ),
