@@ -14,14 +14,6 @@ class _SearchPageState extends State<SearchPage> {
       Get.put(SearchControllerClass());
 
   @override
-  void initState() {
-    super.initState();
-    // searchController.fetchTopCategories();
-    // searchController.fetchTopServices();
-    // searchController.fetchPopularServices();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -66,10 +58,9 @@ class _SearchPageState extends State<SearchPage> {
                 SizedBox(height: 20),
                 Obx(() => _buildSearchResults()),
                 SizedBox(height: 20),
-                Text(
-                  'Your search history',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                Text('Your search history',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 SizedBox(height: 10),
                 Obx(() {
                   return Wrap(
@@ -81,64 +72,64 @@ class _SearchPageState extends State<SearchPage> {
                   );
                 }),
                 SizedBox(height: 20),
-                Text(
-                  'Popular Services',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                Text('Popular Services',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 SizedBox(height: 10),
                 Obx(() {
-                  return Column(
-                    children: searchController.popularServices
-                        .map((service) => _buildTopServiceCard(
-                              serviceName: service.name ?? '',
-                              imageUrl: 'assets/images/topImages.png',
-                              // imageUrl: service.imageUrl ?? 'assets/images/topImages.png',
-                              time: service.time ?? 'N/A',
-                              warranty: service.warranty ?? 'N/A',
-                              description: service.description ?? '',
-                            ))
-                        .toList(),
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: searchController.popularServices
+                          .map((service) => ServiceCard(
+                                serviceName: service.name,
+                                price: service.price.toString(),
+                                rating: service.averageReview,
+                                imagePath: 'assets/car/toprecommended1.png',
+                                colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
+                              ))
+                          .toList(),
+                    ),
                   );
                 }),
                 SizedBox(height: 20),
-                Text(
-                  'Top Categories',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                Text('Top Categories',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 SizedBox(height: 10),
                 Obx(() {
-                  return Row(
-                    children: searchController.topCategories
-                        .map((category) => ServicesType(
-                              text: category.name ?? '',
-                              borderSides: [
-                                BorderSideEnum.bottom,
-                                BorderSideEnum.right
-                              ],
-                              imagePath: 'assets/services/default.png',
-                              // imagePath: category.imagePath ?? 'assets/services/default.png',
-                              onTap: () =>
-                                  navigateToServicePage(category.name ?? ''),
-                            ))
-                        .toList(),
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: searchController.topCategories
+                          .map((service) => ServicesType(
+                                text: service.category,
+                                borderSides: [
+                                  BorderSideEnum.bottom,
+                                  BorderSideEnum.right
+                                ],
+                                imagePath: 'assets/services/car wash.png',
+                                onTap: () =>
+                                    navigateToServicePage(service.category),
+                              ))
+                          .toList(),
+                    ),
                   );
                 }),
                 SizedBox(height: 20),
-                Text(
-                  'Top Services',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
+                Text('Top Services',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                 SizedBox(height: 10),
                 Obx(() {
                   return Column(
                     children: searchController.topServices
                         .map((service) => _buildTopServiceCard(
-                              serviceName: service.name ?? '',
-                              imageUrl: 'assets/images/topImages.png',
-                              // imageUrl: service.imageUrl ?? 'assets/images/topImages.png',
-                              time: service.time ?? 'N/A',
-                              warranty: service.warranty ?? 'N/A',
-                              description: service.description ?? '',
+                              serviceName: service.name,
+                              imageUrl: service.image,
+                              time: service.time,
+                              warranty: service.warranty,
+                              description: service.description,
                             ))
                         .toList(),
                   );
@@ -155,17 +146,15 @@ class _SearchPageState extends State<SearchPage> {
     if (searchController.searchResults.isEmpty &&
         searchController.searchController.text.isNotEmpty) {
       return Center(
-          child: Text(
-        "No results found",
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ));
+          child: Text("No results found",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)));
     } else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: searchController.searchResults.map((result) {
           return _buildTopServiceCard(
             serviceName: '${result['name']}',
-            imageUrl: 'assets/images/topImages.png',
+            imageUrl: '${result['image']}',
             time: '4 Hours',
             warranty: '1 Month',
             description: '${result['description'] ?? ''}',
@@ -204,9 +193,11 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset(
+            child: Image.network(
               imageUrl,
-              fit: BoxFit.cover,
+              height: 70,
+              width: 70,
+              fit: BoxFit.fill,
             ),
           ),
           SizedBox(width: 10),
@@ -221,23 +212,20 @@ class _SearchPageState extends State<SearchPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(fontSize: 14),
-                ),
+                // SizedBox(height: 4),
+                // Text(
+                //   description,
+                //   style: TextStyle(fontSize: 14),
+                // ),
                 SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.timer, size: 14),
+                    Text('Takes $time'),
                     SizedBox(width: 4),
-                    Text(time),
-                    SizedBox(width: 10),
-                    Icon(Icons.verified_user, size: 14),
-                    SizedBox(width: 4),
-                    Text(warranty),
+                    Text('$warranty Warranty'),
                   ],
                 ),
+                Text('Includes 15 Services'),
               ],
             ),
           ),

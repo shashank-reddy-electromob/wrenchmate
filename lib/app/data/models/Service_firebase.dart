@@ -31,12 +31,28 @@ class ServiceFirebase {
       'description': description,
       'discount': discount,
       'name': name,
-      'image':image,
+      'image': image,
       'price': price,
       'time': time,
       'warranty': warranty,
       'averageReview': averageReview,
       'numberOfReviews': numberOfReviews,
     };
+  }
+
+  factory ServiceFirebase.fromMap(Map<String, dynamic> map, String id) {
+    return ServiceFirebase(
+      id: id,
+      category: map['category'] ?? '',
+      description: map['description'] ?? '',
+      discount: map['discount'] ?? 0,
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
+      price: map['price']?.toDouble() ?? 0.0,
+      time: map['time'] ?? '',
+      warranty: map['warranty'] ?? '',
+      averageReview: map['averageReview']?.toDouble() ?? 0.0,
+      numberOfReviews: map['numberOfReviews'] ?? 0,
+    );
   }
 }

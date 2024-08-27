@@ -6,7 +6,6 @@ import 'package:wrenchmate_user_app/app/controllers/service_controller.dart';
 import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
 
 class SearchControllerClass extends GetxController {
-  // final ServiceController serviceController = Get.find();
   final TextEditingController searchController = TextEditingController();
   final RxList<QueryDocumentSnapshot> searchResults =
       <QueryDocumentSnapshot>[].obs;
@@ -21,9 +20,19 @@ class SearchControllerClass extends GetxController {
     super.onInit();
     searchController.addListener(_onSearchChanged);
     _loadSearchHistory();
-    // fetchTopCategories();
-    // fetchTopServices();
-    // fetchPopularServices();
+    fetchTopServices();
+    fetchTopCategories();
+    fetchPopularServices();
+    testFetchTopServices();
+  }
+
+  void testFetchTopServices() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('Top Services')
+        .doc('6zik3gDPzVILHjoDaxNO')
+        .get();
+
+    print("Document data: ${doc.data()}");
   }
 
   @override
@@ -49,10 +58,103 @@ class SearchControllerClass extends GetxController {
       searchResults.clear();
     }
   }
-  // final ServiceController serviceController = Get.find();
 
   Future<void> _fetchServiceDetails(String serviceId) async {
     await serviceController.fetchServiceDataById(serviceId);
+  }
+
+  Future<void> fetchTopServices() async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('Top Services')
+          .doc('6zik3gDPzVILHjoDaxNO')
+          .get();
+
+      print(
+          "Top Services Document: ${doc.data()}"); // Print document data for debugging
+
+      List<dynamic> serviceIdsTopServices = doc['top services'] ?? [];
+      List<Future<void>> fetchServiceFutures =
+          serviceIdsTopServices.map((serviceId) async {
+        DocumentSnapshot serviceDoc = await FirebaseFirestore.instance
+            .collection('Service')
+            .doc(serviceId)
+            .get();
+
+        if (serviceDoc.exists) {
+          ServiceFirebase service = ServiceFirebase.fromMap(
+              serviceDoc.data() as Map<String, dynamic>, serviceId);
+          topServices.add(service);
+        }
+      }).toList();
+
+      await Future.wait(fetchServiceFutures);
+      print("Top services fetched successfully.");
+    } catch (e) {
+      print("Error fetching top services: $e");
+    }
+  }
+
+  Future<void> fetchTopCategories() async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('Top Services')
+          .doc('6zik3gDPzVILHjoDaxNO')
+          .get();
+
+      List<dynamic> serviceIdsTopCategories = doc['top category'] ?? [];
+      List<Future<void>> fetchServiceFutures =
+          serviceIdsTopCategories.map((serviceId) async {
+        DocumentSnapshot serviceDoc = await FirebaseFirestore.instance
+            .collection('Service')
+            .doc(serviceId)
+            .get();
+
+        print("Service Document: ${serviceDoc.data()}");
+
+        if (serviceDoc.exists) {
+          ServiceFirebase service = ServiceFirebase.fromMap(
+              serviceDoc.data() as Map<String, dynamic>, serviceId);
+          topCategories.add(service);
+        }
+      }).toList();
+
+      await Future.wait(fetchServiceFutures);
+      print("Top categories fetched successfully.");
+    } catch (e) {
+      print("Error fetching top categories: $e");
+    }
+  }
+
+  Future<void> fetchPopularServices() async {
+    try {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('Top Services')
+          .doc('6zik3gDPzVILHjoDaxNO')
+          .get();
+
+      List<dynamic> serviceIdsPopularServices = doc['popular services'] ?? [];
+      List<Future<void>> fetchServiceFutures =
+          serviceIdsPopularServices.map((serviceId) async {
+        DocumentSnapshot serviceDoc = await FirebaseFirestore.instance
+            .collection('Service')
+            .doc(serviceId)
+            .get();
+
+        print("Service Document: ${serviceDoc.data()}");
+
+        if (serviceDoc.exists) {
+          ServiceFirebase service = ServiceFirebase.fromMap(
+              serviceDoc.data() as Map<String, dynamic>, serviceId);
+          popularServices.add(service);
+        }
+      }).toList();
+
+      await Future.wait(fetchServiceFutures);
+      print("Popular services fetched successfully.");
+    } catch (e) {
+      print("Error fetching popular services: $e");
+    }
   }
 
   Future<void> _loadSearchHistory() async {
@@ -72,7 +174,6 @@ class SearchControllerClass extends GetxController {
         List<dynamic> serviceIds = doc['user search'] ?? [];
 
         for (String serviceId in serviceIds) {
-          print('Service ID: $serviceId');
           fetchServiceFutures.add(_fetchServiceDetails(serviceId));
         }
       }
@@ -85,67 +186,6 @@ class SearchControllerClass extends GetxController {
       print('Search History: $searchHistory');
     } catch (e) {
       print('Error loading search history: $e');
-    }
-  }
-
-  Future<void> fetchTopCategories() async {
-    try {
-      DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('Top Services')
-          .doc('6zik3gDPzVILHjoDaxNO')
-          .get();
-      List<String> categoryIds = List<String>.from(doc['top category'] ?? []);
-      print("top category :: $categoryIds");
-
-      List<Future<void>> fetchCategoryFutures =
-          categoryIds.map((id) => _fetchServiceDetails(id)).toList();
-      await Future.wait(fetchCategoryFutures);
-      print("fetchCategoryFutures :: $fetchCategoryFutures");
-      topCategories
-          .assignAll(serviceController.services as Iterable<ServiceFirebase>);
-          
-    } catch (e) {
-      print('Error fetching top categories: $e');
-    }
-  }
-
-  Future<void> fetchTopServices() async {
-    try {
-      DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('Top Services')
-          .doc('6zik3gDPzVILHjoDaxNO')
-          .get();
-      List<String> serviceIds = List<String>.from(doc['top services'] ?? []);
-      print("top services :: $serviceIds");
-
-      List<Future<void>> fetchServiceFutures =
-          serviceIds.map((id) => _fetchServiceDetails(id)).toList();
-      await Future.wait(fetchServiceFutures);
-
-      topServices
-          .assignAll(serviceController.services as Iterable<ServiceFirebase>);
-    } catch (e) {
-      print('Error fetching top services: $e');
-    }
-  }
-
-  Future<void> fetchPopularServices() async {
-    try {
-      DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('Top Services')
-          .doc('6zik3gDPzVILHjoDaxNO')
-          .get();
-      List<String> serviceIds =
-          List<String>.from(doc['popular services'] ?? []);
-      print("popular services :: $serviceIds");
-      List<Future<void>> fetchServiceFutures =
-          serviceIds.map((id) => _fetchServiceDetails(id)).toList();
-      await Future.wait(fetchServiceFutures);
-
-      popularServices
-          .assignAll(serviceController.services as Iterable<ServiceFirebase>);
-    } catch (e) {
-      print('Error fetching popular services: $e');
     }
   }
 }

@@ -21,8 +21,12 @@ class _serviceswidgitState extends State<serviceswidgit> {
       padding: const EdgeInsets.all(20.0),
       child: Column(
         children: [
-          Header(text: "Services", ),
-          SizedBox(height: 12,),
+          Header(
+            text: "Services",
+          ),
+          SizedBox(
+            height: 12,
+          ),
           Row(
             children: [
               ServicesType(
@@ -83,11 +87,11 @@ class _serviceswidgitState extends State<serviceswidgit> {
       ),
     );
   }
+
   void navigateToServicePage(String service) {
     Get.toNamed(AppRoutes.SERVICE, arguments: service);
   }
 }
-
 
 class ServicesType extends StatelessWidget {
   final String text;
@@ -96,7 +100,6 @@ class ServicesType extends StatelessWidget {
   final double borderWidth;
   final String imagePath;
   final VoidCallback onTap;
-
 
   const ServicesType({
     Key? key,
@@ -127,7 +130,10 @@ class ServicesType extends StatelessWidget {
               imagePath,
               fit: BoxFit.cover,
             ),
-            Text(text,textAlign: TextAlign.center,),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
