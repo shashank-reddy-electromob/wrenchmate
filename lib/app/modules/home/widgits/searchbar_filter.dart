@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:wrenchmate_user_app/utils/color.dart';
 
 import '../../../controllers/auth_controller.dart';
 import '../../../routes/app_routes.dart';
@@ -33,6 +34,12 @@ class _searchbarState extends State<searchbar> {
               color: Color(0xffF7F7F7),
               child: Center(
                 child: TextField(
+                  onTap: () async {
+                    // This ensures that the search screen is shown when the search field is tapped
+                    print("AppRoutes.SEARCHSCREEN");
+                    // await Future.delayed(Duration(milliseconds: 100));
+                    Get.toNamed(AppRoutes.SEARCHSCREEN);
+                  },
                   decoration: InputDecoration(
                     hintText: "Search services and packages",
                     hintStyle:
@@ -96,8 +103,8 @@ class BottomSheet extends StatefulWidget {
 
 class _BottomSheetState extends State<BottomSheet> {
   List<String> selectedServices = [];
-  String selecteddiscount = '';
-  String selectedrating = '';
+  String selectedDiscount = '';
+  String selectedRating = '';
 
   List<String> services = [
     "Car Wash",
@@ -107,12 +114,12 @@ class _BottomSheetState extends State<BottomSheet> {
     "Painting",
     "Denting",
   ];
-  List<String> discount = [
+  List<String> discounts = [
     '0-15%',
     '16-35%',
     '36-50%',
   ];
-  List<String> rating = [
+  List<String> ratings = [
     '>⭐4.0',
     '>⭐3.0',
     '>⭐2.0',
@@ -123,7 +130,6 @@ class _BottomSheetState extends State<BottomSheet> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
-      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -131,209 +137,232 @@ class _BottomSheetState extends State<BottomSheet> {
           topRight: Radius.circular(20.0),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            height: 6,
-            margin: EdgeInsets.only(top: 8),
-            width: 80,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(8),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 8),
+            Container(
+              height: 6,
+              width: 80,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
+            SizedBox(height: 16),
+            RangeSliderWidget(),
+            SizedBox(height: 16),
+            _buildServiceTypes(),
+            SizedBox(height: 16),
+            _buildDiscountTypes(),
+            SizedBox(height: 16),
+            _buildRatingTypes(),
+            SizedBox(height: 32),
+            _buildClearAllApplyButtons(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceTypes() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Service Type",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          RangeSliderWidget(),
-          servicetypes(),
-          discounttypes(),
-          ratingtypes(),
-          clearallApply()
+          SizedBox(height: 8),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: services.map((service) {
+              bool isSelected = selectedServices.contains(service);
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    if (isSelected) {
+                      selectedServices.remove(service);
+                    } else {
+                      selectedServices.add(service);
+                    }
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  decoration: BoxDecoration(
+                    color: isSelected ? primaryColorLight : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    service,
+                    style: TextStyle(
+                        color: isSelected ? primaryColor : greyColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
         ],
       ),
     );
   }
 
-  Widget servicetypes() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Service Type",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Wrap(
-          spacing: 8.0,
-          runSpacing: 8.0,
-          children: services.map((service) {
-            bool isSelected = selectedServices.contains(service);
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  if (isSelected) {
-                    selectedServices.remove(service);
-                  } else {
-                    selectedServices.add(service);
-                  }
-                });
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.blue : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(20),
+  Widget _buildDiscountTypes() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Discount",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: discounts.map((discount) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedDiscount = discount;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  decoration: BoxDecoration(
+                    color: selectedDiscount == discount
+                        ? primaryColorLight
+                        : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    discount,
+                    style: TextStyle(
+                        color: selectedDiscount == discount
+                            ? primaryColor
+                            : greyColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700),
+                  ),
                 ),
-                child: Text(
-                  service,
-                  style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
-                      fontSize: 18),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget discounttypes() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Discount",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Wrap(
-          spacing: 8.0,
-          runSpacing: 8.0,
-          children: discount.map((discount) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  selecteddiscount = discount;
-                });
-                print(discount);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                decoration: BoxDecoration(
-                  color: selecteddiscount == discount
-                      ? Colors.blue
-                      : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(20),
+  Widget _buildRatingTypes() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Rating",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: ratings.map((rating) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedRating = rating;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  decoration: BoxDecoration(
+                    color: selectedRating == rating
+                        ? primaryColorLight
+                        : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    rating,
+                    style: TextStyle(
+                        color:
+                            selectedRating == rating ? primaryColor : greyColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700),
+                  ),
                 ),
-                child: Text(
-                  discount,
-                  style: TextStyle(
-                      color: selecteddiscount == discount
-                          ? Colors.white
-                          : Colors.black,
-                      fontSize: 18),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget ratingtypes() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Rating",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Wrap(
-          spacing: 8.0,
-          runSpacing: 8.0,
-          children: rating.map((rating) {
-            return GestureDetector(
-              onTap: () {
+  Widget _buildClearAllApplyButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.blue,
+                side: BorderSide(color: Colors.blue),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                minimumSize: Size(double.infinity, 60),
+              ),
+              onPressed: () {
                 setState(() {
-                  selectedrating = rating;
+                  selectedRating = '';
+                  selectedDiscount = '';
+                  selectedServices = [];
                 });
-                print(rating);
+                Navigator.of(context).pop();
               },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                decoration: BoxDecoration(
-                  color:
-                      selectedrating == rating ? Colors.blue : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  rating,
-                  style: TextStyle(
-                      color: selectedrating == rating
-                          ? Colors.white
-                          : Colors.black,
-                      fontSize: 18),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget clearallApply() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          width: MediaQuery.of(context).size.width * 0.45,
-          height: 70,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.blue,
-              backgroundColor: Colors.white, // Text color
-              side: BorderSide(color: Colors.blue), // Border color
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            onPressed: () {
-              selectedrating = '';
-              selecteddiscount = '';
-              selectedServices = [];
-              Navigator.of(context).pop();
-            },
-            child: Text(
-              'CLEAR ALL',
-              style: TextStyle(
-                color: Colors.blue,
+              child: Text(
+                "CLEAR ALL",
+                style: TextStyle(
+                    color: primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
               ),
             ),
           ),
-        ),
-        SizedBox(width: 10), // Space between buttons
-        Container(
-          width: MediaQuery.of(context).size.width * 0.45,
-          height: 70,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.blue, // Text color
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
+          SizedBox(width: 10),
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                minimumSize: Size(double.infinity, 60),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "APPLY",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
               ),
             ),
-            onPressed: () {
-              // apply functionality here
-              print(selectedServices);
-              print(selecteddiscount);
-              print(selectedrating);
-              Navigator.of(context).pop();
-            },
-            child: Text('APPLY'),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -387,7 +416,7 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               decoration: BoxDecoration(),
               child: Material(
                 type: MaterialType.circle,
-                color: Colors.blue,
+                color: primaryColor,
                 elevation: 0,
                 child: Container(
                   width: 20,
@@ -401,7 +430,7 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               decoration: BoxDecoration(),
               child: Material(
                 type: MaterialType.circle,
-                color: Colors.blue,
+                color: primaryColor,
                 elevation: 3,
                 child: Container(
                   width: 20,
@@ -412,95 +441,67 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
               ),
             ),
             trackBar: FlutterSliderTrackBar(
-              activeTrackBar:
-                  BoxDecoration(color: Colors.blue.withOpacity(0.5)),
+              activeTrackBar: BoxDecoration(
+                color: primaryColor.withOpacity(0.5),
+              ),
+            ),
+            tooltip: FlutterSliderTooltip(
+              positionOffset: FlutterSliderTooltipPositionOffset(
+                top: 50,
+              ),
+              leftPrefix: Container(
+                child: Text(
+                  '₹ ',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              rightPrefix: Container(
+                child: Text(
+                  '₹ ',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              alwaysShowTooltip: true,
+              custom: (value) {
+                return Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '₹ ${value.toInt()}',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '₹ ${_lowerValue.toInt()}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                '₹ ${_upperValue.toInt()}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          //depends on UI
-          // FlutterSlider(
-          //   values: [_lowerValue, _upperValue],
-          //   rangeSlider: true,
-          //   max: 5000,
-          //   min: 120,
-          //   onDragging: (handlerIndex, lowerValue, upperValue) {
-          //     setState(() {
-          //       _lowerValue = lowerValue;
-          //       _upperValue = upperValue;
-          //     });
-          //   },
-          //   handler: FlutterSliderHandler(
-          //     decoration: BoxDecoration(),
-          //     child: Material(
-          //       type: MaterialType.circle,
-          //       color: Colors.blue,
-          //       elevation: 0,
-          //       child: Container(
-          //         width: 20,
-          //         decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(30),
-          //         ),
-          //       ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       '₹ ${_lowerValue.toInt()}',
+          //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           //     ),
-          //   ),
-          //   rightHandler: FlutterSliderHandler(
-          //     decoration: BoxDecoration(),
-          //     child: Material(
-          //       type: MaterialType.circle,
-          //       color: Colors.blue,
-          //       elevation: 3,
-          //       child: Container(
-          //         width: 20,
-          //         decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(30),
-          //         ),
-          //       ),
+          //     Text(
+          //       '₹ ${_upperValue.toInt()}',
+          //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           //     ),
-          //   ),
-          //   trackBar: FlutterSliderTrackBar(
-          //     activeTrackBar: BoxDecoration(color: Colors.blue.withOpacity(0.5)),
-          //   ),
-          //   tooltip: FlutterSliderTooltip(
-          //     leftPrefix: Container(
-          //       child: Text(
-          //         '₹ ',
-          //         style: TextStyle(fontSize: 17, fontWeight: FontWeight.w300, color: Colors.white),
-          //       ),
-          //     ),
-          //     rightPrefix: Container(
-          //       child: Text(
-          //         '₹ ',
-          //         style: TextStyle(fontSize: 17, fontWeight: FontWeight.w300, color: Colors.white),
-          //       ),
-          //     ),
-          //     alwaysShowTooltip: true,
-          //     custom: (value) {
-          //       return Container(
-          //         padding: EdgeInsets.all(8),
-          //         decoration: BoxDecoration(
-          //           color: Colors.blue,
-          //           borderRadius: BorderRadius.circular(5),
-          //         ),
-          //         child: Text(
-          //           '₹ ${value.toInt()}',
-          //           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-          //         ),
-          //       );
-          //     },
-          //   ),
+          //   ],
           // ),
         ],
       ),
@@ -516,7 +517,7 @@ class BarChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.blue.withOpacity(0.5)
+      ..color = primaryColor.withOpacity(0.5)
       ..style = PaintingStyle.fill;
 
     double barWidth = 300 / itemCounts.length;

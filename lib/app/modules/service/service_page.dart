@@ -288,7 +288,7 @@ class _ServicePageState extends State<ServicePage> {
                                             ),
                                             //add button
                                             Positioned(
-                                              width: 80,
+                                              // width: 80,
                                               top: MediaQuery.of(context)
                                                       .size
                                                       .height *
@@ -299,7 +299,7 @@ class _ServicePageState extends State<ServicePage> {
                                                   0.04,
                                               child: CustomElevatedButton(
                                                 onPressed: () {},
-                                                text: '+Add',
+                                                text: 'Add+',
                                               ),
                                             ),
                                           ],

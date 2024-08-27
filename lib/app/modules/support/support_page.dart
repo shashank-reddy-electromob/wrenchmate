@@ -12,7 +12,6 @@ class SupportPage extends StatefulWidget {
 class _SupportPageState extends State<SupportPage> {
   String selectedTab = 'FAQ';
   
-  // Sample FAQ data
   final List<Map<String, String>> faqs = [
     {'question': 'What is your return policy?', 'answer': 'You can return items within 30 days.'},
     {'question': 'How do I contact support?', 'answer': 'You can contact us via the chat option.'},
@@ -20,15 +19,14 @@ class _SupportPageState extends State<SupportPage> {
     {'question': 'How do I contact support?', 'answer': 'You can contact us via the chat option.'},
     {'question': 'What is your return policy?', 'answer': 'You can return items within 30 days.'},
     {'question': 'How do I contact support?', 'answer': 'You can contact us via the chat option.'},
-    // Add more FAQs as needed
   ];
 
-  // Track visibility of each FAQ item
-  List<bool> _isVisibleList = List.generate(6, (index) => false); // Adjust size based on FAQs
+  List<bool> _isVisibleList = List.generate(6, (index) => false); 
+  final SupportController controller = Get.put(SupportController());  
 
   @override
   Widget build(BuildContext context) {
-    final SupportController controller = Get.find();
+    // final SupportController controller = Get.find();
     return Scaffold(backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,

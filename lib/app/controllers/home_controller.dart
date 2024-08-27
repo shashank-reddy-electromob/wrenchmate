@@ -29,6 +29,26 @@ class HomeController extends GetxController {
     }
   }
 
+  // var searchResults = [].obs;
+
+  // Future<void> searchServices(String query) async {
+  //   try {
+  //     // Perform the search query on the 'Services' collection
+  //     QuerySnapshot querySnapshot = await _firestore
+  //         .collection('Services')
+  //         .where('serviceName', isGreaterThanOrEqualTo: query)
+  //         .where('serviceName', isLessThanOrEqualTo: query + '\uf8ff')
+  //         .get();
+
+  //     searchResults.value =
+  //         querySnapshot.docs.map((doc) => doc.data()).toList();
+  //     print("Search results fetched successfully: ${searchResults.value}");
+  //   } catch (e) {
+  //     print("Failed to fetch search results: $e");
+  //     Get.snackbar("Error", "Failed to fetch search results: ${e.toString()}");
+  //   }
+  // }
+
   Future<void> updateUserProfile(Map<String, dynamic> updatedData) async {
     try {
       print("in update user profile");
@@ -37,7 +57,8 @@ class HomeController extends GetxController {
 
       // Check if a new image was provided and upload it
       if (updatedData.containsKey('User_profile_image')) {
-        profileImagePath = await uploadImageToStorage(updatedData['User_profile_image']);
+        profileImagePath =
+            await uploadImageToStorage(updatedData['User_profile_image']);
         updatedData['User_profile_image'] = profileImagePath ?? '';
       }
 
@@ -59,13 +80,15 @@ class HomeController extends GetxController {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       final storageReference = FirebaseStorage.instance.ref('/Users');
-      final fileName= image.path.split('/').last;
+      final fileName = image.path.split('/').last;
       final dateStamp = DateTime.now().microsecondsSinceEpoch;
-      final uploadReference =  storageReference.child('$userId/ProfileImage/$dateStamp-$fileName');
+      final uploadReference =
+          storageReference.child('$userId/ProfileImage/$dateStamp-$fileName');
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',
       );
-      TaskSnapshot taskSnapshot = await uploadReference.putFile(image,metadata);
+      TaskSnapshot taskSnapshot =
+          await uploadReference.putFile(image, metadata);
       return await taskSnapshot.ref.getDownloadURL();
     } catch (e) {
       print("Failed to upload image: $e");

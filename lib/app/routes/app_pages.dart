@@ -60,6 +60,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_register.dart';
 import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
+import 'package:wrenchmate_user_app/app/modules/home/searchscreen.dart';
 import '../modules/auth/MapScreen.dart';
 import '../bindings/auth_binding.dart';
 import '../bindings/bottomnav_bindings.dart';
@@ -97,6 +98,7 @@ class AppPages {
 
   static final routes = [
     GetPage(name: AppRoutes.LOGIN, page: () => LoginPage(), binding: AuthBinding()),
+    GetPage(name: AppRoutes.SEARCHSCREEN, page: () => SearchPage(), binding: HomeBinding()),
     GetPage(name: AppRoutes.OTP, page: () => optpage(), binding: AuthBinding()),
     GetPage(name: AppRoutes.REGISTER, page: () => RegisterPage(), binding: AuthBinding()),
     GetPage(name: AppRoutes.MAPSCREEN, page: () => MapScreen(), binding: AuthBinding()),

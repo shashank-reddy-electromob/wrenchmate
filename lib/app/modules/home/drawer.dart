@@ -69,17 +69,21 @@ class _drawerPageState extends State<drawerPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  child: ClipOval(
-                    child: (userData?['User_profile_image'] != null)
-                        ? Image.network(
-                            userData!['User_profile_image'] ?? '',
-                            fit: BoxFit.cover,
-                            height: 85.0,
-                            width: 85.0,
-                          )
-                        : Image.asset("assets/images/person.png"),
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      child: ClipOval(
+                        child: (userData?['User_profile_image'] != null)
+                            ? Image.network(
+                                userData!['User_profile_image'] ?? '',
+                                fit: BoxFit.cover,
+                                height: 85.0,
+                                width: 85.0,
+                              )
+                            : Image.asset("assets/images/person.png"),
+                      ),
+                    ),
+                  ],
                 ),
                 Row(
                   children: [
@@ -113,7 +117,7 @@ class _drawerPageState extends State<drawerPage> {
             ),
           ),
           SizedBox(
-            height: 30,
+            height: 10,
           ),
           MenuTab(
             index: 0,

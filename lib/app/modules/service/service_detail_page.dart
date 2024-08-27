@@ -23,9 +23,9 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   late List<bool> _isVisibleList;
   final ServiceController controller = Get.find();
   late ServiceFirebase service;
-  bool addtocart=false;
+  bool addtocart = false;
   late CartController cartController;
-  
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +43,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     _isVisibleList = List<bool>.filled(controller.faqs.length, false);
   }
 
-  Future<void> addToCart(ServiceFirebase service) async{
+  Future<void> addToCart(ServiceFirebase service) async {
     print("adding to cart");
     await cartController.addToCart(serviceId: service.id);
     print("added to cart");
@@ -99,14 +99,14 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                   height: MediaQuery.of(context).size.height * 0.49,
                   child: Stack(children: [
                     ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child:
-                      ExtendedImage.network(
+                      borderRadius: BorderRadius.circular(12),
+                      child: ExtendedImage.network(
                         "https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
                         //service.image,
                         fit: BoxFit.fitWidth,
                         cache: true,
-                    ),),
+                      ),
+                    ),
                     Positioned(top: 200, left: 20, child: serviceCard()),
                   ]),
                 ),
@@ -270,9 +270,9 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                     return BottomSheet();
                   },
                 );
-              }, text: '+Add',
-            )
-        ),
+              },
+              text: 'Add+',
+            )),
       ]),
     );
   }
@@ -322,16 +322,22 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                               fontWeight: FontWeight.w400),
                         ),
                         (addtocart == false)
-                            ? CustomElevatedButton(onPressed: () {
-                                addToCart(service);
-                                setState(() {
-                                  addtocart = true;
-                                });
-                              }, text: '+Add',)
-                            : CustomElevatedButton(onPressed: () {
-                          Navigator.pop(context);
-                          Get.toNamed(AppRoutes.CART);
-                        }, text: 'Go to cart',),
+                            ? CustomElevatedButton(
+                                onPressed: () {
+                                  addToCart(service);
+                                  setState(() {
+                                    addtocart = true;
+                                  });
+                                },
+                                text: '+Add',
+                              )
+                            : CustomElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Get.toNamed(AppRoutes.CART);
+                                },
+                                text: 'Go to cart',
+                              ),
                       ],
                     ),
                     SizedBox(height: 18),
@@ -346,17 +352,22 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                               fontWeight: FontWeight.w400),
                         ),
                         (addtocart == false)
-                            ? CustomElevatedButton(onPressed: () {
-                          addToCart(service);
-                          setState(() {
-                            addtocart = true;
-                          });
-                        }, text: '+Add',)
-                            : CustomElevatedButton(onPressed: () {
-                          Navigator.pop(context);
-                          Get.toNamed(AppRoutes.CART);
-                        }, text: 'Go to cart',),
-
+                            ? CustomElevatedButton(
+                                onPressed: () {
+                                  addToCart(service);
+                                  setState(() {
+                                    addtocart = true;
+                                  });
+                                },
+                                text: '+Add',
+                              )
+                            : CustomElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Get.toNamed(AppRoutes.CART);
+                                },
+                                text: 'Go to cart',
+                              ),
                       ],
                     ),
                   ],

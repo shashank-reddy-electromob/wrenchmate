@@ -22,4 +22,5 @@ class AppRoutes {
   static const CONTACT_US = '/contact-us';
   static const TRACKING = '/tracking';
   static const BOTTOMNAV = '/bottomnav';
+  static const SEARCHSCREEN = '/searchScreen';
 }

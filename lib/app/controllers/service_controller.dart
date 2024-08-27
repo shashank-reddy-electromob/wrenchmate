@@ -188,7 +188,7 @@ class ServiceController extends GetxController {
   Future<void> fetchServiceDataById(String serviceId) async {
     try {
       print("Fetching service data by ID: $serviceId");
-      loading.value = true; // Start loading
+      loading.value = true; 
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('Service')
           .doc(serviceId)
@@ -196,7 +196,6 @@ class ServiceController extends GetxController {
       var data = doc.data() as Map<String, dynamic>;
       print("Returned service data: $data");
 
-      // Add the fetched service to the services list
       services.add(ServiceFirebase(
         averageReview: data['averageReview']?.toDouble() ?? 0.0,
         numberOfReviews: data['numberOfReviews'] ?? 0,

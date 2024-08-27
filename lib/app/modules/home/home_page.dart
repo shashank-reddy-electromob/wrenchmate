@@ -100,143 +100,145 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         children: [
           drawerPage(),
-          AnimatedContainer(
-            decoration: isDrawerOpen
-                ? BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 20,
-                        blurRadius: 35,
-                      ),
-                    ],
-                  )
-                : BoxDecoration(color: Colors.white),
-            duration: Duration(microseconds: 100),
-            transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
-              ..scale(scaleFactor),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  Container(
-                    height: 40,
-                  ),
-                  //appbar
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        //icon and name
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  xOffSet = 230;
-                                  yOffSet =
-                                      MediaQuery.of(context).size.height * 0.15;
-                                  scaleFactor = 0.7;
-                                  isDrawerOpen = true;
-                                });
-                              },
-                              child: ClipOval(
-                                child: FutureBuilder<String>(
-                                  future: profileImageUrlFuture,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return CircularProgressIndicator(
-                                          color: Color(0xff1671D8));
-                                    } else if (snapshot.hasError) {
-                                      return Icon(Icons.error);
-                                    } else if (snapshot.hasData &&
-                                        snapshot.data!.isNotEmpty) {
-                                      return Image.network(
-                                        snapshot.data!,
-                                        fit: BoxFit.cover,
-                                        height: 45.0,
-                                        width: 45.0,
-                                      );
-                                    } else {
-                                      return Image.asset(
-                                        'assets/images/person.png',
-                                        fit: BoxFit.cover,
-                                        height: 45.0,
-                                        width: 45.0,
-                                      );
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Container(
-                              // height: 45,
-                              child: const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'helo',
-                                    style: TextStyle(
-                                        fontSize: 22, color: Colors.black),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_on_outlined,
-                                        size: 16,
-                                        color: Color(0xffFF5402),
-                                      ),
-                                      Text("234, FTS Colony, HYD",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        //notification
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Color(
-                                  0xffE7E7E7), // Set the border color to grey
-                              width: 1.0, // Set the border width
-                            ),
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.notifications_none_outlined,
-                              color: Color(0xff515151),
-                            ),
-                            onPressed: () {
-                              Get.toNamed(AppRoutes.NOTIFICATIONS);
-                            },
-                          ),
+          IgnorePointer(
+            ignoring: isDrawerOpen,
+            child: AnimatedContainer(
+              decoration: isDrawerOpen
+                  ? BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 20,
+                          blurRadius: 35,
                         ),
                       ],
+                    )
+                  : BoxDecoration(color: Colors.white),
+              duration: Duration(microseconds: 100),
+              transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
+                ..scale(scaleFactor),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 40,
                     ),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  searchbar(),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  offersSliders(),
-                  serviceswidgit(),
-                  toprecommendedservices(),
-                ],
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    xOffSet = 230;
+                                    yOffSet =
+                                        MediaQuery.of(context).size.height *
+                                            0.15;
+                                    scaleFactor = 0.7;
+                                    isDrawerOpen = true;
+                                  });
+                                },
+                                child: ClipOval(
+                                  child: FutureBuilder<String>(
+                                    future: profileImageUrlFuture,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return CircularProgressIndicator(
+                                            color: Color(0xff1671D8));
+                                      } else if (snapshot.hasError) {
+                                        return Icon(Icons.error);
+                                      } else if (snapshot.hasData &&
+                                          snapshot.data!.isNotEmpty) {
+                                        return Image.network(
+                                          snapshot.data!,
+                                          fit: BoxFit.cover,
+                                          height: 45.0,
+                                          width: 45.0,
+                                        );
+                                      } else {
+                                        return Image.asset(
+                                          'assets/images/person.png',
+                                          fit: BoxFit.cover,
+                                          height: 45.0,
+                                          width: 45.0,
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Container(
+                                // height: 45,
+                                child: const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'helo',
+                                      style: TextStyle(
+                                          fontSize: 22, color: Colors.black),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on_outlined,
+                                          size: 16,
+                                          color: Color(0xffFF5402),
+                                        ),
+                                        Text("234, FTS Colony, HYD",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          //notification
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Color(
+                                    0xffE7E7E7), // Set the border color to grey
+                                width: 1.0, // Set the border width
+                              ),
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.notifications_none_outlined,
+                                color: Color(0xff515151),
+                              ),
+                              onPressed: () {
+                                Get.toNamed(AppRoutes.NOTIFICATIONS);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    searchbar(),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    offersSliders(),
+                    serviceswidgit(),
+                    toprecommendedservices(),
+                  ],
+                ),
               ),
             ),
           ),
