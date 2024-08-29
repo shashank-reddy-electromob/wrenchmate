@@ -1,13 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:wrenchmate_user_app/app/controllers/searchcontroller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/searchscreen.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
-
-import '../../../controllers/auth_controller.dart';
 import '../../../routes/app_routes.dart';
 
 class searchbar extends StatefulWidget {
@@ -19,8 +15,6 @@ class searchbar extends StatefulWidget {
 }
 
 class _searchbarState extends State<searchbar> {
-  final SearchControllerClass searchController =
-      Get.put(SearchControllerClass());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -104,6 +98,27 @@ class BottomSheet extends StatefulWidget {
 }
 
 class _BottomSheetState extends State<BottomSheet> {
+  final SearchControllerClass searchController =
+      Get.put(SearchControllerClass());
+  void onApplyFilters(
+    List<String> selectedServices,
+    String selectedDiscount,
+    String selectedRating,
+    double minPrice,
+    double maxPrice,
+  ) async {
+    print("onApplyFilters called");
+    await searchController.fetchFilteredSearchResults(
+      selectedServices: selectedServices,
+      selectedDiscount: selectedDiscount,
+      selectedRating: selectedRating,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+    );
+
+    Get.toNamed('/filteredResults');
+  }
+
   List<String> selectedServices = [];
   String selectedDiscount = '';
   String selectedRating = '';
@@ -114,9 +129,9 @@ class _BottomSheetState extends State<BottomSheet> {
     "Car Wash",
     "Detailing",
     "Repair",
-    "Wheel",
-    "Painting",
-    "Denting",
+    "Wheel Service",
+    "Accessories",
+    "Denting and Painting",
   ];
   List<String> discounts = [
     '0-15%',
@@ -353,41 +368,48 @@ class _BottomSheetState extends State<BottomSheet> {
             ),
           ),
           SizedBox(width: 10),
-      Expanded(
-  child: ElevatedButton(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.blue,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      minimumSize: Size(double.infinity, 60),
-    ),
-    onPressed: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => SearchPage(
-            // filters: {
-            //   'selectedServices': selectedServices,
-            //   'selectedDiscount': selectedDiscount,
-            //   'selectedRating': selectedRating,
-            //   'minPrice': minPrice,
-            //   'maxPrice': maxPrice,
-            // },
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                minimumSize: Size(double.infinity, 60),
+              ),
+              onPressed: () {
+                onApplyFilters(
+                  selectedServices,
+                  selectedDiscount,
+                  selectedRating,
+                  minPrice,
+                  maxPrice,
+                );
+                // Navigator.of(context).push(
+                // MaterialPageRoute(
+                //   builder: (context) => SearchPage(
+                //       // filters: {
+                //       //   'selectedServices': selectedServices,
+                //       //   'selectedDiscount': selectedDiscount,
+                //       //   'selectedRating': selectedRating,
+                //       //   'minPrice': minPrice,
+                //       //   'maxPrice': maxPrice,
+                //       // },
+                //       ),
+                // ),
+                // );
+              },
+              child: Text(
+                "APPLY",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
-        ),
-      );
-    },
-    child: Text(
-      "APPLY",
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
-    ),
-  ),
-),
-],
+        ],
       ),
     );
   }

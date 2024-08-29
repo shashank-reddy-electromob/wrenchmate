@@ -17,17 +17,24 @@ class CarDetails extends StatefulWidget {
 class _CarDetailsState extends State<CarDetails> {
   String? selectedFuelType;
   String? selectedTransmissionType;
+  String? selectedCarModel; // Add this field
   TextEditingController regNoController = TextEditingController();
   TextEditingController regYearController = TextEditingController();
   TextEditingController insuranceExpController = TextEditingController();
   TextEditingController pucExpDateController = TextEditingController();
   CarController? carController;
-@override
+  int? selectedIndex = 0;
 
-void initState() {
-  carController = Get.put(CarController());
-  selectedIndex = Get.arguments as int;
+  @override
+  void initState() {
+    super.initState();
+    carController = Get.put(CarController());
+    selectedIndex = Get.arguments as int?;
+    if (selectedIndex == null) {
+      selectedIndex = 0; // Or any default value
+    }
   }
+
   final List<String> carNames = ['Hatchback', 'Sedan', 'Compact SUV', 'SUV'];
   final List<String> carImages = [
     'assets/car/Matchback.png',
@@ -35,9 +42,9 @@ void initState() {
     'assets/car/compact_suv.png',
     'assets/car/suv.png'
   ];
-  int? selectedIndex;
 
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+  Future<void> _selectDate(
+      BuildContext context, TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -52,8 +59,11 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
-    String selectedCarType = carNames[selectedIndex!];
-    String selectedCarImage = carImages[selectedIndex!];
+    final int index = selectedIndex ?? 0;
+    String selectedCarType = carNames[index];
+    String selectedCarImage = carImages[index];
+
+    List<String> carModels = carController!.getCarModels(selectedCarType);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -67,11 +77,12 @@ void initState() {
           child: Custombackbutton(),
         ),
       ),
-      body: SingleChildScrollView(scrollDirection: Axis.vertical,
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(left: 16,top: 8),
+              margin: EdgeInsets.only(left: 16, top: 8),
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
@@ -102,10 +113,30 @@ void initState() {
                       ),
                       child: Row(
                         children: [
-                          SizedBox(width: 16,),
-                          Image.asset(selectedCarImage,height: 90,),
-                          SizedBox(width: 16,),
-                          Text(selectedCarType,style: TextStyle(fontWeight: FontWeight.w500,fontSize: 24),)
+                          // SizedBox(
+                          //   width: 16,
+                          // ),
+                          Expanded(
+                            child: Image.asset(
+                              selectedCarImage,
+                              height: 90,
+                            ),
+                          ),
+                          // SizedBox(
+                          //   width: 16,
+                          // ),
+                          Expanded(
+                            child: CustomDropdown(
+                              label: "Car Model",
+                              value: selectedCarModel,
+                              items: carModels,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedCarModel = value;
+                                });
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -140,7 +171,8 @@ void initState() {
                           child: CustomDateField(
                             controller: regYearController,
                             label: "Reg Year",
-                            onTap: () => _selectDate(context, regYearController),
+                            onTap: () =>
+                                _selectDate(context, regYearController),
                           ),
                         ),
                         Padding(
@@ -148,7 +180,8 @@ void initState() {
                           child: CustomDateField(
                             controller: insuranceExpController,
                             label: "Insurance Exp.",
-                            onTap: () => _selectDate(context, insuranceExpController),
+                            onTap: () =>
+                                _selectDate(context, insuranceExpController),
                           ),
                         ),
                         Padding(
@@ -156,7 +189,8 @@ void initState() {
                           child: CustomDateField(
                             controller: pucExpDateController,
                             label: "PUC Exp Date",
-                            onTap: () => _selectDate(context, pucExpDateController),
+                            onTap: () =>
+                                _selectDate(context, pucExpDateController),
                           ),
                         ),
                       ],
@@ -172,21 +206,24 @@ void initState() {
                       },
                     ),
                     Spacer(),
-                    blueButton(text: 'COMPLETED', onTap: () async{
-                      print("tapped");
-                      // await carController?.addCar(
-                      //   fuelType: 'Petrol',
-                      //   registrationNumber: 'ABC1234',
-                      //   registrationYear: 2021,
-                      //   pucExpiration: DateTime(2022, 12, 31),
-                      //   insuranceExpiration: DateTime(2023, 12, 31),
-                      //   transmission: 'Automatic', carType: selectedCarType,
-                      //   carModel: '', //make changes here
-                      // );
-                      Get.toNamed(AppRoutes.BOTTOMNAV);
-                    }),
-                    SizedBox(width: 16,),
-
+                    blueButton(
+                        text: 'COMPLETED',
+                        onTap: () async {
+                          print("tapped");
+                          // await carController?.addCar(
+                          //   fuelType: 'Petrol',
+                          //   registrationNumber: 'ABC1234',
+                          //   registrationYear: 2021,
+                          //   pucExpiration: DateTime(2022, 12, 31),
+                          //   insuranceExpiration: DateTime(2023, 12, 31),
+                          //   transmission: 'Automatic', carType: selectedCarType,
+                          //   carModel: '', //make changes here
+                          // );
+                          Get.toNamed(AppRoutes.BOTTOMNAV);
+                        }),
+                    SizedBox(
+                      width: 16,
+                    ),
                   ],
                 ),
               ),
@@ -233,7 +270,7 @@ class CustomDropdown extends StatelessWidget {
           value: value,
           child: Text(
             value,
-            style: TextStyle(fontSize: 18.0),
+            style: TextStyle(fontSize: 12.0),
           ),
         );
       }).toList(),
@@ -264,7 +301,8 @@ class CustomDateField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: label,
           hintStyle: TextStyle(color: Color(0xFFB8B8BC)),
-          contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Color(0xFFB8B8BC)),
           ),

@@ -5,7 +5,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 
-import '../../data/models/Service_Firebase.dart';
+import '../../data/models/Service_firebase.dart';
 
 class SearchPage extends StatefulWidget {
   @override

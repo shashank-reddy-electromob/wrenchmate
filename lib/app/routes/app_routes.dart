@@ -9,6 +9,8 @@ class AppRoutes {
   static const SERVICE = '/service';
   static const SERVICE_DETAIL = '/service-detail';
   static const SUBSCRIPTION = '/subscription';
+  static const String FILTERED_RESULTS = '/filteredResults';
+
   static const PAYMENT = '/payment';
   static const CART = '/cart';
   static const BOOKING_DETAILS = '/booking-details';

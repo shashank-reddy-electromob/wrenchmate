@@ -34,6 +34,7 @@ class SearchControllerClass extends GetxController {
 
     print("Document data: ${doc.data()}");
   }
+
 // disp
   @override
   void onClose() {
@@ -70,8 +71,7 @@ class SearchControllerClass extends GetxController {
           .doc('6zik3gDPzVILHjoDaxNO')
           .get();
 
-      print(
-          "Top Services Document: ${doc.data()}"); // Print document data for debugging
+      print("Top Services Document: ${doc.data()}");
 
       List<dynamic> serviceIdsTopServices = doc['top services'] ?? [];
       List<Future<void>> fetchServiceFutures =
@@ -189,12 +189,16 @@ class SearchControllerClass extends GetxController {
     }
   }
 
-  var searchFilterResults = <QueryDocumentSnapshot>[];
-  List<String> selectedServices = [];
-  String selectedDiscount = '';
-  String selectedRating = '';
-  double minPrice = 0;
-  double maxPrice = double.infinity;
+  // var searchFilterResults = <QueryDocumentSnapshot>[];
+  // List<String> selectedServices = [];
+  // String selectedDiscount = '';
+  // String selectedRating = '';
+  // double minPrice = 0;
+  // double maxPrice = double.infinity;
+
+  RxList<QueryDocumentSnapshot> searchFilterResults =
+      <QueryDocumentSnapshot>[].obs;
+
   Future<void> fetchFilteredSearchResults({
     List<String> selectedServices = const [],
     String selectedDiscount = '',
@@ -202,44 +206,75 @@ class SearchControllerClass extends GetxController {
     double minPrice = 0,
     double maxPrice = double.infinity,
   }) async {
-    Query query = FirebaseFirestore.instance.collection('Service');
+    try {
+      print("inside fetchFilteredSearchResults");
+      print("selectedServices :: $selectedServices");
+      print("selectedDiscount :: $selectedDiscount");
+      print("selectedRating :: $selectedRating");
+      print("minPrice :: $minPrice");
+      print("maxPrice :: $maxPrice");
 
-    if (selectedServices.isNotEmpty) {
-      query = query.where('category', whereIn: selectedServices);
-    }
+      Query query = FirebaseFirestore.instance.collection('Service');
 
-    if (selectedDiscount.isNotEmpty) {
-      query = query.where('discount', isEqualTo: selectedDiscount);
-    }
+      if (selectedServices.isNotEmpty) {
+        query = query.where('category', whereIn: selectedServices);
+        print("Filter Applied: category whereIn $selectedServices");
+      }
 
-    if (selectedRating.isNotEmpty) {
-      query = query.where('rating', isGreaterThanOrEqualTo: selectedRating);
-    }
+      if (selectedDiscount.isNotEmpty) {
+        query = query.where('discount', isEqualTo: selectedDiscount);
+        print("Filter Applied: discount isEqualTo $selectedDiscount");
+      }
 
-    query = query.where('price', isGreaterThanOrEqualTo: minPrice);
-    query = query.where('price', isLessThanOrEqualTo: maxPrice);
+      if (selectedRating.isNotEmpty) {
+        query = query.where('averageReview',
+            isGreaterThanOrEqualTo: double.parse(selectedRating));
+        print(
+            "Filter Applied: averageReview isGreaterThanOrEqualTo $selectedRating");
+      }
 
-    QuerySnapshot snapshot = await query.get();
+      if (minPrice != 0 || maxPrice != double.infinity) {
+        query = query
+            .where('price', isGreaterThanOrEqualTo: minPrice)
+            .where('price', isLessThanOrEqualTo: maxPrice);
+        print("Filter Applied: price range from $minPrice to $maxPrice");
+      }
 
-    searchFilterResults = snapshot.docs;
-    update();
-  }
+      // Print the final query setup for debugging purposes
+      print("Executing Query: ${query.toString()}");
 
-  Future<void> search(String queryString) async {
-    if (queryString.isEmpty) {
-      searchFilterResults = [];
+      QuerySnapshot snapshot = await query.get();
+
+      print('Number of documents retrieved: ${snapshot.docs.length}');
+
+      for (var result in snapshot.docs) {
+        print('Document ID: ${result.id}');
+        print('Document Data: ${result.data()}');
+      }
+
+      searchFilterResults.value = snapshot.docs;
+
       update();
-      return;
+    } catch (e) {
+      print('Error fetching search results: $e');
     }
-
-    Query query = FirebaseFirestore.instance
-        .collection('Service')
-        .where('name', isGreaterThanOrEqualTo: queryString)
-        .where('name', isLessThanOrEqualTo: queryString + '\uf8ff');
-
-    QuerySnapshot snapshot = await query.get();
-
-    searchFilterResults = snapshot.docs;
-    update();
   }
+
+  // Future<void> search(String queryString) async {
+  //   if (queryString.isEmpty) {
+  //     searchFilterResults = [];
+  //     update();
+  //     return;
+  //   }
+
+  //   Query query = FirebaseFirestore.instance
+  //       .collection('Service')
+  //       .where('name', isGreaterThanOrEqualTo: queryString)
+  //       .where('name', isLessThanOrEqualTo: queryString + '\uf8ff');
+
+  //   QuerySnapshot snapshot = await query.get();
+
+  //   searchFilterResults = snapshot.docs;
+  //   update();
+  // }
 }
