@@ -188,4 +188,58 @@ class SearchControllerClass extends GetxController {
       print('Error loading search history: $e');
     }
   }
+
+  var searchFilterResults = <QueryDocumentSnapshot>[];
+  List<String> selectedServices = [];
+  String selectedDiscount = '';
+  String selectedRating = '';
+  double minPrice = 0;
+  double maxPrice = double.infinity;
+  Future<void> fetchFilteredSearchResults({
+    List<String> selectedServices = const [],
+    String selectedDiscount = '',
+    String selectedRating = '',
+    double minPrice = 0,
+    double maxPrice = double.infinity,
+  }) async {
+    Query query = FirebaseFirestore.instance.collection('Service');
+
+    if (selectedServices.isNotEmpty) {
+      query = query.where('category', whereIn: selectedServices);
+    }
+
+    if (selectedDiscount.isNotEmpty) {
+      query = query.where('discount', isEqualTo: selectedDiscount);
+    }
+
+    if (selectedRating.isNotEmpty) {
+      query = query.where('rating', isGreaterThanOrEqualTo: selectedRating);
+    }
+
+    query = query.where('price', isGreaterThanOrEqualTo: minPrice);
+    query = query.where('price', isLessThanOrEqualTo: maxPrice);
+
+    QuerySnapshot snapshot = await query.get();
+
+    searchFilterResults = snapshot.docs;
+    update();
+  }
+
+  Future<void> search(String queryString) async {
+    if (queryString.isEmpty) {
+      searchFilterResults = [];
+      update();
+      return;
+    }
+
+    Query query = FirebaseFirestore.instance
+        .collection('Service')
+        .where('name', isGreaterThanOrEqualTo: queryString)
+        .where('name', isLessThanOrEqualTo: queryString + '\uf8ff');
+
+    QuerySnapshot snapshot = await query.get();
+
+    searchFilterResults = snapshot.docs;
+    update();
+  }
 }
