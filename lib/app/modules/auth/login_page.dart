@@ -25,10 +25,10 @@ class _LoginPageState extends State<LoginPage> {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: '+91${_phonenumbercontroller.text}',
       verificationCompleted: (PhoneAuthCredential credential) {
+        controller.handleSignIn(credential, _phonenumbercontroller);
         setState(() {
           _isLoading = false;
         });
-        controller.handleSignIn(credential, _phonenumbercontroller);
       },
       verificationFailed: (FirebaseAuthException e) {
         print("Verification failed: ${e.message}");

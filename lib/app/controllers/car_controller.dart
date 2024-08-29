@@ -26,17 +26,16 @@ class CarController extends GetxController {
     required String carModel,
   }) async {
     try {
-      print("in controller");
       String carTypeId = carTypeToIdMap[carType]!;
 
-      CollectionReference cars500x = _firestore
+      CollectionReference cars = _firestore
           .collection('car')
           .doc('PeVE6MdvLwzcePpmZfp0')
           .collection(carType)
           .doc(carTypeId)
           .collection(carModel);
 
-      await cars500x.doc().set({
+      await cars.doc().set({
         'fuel_type': fuelType,
         'registration_number': registrationNumber,
         'registration_year': registrationYear,
@@ -47,11 +46,17 @@ class CarController extends GetxController {
 
       DocumentSnapshot userDoc =
           await _firestore.collection('User').doc(userId).get();
+      
       List<dynamic> currentCarTypes = userDoc.get('User_carType') ?? [];
       List<dynamic> currentCarModels = userDoc.get('User_carModel') ?? [];
 
+      print(currentCarModels);
+      print(currentCarTypes);
+
       currentCarTypes.add(carType);
       currentCarModels.add(carModel);
+      print(currentCarModels);
+      print(currentCarTypes);
 
       await _firestore.collection('User').doc(userId).update({
         'User_carType': currentCarTypes,
@@ -66,7 +71,6 @@ class CarController extends GetxController {
 
   final Map<String, List<String>> subCollectionNamesMap = {
     "Hatchback": [
-      "Select",
       "1-series",
       "3-Door hatch",
       "5-Door hatch",
@@ -107,7 +111,6 @@ class CarController extends GetxController {
       "Wagon R",
     ],
     "Compact SUV": [
-      "Select",
       "500x",
       "Astor",
       "Brezza",
@@ -154,10 +157,14 @@ class CarController extends GetxController {
       "WR-V",
       "X1",
       "X2",
-      "X3"
+      "X3",
+      "XC40",
+      "XC60",
+      "Xuv 300",
+      "Xuv 400",
+      "Zs EV"
     ],
     "SUV": [
-      "Select",
       "500L",
       "Alcazar",
       "Aria",
@@ -205,10 +212,43 @@ class CarController extends GetxController {
       "Marazzo",
       "Outlander",
       "Pajero",
-      "Prado"
+      "Prado",
+      "Q5",
+      "Q6",
+      "Q7",
+      "Q8",
+      "Range Rover",
+      "Range Rover Sport",
+      "Rubicon",
+      "Safari",
+      "Safari Storme",
+      "Scorpio",
+      "Scorpio N",
+      "Sumo",
+      "Thar Roxx",
+      "Tiguan",
+      "Touareg",
+      "Trailblazer",
+      "Traveller",
+      "Trax",
+      "Trooper",
+      "Tucson",
+      "Vellfire",
+      "Vogue",
+      "Wagoneer",
+      "Wrangler",
+      "X-Trail",
+      "X4",
+      "X5",
+      "X6",
+      "X7",
+      "XC90",
+      "XL6",
+      "XM",
+      "Xuv 500",
+      "Xuv 700"
     ],
     "Sedan": [
-      "Select",
       "124 Sedan",
       "2-series",
       "3-series",
@@ -255,7 +295,30 @@ class CarController extends GetxController {
       "M8 comp",
       "Mondeo",
       "Mustang",
-      "Octavia"
+      "Octavia",
+      "Passat",
+      "Phaeton",
+      "Rapid",
+      "S-class",
+      "S60",
+      "S8",
+      "S90",
+      "Sail",
+      "Slavia",
+      "Sunny",
+      "Superb",
+      "Swift Dzire",
+      "Tigor",
+      "Tipo",
+      "Vento",
+      "Verito",
+      "Verna",
+      "XE",
+      "XF",
+      "XJ",
+      "Xcent",
+      "Yaris",
+      "Z4"
     ],
   };
   List<String> getCarModels(String carType) {
