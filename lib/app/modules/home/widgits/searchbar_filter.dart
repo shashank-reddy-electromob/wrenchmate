@@ -366,13 +366,13 @@ class _BottomSheetState extends State<BottomSheet> {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => SearchPage(
-            filters: {
-              'selectedServices': selectedServices,
-              'selectedDiscount': selectedDiscount,
-              'selectedRating': selectedRating,
-              'minPrice': minPrice,
-              'maxPrice': maxPrice,
-            },
+            // filters: {
+            //   'selectedServices': selectedServices,
+            //   'selectedDiscount': selectedDiscount,
+            //   'selectedRating': selectedRating,
+            //   'minPrice': minPrice,
+            //   'maxPrice': maxPrice,
+            // },
           ),
         ),
       );

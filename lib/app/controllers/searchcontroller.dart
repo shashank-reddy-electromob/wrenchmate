@@ -34,7 +34,7 @@ class SearchControllerClass extends GetxController {
 
     print("Document data: ${doc.data()}");
   }
-
+// disp
   @override
   void onClose() {
     searchController.dispose();
