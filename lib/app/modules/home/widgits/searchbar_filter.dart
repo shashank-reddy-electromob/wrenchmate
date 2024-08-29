@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:wrenchmate_user_app/app/controllers/searchcontroller.dart';
+import 'package:wrenchmate_user_app/app/modules/home/searchscreen.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 
 import '../../../controllers/auth_controller.dart';
@@ -17,6 +19,8 @@ class searchbar extends StatefulWidget {
 }
 
 class _searchbarState extends State<searchbar> {
+  final SearchControllerClass searchController =
+      Get.put(SearchControllerClass());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,9 +39,7 @@ class _searchbarState extends State<searchbar> {
               child: Center(
                 child: TextField(
                   onTap: () async {
-                    // This ensures that the search screen is shown when the search field is tapped
                     print("AppRoutes.SEARCHSCREEN");
-                    // await Future.delayed(Duration(milliseconds: 100));
                     Get.toNamed(AppRoutes.SEARCHSCREEN);
                   },
                   decoration: InputDecoration(
@@ -105,6 +107,8 @@ class _BottomSheetState extends State<BottomSheet> {
   List<String> selectedServices = [];
   String selectedDiscount = '';
   String selectedRating = '';
+  double minPrice = 0;
+  double maxPrice = double.infinity;
 
   List<String> services = [
     "Car Wash",
@@ -150,7 +154,14 @@ class _BottomSheetState extends State<BottomSheet> {
               ),
             ),
             SizedBox(height: 16),
-            RangeSliderWidget(),
+            RangeSliderWidget(
+                // onRangeChanged: (min, max) {
+                //   setState(() {
+                //     minPrice = min;
+                //     maxPrice = max;
+                //   });
+                // },
+                ),
             SizedBox(height: 16),
             _buildServiceTypes(),
             SizedBox(height: 16),
@@ -327,6 +338,8 @@ class _BottomSheetState extends State<BottomSheet> {
                   selectedRating = '';
                   selectedDiscount = '';
                   selectedServices = [];
+                  minPrice = 0;
+                  maxPrice = double.infinity;
                 });
                 Navigator.of(context).pop();
               },
@@ -340,28 +353,41 @@ class _BottomSheetState extends State<BottomSheet> {
             ),
           ),
           SizedBox(width: 10),
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                minimumSize: Size(double.infinity, 60),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                "APPLY",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600),
-              ),
-            ),
+      Expanded(
+  child: ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.blue,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      minimumSize: Size(double.infinity, 60),
+    ),
+    onPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => SearchPage(
+            filters: {
+              'selectedServices': selectedServices,
+              'selectedDiscount': selectedDiscount,
+              'selectedRating': selectedRating,
+              'minPrice': minPrice,
+              'maxPrice': maxPrice,
+            },
           ),
-        ],
+        ),
+      );
+    },
+    child: Text(
+      "APPLY",
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  ),
+),
+],
       ),
     );
   }

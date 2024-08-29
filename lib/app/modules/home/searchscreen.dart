@@ -5,6 +5,10 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 
 class SearchPage extends StatefulWidget {
+  final Map<String, dynamic>? filters;
+
+  SearchPage({this.filters});
+
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -12,6 +16,28 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final SearchControllerClass searchController =
       Get.put(SearchControllerClass());
+  @override
+  void initState() {
+    super.initState();
+    _applyFilters();
+  }
+
+  void _applyFilters() {
+    final filters = widget.filters;
+
+    if (filters != null) {
+      // Set filters in the search controller
+      searchController.selectedServices =
+          List<String>.from(filters['selectedServices'] ?? []);
+      searchController.selectedDiscount = filters['selectedDiscount'] ?? '';
+      searchController.selectedRating = filters['selectedRating'] ?? '';
+      searchController.minPrice = filters['minPrice'] ?? 0.0;
+      searchController.maxPrice = filters['maxPrice'] ?? double.infinity;
+
+      // Fetch filtered search results
+      searchController.fetchFilteredSearchResults();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,83 +82,102 @@ class _SearchPageState extends State<SearchPage> {
                   ],
                 ),
                 SizedBox(height: 20),
-                Obx(() => _buildSearchResults()),
-                SizedBox(height: 20),
-                Text('Your search history',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                SizedBox(height: 10),
                 Obx(() {
-                  return Wrap(
-                    spacing: 8.0,
-                    runSpacing: 4.0,
-                    children: searchController.searchHistory
-                        .map((name) => _buildChip(name))
-                        .toList(),
-                  );
-                }),
-                SizedBox(height: 20),
-                Text('Popular Services',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                SizedBox(height: 10),
-                Obx(() {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: searchController.popularServices
-                          .map((service) => ServiceCard(
-                                serviceName: service.name,
-                                price: service.price.toString(),
-                                rating: service.averageReview,
-                                imagePath: 'assets/car/toprecommended1.png',
-                                colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
-                              ))
-                          .toList(),
-                    ),
-                  );
-                }),
-                SizedBox(height: 20),
-                Text('Top Categories',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                SizedBox(height: 10),
-                Obx(() {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: searchController.topCategories
-                          .map((service) => ServicesType(
-                                text: service.category,
-                                borderSides: [
-                                  BorderSideEnum.bottom,
-                                  BorderSideEnum.right
-                                ],
-                                imagePath: 'assets/services/car wash.png',
-                                onTap: () =>
-                                    navigateToServicePage(service.category),
-                              ))
-                          .toList(),
-                    ),
-                  );
-                }),
-                SizedBox(height: 20),
-                Text('Top Services',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                SizedBox(height: 10),
-                Obx(() {
-                  return Column(
-                    children: searchController.topServices
-                        .map((service) => _buildTopServiceCard(
-                              serviceName: service.name,
-                              imageUrl: service.image,
-                              time: service.time,
-                              warranty: service.warranty,
-                              description: service.description,
-                            ))
-                        .toList(),
-                  );
+                  bool hasFilters =
+                      searchController.selectedServices.isNotEmpty ||
+                          searchController.selectedDiscount.isNotEmpty ||
+                          searchController.selectedRating.isNotEmpty ||
+                          searchController.minPrice != 0 ||
+                          searchController.maxPrice != double.infinity;
+
+                  return hasFilters
+                      ? _buildSearchResults()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Your search history',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                            SizedBox(height: 10),
+                            Obx(() {
+                              return Wrap(
+                                spacing: 8.0,
+                                runSpacing: 4.0,
+                                children: searchController.searchHistory
+                                    .map((name) => _buildChip(name))
+                                    .toList(),
+                              );
+                            }),
+                            SizedBox(height: 20),
+                            Text('Popular Services',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12)),
+                            SizedBox(height: 10),
+                            Obx(() {
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: searchController.popularServices
+                                      .map((service) => ServiceCard(
+                                            serviceName: service.name,
+                                            price: service.price.toString(),
+                                            rating: service.averageReview,
+                                            imagePath:
+                                                'assets/car/toprecommended1.png',
+                                            colors: [
+                                              Color(0xff9DB3E5),
+                                              Color(0xff3E31BF)
+                                            ],
+                                          ))
+                                      .toList(),
+                                ),
+                              );
+                            }),
+                            SizedBox(height: 20),
+                            Text('Top Categories',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12)),
+                            SizedBox(height: 10),
+                            Obx(() {
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: searchController.topCategories
+                                      .map((service) => ServicesType(
+                                            text: service.category,
+                                            borderSides: [
+                                              BorderSideEnum.bottom,
+                                              BorderSideEnum.right
+                                            ],
+                                            imagePath:
+                                                'assets/services/car wash.png',
+                                            onTap: () => navigateToServicePage(
+                                                service.category),
+                                          ))
+                                      .toList(),
+                                ),
+                              );
+                            }),
+                            SizedBox(height: 20),
+                            Text('Top Services',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 12)),
+                            SizedBox(height: 10),
+                            Obx(() {
+                              return Column(
+                                children: searchController.topServices
+                                    .map((service) => _buildTopServiceCard(
+                                          serviceName: service.name,
+                                          imageUrl: service.image,
+                                          time: service.time,
+                                          warranty: service.warranty,
+                                          description: service.description,
+                                        ))
+                                    .toList(),
+                              );
+                            }),
+                          ],
+                        );
                 }),
               ],
             ),
@@ -146,8 +191,9 @@ class _SearchPageState extends State<SearchPage> {
     if (searchController.searchResults.isEmpty &&
         searchController.searchController.text.isNotEmpty) {
       return Center(
-          child: Text("No results found",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)));
+        child: Text("No results found",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      );
     } else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,11 +258,6 @@ class _SearchPageState extends State<SearchPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                // SizedBox(height: 4),
-                // Text(
-                //   description,
-                //   style: TextStyle(fontSize: 14),
-                // ),
                 SizedBox(height: 4),
                 Row(
                   children: [
