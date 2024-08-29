@@ -231,9 +231,6 @@ class _HomePageState extends State<HomePage> {
                       height: 12,
                     ),
                     searchbar(),
-                    SizedBox(
-                      height: 12,
-                    ),
                     offersSliders(),
                     serviceswidgit(),
                     toprecommendedservices(),
