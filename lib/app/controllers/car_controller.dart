@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get.dart'; // Import GetX for reactive state management
+import 'package:get/get.dart';
+
+import '../routes/app_routes.dart'; // Import GetX for reactive state management
 
 class CarController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -28,14 +30,12 @@ class CarController extends GetxController {
     try {
       String carTypeId = carTypeToIdMap[carType]!;
 
-      CollectionReference cars = _firestore
+      DocumentReference docRef= await _firestore
           .collection('car')
           .doc('PeVE6MdvLwzcePpmZfp0')
           .collection(carType)
           .doc(carTypeId)
-          .collection(carModel);
-
-      await cars.doc().set({
+          .collection(carModel).add({
         'fuel_type': fuelType,
         'registration_number': registrationNumber,
         'registration_year': registrationYear,
@@ -45,31 +45,30 @@ class CarController extends GetxController {
       });
 
       DocumentSnapshot userDoc =
-          await _firestore.collection('User').doc(userId).get();
-      
-      List<dynamic> currentCarTypes = userDoc.get('User_carType') ?? [];
-      List<dynamic> currentCarModels = userDoc.get('User_carModel') ?? [];
+      await _firestore.collection('User').doc(userId).get();
 
-      print(currentCarModels);
-      print(currentCarTypes);
+      List<dynamic> currentCarDetails = userDoc.get('User_carDetails') ?? [];
 
-      currentCarTypes.add(carType);
-      currentCarModels.add(carModel);
-      print(currentCarModels);
-      print(currentCarTypes);
+      String newCarDetail = "$carType;$carModel;${docRef.id}";
+
+      currentCarDetails.add(newCarDetail);
+
+      print(currentCarDetails);
 
       await _firestore.collection('User').doc(userId).update({
-        'User_carType': currentCarTypes,
-        'User_carModel': currentCarModels,
+        'User_carDetails': currentCarDetails,
       });
 
       print("Car added successfully.");
+      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: userId);
     } catch (e) {
-      print("Error adding car to 500x collection: $e");
+      print("Error adding car: $e");
     }
   }
 
-  final Map<String, List<String>> subCollectionNamesMap = {
+
+
+final Map<String, List<String>> subCollectionNamesMap = {
     "Hatchback": [
       "1-series",
       "3-Door hatch",

@@ -124,8 +124,7 @@ class AuthController extends GetxController {
         'User_email': email,
         if (address != null && address.isNotEmpty) 'User_address': address,
         if (profileImagePath != null && profileImagePath.isNotEmpty) 'User_profile_image': profileImagePath,
-        'User_carType':[],
-        'User_carModel':[]
+        'User_carDetails':[],
       });
       print("User added to Firestore");
       Get.toNamed(AppRoutes.BOTTOMNAV, arguments: userId);
