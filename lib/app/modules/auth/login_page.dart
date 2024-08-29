@@ -12,8 +12,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _phonenumbercontroller = TextEditingController();
-   bool _isLoading=false;
-   bool _isLoadingGoogle=false;
+  bool _isLoading = false;
+  bool _isLoadingGoogle = false;
   final AuthController controller = Get.find();
 
   void _login() async {
@@ -21,30 +21,39 @@ class _LoginPageState extends State<LoginPage> {
       _isLoading = true;
     });
     final AuthController controller = Get.find();
-    try {
-      print("calling the controller functions");
-      bool success = await controller.login(
-          '+91${_phonenumbercontroller.text}', _phonenumbercontroller
-      );
-      print("true ya false: "+success.toString());
-      if (!success) {
+    print("calling the controller functions");
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+91${_phonenumbercontroller.text}',
+      verificationCompleted: (PhoneAuthCredential credential) {
         setState(() {
           _isLoading = false;
         });
-      }
-    } catch (e) {
-      print("Exception caught in _login: $e");
-      setState(() {
-        _isLoading = false;
-      });
-      Get.snackbar("Error", e.toString());
-    }
+        controller.handleSignIn(credential, _phonenumbercontroller);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print("Verification failed: ${e.message}");
+        Get.snackbar("Error", "Login failed: ${e.toString()}");
+        setState(() {
+          _isLoading = false;
+        });
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        print("OTP sent: $verificationId");
+        Get.toNamed(AppRoutes.OTP,
+            arguments: '+91${_phonenumbercontroller.text}');
+        controller.verificationid.value = verificationId;
+        controller.resendToken = resendToken;
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        controller.verificationid.value = verificationId;
+      },
+    );
   }
+
   void dispose() {
     controller.dispose();
     super.dispose();
   }
-
 
   void _googlelogin() async {
     setState(() {
@@ -73,7 +82,12 @@ class _LoginPageState extends State<LoginPage> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff9DB3E5), Color(0xffFFFFFF), Color(0xffFFFFFF), Color(0xffFFFFFF)],
+            colors: [
+              Color(0xff9DB3E5),
+              Color(0xffFFFFFF),
+              Color(0xffFFFFFF),
+              Color(0xffFFFFFF)
+            ],
             begin: Alignment.bottomRight,
             end: Alignment.topLeft,
           ),
@@ -93,7 +107,10 @@ class _LoginPageState extends State<LoginPage> {
               //text
               Text(
                 "Log In",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xff120D26)),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff120D26)),
               ),
               SizedBox(height: 12.0),
               Text(
@@ -117,14 +134,17 @@ class _LoginPageState extends State<LoginPage> {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: 'Enter number',
-                            hintStyle: TextStyle(color: Colors.grey, fontSize: 22.0), // Increased hint text size
+                            hintStyle: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 22.0), // Increased hint text size
                             border: OutlineInputBorder(
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
                             fillColor: Colors.transparent,
                           ),
-                          style: TextStyle(fontSize: 22.0), // Increased entered text size
+                          style: TextStyle(
+                              fontSize: 22.0), // Increased entered text size
                         ),
                       ),
                     ],
@@ -134,15 +154,22 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 32.0),
               //submit
               Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: _isLoading
-                    ? Center(child: CircularProgressIndicator(color:  Color(0xff1671D8),)) // Show loader
-                :blueButton(text: 'REQUEST OTP', onTap:  _isLoading ? null : _login)
-              ),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                          color: Color(0xff1671D8),
+                        )) // Show loader
+                      : blueButton(
+                          text: 'REQUEST OTP',
+                          onTap: _isLoading ? null : _login)),
               SizedBox(height: 32.0),
               Text(
                 "OR",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xff969696)),
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff969696)),
               ),
               SizedBox(height: 32.0),
               //google
@@ -150,7 +177,10 @@ class _LoginPageState extends State<LoginPage> {
                 width: MediaQuery.of(context).size.width * 0.8,
                 height: 60,
                 child: _isLoadingGoogle
-                    ? Center(child: CircularProgressIndicator(color: Color(0xff1671D8),)) // Show loader
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        color: Color(0xff1671D8),
+                      )) // Show loader
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           elevation: 1,
@@ -171,7 +201,8 @@ class _LoginPageState extends State<LoginPage> {
                             SizedBox(width: 8),
                             Text(
                               'Login With Google',
-                              style: TextStyle(color: Color(0xff120D26), fontSize: 20),
+                              style: TextStyle(
+                                  color: Color(0xff120D26), fontSize: 20),
                             ),
                           ],
                         ),
@@ -202,7 +233,8 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(width: 8),
                       Text(
                         'Login With Facebook',
-                        style: TextStyle(color: Color(0xff120D26), fontSize: 20),
+                        style:
+                            TextStyle(color: Color(0xff120D26), fontSize: 20),
                       ),
                     ],
                   ),
