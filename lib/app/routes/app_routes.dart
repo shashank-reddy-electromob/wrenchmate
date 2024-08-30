@@ -22,6 +22,7 @@ class AppRoutes {
   static const CAR_DETALS = '/car-details';
   static const SUPPORT = '/support';
   static const CONTACT_US = '/contact-us';
+  static const CHATSCREEN = '/chatscreen';
   static const TRACKING = '/tracking';
   static const BOTTOMNAV = '/bottomnav';
   static const SEARCHSCREEN = '/searchScreen';

@@ -56,23 +56,23 @@ class _bottomnavigationState extends State<bottomnavigation> {
         // drawer: drawerPage(),
         backgroundColor: Colors.white,
         body: _widgetOptions.elementAt(_selectedIndex),
-        // floatingActionButton: DraggableFab(
-        //   child:ClipOval(
-        //     child: Material(
-        //       color: Colors.blue, // Button color
-        //       child: InkWell(
-        //         splashColor: Colors.blueAccent, // Splash color
-        //         onTap: () {
-        //           Get.toNamed(AppRoutes.TRACKING);
-        //         },
-        //         child: SizedBox(
-        //           width: 60,
-        //           height: 60,
-        //         ),
-        //       ),
-        //     ),
-        //   )
-        // ),
+        floatingActionButton: DraggableFab(
+          child:ClipOval(
+            child: Material(
+              color: Colors.blue, // Button color
+              child: InkWell(
+                splashColor: Colors.blueAccent, // Splash color
+                onTap: () {
+                  Get.toNamed(AppRoutes.TRACKING);
+                },
+                child: SizedBox(
+                  width: 60,
+                  height: 60,
+                ),
+              ),
+            ),
+          )
+        ),
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(

@@ -62,6 +62,7 @@ import 'package:wrenchmate_user_app/app/modules/auth/car_register.dart';
 import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
 import 'package:wrenchmate_user_app/app/modules/home/filterdatascreen.dart';
 import 'package:wrenchmate_user_app/app/modules/home/searchscreen.dart';
+import 'package:wrenchmate_user_app/app/modules/tracking/chatscreen.dart';
 import '../modules/auth/MapScreen.dart';
 import '../bindings/auth_binding.dart';
 import '../bindings/bottomnav_bindings.dart';
@@ -104,6 +105,7 @@ class AppPages {
         name: AppRoutes.SEARCHSCREEN,
         page: () => SearchPage(),
         binding: HomeBinding()),
+        
     GetPage(name: AppRoutes.OTP, page: () => optpage(), binding: AuthBinding()),
     GetPage(
         name: AppRoutes.REGISTER,
@@ -186,5 +188,9 @@ class AppPages {
         name: AppRoutes.TRACKING,
         page: () => TrackingPage(),
         binding: TrackingBinding()),
+    GetPage(
+        name: AppRoutes.CHATSCREEN,
+        page: () => ChatScreen(),
+        binding: TrackingBinding()),    
   ];
 }

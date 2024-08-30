@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -35,11 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               SizedBox(width: 16),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+                style: AppTextStyle.semiboldRaleway19,
               ),
             ],
           ),

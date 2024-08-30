@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/searchcontroller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/searchscreen.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../../routes/app_routes.dart';
 
 class searchbar extends StatefulWidget {
@@ -38,8 +39,7 @@ class _searchbarState extends State<searchbar> {
                   },
                   decoration: InputDecoration(
                     hintText: "Search services and packages",
-                    hintStyle:
-                        TextStyle(color: Color(0xff858585), fontSize: 16),
+                    hintStyle: AppTextStyle.mediumRaleway12,
                     prefixIcon: Icon(Icons.search, color: Color(0xff838383)),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,

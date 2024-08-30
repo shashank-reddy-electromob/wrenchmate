@@ -22,7 +22,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
-  final TextEditingController alternateNumberController = TextEditingController();
+  final TextEditingController alternateNumberController =
+      TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
@@ -30,7 +31,8 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -43,13 +45,15 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       final storageReference = FirebaseStorage.instance.ref('/Users');
-      final fileName= image.path.split('/').last;
+      final fileName = image.path.split('/').last;
       final dateStamp = DateTime.now().microsecondsSinceEpoch;
-      final uploadReference =  storageReference.child('$userId/ProfileImage/$dateStamp-$fileName');
+      final uploadReference =
+          storageReference.child('$userId/ProfileImage/$dateStamp-$fileName');
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',
       );
-      TaskSnapshot taskSnapshot = await uploadReference.putFile(image,metadata);
+      TaskSnapshot taskSnapshot =
+          await uploadReference.putFile(image, metadata);
       return await taskSnapshot.ref.getDownloadURL();
     } catch (e) {
       print("Failed to upload image: $e");
@@ -63,10 +67,14 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     String? name = nameController.text.isNotEmpty ? nameController.text : null;
-    String? number = numberController.text.isNotEmpty ? numberController.text : null;
-    String? alternateNumber = alternateNumberController.text.isNotEmpty ? alternateNumberController.text : null;
+    String? number =
+        numberController.text.isNotEmpty ? numberController.text : null;
+    String? alternateNumber = alternateNumberController.text.isNotEmpty
+        ? alternateNumberController.text
+        : null;
     String? email = emailController.text.isNotEmpty ? emailController.text : "";
-    String? address = addressController.text.isNotEmpty ? addressController.text : "";
+    String? address =
+        addressController.text.isNotEmpty ? addressController.text : "";
     String? profileImagePath;
 
     if (_image != null) {
@@ -77,9 +85,11 @@ class _RegisterPageState extends State<RegisterPage> {
       Get.snackbar('Error', 'Invalid or empty name field');
     } else if (number == null || !RegExp(r'^\d{10}$').hasMatch(number)) {
       Get.snackbar('Error', 'Invalid or empty number field');
-    } else if (alternateNumber == null || !RegExp(r'^\d{10}$').hasMatch(alternateNumber)) {
+    } else if (alternateNumber == null ||
+        !RegExp(r'^\d{10}$').hasMatch(alternateNumber)) {
       Get.snackbar('Error', 'Invalid or empty alternate number field');
-    } else if (email == null || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+    } else if (email == null ||
+        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
       Get.snackbar('Error', 'Invalid or empty email field');
     } else if (address == null) {
       address = '';
@@ -124,7 +134,12 @@ class _RegisterPageState extends State<RegisterPage> {
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 18),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff9DB3E5), Color(0xffFFFFFF), Color(0xffFFFFFF), Color(0xffFFFFFF)],
+            colors: [
+              Color(0xff9DB3E5),
+              Color(0xffFFFFFF),
+              Color(0xffFFFFFF),
+              Color(0xffFFFFFF)
+            ],
             begin: Alignment.bottomRight,
             end: Alignment.topLeft,
           ),

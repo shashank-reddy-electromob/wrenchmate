@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
 
-  CustomElevatedButton({required this.onPressed,required this.text});
+  CustomElevatedButton({required this.onPressed, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class CustomElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         text,
-        style: TextStyle(fontSize: 14),
+        style: AppTextStyle.semibold14.copyWith(color: Colors.white),
       ),
     );
   }
