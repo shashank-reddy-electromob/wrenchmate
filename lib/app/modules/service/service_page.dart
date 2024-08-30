@@ -7,6 +7,8 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.da
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
+import 'package:wrenchmate_user_app/utils/color.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
 import '../../routes/app_routes.dart';
 import '../../controllers/service_controller.dart';
@@ -19,7 +21,7 @@ class ServicePage extends StatefulWidget {
 class _ServicePageState extends State<ServicePage> {
   String selectedCategory = 'Show All';
   late String service;
-  late CartController cartController ;
+  late CartController cartController;
   final ServiceController serviceController = Get.put(ServiceController());
   List<bool> addToCartStates = [];
 
@@ -30,7 +32,8 @@ class _ServicePageState extends State<ServicePage> {
     print(service);
     serviceController.fetchServices(service).then((_) {
       setState(() {
-        addToCartStates = List<bool>.filled(serviceController.services.length, false);
+        addToCartStates =
+            List<bool>.filled(serviceController.services.length, false);
       });
     });
   }
@@ -48,22 +51,23 @@ class _ServicePageState extends State<ServicePage> {
     }
   }
 
-
   Future<void> addToCart(ServiceFirebase service) async {
     print("adding to cart");
     await cartController.addToCart(serviceId: service.id);
     print("added to cart");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor:
-              service == "Repairing" || service=="Body Parts"? Color(0xffE4F7FF) : Colors.transparent,
+          backgroundColor: service == "Repairing" || service == "Body Parts"
+              ? Color(0xffE4F7FF)
+              : Colors.transparent,
           title: Text(
             service,
-            style: TextStyle(fontWeight: FontWeight.w500),
+            style: AppTextStyle.semiboldRaleway19,
           ),
           leading: Padding(
               padding: const EdgeInsets.all(6.0), child: Custombackbutton()),
@@ -90,10 +94,8 @@ class _ServicePageState extends State<ServicePage> {
                                     cursorColor: Colors.grey,
                                     decoration: InputDecoration(
                                       hintText: "Search services and Packages",
-                                      hintStyle: TextStyle(
-                                        color: Color(0xff858585),
-                                        fontSize: 16,
-                                      ),
+                                      hintStyle: AppTextStyle.mediumRaleway12
+                                          .copyWith(color: greyColor),
                                       prefixIcon: Icon(
                                         Icons.search,
                                         color: Color(0xff838383),
@@ -208,11 +210,8 @@ class _ServicePageState extends State<ServicePage> {
                                                           children: [
                                                             Text(
                                                               service.name,
-                                                              style: TextStyle(
-                                                                  fontSize: 24,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
+                                                              style: AppTextStyle
+                                                                  .semibold18,
                                                             ),
                                                           ],
                                                         ),
@@ -220,13 +219,9 @@ class _ServicePageState extends State<ServicePage> {
                                                         Row(
                                                           children: [
                                                             Text(
-                                                              '\₹${service.price}  ',
-                                                              style: TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
+                                                                '\₹${service.price}  ',
+                                                                style: AppTextStyle
+                                                                    .semibold14),
                                                             Icon(
                                                                 CupertinoIcons
                                                                     .star,
@@ -235,17 +230,19 @@ class _ServicePageState extends State<ServicePage> {
                                                                     0xffFFE262)),
                                                             Text(
                                                               ' ${service.averageReview.toStringAsFixed(1)}',
-                                                              style: TextStyle(
-                                                                  fontSize: 20,
-                                                                  color: Color(
-                                                                      0xff636363)),
+                                                              style: AppTextStyle
+                                                                  .mediumdmsans13
+                                                                  .copyWith(
+                                                                      color:
+                                                                          greyColor),
                                                             ),
                                                             Text(
                                                               ' (${service.numberOfReviews} reviews)',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Color(
-                                                                      0xff858585)),
+                                                              style: AppTextStyle
+                                                                  .mediumdmsans11
+                                                                  .copyWith(
+                                                                      color:
+                                                                          greyColor),
                                                             ),
                                                           ],
                                                         ),
@@ -266,13 +263,13 @@ class _ServicePageState extends State<ServicePage> {
                                                                     color: Color(
                                                                         0xff797979)),
                                                                 Text(
-                                                                  ' Takes ${service.time} Hours',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16,
-                                                                      color: Color(
-                                                                          0xff797979)),
-                                                                ),
+                                                                    ' Takes ${service.time} Hours',
+                                                                    style: AppTextStyle
+                                                                        .mediumRaleway12
+                                                                        .copyWith(
+                                                                            color:
+                                                                                Color(0xff797979),
+                                                                            fontWeight: FontWeight.w700)),
                                                               ],
                                                             ),
                                                             //WARRANTY
@@ -285,13 +282,13 @@ class _ServicePageState extends State<ServicePage> {
                                                                     color: Color(
                                                                         0xff797979)),
                                                                 Text(
-                                                                  ' ${service.warranty} Warranty',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16,
-                                                                      color: Color(
-                                                                          0xff797979)),
-                                                                ),
+                                                                    ' ${service.warranty} Warranty',
+                                                                    style: AppTextStyle
+                                                                        .mediumRaleway12
+                                                                        .copyWith(
+                                                                            color:
+                                                                                Color(0xff797979),
+                                                                            fontWeight: FontWeight.w700)),
                                                               ],
                                                             ),
                                                           ],
@@ -313,19 +310,23 @@ class _ServicePageState extends State<ServicePage> {
                                                       .size
                                                       .width *
                                                   0.04,
-                                              child: !addToCartStates[index] // Check the state for this service
+                                              child: !addToCartStates[
+                                                      index] // Check the state for this service
                                                   ? CustomElevatedButton(
                                                       onPressed: () {
                                                         addToCart(service);
                                                         setState(() {
-                                                          addToCartStates[index] = true; // Update only this service's state
+                                                          addToCartStates[
+                                                                  index] =
+                                                              true; // Update only this service's state
                                                         });
                                                       },
                                                       text: '+Add',
                                                     )
                                                   : CustomElevatedButton(
                                                       onPressed: () {
-                                                        Get.toNamed(AppRoutes.CART);
+                                                        Get.toNamed(
+                                                            AppRoutes.CART);
                                                       },
                                                       text: 'Go to cart',
                                                     ),

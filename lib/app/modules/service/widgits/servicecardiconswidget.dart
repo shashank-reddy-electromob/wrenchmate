@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
 class DurationWidget extends StatelessWidget {
   final IconData icon;
@@ -7,12 +8,12 @@ class DurationWidget extends StatelessWidget {
   final String subtitleText;
   final String durationText;
 
-
   const DurationWidget({
     Key? key,
     required this.icon,
     required this.titleText,
-    required this.durationText, required this.subtitleText,
+    required this.durationText,
+    required this.subtitleText,
   }) : super(key: key);
 
   @override
@@ -20,32 +21,26 @@ class DurationWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 12),
+        // SizedBox(height: 12),
         Text(
           titleText,
-          style: TextStyle(
-            fontSize: 16,
-            color: Color(0xff616161),
-            fontWeight: FontWeight.w400,
-          ),
+          style: AppTextStyle.mediumdmsans13
+              .copyWith(color: Color(0xff6F6F6F), fontWeight: FontWeight.w300),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 6.0),
           child: Row(
             children: [
-              
               Icon(
                 icon,
-                size: 24,
-                color: (icon==CupertinoIcons.star)?Color(0xffFFE262):Color(0xff797979),
+                size: 18,
+                color: (icon == CupertinoIcons.star)
+                    ? Color(0xffFFE262)
+                    : Color(0xff797979),
               ),
               Text(
-                ' $durationText '+ subtitleText,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                ),
+                ' $durationText ' + subtitleText,
+                style: AppTextStyle.mediumdmsans13,
               ),
             ],
           ),

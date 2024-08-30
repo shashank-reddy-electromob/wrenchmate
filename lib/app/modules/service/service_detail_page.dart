@@ -7,6 +7,8 @@ import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.d
 import 'package:wrenchmate_user_app/app/modules/service/widgits/seperator.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/servicecardiconswidget.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
+import 'package:wrenchmate_user_app/utils/color.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
 import '../../data/models/Service_Firebase.dart';
@@ -91,11 +93,10 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           return Center(child: CircularProgressIndicator());
         } else {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Column(
               children: [
-                //service card
-                Container(
+                SizedBox(
                   height: MediaQuery.of(context).size.height * 0.49,
                   width: MediaQuery.of(context).size.width,
                   child: Stack(children: [
@@ -104,15 +105,18 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                       child: ExtendedImage.network(
                         service.image,
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height*0.3,
+                        height: MediaQuery.of(context).size.height * 0.3,
                         fit: BoxFit.cover,
                         cache: true,
                       ),
                     ),
-                    Positioned(top: 200, left: 20, child: serviceCard()),
+                    Positioned(
+                        top: 200, left: 8, child: Center(child: serviceCard())),
                   ]),
                 ),
-                // Tabs
+                SizedBox(
+                  height: 10,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20, top: 8),
                   child: Container(
@@ -180,7 +184,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
 
   Widget serviceCard() {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.82,
+      width: MediaQuery.of(context).size.width * 0.86,
       height: MediaQuery.of(context).size.height * 0.23,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
@@ -201,15 +205,16 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
             children: [
               Row(
                 children: [
-                  Text("Service  ", style: TextStyle(fontSize: 16)),
+                  Text("Service  ",
+                      style: AppTextStyle.mediumRaleway12
+                          .copyWith(color: Color(0xff6F6F6F))),
                   Icon(
                     CupertinoIcons.greaterthan,
                     size: 12,
                   ),
-                  Text(
-                    '  ${service.name}',
-                    style: TextStyle(color: Color(0xff3778F2), fontSize: 16),
-                  )
+                  Text('  ${service.name}',
+                      style: AppTextStyle.mediumRaleway12
+                          .copyWith(color: primaryColor))
                 ],
               ),
               SizedBox(
@@ -217,24 +222,18 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               ),
               Text(
                 service.name,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500),
+                style: AppTextStyle.semibold18,
               ),
-              Text(
-                "₹ ${service.price}",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w500),
-              ),
+              Text("₹ ${service.price}", style: AppTextStyle.semibold14),
               SizedBox(
-                height: 10,
+                height: 5,
               ),
               MySeparator(),
+              SizedBox(
+                height: 5,
+              ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   DurationWidget(
                     icon: CupertinoIcons.clock,
@@ -259,39 +258,38 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
             ],
           ),
         ),
-        //button
         Positioned(
-            top: MediaQuery.of(context).size.height * 0.055,
-            right: MediaQuery.of(context).size.width * 0.04,
-            child: (addtocart == false)
-                ? CustomElevatedButton(
-              onPressed: () {
-                addToCart(service);
-                setState(() {
-                  addtocart = true;
-                });
-              },
-              text: '+Add',
-            )
-                : CustomElevatedButton(
-              onPressed: () {
-                Get.toNamed(AppRoutes.CART);
-              },
-              text: 'Go to cart',
-            ),
-            // child: CustomElevatedButton(
-            //   onPressed: () {
-            //
-            //     // showModalBottomSheet(
-            //     //   context: context,
-            //     //   isScrollControlled: true,
-            //     //   builder: (context) {
-            //     //     return BottomSheet();
-            //     //   },
-            //     // );
-            //   },
-            //   text: 'Add+',
-            // )
+          top: MediaQuery.of(context).size.height * 0.055,
+          right: MediaQuery.of(context).size.width * 0.04,
+          child: (addtocart == false)
+              ? CustomElevatedButton(
+                  onPressed: () {
+                    addToCart(service);
+                    setState(() {
+                      addtocart = true;
+                    });
+                  },
+                  text: '+Add',
+                )
+              : CustomElevatedButton(
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.CART);
+                  },
+                  text: 'Go to cart',
+                ),
+          // child: CustomElevatedButton(
+          //   onPressed: () {
+          //
+          //     // showModalBottomSheet(
+          //     //   context: context,
+          //     //   isScrollControlled: true,
+          //     //   builder: (context) {
+          //     //     return BottomSheet();
+          //     //   },
+          //     // );
+          //   },
+          //   text: 'Add+',
+          // )
         ),
       ]),
     );
@@ -411,7 +409,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: Text(
           service.description,
-          style: TextStyle(color: Color(0xff6D6D6D), fontSize: 16),
+          style: AppTextStyle.medium10.copyWith(color: Color(0xff6D6D6D)),
           textAlign: TextAlign.center,
         ),
       ),
@@ -429,11 +427,16 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
             ListTile(
               title: Text(
                 faq.question, // Use FAQ model
-                style: TextStyle(
-                    color: _isVisibleList[serviceIndex]
-                        ? Color(0xff3778F2)
-                        : Color(0xff7B7B7B),
-                    fontSize: 16),
+                style: AppTextStyle.medium10.copyWith(
+                  color: _isVisibleList[serviceIndex]
+                      ? Color(0xff3778F2)
+                      : Color(0xff7B7B7B),
+                ),
+                // style: TextStyle(
+                //     color: _isVisibleList[serviceIndex]
+                //         ? Color(0xff3778F2)
+                //         : Color(0xff7B7B7B),
+                //     fontSize: 16),
               ),
               trailing: _isVisibleList[serviceIndex]
                   ? Icon(Icons.arrow_drop_up, color: Color(0xff3778F2))
@@ -455,7 +458,9 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                       const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                   child: Text(
                     faq.answer, // Use FAQ model
-                    style: TextStyle(color: Color(0xff6D6D6D), fontSize: 14),
+                    style: AppTextStyle.medium10.copyWith(
+                      color: Color(0xff6D6D6D),
+                    ),
                   ),
                 ),
               ),
@@ -498,8 +503,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                       children: [
                         Text(
                           user.userName.isNotEmpty ? user.userName : 'Unknown',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 18),
+                          style: AppTextStyle.semibold14,
                         ),
                         Row(
                           children: List.generate(5, (index) {
@@ -521,7 +525,8 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 ),
                 Text(
                   review.message,
-                  style: TextStyle(color: Color(0xff575757), fontSize: 16),
+                  style:
+                      AppTextStyle.medium10.copyWith(color: Color(0xff575757)),
                 ),
               ],
             ),
