@@ -20,7 +20,7 @@ class CarController extends GetxController {
   Future<void> addCar({
     required String fuelType,
     required String registrationNumber,
-    required int registrationYear,
+    required DateTime registrationYear,
     required DateTime pucExpiration,
     required DateTime insuranceExpiration,
     required String transmission,

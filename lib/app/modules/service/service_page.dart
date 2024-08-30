@@ -7,6 +7,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.da
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
+import '../../controllers/cart_controller.dart';
 import '../../routes/app_routes.dart';
 import '../../controllers/service_controller.dart';
 
@@ -18,32 +19,48 @@ class ServicePage extends StatefulWidget {
 class _ServicePageState extends State<ServicePage> {
   String selectedCategory = 'Show All';
   late String service;
+  late CartController cartController ;
   final ServiceController serviceController = Get.put(ServiceController());
+  List<bool> addToCartStates = [];
 
   void initState() {
     super.initState();
+    cartController = Get.put(CartController());
     service = Get.arguments;
     print(service);
-    serviceController.fetchServices(service);
+    serviceController.fetchServices(service).then((_) {
+      setState(() {
+        addToCartStates = List<bool>.filled(serviceController.services.length, false);
+      });
+    });
   }
 
   List<ServiceFirebase> get filteredServices {
     if (selectedCategory == 'Show All') {
-      return serviceController.services;
+      return serviceController.services; // Show all services
     } else {
-      return serviceController.services
-          .where((service) => service.category == selectedCategory)
-          .toList();
+      return serviceController.services.where((service) {
+        String serviceName = service.name.toLowerCase().replaceAll(' ', '');
+        String category = selectedCategory.toLowerCase().replaceAll(' ', '');
+
+        return serviceName.contains(category) || category.contains(serviceName);
+      }).toList();
     }
   }
 
+
+  Future<void> addToCart(ServiceFirebase service) async {
+    print("adding to cart");
+    await cartController.addToCart(serviceId: service.id);
+    print("added to cart");
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor:
-              service == "Repairing" ? Color(0xffE4F7FF) : Colors.transparent,
+              service == "Repairing" || service=="Body Parts"? Color(0xffE4F7FF) : Colors.transparent,
           title: Text(
             service,
             style: TextStyle(fontWeight: FontWeight.w500),
@@ -51,7 +68,7 @@ class _ServicePageState extends State<ServicePage> {
           leading: Padding(
               padding: const EdgeInsets.all(6.0), child: Custombackbutton()),
         ),
-        body: service != "Repairing"
+        body: service != "Repairing" && service != "Body Parts"
             ? Column(
                 children: [
                   SizedBox(
@@ -126,10 +143,9 @@ class _ServicePageState extends State<ServicePage> {
                               return ListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
-                                itemCount: serviceController.services.length,
+                                itemCount: filteredServices.length,
                                 itemBuilder: (context, index) {
-                                  final service =
-                                      serviceController.services[index];
+                                  final service = filteredServices[index];
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16.0),
@@ -297,10 +313,22 @@ class _ServicePageState extends State<ServicePage> {
                                                       .size
                                                       .width *
                                                   0.04,
-                                              child: CustomElevatedButton(
-                                                onPressed: () {},
-                                                text: 'Add+',
-                                              ),
+                                              child: !addToCartStates[index] // Check the state for this service
+                                                  ? CustomElevatedButton(
+                                                      onPressed: () {
+                                                        addToCart(service);
+                                                        setState(() {
+                                                          addToCartStates[index] = true; // Update only this service's state
+                                                        });
+                                                      },
+                                                      text: '+Add',
+                                                    )
+                                                  : CustomElevatedButton(
+                                                      onPressed: () {
+                                                        Get.toNamed(AppRoutes.CART);
+                                                      },
+                                                      text: 'Go to cart',
+                                                    ),
                                             ),
                                           ],
                                         ),
@@ -465,10 +493,10 @@ class _ServicePageState extends State<ServicePage> {
             SubService(
               imagePath: "assets/services/accessories/guards.png",
               text: "Guards",
-              isSelected: selectedCategory == 'guards',
+              isSelected: selectedCategory == 'guard',
               onTap: () {
                 setState(() {
-                  selectedCategory = 'guards';
+                  selectedCategory = 'guard';
                 });
               },
             ),
@@ -504,11 +532,11 @@ class _ServicePageState extends State<ServicePage> {
             ),
             SubService(
               imagePath: "assets/services/accessories/airfresh.png",
-              text: "Air Freshener",
-              isSelected: selectedCategory == 'airfreshener',
+              text: "Perfume",
+              isSelected: selectedCategory == 'Perfume',
               onTap: () {
                 setState(() {
-                  selectedCategory = 'airfreshener';
+                  selectedCategory = 'Perfume';
                 });
               },
             ),
@@ -535,10 +563,10 @@ class _ServicePageState extends State<ServicePage> {
             SubService(
               imagePath: "assets/services/accessories/cables.png",
               text: "Cables",
-              isSelected: selectedCategory == 'cables',
+              isSelected: selectedCategory == 'cable',
               onTap: () {
                 setState(() {
-                  selectedCategory = 'cables';
+                  selectedCategory = 'cable';
                 });
               },
             ),

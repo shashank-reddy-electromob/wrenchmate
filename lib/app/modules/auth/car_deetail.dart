@@ -70,7 +70,7 @@ class _CarDetailsState extends State<CarDetails> {
     await carController?.addCar(
       fuelType: selectedFuelType ?? '',
       registrationNumber: regNoController.text,
-      registrationYear: int.tryParse(regYearController.text.split('/').last) ?? 0,
+      registrationYear: DateFormat('dd/MM/yyyy').parse(regYearController.text),
       pucExpiration: DateFormat('dd/MM/yyyy').parse(pucExpDateController.text),
       insuranceExpiration: DateFormat('dd/MM/yyyy').parse(insuranceExpController.text),
       transmission: selectedTransmissionType ?? '',

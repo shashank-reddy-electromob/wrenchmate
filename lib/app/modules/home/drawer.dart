@@ -6,7 +6,18 @@ import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
 
 class drawerPage extends StatefulWidget {
-  const drawerPage({super.key});
+  final String userProfileImage;
+  final String userName;
+  final String userNumber;
+  final String userEmail;
+
+  const drawerPage({
+    Key? key,
+    required this.userProfileImage,
+    required this.userName,
+    required this.userNumber,
+    required this.userEmail,
+  }) : super(key: key);
 
   @override
   State<drawerPage> createState() => _drawerPageState();
@@ -14,21 +25,6 @@ class drawerPage extends StatefulWidget {
 
 class _drawerPageState extends State<drawerPage> {
   int? _selectedIndex;
-  HomeController? controller;
-  Map<String, dynamic>? userData;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = Get.put(HomeController());
-    fetchUserData();
-  }
-
-  Future<void> fetchUserData() async {
-    userData = await controller?.fetchUserData() as Map<String, dynamic>?;
-    setState(() {});
-  }
-
   void _onTabTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -73,9 +69,9 @@ class _drawerPageState extends State<drawerPage> {
                   children: [
                     Container(
                       child: ClipOval(
-                        child: (userData?['User_profile_image'] != null)
+                        child: (widget.userProfileImage.isNotEmpty)
                             ? Image.network(
-                                userData!['User_profile_image'] ?? '',
+                                widget.userProfileImage,
                                 fit: BoxFit.cover,
                                 height: 85.0,
                                 width: 85.0,
@@ -88,7 +84,7 @@ class _drawerPageState extends State<drawerPage> {
                 Row(
                   children: [
                     Text(
-                      userData?['User_name'] ?? 'Unknown User',
+                      widget.userName,
                       style: TextStyle(fontSize: 20, color: Colors.black),
                     ),
                     IconButton(
@@ -103,14 +99,11 @@ class _drawerPageState extends State<drawerPage> {
                   ],
                 ),
                 Text(
-                  userData?['User_number'] != null &&
-                          userData!['User_number'].isNotEmpty
-                      ? userData!['User_number'][0]
-                      : 'No number available',
+                  widget.userNumber,
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 Text(
-                  userData?['User_email'] ?? 'No email available',
+                  widget.userEmail,
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               ],

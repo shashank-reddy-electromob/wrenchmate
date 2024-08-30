@@ -16,7 +16,7 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.find();
   final ServiceController serviceController = Get.find();
-  final BookingController bookingController = Get.find(); // Get the BookingController instance
+  final BookingController bookingController = Get.put(BookingController()); // Get the BookingController instance
 
   double? totalAmount;
   double? tax ;
@@ -44,7 +44,7 @@ class _CartPageState extends State<CartPage> {
       });
 
       tax = totalAmount! * 0.1;
-      finalAmount = (totalAmount! + tax!); 
+      finalAmount = (totalAmount! + tax!);
     });
   }
 
@@ -125,8 +125,8 @@ class _CartPageState extends State<CartPage> {
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
                                         child: ExtendedImage.network(
-                                            "https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
-                                            //service.image,
+                                            //"https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
+                                            service.image,
                                             fit: BoxFit.cover,
                                             cache: true,
                                             width: 80,
@@ -146,7 +146,7 @@ class _CartPageState extends State<CartPage> {
                                           ),
                                           SizedBox(height: 4),
                                           Text(
-                                            '\$${service.price.toStringAsFixed(2)}', // Display price
+                                            '₹ ${service.price.toStringAsFixed(2)}', // Display price
                                             style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.green),

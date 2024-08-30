@@ -8,6 +8,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:google_api_availability/google_api_availability.dart';
+import '../../controllers/home_controller.dart';
 import 'drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,37 +20,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final user;
-  Future<String>? profileImageUrlFuture;
+  HomeController? controller;
+  Map<String, dynamic>? userData;
 
   @override
   void initState() {
     super.initState();
-    print("initstate");
     user = FirebaseAuth.instance.currentUser!;
-    print("userid: " + user.uid);
-    profileImageUrlFuture = fetchUserProfileImage();
-    checkGooglePlayServices();
+    controller = Get.put(HomeController());
+    fetchUserData();
   }
 
-  Future<String> fetchUserProfileImage() async {
-    try {
-      print("Fetching User Profile Image...");
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('User')
-          .doc(user.uid)
-          .get();
-      if (userSnapshot.exists) {
-        String profileImageUrl = userSnapshot.get('User_profile_image');
-        print("User Profile Image URL: $profileImageUrl");
-        return profileImageUrl;
-      } else {
-        print("No such document found.");
-        return '';
-      }
-    } catch (e) {
-      print("Error occurred: $e");
-      return '';
-    }
+  Future<void> fetchUserData() async {
+    userData = await controller?.fetchUserData() as Map<String, dynamic>?;
+    setState(() {});
   }
 
   void checkGooglePlayServices() async {
@@ -67,24 +51,6 @@ class _HomePageState extends State<HomePage> {
   double scaleFactor = 1;
   bool isDrawerOpen = false;
 
-  void _onHorizontalDragUpdate(DragUpdateDetails details) {
-    if (details.primaryDelta! > 0) {
-      setState(() {
-        xOffSet = 230;
-        yOffSet = MediaQuery.of(context).size.height * 0.15;
-        scaleFactor = 0.7;
-        isDrawerOpen = true;
-      });
-    } else if (details.primaryDelta! < 0) {
-      setState(() {
-        xOffSet = 0;
-        yOffSet = 0;
-        scaleFactor = 1;
-        isDrawerOpen = false;
-      });
-    }
-  }
-
   void _onTap() {
     setState(() {
       xOffSet = 0;
@@ -99,9 +65,21 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          drawerPage(),
-          IgnorePointer(
-            ignoring: isDrawerOpen,
+          drawerPage(
+            userProfileImage: userData?['User_profile_image'] ?? '',
+            userName: userData?['User_name'] ?? 'Unknown User',
+            userNumber: userData?['User_number'] != null &&
+                        userData!['User_number'].isNotEmpty
+                    ? userData!['User_number'][0]
+                    : 'No number available',
+            userEmail: userData?['User_email'] ?? 'No email available',
+          ),
+          GestureDetector(
+            onTap: () {
+              if (isDrawerOpen) {
+                _onTap();
+              }
+            },
             child: AnimatedContainer(
               decoration: isDrawerOpen
                   ? BoxDecoration(
@@ -119,122 +97,122 @@ class _HomePageState extends State<HomePage> {
               duration: Duration(microseconds: 100),
               transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
                 ..scale(scaleFactor),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 40,
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    xOffSet = 230;
-                                    yOffSet =
-                                        MediaQuery.of(context).size.height *
-                                            0.15;
-                                    scaleFactor = 0.7;
-                                    isDrawerOpen = true;
-                                  });
-                                },
-                                child: ClipOval(
-                                  child: FutureBuilder<String>(
-                                    future: profileImageUrlFuture,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return CircularProgressIndicator(
-                                            color: Color(0xff1671D8));
-                                      } else if (snapshot.hasError) {
-                                        return Icon(Icons.error);
-                                      } else if (snapshot.hasData &&
-                                          snapshot.data!.isNotEmpty) {
-                                        return Image.network(
-                                          snapshot.data!,
-                                          fit: BoxFit.cover,
-                                          height: 45.0,
-                                          width: 45.0,
-                                        );
-                                      } else {
-                                        return Image.asset(
-                                          'assets/images/person.png',
-                                          fit: BoxFit.cover,
-                                          height: 45.0,
-                                          width: 45.0,
-                                        );
-                                      }
+              child: IgnorePointer(
+                ignoring: isDrawerOpen, // Disable interaction only when drawer is open
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 40,
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded( // Wrap the entire Row with Expanded
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        xOffSet = 230;
+                                        yOffSet =
+                                            MediaQuery.of(context).size.height *
+                                                0.15;
+                                        scaleFactor = 0.7;
+                                        isDrawerOpen = true;
+                                      });
                                     },
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Container(
-                                // height: 45,
-                                child: const Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'helo',
-                                      style: TextStyle(
-                                          fontSize: 22, color: Colors.black),
+                                    child: ClipOval(
+                                      child: userData?['User_profile_image'] != null &&
+                                              userData!['User_profile_image'].isNotEmpty
+                                          ? Image.network(
+                                              userData!['User_profile_image'],
+                                              fit: BoxFit.cover,
+                                              height: 45.0,
+                                              width: 45.0,
+                                            )
+                                          : Image.asset(
+                                              'assets/images/person.png',
+                                              fit: BoxFit.cover,
+                                              height: 45.0,
+                                              width: 45.0,
+                                            ),
                                     ),
-                                    Row(
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded( // Keep this Expanded
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Icon(
-                                          Icons.location_on_outlined,
-                                          size: 16,
-                                          color: Color(0xffFF5402),
+                                        Text(
+                                          'hello ${userData?['User_name'] ?? 'User'}',
+                                          style: TextStyle(
+                                              fontSize: 22, color: Colors.black),
                                         ),
-                                        Text("234, FTS Colony, HYD",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black)),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.location_on_outlined,
+                                              size: 16,
+                                              color: Color(0xffFF5402),
+                                            ),
+                                            Expanded( // Keep this Expanded
+                                              child: Text(
+                                                userData?['User_address'] != null
+                                                    ? userData!['User_address']
+                                                        .split(',')
+                                                        .take(3)
+                                                        .join(', ')
+                                                    : 'Location not available',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
-                                  ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            //notification
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Color(
+                                      0xffE7E7E7), // Set the border color to grey
+                                  width: 1.0, // Set the border width
                                 ),
                               ),
-                            ],
-                          ),
-                          //notification
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Color(
-                                    0xffE7E7E7), // Set the border color to grey
-                                width: 1.0, // Set the border width
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.notifications_none_outlined,
+                                  color: Color(0xff515151),
+                                ),
+                                onPressed: () {
+                                  Get.toNamed(AppRoutes.NOTIFICATIONS);
+                                },
                               ),
                             ),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.notifications_none_outlined,
-                                color: Color(0xff515151),
-                              ),
-                              onPressed: () {
-                                Get.toNamed(AppRoutes.NOTIFICATIONS);
-                              },
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    searchbar(),
-                    offersSliders(),
-                    serviceswidgit(),
-                    toprecommendedservices(),
-                  ],
+                      SizedBox(
+                        height: 12,
+                      ),
+                      searchbar(),
+                      offersSliders(),
+                      serviceswidgit(),
+                      toprecommendedservices(),
+                    ],
+                  ),
                 ),
               ),
             ),

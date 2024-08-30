@@ -4,6 +4,7 @@ import 'package:wrenchmate_user_app/app/controllers/searchcontroller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
+import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 
 import '../../data/models/Service_firebase.dart';
 
@@ -29,19 +30,7 @@ class _SearchPageState extends State<SearchPage> {
               children: [
                 Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_back_ios_new_outlined,
-                            color: Colors.black),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
+                    Custombackbutton(),
                     SizedBox(width: 10),
                     Expanded(
                       child: TextField(
@@ -195,7 +184,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void navigateToServicePage(String service) {
-    Get.toNamed('/service', arguments: service);
+    Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: service);
   }
 
   Widget _buildChip(String label) {

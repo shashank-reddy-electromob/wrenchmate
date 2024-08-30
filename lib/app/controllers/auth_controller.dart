@@ -125,7 +125,7 @@ class AuthController extends GetxController {
         'User_carDetails':[],
       });
       print("User added to Firestore");
-      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: userId);
+      Get.toNamed(AppRoutes.MAPSCREEN);
     } catch (e) {
       print("Failed to add user: $e");
       Get.snackbar("Error", "Failed to add user: ${e.toString()}");

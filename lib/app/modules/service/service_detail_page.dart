@@ -97,13 +97,15 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 //service card
                 Container(
                   height: MediaQuery.of(context).size.height * 0.49,
+                  width: MediaQuery.of(context).size.width,
                   child: Stack(children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: ExtendedImage.network(
-                        "https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
-                        //service.image,
-                        fit: BoxFit.fitWidth,
+                        service.image,
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height*0.3,
+                        fit: BoxFit.cover,
                         cache: true,
                       ),
                     ),
@@ -261,124 +263,142 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
         Positioned(
             top: MediaQuery.of(context).size.height * 0.055,
             right: MediaQuery.of(context).size.width * 0.04,
-            child: CustomElevatedButton(
+            child: (addtocart == false)
+                ? CustomElevatedButton(
               onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) {
-                    return BottomSheet();
-                  },
-                );
+                addToCart(service);
+                setState(() {
+                  addtocart = true;
+                });
               },
-              text: 'Add+',
-            )),
+              text: '+Add',
+            )
+                : CustomElevatedButton(
+              onPressed: () {
+                Get.toNamed(AppRoutes.CART);
+              },
+              text: 'Go to cart',
+            ),
+            // child: CustomElevatedButton(
+            //   onPressed: () {
+            //
+            //     // showModalBottomSheet(
+            //     //   context: context,
+            //     //   isScrollControlled: true,
+            //     //   builder: (context) {
+            //     //     return BottomSheet();
+            //     //   },
+            //     // );
+            //   },
+            //   text: 'Add+',
+            // )
+        ),
       ]),
     );
   }
 
-  Widget BottomSheet() {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.3,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-      ),
-      child: StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return Column(
-            children: [
-              Container(
-                height: 6,
-                margin: EdgeInsets.only(top: 8),
-                width: 80,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              SizedBox(height: 18),
-              Text(
-                "Choose a Service Type",
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-              ),
-              SizedBox(height: 36),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Showroom Quality\n ₹ ${service.price}",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        (addtocart == false)
-                            ? CustomElevatedButton(
-                                onPressed: () {
-                                  addToCart(service);
-                                  setState(() {
-                                    addtocart = true;
-                                  });
-                                },
-                                text: '+Add',
-                              )
-                            : CustomElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Get.toNamed(AppRoutes.CART);
-                                },
-                                text: 'Go to cart',
-                              ),
-                      ],
-                    ),
-                    SizedBox(height: 18),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Normal Quality\n ₹ ${service.price}",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        (addtocart == false)
-                            ? CustomElevatedButton(
-                                onPressed: () {
-                                  addToCart(service);
-                                  setState(() {
-                                    addtocart = true;
-                                  });
-                                },
-                                text: '+Add',
-                              )
-                            : CustomElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  Get.toNamed(AppRoutes.CART);
-                                },
-                                text: 'Go to cart',
-                              ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
+  // Widget BottomSheet() {
+  //   return Container(
+  //     height: MediaQuery.of(context).size.height * 0.3,
+  //     width: double.infinity,
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.only(
+  //         topLeft: Radius.circular(20.0),
+  //         topRight: Radius.circular(20.0),
+  //       ),
+  //     ),
+  //     child: StatefulBuilder(
+  //       builder: (BuildContext context, StateSetter setState) {
+  //         return Column(
+  //           children: [
+  //             Container(
+  //               height: 6,
+  //               margin: EdgeInsets.only(top: 8),
+  //               width: 80,
+  //               decoration: BoxDecoration(
+  //                 color: Colors.grey.shade300,
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //             ),
+  //             SizedBox(height: 18),
+  //             Text(
+  //               "Choose a Service Type",
+  //               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+  //             ),
+  //             SizedBox(height: 36),
+  //             Padding(
+  //               padding: const EdgeInsets.symmetric(horizontal: 18.0),
+  //               child: Column(
+  //                 children: [
+  //                   Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: [
+  //                       Text(
+  //                         "Showroom Quality\n ₹ ${service.price}",
+  //                         style: TextStyle(
+  //                             color: Colors.black,
+  //                             fontSize: 22,
+  //                             fontWeight: FontWeight.w400),
+  //                       ),
+  //                       (addtocart == false)
+  //                           ? CustomElevatedButton(
+  //                               onPressed: () {
+  //                                 addToCart(service);
+  //                                 setState(() {
+  //                                   addtocart = true;
+  //                                 });
+  //                               },
+  //                               text: '+Add',
+  //                             )
+  //                           : CustomElevatedButton(
+  //                               onPressed: () {
+  //                                 Navigator.pop(context);
+  //                                 Get.toNamed(AppRoutes.CART);
+  //                               },
+  //                               text: 'Go to cart',
+  //                             ),
+  //                     ],
+  //                   ),
+  //                   SizedBox(height: 18),
+  //                   Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: [
+  //                       Text(
+  //                         "Normal Quality\n ₹ ${service.price}",
+  //                         style: TextStyle(
+  //                             color: Colors.black,
+  //                             fontSize: 22,
+  //                             fontWeight: FontWeight.w400),
+  //                       ),
+  //                       (addtocart == false)
+  //                           ? CustomElevatedButton(
+  //                               onPressed: () {
+  //                                 addToCart(service);
+  //                                 setState(() {
+  //                                   addtocart = true;
+  //                                 });
+  //                               },
+  //                               text: '+Add',
+  //                             )
+  //                           : CustomElevatedButton(
+  //                               onPressed: () {
+  //                                 Navigator.pop(context);
+  //                                 Get.toNamed(AppRoutes.CART);
+  //                               },
+  //                               text: 'Go to cart',
+  //                             ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget DescriptionWidget() {
     return Container(

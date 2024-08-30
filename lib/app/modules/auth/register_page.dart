@@ -212,18 +212,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         await register();
                       },
                     ),
-              Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: GestureDetector(
-                  onTap: () {
-                    Get.toNamed(AppRoutes.BOTTOMNAV);
-                  },
-                  child: Text(
-                    "SKIP FOR NOW",
-                    style: TextStyle(fontSize: 18, color: Color(0xff595959)),
-                  ),
-                ),
-              ),
             ],
           ),
         ),

@@ -34,9 +34,6 @@ class _offersSlidersState extends State<offersSliders> {
       offerTitle: 'Get Best Offer',
       imagePath: 'assets/images/casousel_img.png',
     ),
-    // Container(color: Colors.green, height: 200, width: 330),
-    // Container(color: Colors.blue, height: 200, width: 330),
-    // Container(color: Colors.yellow, height: 200, width: 330),
   ];
   @override
   Widget build(BuildContext context) {
@@ -66,7 +63,7 @@ class _offersSlidersState extends State<offersSliders> {
   }
 
   Widget build_offers(int index) {
-    return InkWell(onTap: () {}, child: offer_widgits[index]);
+    return InkWell(onTap: () {print("details wala fun");}, child: offer_widgits[index]);
   }
 
   Widget buildindicator() {
@@ -182,7 +179,7 @@ class OfferCard extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: Color(0xffFF5402),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

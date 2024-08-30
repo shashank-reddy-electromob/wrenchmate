@@ -184,7 +184,7 @@ class _MapScreenState extends State<MapScreen> {
       builder: (context) => StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return Container(
-            height: MediaQuery.of(context).size.height * 0.7,
+            height: MediaQuery.of(context).size.height * 0.85,
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Colors.white,

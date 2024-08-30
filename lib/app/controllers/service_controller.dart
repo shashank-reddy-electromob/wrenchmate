@@ -14,7 +14,7 @@ class ServiceController extends GetxController {
   var selectedService = Rxn<ServiceFirebase>(); // To store the selected service
 
 
-  void fetchServices(String category) async {
+  Future<void> fetchServices(String category) async {
     try {
       loading.value = true; // Start loading
       print("Fetching services for category: $category");
