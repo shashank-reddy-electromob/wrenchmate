@@ -17,7 +17,7 @@ class CarDetails extends StatefulWidget {
 class _CarDetailsState extends State<CarDetails> {
   String? selectedFuelType;
   String? selectedTransmissionType;
-  String? selectedCarModel; // Add this field
+  String? selectedCarModel;
   TextEditingController regNoController = TextEditingController();
   TextEditingController regYearController = TextEditingController();
   TextEditingController insuranceExpController = TextEditingController();
@@ -55,6 +55,28 @@ class _CarDetailsState extends State<CarDetails> {
       setState(() {
         controller.text = DateFormat('dd/MM/yyyy').format(picked);
       });
+  }
+
+  void addCar() async {
+    if (selectedCarModel == null ||
+        regNoController.text.isEmpty || 
+        regYearController.text.isEmpty || 
+        insuranceExpController.text.isEmpty || 
+        pucExpDateController.text.isEmpty) {
+      Get.snackbar('Error', 'Please fill all fields');
+      return;
+    }
+
+    await carController?.addCar(
+      fuelType: selectedFuelType ?? '',
+      registrationNumber: regNoController.text,
+      registrationYear: int.tryParse(regYearController.text.split('/').last) ?? 0,
+      pucExpiration: DateFormat('dd/MM/yyyy').parse(pucExpDateController.text),
+      insuranceExpiration: DateFormat('dd/MM/yyyy').parse(insuranceExpController.text),
+      transmission: selectedTransmissionType ?? '',
+      carType: carNames[selectedIndex ?? 0],
+      carModel: selectedCarModel ?? '',
+    );
   }
 
   @override
@@ -208,19 +230,8 @@ class _CarDetailsState extends State<CarDetails> {
                     Spacer(),
                     blueButton(
                         text: 'COMPLETED',
-                        onTap: () async {
-                          print("tapped");
-                          // await carController?.addCar(
-                          //   fuelType: 'Petrol',
-                          //   registrationNumber: 'ABC1234',
-                          //   registrationYear: 2021,
-                          //   pucExpiration: DateTime(2022, 12, 31),
-                          //   insuranceExpiration: DateTime(2023, 12, 31),
-                          //   transmission: 'Automatic', carType: selectedCarType,
-                          //   carModel: '', //make changes here
-                          // );
-                          Get.toNamed(AppRoutes.BOTTOMNAV);
-                        }),
+                        onTap: addCar, // Call the new addCar function
+                    ),
                     SizedBox(
                       width: 16,
                     ),
@@ -265,12 +276,13 @@ class CustomDropdown extends StatelessWidget {
       ),
       value: value,
       onChanged: onChanged,
+      dropdownColor: Colors.white,
       items: items.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem(
           value: value,
           child: Text(
             value,
-            style: TextStyle(fontSize: 12.0),
+            style: TextStyle(fontSize: 16.0),
           ),
         );
       }).toList(),

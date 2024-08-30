@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -124,6 +122,7 @@ class AuthController extends GetxController {
         'User_email': email,
         if (address != null && address.isNotEmpty) 'User_address': address,
         if (profileImagePath != null && profileImagePath.isNotEmpty) 'User_profile_image': profileImagePath,
+        'User_carDetails':[],
       });
       print("User added to Firestore");
       Get.toNamed(AppRoutes.BOTTOMNAV, arguments: userId);
@@ -131,6 +130,12 @@ class AuthController extends GetxController {
       print("Failed to add user: $e");
       Get.snackbar("Error", "Failed to add user: ${e.toString()}");
     }
+  }
+
+  Future<List<dynamic>> getUserCarDetails() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+    return userDoc['User_carDetails'] ?? [];
   }
 
   void logout() async {

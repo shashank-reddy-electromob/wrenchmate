@@ -6,7 +6,6 @@ import 'package:wrenchmate_user_app/app/modules/product/productscreen.dart';
 import 'package:wrenchmate_user_app/app/modules/tracking/chatscreen.dart';
 import 'package:wrenchmate_user_app/app/modules/tracking/tracking_page.dart';
 import 'app/bindings/initial_binding.dart';
-import 'app/modules/auth/car_deetail.dart';
 import 'app/routes/app_pages.dart';
 import 'firebase_options.dart';
 
