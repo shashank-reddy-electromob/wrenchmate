@@ -91,10 +91,10 @@ class _bottomnavigationState extends State<bottomnavigation> {
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
-                AssetImage('assets/icons/bookings.png'),
+                AssetImage('assets/icons/product.png'),
                 size: 30,
               ),
-              label: 'Booking',
+              label: 'Product',
             ),
             BottomNavigationBarItem(
               icon: Container(
