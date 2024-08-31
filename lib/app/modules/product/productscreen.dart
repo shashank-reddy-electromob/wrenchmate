@@ -43,7 +43,6 @@ class ProductScreen extends StatelessWidget {
                 return Stack(
                   children: [
                     Container(
-                      color: Colors.pink,
                       margin: EdgeInsets.only(left: 50.0), // Adjusted margin
                       child: Card(
                         color: Color(0xffF7F7F7),
