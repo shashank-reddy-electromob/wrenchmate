@@ -6,6 +6,7 @@ import 'package:wrenchmate_user_app/app/modules/cart/widgets/pricing.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
 import '../../controllers/booking_controller.dart'; // Import the BookingController
+import '../../controllers/home_controller.dart'; // Import the HomeController
 import '../../widgets/custombackbutton.dart'; // Import the ServiceController
 
 class CartPage extends StatefulWidget {
@@ -17,16 +18,19 @@ class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.find();
   final ServiceController serviceController = Get.find();
   final BookingController bookingController = Get.put(BookingController()); // Get the BookingController instance
+  final HomeController homeController = Get.find(); // Get the HomeController instance
 
   double? totalAmount;
   double? tax ;
   double? finalAmount;
   List<String> deletedServiceIds = [];
+  String? currentCar;
 
   @override
   void initState() {
     super.initState();
     fetchCartData();
+    fetchUserCurrentCar();
   }
 
   Future<void> fetchCartData() async {
@@ -34,7 +38,12 @@ class _CartPageState extends State<CartPage> {
     calculateTotal();
   }
 
-    void calculateTotal() {
+  Future<void> fetchUserCurrentCar() async {
+    currentCar = await homeController.fetchUserCurrentCar();
+    setState(() {});
+  }
+
+  void calculateTotal() {
     setState(() {
       totalAmount = cartController.cartItems.fold<double>(0, (sum, item) {
         var service = serviceController.services.firstWhere(
@@ -287,6 +296,7 @@ class _CartPageState extends State<CartPage> {
                             '', // confirmation_note
                             '', // outForService_note
                             '', // completed_note
+                            currentCar!, // Pass the current car
                           );
 
                           // Optionally show a success message

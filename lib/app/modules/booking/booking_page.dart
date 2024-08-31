@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/tabButton.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import for Timestamp
 import '../../controllers/booking_controller.dart';
 import '../../controllers/service_controller.dart';
 import '../../data/models/Service_Firebase.dart';
@@ -48,7 +49,7 @@ class _BookingPageState extends State<BookingPage> {
     }
 
     print('History Services Count: ${historyServices.length}');
-print('Current Services Count: ${currentServices.length}');
+    print('Current Services Count: ${currentServices.length}');
     setState(() {}); // Update the UI
   }
 
@@ -151,8 +152,33 @@ class BookingTile extends StatelessWidget {
 
   const BookingTile({Key? key, required this.service, required this.booking, required this.selectedTab}) : super(key: key);
 
+  String _getCarImage(String carType) {
+    switch (carType) {
+      case 'Compact SUV':
+        return 'assets/car/compact_suv.png';
+      case 'Hatchback':
+        return 'assets/car/hatchback.png';
+      case 'SUV':
+        return 'assets/car/suv.png';
+      case 'Sedan':
+        return 'assets/car/sedan.png';
+      default:
+        return 'assets/car/default_car.png';
+    }
+  }
+
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) return '';
+    final DateFormat formatter = DateFormat('hh:mm, dd, MMM');
+    return formatter.format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final carType = booking.car_details?.split(';')[0] ?? '';
+    final carImage = _getCarImage(carType);
+    final formattedDate = _formatDateTime(booking.confirmationDate);
+
     return Padding(
       padding: const EdgeInsets.only(left: 18.0, top: 8.0),
       child: GestureDetector(
@@ -184,15 +210,36 @@ class BookingTile extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 150,
+                  padding: EdgeInsets.only(left: 16,top: 24,bottom: 16,right: 48),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.white,
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(service.name), // Display service name
-                      Text('\$${service.price}'), // Display service price
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Image.asset(carImage, height: 60),
+                              SizedBox(width: 8,),
+                              Text('Service name: \n${service.name}'),
+                            ],
+                          ),
+                          Container(height: 40,width: 100,decoration: BoxDecoration(
+                            color: Color(0xffE9FFED),
+                            borderRadius: BorderRadius.circular(7),
+                          ),child: Text("something"),alignment: Alignment.center,)
+                        ],
+                      ), // Display service name
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(formattedDate),
+                          Text('₹ ${service.price}'),
+                        ],
+                      ),
+
                     ],
                   ),
                 ),

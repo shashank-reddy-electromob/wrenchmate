@@ -9,6 +9,7 @@ class Booking {
   final String? completedNote; // Optional completed_note
   final DateTime? confirmationDate; // Optional confirmation_date
   final String? confirmationNote; // Optional confirmation_note
+  final String? car_details;
   final DateTime? outForServiceDate; // Optional outForService_date
   final String? outForServiceNote; // Optional outForService_note
   final PaymentSummary? paymentSummary; // Optional paymentSummary
@@ -18,6 +19,7 @@ class Booking {
     this.userId,
     this.serviceList,
     this.status,
+    this.car_details,
     this.completedDate,
     this.completedNote,
     this.confirmationDate,
@@ -34,6 +36,7 @@ class Booking {
       userId: map['user_id'],
       serviceList: List<String>.from(map['service_list'] ?? []),
       status: map['status'],
+        car_details: map['car_details'],
       completedDate: map['completed_date'] is Timestamp
           ? (map['completed_date'] as Timestamp).toDate()
           : map['completed_date'] != null

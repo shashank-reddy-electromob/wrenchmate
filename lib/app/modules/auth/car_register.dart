@@ -97,7 +97,7 @@ class _CarRegisterState extends State<CarRegister> {
                       onTap: () => _onCardTap(0),
                       isSelected: _selectedCardIndex == 0,
                       name: 'Hatchback',
-                      imagePath: 'assets/car/Matchback.png',
+                      imagePath: 'assets/car/Hatchback.png',
                     ),
                     CarCard(
                       onTap: () => _onCardTap(1),

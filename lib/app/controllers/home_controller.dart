@@ -48,7 +48,22 @@ class HomeController extends GetxController {
   //     Get.snackbar("Error", "Failed to fetch search results: ${e.toString()}");
   //   }
   // }
+  Future<String?> fetchUserCurrentCar() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
 
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      int currentCarIndex = userData['User_currentCar'];
+      String currentCar = userData['User_carDetails'][currentCarIndex];
+      return currentCar;
+    } catch (e) {
+      print("Failed to fetch user current car: $e");
+      Get.snackbar("Error", "Failed to fetch user current car: ${e.toString()}");
+      return null;
+    }
+  }
   Future<void> updateUserProfile(Map<String, dynamic> updatedData) async {
     try {
       print("in update user profile");

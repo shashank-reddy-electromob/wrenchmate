@@ -15,6 +15,7 @@ class BookingController extends GetxController {
     String confirmationNote,
     String outForServiceNote,
     String completedNote,
+    String cardetails,
   ) async {
     try {
       await _firestore.collection('Booking').add({
@@ -27,6 +28,7 @@ class BookingController extends GetxController {
         'confirmation_note': confirmationNote,
         'outForService_note': outForServiceNote,
         'completed_note': completedNote,
+        'car_details': cardetails
       });
     } catch (e) {
       // Handle Firestore errors
@@ -44,11 +46,10 @@ class BookingController extends GetxController {
       List<Map<String, dynamic>> bookings = snapshot.docs
           .map((doc) => doc.data() as Map<String, dynamic>)
           .toList();
-
-      print(bookings); // Print the fetched booking data
+print("aryan is coo");
+      print(bookings);
       return bookings;
     } catch (e) {
-      // Handle Firestore errors
       throw Exception("Failed to fetch bookings: $e");
     }
   }
