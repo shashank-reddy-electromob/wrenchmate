@@ -11,7 +11,8 @@ class AuthController extends GetxController {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> handleSignIn(PhoneAuthCredential credential, TextEditingController otpcontroller) async {
+  Future<void> handleSignIn(PhoneAuthCredential credential,
+      TextEditingController otpcontroller) async {
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
         verificationCompleted: (PhoneAuthCredential credential) {
@@ -22,8 +23,9 @@ class AuthController extends GetxController {
         codeAutoRetrievalTimeout: (String verificationId) {},
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
-      bool isNewUser = FirebaseAuth.instance.currentUser!.metadata.creationTime ==
-          FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
+      bool isNewUser =
+          FirebaseAuth.instance.currentUser!.metadata.creationTime ==
+              FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER);
       } else {
@@ -50,11 +52,13 @@ class AuthController extends GetxController {
     }
   }
 
-  void resendOTP(String phoneNumber, TextEditingController otpcontroller) async {
+  void resendOTP(
+      String phoneNumber, TextEditingController otpcontroller) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       forceResendingToken: resendToken,
-      verificationCompleted: (PhoneAuthCredential credential) => handleSignIn(credential, otpcontroller),
+      verificationCompleted: (PhoneAuthCredential credential) =>
+          handleSignIn(credential, otpcontroller),
       verificationFailed: (FirebaseAuthException e) {
         print("Verification failed: ${e.message}");
         Get.snackbar("Error", e.message ?? "Verification failed");
@@ -71,14 +75,16 @@ class AuthController extends GetxController {
     );
   }
 
-  Future<void> verifyOTP(String otp, String phoneNumber, TextEditingController otpcontroller) async {
+  Future<void> verifyOTP(String otp, String phoneNumber,
+      TextEditingController otpcontroller) async {
     try {
       print(verificationid);
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationid.toString(), smsCode: otp);
       await FirebaseAuth.instance.signInWithCredential(credential);
-      bool isNewUser = FirebaseAuth.instance.currentUser!.metadata.creationTime ==
-          FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
+      bool isNewUser =
+          FirebaseAuth.instance.currentUser!.metadata.creationTime ==
+              FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
       } else {
@@ -93,7 +99,8 @@ class AuthController extends GetxController {
   Future<void> googleLogin() async {
     try {
       GoogleAuthProvider googleProvider = GoogleAuthProvider();
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithProvider(googleProvider);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithProvider(googleProvider);
       bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
       if (isNewUser == true) {
         Get.toNamed(AppRoutes.REGISTER);
@@ -107,12 +114,14 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> addUserToFirestore({required String name,
+  Future<void> addUserToFirestore({
+    required String name,
     required String number,
     required String alternateNumber,
     required String email,
     String? address,
-    String? profileImagePath,}) async {
+    String? profileImagePath,
+  }) async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       print(userId);
@@ -121,9 +130,18 @@ class AuthController extends GetxController {
         'User_number': [number, alternateNumber],
         'User_email': email,
         if (address != null && address.isNotEmpty) 'User_address': address,
-        if (profileImagePath != null && profileImagePath.isNotEmpty) 'User_profile_image': profileImagePath,
-        'User_carDetails':[],
+        if (profileImagePath != null && profileImagePath.isNotEmpty)
+          'User_profile_image': profileImagePath,
+        'User_carDetails': [],
       });
+      await _firestore
+          .collection('User')
+          .doc(userId)
+          .collection('SearchHistory')
+          .add({
+        'user search': [],
+      });
+      print("SearchHistory subcollection added to Firestore");
       print("User added to Firestore");
       Get.toNamed(AppRoutes.MAPSCREEN);
     } catch (e) {
@@ -134,7 +152,8 @@ class AuthController extends GetxController {
 
   Future<List<dynamic>> getUserCarDetails() async {
     String userId = FirebaseAuth.instance.currentUser!.uid;
-    DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+    DocumentSnapshot userDoc =
+        await _firestore.collection('User').doc(userId).get();
     return userDoc['User_carDetails'] ?? [];
   }
 
