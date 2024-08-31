@@ -69,9 +69,9 @@ class _HomePageState extends State<HomePage> {
             userProfileImage: userData?['User_profile_image'] ?? '',
             userName: userData?['User_name'] ?? 'Unknown User',
             userNumber: userData?['User_number'] != null &&
-                        userData!['User_number'].isNotEmpty
-                    ? userData!['User_number'][0]
-                    : 'No number available',
+                userData!['User_number'].isNotEmpty
+                ? userData!['User_number'][0]
+                : 'No number available',
             userEmail: userData?['User_email'] ?? 'No email available',
           ),
           GestureDetector(
@@ -83,16 +83,16 @@ class _HomePageState extends State<HomePage> {
             child: AnimatedContainer(
               decoration: isDrawerOpen
                   ? BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 20,
-                          blurRadius: 35,
-                        ),
-                      ],
-                    )
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 20,
+                    blurRadius: 35,
+                  ),
+                ],
+              )
                   : BoxDecoration(color: Colors.white),
               duration: Duration(microseconds: 100),
               transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
@@ -127,19 +127,19 @@ class _HomePageState extends State<HomePage> {
                                     },
                                     child: ClipOval(
                                       child: userData?['User_profile_image'] != null &&
-                                              userData!['User_profile_image'].isNotEmpty
+                                          userData!['User_profile_image'].isNotEmpty
                                           ? Image.network(
-                                              userData!['User_profile_image'],
-                                              fit: BoxFit.cover,
-                                              height: 45.0,
-                                              width: 45.0,
-                                            )
+                                        userData!['User_profile_image'],
+                                        fit: BoxFit.cover,
+                                        height: 45.0,
+                                        width: 45.0,
+                                      )
                                           : Image.asset(
-                                              'assets/images/person.png',
-                                              fit: BoxFit.cover,
-                                              height: 45.0,
-                                              width: 45.0,
-                                            ),
+                                        'assets/images/person.png',
+                                        fit: BoxFit.cover,
+                                        height: 45.0,
+                                        width: 45.0,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(width: 10),
@@ -163,9 +163,9 @@ class _HomePageState extends State<HomePage> {
                                               child: Text(
                                                 userData?['User_address'] != null
                                                     ? userData!['User_address']
-                                                        .split(',')
-                                                        .take(3)
-                                                        .join(', ')
+                                                    .split(',')
+                                                    .take(3)
+                                                    .join(', ')
                                                     : 'Location not available',
                                                 style: TextStyle(
                                                     fontSize: 16,

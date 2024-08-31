@@ -22,6 +22,7 @@ class bottomnavigation extends StatefulWidget {
 
 class _bottomnavigationState extends State<bottomnavigation> {
   int _selectedIndex = 0;
+
   static List<Widget> _widgetOptions = [
     HomePage(),
     BookingPage(),
@@ -53,25 +54,29 @@ class _bottomnavigationState extends State<bottomnavigation> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        // drawer: drawerPage(),
         backgroundColor: Colors.white,
-        body: _widgetOptions.elementAt(_selectedIndex),
+        body: Stack(
+          children: [
+            _widgetOptions.elementAt(_selectedIndex),
+            SlidingContainer(isVisible: _selectedIndex == 0),
+          ],
+        ),
         floatingActionButton: DraggableFab(
-          child:ClipOval(
-            child: Material(
-              color: Colors.blue, // Button color
-              child: InkWell(
-                splashColor: Colors.blueAccent, // Splash color
-                onTap: () {
-                  Get.toNamed(AppRoutes.TRACKING);
-                },
-                child: SizedBox(
-                  width: 60,
-                  height: 60,
+            child: ClipOval(
+              child: Material(
+                color: Colors.blue,
+                child: InkWell(
+                  splashColor: Colors.blueAccent,
+                  onTap: () {
+                    Get.toNamed(AppRoutes.TRACKING);
+                  },
+                  child: SizedBox(
+                    width: 60,
+                    height: 60,
+                  ),
                 ),
               ),
-            ),
-          )
+            )
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
@@ -132,7 +137,32 @@ class _bottomnavigationState extends State<bottomnavigation> {
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
+      ),
+    );
+  }
+}
 
+class SlidingContainer extends StatelessWidget {
+  final bool isVisible;
+
+  SlidingContainer({required this.isVisible});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedPositioned(
+      duration: Duration(milliseconds: 300),
+      bottom: isVisible ? 0 : -100,  // Adjust these values as needed
+      left: 0,
+      right: 0,
+      child: Container(
+        height: 100,  // Adjust height as needed
+        color: Colors.blueAccent,
+        child: Center(
+          child: Text(
+            "Sliding Container",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        ),
       ),
     );
   }
