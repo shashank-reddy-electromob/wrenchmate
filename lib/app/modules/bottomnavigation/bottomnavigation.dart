@@ -10,6 +10,7 @@ import '../../controllers/home_controller.dart';
 import '../../routes/app_routes.dart';
 import '../booking/booking_page.dart';
 import '../car/car_page.dart';
+import '../product/productscreen.dart';
 import '../subscription/subscription_page.dart';
 import '../support/support_page.dart';
 
@@ -25,7 +26,8 @@ class _bottomnavigationState extends State<bottomnavigation> {
 
   static List<Widget> _widgetOptions = [
     HomePage(),
-    BookingPage(),
+   // BookingPage(),
+    ProductScreen(),
     CarPage(),
     SupportPage(),
     SubscriptionPage(),

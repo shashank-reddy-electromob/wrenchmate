@@ -5,15 +5,32 @@ import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
+import '../../widgets/custombackbutton.dart';
+
 class ProductScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Product',
-        onBackButtonPressed: () {
-          Navigator.of(context).pop();
-        },
+    return Scaffold(backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        flexibleSpace: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Custombackbutton(),
+                SizedBox(width: 16,),
+                Text(
+                  "Product",
+                  style: AppTextStyle.semiboldRaleway19,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -26,7 +43,8 @@ class ProductScreen extends StatelessWidget {
                 return Stack(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(left: 60.0),
+                      color: Colors.pink,
+                      margin: EdgeInsets.only(left: 50.0), // Adjusted margin
                       child: Card(
                         color: Color(0xffF7F7F7),
                         shape: RoundedRectangleBorder(
@@ -34,7 +52,7 @@ class ProductScreen extends StatelessWidget {
                             side: BorderSide(width: 1, color: lightGreyColor)),
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              left: 56.0, top: 16.0, right: 16.0, bottom: 16.0),
+                              left: 56.0, top: 16.0, right: 0.0, bottom: 16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -54,6 +72,7 @@ class ProductScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 4.0),
                               Row(
+                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Text(
@@ -63,7 +82,8 @@ class ProductScreen extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  Expanded(
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                     child: CustomElevatedButton(
                                       onPressed: () {
                                         // showModalBottomSheet(
@@ -85,7 +105,7 @@ class ProductScreen extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      left: 4.0,
+                      left: 4.0, // Adjusted position
                       top: 35.0,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
