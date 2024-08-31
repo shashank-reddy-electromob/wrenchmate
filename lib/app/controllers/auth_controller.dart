@@ -110,7 +110,7 @@ class AuthController extends GetxController {
     } catch (e) {
       print("Google Sign-In failed: $e");
       Get.snackbar("Error", "Google Sign-In failed: ${e.toString()}");
-      throw e; // Ensure the exception is thrown
+      throw e;
     }
   }
 
