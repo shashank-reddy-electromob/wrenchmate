@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
 import '../../../routes/app_routes.dart';
 import '../../service/service_page.dart';
@@ -116,7 +117,7 @@ class ServicesType extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: MediaQuery.of(context).size.width / 4 - 10,
+        height: MediaQuery.of(context).size.width / 4,
         width: MediaQuery.of(context).size.width / 4 - 10,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
@@ -124,6 +125,7 @@ class ServicesType extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
@@ -133,6 +135,8 @@ class ServicesType extends StatelessWidget {
             Text(
               text,
               textAlign: TextAlign.center,
+              style: AppTextStyle.mediumRaleway12
+                  .copyWith(fontWeight: FontWeight.w700),
             ),
           ],
         ),

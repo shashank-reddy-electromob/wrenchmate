@@ -154,6 +154,8 @@ class ServiceCard extends StatelessWidget {
                       Text(
                         rating.toString(),
                         style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -168,6 +170,7 @@ class ServiceCard extends StatelessWidget {
               serviceName,
               style: TextStyle(
                 fontSize: 13,
+                fontFamily: 'Poppins',
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -176,9 +179,10 @@ class ServiceCard extends StatelessWidget {
             Text(
               '₹ $price',
               style: TextStyle(
-                fontSize: 10,
-                color: Colors.white,
-              ),
+                  fontFamily: 'Raleway',
+                  fontSize: 10,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
             ),
           ],
         ),

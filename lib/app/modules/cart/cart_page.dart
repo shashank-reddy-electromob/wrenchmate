@@ -17,11 +17,13 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.find();
   final ServiceController serviceController = Get.find();
-  final BookingController bookingController = Get.put(BookingController()); // Get the BookingController instance
-  final HomeController homeController = Get.find(); // Get the HomeController instance
+  final BookingController bookingController =
+      Get.put(BookingController()); // Get the BookingController instance
+  final HomeController homeController =
+      Get.find(); // Get the HomeController instance
 
   double? totalAmount;
-  double? tax ;
+  double? tax;
   double? finalAmount;
   List<String> deletedServiceIds = [];
   String? currentCar;
@@ -66,7 +68,7 @@ class _CartPageState extends State<CartPage> {
         backgroundColor: Colors.transparent,
         title: Text(
           "Cart",
-          style: TextStyle(fontWeight: FontWeight.w500),
+          style: TextStyle(fontWeight: FontWeight.w500, fontFamily: 'Raleway'),
         ),
         leading: Padding(
             padding: const EdgeInsets.all(6.0), child: Custombackbutton()),
@@ -166,12 +168,16 @@ class _CartPageState extends State<CartPage> {
                                   ),
                                   // Remove Item Button
                                   IconButton(
-                                    icon: Icon(Icons.delete_rounded, color: Colors.red),
+                                    icon: Icon(Icons.delete_rounded,
+                                        color: Colors.red),
                                     onPressed: () async {
-                                      await cartController.deleteServicesFromCart(cartItem['serviceId']);
+                                      await cartController
+                                          .deleteServicesFromCart(
+                                              cartItem['serviceId']);
                                       setState(() {
-                                        cartController.cartItems.removeAt(index);
-                                        calculateTotal(); 
+                                        cartController.cartItems
+                                            .removeAt(index);
+                                        calculateTotal();
                                       });
                                     },
                                   ),
@@ -179,8 +185,7 @@ class _CartPageState extends State<CartPage> {
                               ),
                             ),
                             Divider(
-                              color:
-                                  Color(0xFFF0F0F0),
+                              color: Color(0xFFF0F0F0),
                               thickness: 1,
                               indent: 16,
                               endIndent: 16,
@@ -250,20 +255,22 @@ class _CartPageState extends State<CartPage> {
             bottom: 0,
             child: Container(
               color: Color(0xffFAFAFA),
-              padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     children: [
-                      Text('\₹ ${finalAmount?.toStringAsFixed(2)}', // This will now update dynamically
+                      Text(
+                          '\₹ ${finalAmount?.toStringAsFixed(2)}', // This will now update dynamically
                           style: TextStyle(
                               fontSize: 24, fontWeight: FontWeight.w500)),
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           'View Detailed Bill',
-                          style: TextStyle(color: Color(0xff2095FD), fontSize: 16),
+                          style:
+                              TextStyle(color: Color(0xff2095FD), fontSize: 16),
                         ),
                       ),
                     ],
@@ -284,11 +291,12 @@ class _CartPageState extends State<CartPage> {
                       onPressed: () async {
                         try {
                           List<String> serviceIds = List<String>.from(
-                            cartController.cartItems.map((item) => item['serviceId']),
+                            cartController.cartItems
+                                .map((item) => item['serviceId']),
                           );
 
                           await bookingController.addBooking(
-                            serviceIds, // Pass the converted list
+                            serviceIds, 
                             'confirmed', // status
                             DateTime.now(), // confirmation_date
                             null, // outForService_date
@@ -300,10 +308,12 @@ class _CartPageState extends State<CartPage> {
                           );
 
                           // Optionally show a success message
-                          Get.snackbar("Success", "Booking confirmed successfully!");
+                          Get.snackbar(
+                              "Success", "Booking confirmed successfully!");
                         } catch (e) {
                           // Handle the error
-                          Get.snackbar("Error", "Failed to confirm booking: $e");
+                          Get.snackbar(
+                              "Error", "Failed to confirm booking: $e");
                         }
                       },
                       child: Text(
@@ -312,7 +322,6 @@ class _CartPageState extends State<CartPage> {
                       ),
                     ),
                   )
-
                 ],
               ),
             ),

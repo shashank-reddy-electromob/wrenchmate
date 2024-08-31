@@ -5,6 +5,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
 import '../../data/models/Service_firebase.dart';
 
@@ -37,7 +38,7 @@ class _SearchPageState extends State<SearchPage> {
                         controller: searchController.searchController,
                         decoration: InputDecoration(
                           hintText: 'Search services & Packages',
-                          hintStyle: TextStyle(color: Colors.grey),
+                          hintStyle: AppTextStyle.mediumRaleway12,
                           prefixIcon: Icon(Icons.search, color: Colors.grey),
                           border: InputBorder.none,
                           filled: true,
@@ -52,8 +53,10 @@ class _SearchPageState extends State<SearchPage> {
                 Obx(() => _buildSearchResults()),
                 SizedBox(height: 20),
                 Text('Your search history',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontFamily: 'Poppins')),
                 SizedBox(height: 10),
                 Obx(() {
                   return Wrap(
@@ -66,8 +69,10 @@ class _SearchPageState extends State<SearchPage> {
                 }),
                 SizedBox(height: 20),
                 Text('Popular Services',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        fontFamily: 'Poppins')),
                 SizedBox(height: 10),
                 Obx(() {
                   return SingleChildScrollView(
@@ -96,8 +101,10 @@ class _SearchPageState extends State<SearchPage> {
                 }),
                 SizedBox(height: 20),
                 Text('Top Categories',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        fontFamily: 'Poppins')),
                 SizedBox(height: 10),
                 Obx(() {
                   return SingleChildScrollView(
@@ -120,8 +127,10 @@ class _SearchPageState extends State<SearchPage> {
                 }),
                 SizedBox(height: 20),
                 Text('Top Services',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        fontFamily: 'Poppins')),
                 SizedBox(height: 10),
                 Obx(() {
                   return Column(
@@ -228,18 +237,27 @@ class _SearchPageState extends State<SearchPage> {
                   serviceName,
                   style: TextStyle(
                     fontSize: 16,
+                    fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 4),
                 Row(
                   children: [
-                    Text('Takes $time'),
+                    Text('Takes $time',
+                        style: AppTextStyle.mediumdmsans13.copyWith(
+                            color: Color(0xff616161),
+                            fontWeight: FontWeight.w500)),
                     SizedBox(width: 4),
-                    Text('$warranty Warranty'),
+                    Text('$warranty Warranty',
+                        style: AppTextStyle.mediumdmsans13.copyWith(
+                            color: Color(0xff616161),
+                            fontWeight: FontWeight.w500)),
                   ],
                 ),
-                Text('Includes 15 Services'),
+                Text('Includes 15 Services',
+                    style: AppTextStyle.mediumdmsans13.copyWith(
+                        color: Color(0xff616161), fontWeight: FontWeight.w500)),
               ],
             ),
           ),

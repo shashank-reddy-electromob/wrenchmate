@@ -22,7 +22,8 @@ class blueButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 4),
           child: Text(
             text,
-            style: TextStyle(fontSize: 24, color: Colors.white),
+            style: TextStyle(
+                fontSize: 24, color: Colors.white, fontFamily: 'Raleway'),
           ),
         ),
         style: ElevatedButton.styleFrom(

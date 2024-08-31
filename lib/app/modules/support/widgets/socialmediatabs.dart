@@ -15,7 +15,7 @@ class CustomContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric( vertical:  12.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: GestureDetector(
         onTap: onTap,
         child: Container(
@@ -52,10 +52,10 @@ class CustomContainer extends StatelessWidget {
                   Text(
                     text,
                     style: const TextStyle(
-                      fontSize: 18,
-                      color: Color(0xff1F1F1F),
-                      fontWeight: FontWeight.w500
-                    ),
+                        fontFamily: 'Raleway',
+                        fontSize: 16,
+                        color: Color(0xff1F1F1F),
+                        fontWeight: FontWeight.w600),
                   ),
                 ],
               ),

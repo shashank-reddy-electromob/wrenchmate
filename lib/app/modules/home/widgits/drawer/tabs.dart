@@ -36,9 +36,11 @@ class _MenuTabState extends State<MenuTab> {
         child: Container(
           width: 200,
           decoration: BoxDecoration(
-            color: isSelected || _isHovered ? Color(0xff2666DE) : Colors.transparent,
+            color: isSelected || _isHovered
+                ? Color(0xff2666DE)
+                : Colors.transparent,
             gradient: LinearGradient(
-              colors: [Color(0xff2666DE),Color(0xffFFFFFF)],
+              colors: [Color(0xff2666DE), Color(0xffFFFFFF)],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
@@ -54,7 +56,8 @@ class _MenuTabState extends State<MenuTab> {
               Text(
                 widget.text,
                 style: TextStyle(
-                  color: isSelected ? Colors.white :Color(0xff797979),
+                  fontFamily: 'Raleway',
+                  color: isSelected ? Colors.white : Color(0xff797979),
                 ),
               ),
             ],

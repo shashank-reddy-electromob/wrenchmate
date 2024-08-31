@@ -85,7 +85,11 @@ class _drawerPageState extends State<drawerPage> {
                   children: [
                     Text(
                       widget.userName,
-                      style: TextStyle(fontSize: 20, color: Colors.black),
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontFamily: 'Raleway'),
                     ),
                     IconButton(
                         onPressed: () {
@@ -100,11 +104,13 @@ class _drawerPageState extends State<drawerPage> {
                 ),
                 Text(
                   widget.userNumber,
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 14, color: Colors.grey, fontFamily: 'Poppins'),
                 ),
                 Text(
                   widget.userEmail,
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 14, color: Colors.grey, fontFamily: 'Poppins'),
                 ),
               ],
             ),
@@ -173,6 +179,7 @@ class _drawerPageState extends State<drawerPage> {
                       textAlign: TextAlign.center,
                       " Log out",
                       style: TextStyle(
+                        fontFamily: 'Raleway',
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,

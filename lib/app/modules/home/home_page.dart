@@ -8,6 +8,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:google_api_availability/google_api_availability.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/home_controller.dart';
 import 'drawer.dart';
 
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
             userProfileImage: userData?['User_profile_image'] ?? '',
             userName: userData?['User_name'] ?? 'Unknown User',
             userNumber: userData?['User_number'] != null &&
-                userData!['User_number'].isNotEmpty
+                    userData!['User_number'].isNotEmpty
                 ? userData!['User_number'][0]
                 : 'No number available',
             userEmail: userData?['User_email'] ?? 'No email available',
@@ -83,22 +84,22 @@ class _HomePageState extends State<HomePage> {
             child: AnimatedContainer(
               decoration: isDrawerOpen
                   ? BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 20,
-                    blurRadius: 35,
-                  ),
-                ],
-              )
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 20,
+                          blurRadius: 35,
+                        ),
+                      ],
+                    )
                   : BoxDecoration(color: Colors.white),
               duration: Duration(microseconds: 100),
               transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
                 ..scale(scaleFactor),
               child: IgnorePointer(
-                ignoring: isDrawerOpen, // Disable interaction only when drawer is open
+                ignoring: isDrawerOpen,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Column(
@@ -111,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded( // Wrap the entire Row with Expanded
+                            Expanded(
                               child: Row(
                                 children: [
                                   GestureDetector(
@@ -126,31 +127,34 @@ class _HomePageState extends State<HomePage> {
                                       });
                                     },
                                     child: ClipOval(
-                                      child: userData?['User_profile_image'] != null &&
-                                          userData!['User_profile_image'].isNotEmpty
+                                      child: userData?['User_profile_image'] !=
+                                                  null &&
+                                              userData!['User_profile_image']
+                                                  .isNotEmpty
                                           ? Image.network(
-                                        userData!['User_profile_image'],
-                                        fit: BoxFit.cover,
-                                        height: 45.0,
-                                        width: 45.0,
-                                      )
+                                              userData!['User_profile_image'],
+                                              fit: BoxFit.cover,
+                                              height: 45.0,
+                                              width: 45.0,
+                                            )
                                           : Image.asset(
-                                        'assets/images/person.png',
-                                        fit: BoxFit.cover,
-                                        height: 45.0,
-                                        width: 45.0,
-                                      ),
+                                              'assets/images/person.png',
+                                              fit: BoxFit.cover,
+                                              height: 45.0,
+                                              width: 45.0,
+                                            ),
                                     ),
                                   ),
                                   SizedBox(width: 10),
-                                  Expanded( // Keep this Expanded
+                                  Expanded(
+                                    // Keep this Expanded
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'hello ${userData?['User_name'] ?? 'User'}',
-                                          style: TextStyle(
-                                              fontSize: 22, color: Colors.black),
+                                          style: AppTextStyle.boldRaleway15,
                                         ),
                                         Row(
                                           children: [
@@ -159,17 +163,17 @@ class _HomePageState extends State<HomePage> {
                                               size: 16,
                                               color: Color(0xffFF5402),
                                             ),
-                                            Expanded( // Keep this Expanded
+                                            Expanded(
+                                              // Keep this Expanded
                                               child: Text(
-                                                userData?['User_address'] != null
+                                                userData?['User_address'] !=
+                                                        null
                                                     ? userData!['User_address']
-                                                    .split(',')
-                                                    .take(3)
-                                                    .join(', ')
+                                                        .split(',')
+                                                        .take(3)
+                                                        .join(', ')
                                                     : 'Location not available',
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.black),
+                                                style: AppTextStyle.medium10,
                                               ),
                                             ),
                                           ],

@@ -26,8 +26,9 @@ class TabButton extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: TextStyle(
+            fontFamily: 'Raleway',
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
             color: isSelected ? Color(0xff2666DE) : Color(0xff7C7C7C),
           ),
         ),

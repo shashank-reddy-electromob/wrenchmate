@@ -18,14 +18,17 @@ class NotificationPage extends StatelessWidget {
         leading: Custombackbutton(),
         title: Text(
           'Notifications',
-          style: TextStyle(fontWeight: FontWeight.w500),
+          style: TextStyle(fontWeight: FontWeight.w500, fontFamily: 'Raleway'),
         ),
         actions: [
           GestureDetector(
             onTap: () {},
             child: Text(
               "Mark all as read",
-              style: TextStyle(color: Color(0xff2E70E8), fontSize: 16),
+              style: TextStyle(
+                  color: Color(0xff2E70E8),
+                  fontSize: 12,
+                  fontFamily: 'Poppins'),
             ),
           ),
           SizedBox(
@@ -76,16 +79,18 @@ class NotificationPage extends StatelessWidget {
                         children: [
                           Text(dummyNotifications[index].title,
                               style: TextStyle(
-                                  fontSize: 20,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
                                   color: Color(0xff1E293B),
-                                  fontWeight: FontWeight.w400)),
+                                  fontWeight: FontWeight.w500)),
                           Expanded(
                             child: Text(
                               dummyNotifications[index].description,
                               style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 14,
+                                  fontFamily: 'Poppins',
                                   color: Color(0xff334155),
-                                  fontWeight: FontWeight.w300),
+                                  fontWeight: FontWeight.w100),
                               softWrap:
                                   true, // Allow description to wrap to the next line
                             ),

@@ -12,7 +12,7 @@ class termsAndConditions extends StatefulWidget {
 
 class _termsAndConditionsState extends State<termsAndConditions> {
   final ScrollController _scrollController = ScrollController();
-  bool _isAtBottom=false;
+  bool _isAtBottom = false;
 
   @override
   void initState() {
@@ -21,11 +21,13 @@ class _termsAndConditionsState extends State<termsAndConditions> {
   }
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent) {
+    if (_scrollController.offset >=
+        _scrollController.position.maxScrollExtent) {
       setState(() {
         _isAtBottom = true;
       });
-    } else if (_scrollController.offset <= _scrollController.position.minScrollExtent) {
+    } else if (_scrollController.offset <=
+        _scrollController.position.minScrollExtent) {
       setState(() {
         _isAtBottom = false;
       });
@@ -39,6 +41,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
       curve: Curves.easeInOut,
     );
   }
+
   void _scrollToTop() {
     _scrollController.animateTo(
       0.0,
@@ -46,11 +49,17 @@ class _termsAndConditionsState extends State<termsAndConditions> {
       curve: Curves.easeInOut,
     );
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.transparent,
-        title: Text('Terms & Condition'),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text(
+          'Terms & Condition',
+          style: TextStyle(fontFamily: 'Raleway', fontWeight: FontWeight.w500),
+        ),
         leading: Padding(
           padding: const EdgeInsets.all(6.0),
           child: Container(
@@ -82,89 +91,112 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                 Text(
                   '1. Clause 1',
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 24,
-                  ),
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 24,
+                      fontFamily: 'Poppins'),
                 ),
                 SizedBox(height: 8),
                 Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
                 ),
                 SizedBox(height: 16),
                 Text(
                   '2. Clause 2',
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 24,
-                  ),
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 24,
+                      fontFamily: 'Poppins'),
                 ),
                 SizedBox(height: 8),
                 Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
                 ),
                 SizedBox(height: 16),
                 Text(
                   '3. Clause 3',
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 24,
-                  ),
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 24,
+                      fontFamily: 'Poppins'),
                 ),
                 SizedBox(height: 8),
                 Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra condimentum eget purus in. Consectetur eget id morbi amet amet, in. Ipsum viverra pretium tellus neque. Ullamcorper suspendisse aenean leo pharetra in sit semper et. Amet quam placerat sem.',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
                 ),
                 SizedBox(height: 24),
-               //accept
+                //accept
                 Align(
-                  alignment: Alignment.center,
-                  child: blueButton(text: 'ACCEPT', onTap: (){},)
-                ),
+                    alignment: Alignment.center,
+                    child: blueButton(
+                      text: 'ACCEPT',
+                      onTap: () {},
+                    )),
                 SizedBox(height: 90)
               ],
             ),
           ),
           //swiping buttons
           Positioned(
-            bottom: 20,
-            child: Container(
-              width: MediaQuery.of(context).size.width - 40,
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.blue.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius:15,
+              bottom: 20,
+              child: Container(
+                width: MediaQuery.of(context).size.width - 40,
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 15,
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: _isAtBottom ? _scrollToTop : _scrollToBottom,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18.0, vertical: 4),
+                    child: Text(
+                      _isAtBottom ? 'Scroll to Top' : 'Scroll to Bottom',
+                      style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.blue,
+                          fontFamily: 'Raleway'),
+                    ),
                   ),
-                ],
-              ),
-              child: ElevatedButton(
-                onPressed: _isAtBottom ? _scrollToTop : _scrollToBottom,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 4),
-                  child: Text(
-                    _isAtBottom ? 'Scroll to Top' : 'Scroll to Bottom',
-                    style: TextStyle(fontSize: 24, color: Colors.blue),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: Colors.blue, width: 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          18.0), // Adjust the radius to make it more rectangular
+                    ),
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  backgroundColor: Colors.white,
-                  side: BorderSide(color: Colors.blue, width: 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.0), // Adjust the radius to make it more rectangular
-                  ),),
-              ),
-            )
-          ),
+              )),
         ],
       ),
     );
   }
+
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);

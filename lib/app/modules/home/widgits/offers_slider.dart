@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
 class offersSliders extends StatefulWidget {
   const offersSliders({super.key});
@@ -63,7 +64,11 @@ class _offersSlidersState extends State<offersSliders> {
   }
 
   Widget build_offers(int index) {
-    return InkWell(onTap: () {print("details wala fun");}, child: offer_widgits[index]);
+    return InkWell(
+        onTap: () {
+          print("details wala fun");
+        },
+        child: offer_widgits[index]);
   }
 
   Widget buildindicator() {
@@ -134,41 +139,30 @@ class OfferCard extends StatelessWidget {
                   color: Color(0xffF7FAFF),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
-                  'Latest Offer',
-                  style: TextStyle(
-                    color: Color(0xff00246B),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: Text('Latest Offer',
+                    style: AppTextStyle.medium10
+                        .copyWith(color: Color(0xff00246B))),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     offerTitle,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style:
+                        AppTextStyle.semibold16.copyWith(color: Colors.white),
                   ),
                   SizedBox(height: 5),
                   Row(
                     children: [
                       Text(
                         'Get upto ',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                        ),
+                        style:
+                            AppTextStyle.medium10.copyWith(color: Colors.white),
                       ),
                       Text(
                         discountText,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
+                        style:
+                            AppTextStyle.bold24.copyWith(color: Colors.white),
                       ),
                     ],
                   ),
@@ -186,14 +180,16 @@ class OfferCard extends StatelessWidget {
                         ),
                         child: Text(
                           'Book Now',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              color: Colors.white, fontFamily: 'Poppins'),
                         ),
                       ),
                       Text(
                         'All washing services included | T&C applied',
                         style: TextStyle(
+                          fontFamily: 'Poppins',
                           color: Colors.white.withOpacity(0.8),
-                          fontSize: 5,
+                          fontSize: 6,
                         ),
                         maxLines: 1, // Avoid overflow with ellipsis
                         overflow: TextOverflow.ellipsis,

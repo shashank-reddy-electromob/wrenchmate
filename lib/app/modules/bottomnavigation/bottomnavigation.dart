@@ -26,7 +26,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
 
   static List<Widget> _widgetOptions = [
     HomePage(),
-   // BookingPage(),
+    // BookingPage(),
     ProductScreen(),
     CarPage(),
     SupportPage(),
@@ -60,26 +60,25 @@ class _bottomnavigationState extends State<bottomnavigation> {
         body: Stack(
           children: [
             _widgetOptions.elementAt(_selectedIndex),
-            SlidingContainer(isVisible: _selectedIndex == 0),
+            // SlidingContainer(isVisible: _selectedIndex == 0),
           ],
         ),
         floatingActionButton: DraggableFab(
             child: ClipOval(
-              child: Material(
-                color: Colors.blue,
-                child: InkWell(
-                  splashColor: Colors.blueAccent,
-                  onTap: () {
-                    Get.toNamed(AppRoutes.TRACKING);
-                  },
-                  child: SizedBox(
-                    width: 60,
-                    height: 60,
-                  ),
-                ),
+          child: Material(
+            color: Colors.blue,
+            child: InkWell(
+              splashColor: Colors.blueAccent,
+              onTap: () {
+                Get.toNamed(AppRoutes.TRACKING);
+              },
+              child: SizedBox(
+                width: 60,
+                height: 60,
               ),
-            )
-        ),
+            ),
+          ),
+        )),
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -153,11 +152,11 @@ class SlidingContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedPositioned(
       duration: Duration(milliseconds: 300),
-      bottom: isVisible ? 0 : -100,  // Adjust these values as needed
+      bottom: isVisible ? 0 : -100, // Adjust these values as needed
       left: 0,
       right: 0,
       child: Container(
-        height: 100,  // Adjust height as needed
+        height: 100, // Adjust height as needed
         color: Colors.blueAccent,
         child: Center(
           child: Text(

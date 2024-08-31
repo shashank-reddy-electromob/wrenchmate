@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
 class Header extends StatelessWidget {
   final String text;
@@ -19,13 +20,13 @@ class Header extends StatelessWidget {
       children: [
         Text(
           text,
-          style: TextStyle(fontSize: 20),
+          style: AppTextStyle.semibold14,
         ),
         GestureDetector(
           onTap: onTap,
           child: Text(
-            (seeall==null)?'':seeall!,
-            style: TextStyle(color: Color(0xffFF5402)),
+            (seeall == null) ? '' : seeall!,
+            style: TextStyle(color: Color(0xffFF5402), fontFamily: 'Poppins'),
           ),
         ),
       ],
