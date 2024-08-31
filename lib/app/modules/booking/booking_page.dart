@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/tabButton.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import for Timestamp
 import '../../controllers/booking_controller.dart';
 import '../../controllers/service_controller.dart';
 import '../../data/models/Service_Firebase.dart';
@@ -38,7 +37,6 @@ class _BookingPageState extends State<BookingPage> {
     final ServiceController serviceController = Get.put(ServiceController());
     for (var booking in bookings) {
       for (var serviceId in booking['service_list']) {
-        // Fetch service details and add to the appropriate list
         ServiceFirebase service = await _fetchServiceDetails(serviceController, serviceId);
         if (booking['status'] == 'confirmed' || booking['status'] == 'ongoing') {
           currentServices.add(service); // Add to current bookings
@@ -50,12 +48,11 @@ class _BookingPageState extends State<BookingPage> {
 
     print('History Services Count: ${historyServices.length}');
     print('Current Services Count: ${currentServices.length}');
-    setState(() {}); // Update the UI
+    setState(() {});
   }
 
   Future<ServiceFirebase> _fetchServiceDetails(ServiceController serviceController, String serviceId) async {
-    await serviceController.fetchServiceDataById(serviceId); // Call the existing method
-    // Assuming the serviceController has a way to access the fetched service
+    await serviceController.fetchServiceDataById(serviceId);
     return serviceController.services.firstWhere((service) => service.id == serviceId); // Return the service
   }
 

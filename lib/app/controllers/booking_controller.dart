@@ -46,7 +46,6 @@ class BookingController extends GetxController {
       List<Map<String, dynamic>> bookings = snapshot.docs
           .map((doc) => doc.data() as Map<String, dynamic>)
           .toList();
-print("aryan is coo");
       print(bookings);
       return bookings;
     } catch (e) {
