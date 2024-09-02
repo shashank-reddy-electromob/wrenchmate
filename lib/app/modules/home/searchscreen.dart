@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +22,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => SearchControllerClass());
+    // Get.lazyPut(() => SearchControllerClass());
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -121,7 +120,8 @@ class _SearchPageState extends State<SearchPage> {
                                   BorderSideEnum.right
                                 ],
                                 imagePath: 'assets/services/car wash.png',
-                                onTap: () => navigateToServicePage(category.category.toString()),
+                                onTap: () => navigateToServicePage(
+                                    category.category.toString()),
                               ))
                           .toList(),
                     ),
@@ -142,7 +142,8 @@ class _SearchPageState extends State<SearchPage> {
                                 Get.toNamed(AppRoutes.SERVICE_DETAIL,
                                     arguments: service);
                               },
-                              child: _buildTopServiceCard(service as Servicefirebase),
+                              child: _buildTopServiceCard(
+                                  service as Servicefirebase),
                             ))
                         .toList(),
                   );
@@ -181,10 +182,6 @@ class _SearchPageState extends State<SearchPage> {
       );
     }
   }
-
-
-
-
 
   Widget _buildChip(String label) {
     return Chip(
@@ -252,6 +249,5 @@ class _SearchPageState extends State<SearchPage> {
 
   navigateToServicePage(String s) {
     Get.toNamed(AppRoutes.SERVICE, arguments: s);
-
   }
 }

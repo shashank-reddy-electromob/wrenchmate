@@ -6,7 +6,7 @@ import 'service_controller.dart'; // Import the ServiceController
 class CartController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ServiceController serviceController = Get.find();
-  var isLoading = true.obs; 
+  var isLoading = true.obs;
   var cartItems = <Map<String, dynamic>>[].obs;
   double totalAmount = 0.0;
 
@@ -26,12 +26,15 @@ class CartController extends GetxController {
     try {
       isLoading.value = true;
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      QuerySnapshot snapshot = await _firestore.collection('Cart')
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
           .where('userId', isEqualTo: userId)
           .get();
-      
-      cartItems.value = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-      
+
+      cartItems.value = snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+
       print("Cart Items: $cartItems");
 
       Set<String> uniqueServiceIds = {};
@@ -53,15 +56,15 @@ class CartController extends GetxController {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
 
-        QuerySnapshot snapshot = await _firestore.collection('Cart')
-            .where('serviceId', isEqualTo: deletedServiceId)
-            .where('userId', isEqualTo: userId)
-            .get();
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
+          .where('serviceId', isEqualTo: deletedServiceId)
+          .where('userId', isEqualTo: userId)
+          .get();
 
-        for (var doc in snapshot.docs) {
-          await _firestore.collection('Cart').doc(doc.id).delete();
-        }
-
+      for (var doc in snapshot.docs) {
+        await _firestore.collection('Cart').doc(doc.id).delete();
+      }
     } catch (e) {
       print("Error deleting services from cart: $e");
     }
