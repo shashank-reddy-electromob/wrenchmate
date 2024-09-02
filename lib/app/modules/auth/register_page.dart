@@ -121,7 +121,8 @@ class _RegisterPageState extends State<RegisterPage> {
     userId = FirebaseAuth.instance.currentUser!.phoneNumber;
     controller = Get.find();
     if (userId != null) {
-      numberController.text = userId!;
+      // Extract the last 10 digits of the phone number
+      numberController.text = userId!.substring(userId!.length - 10);
     }
   }
 

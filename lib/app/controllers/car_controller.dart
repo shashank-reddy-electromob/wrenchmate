@@ -66,9 +66,45 @@ class CarController extends GetxController {
     }
   }
 
+  Future<List<Map<String, dynamic>>> fetchUserCarDetails() async {
+    try {
+      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+      List<dynamic> userCarDetails = userDoc.get('User_carDetails') ?? [];
 
+      List<Map<String, dynamic>> carDetailsList = [];
 
-final Map<String, List<String>> subCollectionNamesMap = {
+      for (String carDetail in userCarDetails) {
+        var details = carDetail.split(';');
+        String carType = details[0];
+        String carModel = details[1];
+        String carId = details[2];
+
+        DocumentSnapshot carDoc = await _firestore
+            .collection('car')
+            .doc('PeVE6MdvLwzcePpmZfp0')
+            .collection(carType)
+            .doc(carTypeToIdMap[carType])
+            .collection(carModel)
+            .doc(carId)
+            .get();
+
+        if (carDoc.exists) {
+          var carData = carDoc.data() as Map<String, dynamic>;
+          carData['car_type'] = carType;
+          carData['car_model'] = carModel;
+          carDetailsList.add(carData);
+        }
+      }
+      print('controller ka maal: ${carDetailsList}');
+
+      return carDetailsList;
+    } catch (e) {
+      print("Error fetching car details: $e");
+      return [];
+    }
+  }
+
+  final Map<String, List<String>> subCollectionNamesMap = {
     "Hatchback": [
       "1-series",
       "3-Door hatch",
@@ -320,6 +356,7 @@ final Map<String, List<String>> subCollectionNamesMap = {
       "Z4"
     ],
   };
+
   List<String> getCarModels(String carType) {
     return subCollectionNamesMap[carType] ?? [];
   }

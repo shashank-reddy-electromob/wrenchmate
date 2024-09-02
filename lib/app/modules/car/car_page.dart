@@ -1,6 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
+import '../../routes/app_routes.dart';
+import '../../controllers/car_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
 
 class CarPage extends StatefulWidget {
   @override
@@ -8,16 +15,114 @@ class CarPage extends StatefulWidget {
 }
 
 class _CarPageState extends State<CarPage> {
-  bool isEditing = false;
+  int userCurrentCarIndex = 0;
+  List<Map<String, dynamic>> userCars = [];
+  String carModel = '';
+  String petrolOrDiesel = '';
+  String carType = ''; // Add this line
 
-  final TextEditingController regYearController =
-  TextEditingController(text: '2019');
-  final TextEditingController regNoController =
-  TextEditingController(text: '19HY7983298989');
-  final TextEditingController insuranceExpController =
-  TextEditingController(text: '20/12/2024');
-  final TextEditingController pucExpController =
-  TextEditingController(text: '20/08/2024');
+  late TextEditingController regYearController;
+  late TextEditingController regNoController;
+  late TextEditingController insuranceExpController;
+  late TextEditingController pucExpController;
+
+  final CarController carController = Get.put(CarController()); // Initialize the CarController
+
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    regYearController = TextEditingController();
+    regNoController = TextEditingController();
+    insuranceExpController = TextEditingController();
+    pucExpController = TextEditingController();
+    _pageController = PageController(initialPage: userCurrentCarIndex);
+    fetchUserCurrentCarIndex();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void fetchUserCurrentCarIndex() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('User')
+        .doc(userId)
+        .get();
+    if (userDoc.exists) {
+      setState(() {
+        userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
+      });
+      fetchCarDetails(); // Fetch car details after getting the current car index
+    }
+  }
+
+  void fetchCarDetails() async {
+    userCars = await carController.fetchUserCarDetails();
+    print("Car details in CarPage: $userCars");
+    if (userCars.isNotEmpty) {
+      setState(() {
+        updateCarDetails(userCurrentCarIndex);
+      });
+    }
+  }
+
+  void updateCarDetails(int index) {
+    if (index >= 0 && index < userCars.length) {
+      var car = userCars[index];
+      carModel = car['car_model'];
+      petrolOrDiesel = car['fuel_type'];
+      carType = car['car_type'] ; // Add this line
+      regYearController.text = _formatDateTimeRegi((car['registration_year']).toDate());
+      regNoController.text = car['registration_number'] ?? '19HY7983298989';
+      insuranceExpController.text = _formatDateTime((car['insurance_expiration']).toDate());
+      pucExpController.text = _formatDateTime((car['puc_expiration']).toDate());
+      print("Displaying car at index $index: $car");
+    }
+  }
+
+  void navigateCarDetails(int direction) {
+    int newIndex = userCurrentCarIndex + direction;
+    if (newIndex >= 0 && newIndex < userCars.length) {
+      _pageController.animateToPage(
+        newIndex,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      setState(() {
+        userCurrentCarIndex = newIndex;
+        updateCarDetails(newIndex);
+        updateUserCurrentCarIndexInFirebase(newIndex);
+      });
+    }
+  }
+
+  void updateUserCurrentCarIndexInFirebase(int index) async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    await FirebaseFirestore.instance
+        .collection('User')
+        .doc(userId)
+        .update({'User_currentCar': index});
+  }
+
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) return '';
+    final DateFormat formatter = DateFormat('dd/MM/yyyy');
+    return formatter.format(dateTime);
+  }
+  String _formatDateTimeRegi(DateTime? dateTime) {
+    if (dateTime == null) return '';
+    final DateFormat formatter = DateFormat('yyyy');
+    return formatter.format(dateTime);
+  }
+
+  Future<void> _loadImage() async {
+    // Simulate image loading without delay
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +143,7 @@ class _CarPageState extends State<CarPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Hyundai-Venue',
+                      carModel, // Update this line
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -47,7 +152,7 @@ class _CarPageState extends State<CarPage> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      'Petrol/ diesel',
+                      petrolOrDiesel,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -58,17 +163,46 @@ class _CarPageState extends State<CarPage> {
                 Spacer(),
                 Row(
                   children: [
-                    Icon(Icons.chevron_left),
-                    Icon(Icons.chevron_right),
+                    IconButton(
+                      icon: Icon(Icons.chevron_left, color: userCurrentCarIndex == 0 ? Colors.grey : Colors.black),
+                      onPressed: userCurrentCarIndex == 0 ? null : () => navigateCarDetails(-1),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.chevron_right, color: userCurrentCarIndex == userCars.length - 1 ? Colors.grey : Colors.black),
+                      onPressed: userCurrentCarIndex == userCars.length - 1 ? null : () => navigateCarDetails(1),
+                    ),
                   ],
                 ),
               ],
             ),
             SizedBox(height: 20),
             Center(
-              child: Image.asset(
-                'assets/car/suv.png',
+              child: SizedBox(
                 height: 150,
+                child: PageView.builder(
+                  itemCount: userCars.length,
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      userCurrentCarIndex = index;
+                      updateCarDetails(index);
+                      updateUserCurrentCarIndexInFirebase(index);
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    var car = userCars[index];
+                    return Image.asset(
+                      car['car_type'] == 'Sedan' ? 'assets/car/sedan.png' :
+                      car['car_type'] == 'SUV' ? 'assets/car/suv.png' :
+                      car['car_type'] == 'Compact SUV' ? 'assets/car/compact_suv.png' :
+                      car['car_type'] == 'Hatchback' ? 'assets/car/hatchback.png' : "",
+                      height: 150,
+                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                        return CircularProgressIndicator();
+                      },
+                    );
+                  },
+                ),
               ),
             ),
             SizedBox(height: 20),
@@ -91,73 +225,24 @@ class _CarPageState extends State<CarPage> {
                       ),
                       Row(
                         children: [
-                          GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isEditing = !isEditing;
-                                });
-                              },
-                              child: SvgPicture.asset(
-                                  'assets/icons/edit_icon.svg')),
-                          // IconButton(
-                          //   icon: Icon(Icons.edit),
-                          //   onPressed: () {
-                          //     setState(() {
-                          //       isEditing = !isEditing;
-                          //     });
-                          //   },
-                          // ),
-                          SizedBox(
-                            width: 10,
-                          ),
+                          SvgPicture.asset('assets/icons/edit_icon.svg'),
+                          SizedBox(width: 10),
                           SvgPicture.asset('assets/icons/delete_icon.svg'),
-
-                          // IconButton(
-                          //   icon: Icon(Icons.delete, color: Colors.red),
-                          //   onPressed: () {
-                          //     // Delete action
-                          //   },
-                          // ),
                         ],
                       ),
                     ],
                   ),
                   Divider(),
                   SizedBox(height: 10),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         Text(
-                  //           'Reg Year :',
-                  //           style: TextStyle(
-                  //             fontWeight: FontWeight.bold,
-                  //           ),
-                  //         ),
-                  //         SizedBox(height: 4),
-                  //         isEditing
-                  //             ? TextField(
-                  //                 controller: regYearController,
-                  //                 decoration: InputDecoration(
-                  //                   border: OutlineInputBorder(),
-                  //                   isDense:
-                  //                       true, // Reduces the height of the text field
-                  //                 ),
-                  //               )
-                  //             : Text(regYearController.text),
-                  //       ],
-                  //     ),
-                  //   ],
-                  // ),
                   SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      //regi year and insurance
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          //reg year
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -168,21 +253,11 @@ class _CarPageState extends State<CarPage> {
                                 ),
                               ),
                               SizedBox(height: 4),
-                              isEditing
-                                  ? TextField(
-                                controller: regYearController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  isDense:
-                                  true, // Reduces the height of the text field
-                                ),
-                              )
-                                  : Text(regYearController.text),
+                              Text(regYearController.text),
                             ],
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 10),
+                          //insurance
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -193,22 +268,16 @@ class _CarPageState extends State<CarPage> {
                                 ),
                               ),
                               SizedBox(height: 4),
-                              isEditing
-                                  ? TextField(
-                                controller: insuranceExpController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  isDense: true,
-                                ),
-                              )
-                                  : Text(insuranceExpController.text),
+                              Text(insuranceExpController.text),
                             ],
                           ),
                         ],
                       ),
+                      //reg and puc
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          //reg
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -219,20 +288,11 @@ class _CarPageState extends State<CarPage> {
                                 ),
                               ),
                               SizedBox(height: 4),
-                              isEditing
-                                  ? TextField(
-                                controller: regNoController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  isDense: true,
-                                ),
-                              )
-                                  : Text(regNoController.text),
+                              Text(regNoController.text),
                             ],
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 10),
+                          //puc
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -243,15 +303,7 @@ class _CarPageState extends State<CarPage> {
                                 ),
                               ),
                               SizedBox(height: 4),
-                              isEditing
-                                  ? TextField(
-                                controller: pucExpController,
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  isDense: true,
-                                ),
-                              )
-                                  : Text(pucExpController.text),
+                              Text(pucExpController.text),
                             ],
                           ),
                         ],
@@ -262,45 +314,64 @@ class _CarPageState extends State<CarPage> {
               ),
             ),
             Spacer(),
+            //add new car service history
             Row(
               children: [
-                GradientContainer(
-                  width: MediaQuery.of(context).size.width / 2 - 36,
-                  height: 120,
-                  colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        // Image.asset(
-                        //   'assets/images/addnewcar.png',
-                        //   height: 70,
-                        // ),
-                        Text(
-                          'Add New Car',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        )
-                      ],
+                Expanded(
+                  child: GestureDetector(
+                    onTap: (){
+                      Get.toNamed(AppRoutes.CAR_REGISTER);
+                    },
+                    child: GradientContainer(
+                      height: 120,
+                      colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
+                      width: MediaQuery.of(context).size.width / 2 - 36,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.asset(
+                              'assets/car/sedan.png',
+                              width: 100,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Add New Car',
+                              style: TextStyle(color: Colors.white, fontSize: 14),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                GradientContainer(
-                  width: MediaQuery.of(context).size.width / 2 - 36,
-                  height: 120,
-                  colors: [Color(0xffFEA563), Color(0xffFF5F81)],
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        // Image.asset(
-                        //   'assets/images/servicehistroy.png',
-                        //   height: 70,
-                        // ),
-                        Text(
-                          'Service History',
-                          style: TextStyle(color: Colors.white, fontSize: 14),
-                        )
-                      ],
+                SizedBox(width: 16),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.toNamed(AppRoutes.BOOKING);
+                    },
+                    child: GradientContainer(
+                      height: 120,
+                      colors: [Color(0xffFEA563), Color(0xffFF5F81)],
+                      width: MediaQuery.of(context).size.width / 2 - 36,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.asset(
+                              'assets/images/servicehistory.png',
+                              height: 70,
+                            ),
+                            Text(
+                              'Service History',
+                              style: TextStyle(color: Colors.white, fontSize: 14),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
