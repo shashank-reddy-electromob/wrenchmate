@@ -20,7 +20,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => SearchControllerClass());
+    // Get.lazyPut(() => SearchControllerClass());
     return Scaffold(
       body: SafeArea(
         child: Padding(
