@@ -49,6 +49,60 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     print("adding to cart");
     await cartController.addToCart(serviceId: service.id);
     print("added to cart");
+
+    cartController.totalAmount.value += service.price;
+
+    if (!mounted) return;
+
+    final snackBar = SnackBar(
+      backgroundColor: primaryColor,
+      content: Obx(() => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Total Amount: \₹${cartController.totalAmount.value.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.CART);
+                    setState(() {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    });
+                  },
+                  child: Text(
+                    'Checkout',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: primaryColor,
+                      fontFamily: 'Raleway',
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          )),
+      duration: Duration(days: 1), 
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    cartController.totalAmount.listen((newTotal) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    });
   }
 
   @override

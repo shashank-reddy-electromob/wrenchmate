@@ -30,11 +30,41 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     cartController = Get.put(CartController());
-
     user = FirebaseAuth.instance.currentUser!;
     controller = Get.put(HomeController());
     fetchUserData();
+    initalCall();
   }
+
+  Future<void> initalCall() async {
+    await cartController.fetchTotalCost();
+    print(
+        "cartController.totalAmount.value :: ${cartController.totalAmount.value}");
+    if (cartController.totalAmount.value > 0.0) {
+      print(
+          "cartController.totalAmount.value :: ${cartController.totalAmount.value}");
+
+      _onTap();
+    }
+  }
+
+  // RxDouble totalAmount = 0.0.obs;
+  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Future<void> fetchTotalCost() async {
+  //   try {
+  //     String userId = FirebaseAuth.instance.currentUser!.uid;
+  //     DocumentSnapshot userDoc =
+  //         await _firestore.collection('User').doc(userId).get();
+
+  //     if (userDoc.exists) {
+  //       totalAmount.value = userDoc['total_cost_cart'] ?? 0.0;
+  //       print("totalAmount.value :: ${totalAmount.value}");
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching total cost: $e");
+  //   }
+  // }
 
   Future<void> fetchUserData() async {
     userData = await controller?.fetchUserData() as Map<String, dynamic>?;
@@ -61,45 +91,54 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       final snackBar = SnackBar(
         backgroundColor: primaryColor,
-        content: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'Total Amount: \₹${cartController.totalAmount.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+        content: Obx(() => Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Total Amount: \₹${cartController.totalAmount.value.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  Get.toNamed(AppRoutes.CART);
-                },
-                child: Text(
-                  'Checkout',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: primaryColor,
-                    fontFamily: 'Raleway',
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.CART);
+                      setState(() {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      });
+                    },
+                    child: Text(
+                      'Checkout',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: primaryColor,
+                        fontFamily: 'Raleway',
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                    ),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
+            )),
         duration: Duration(days: 1), // Snackbar duration
       );
 
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      cartController.totalAmount.listen((newTotal) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      });
       xOffSet = 0;
       yOffSet = 0;
       scaleFactor = 1;
@@ -260,7 +299,9 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         height: 12,
                       ),
-                      searchbar(readonly: true,),
+                      searchbar(
+                        readonly: true,
+                      ),
                       offersSliders(),
                       serviceswidgit(),
                       toprecommendedservices(),

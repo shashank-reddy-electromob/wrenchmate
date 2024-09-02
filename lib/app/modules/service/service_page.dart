@@ -27,6 +27,7 @@ class _ServicePageState extends State<ServicePage> {
   final ServiceController serviceController = Get.put(ServiceController());
   List<bool> addToCartStates = [];
 
+  @override
   void initState() {
     super.initState();
     cartController = Get.put(CartController());
@@ -42,7 +43,7 @@ class _ServicePageState extends State<ServicePage> {
 
   List<Servicefirebase> get filteredServices {
     if (selectedCategory == 'Show All') {
-      return serviceController.services; // Show all services
+      return serviceController.services;
     } else {
       return serviceController.services.where((service) {
         String serviceName = service.name.toLowerCase().replaceAll(' ', '');
@@ -52,58 +53,72 @@ class _ServicePageState extends State<ServicePage> {
       }).toList();
     }
   }
-  // double totalAmount = 0.0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Update addToCartStates length when filteredServices changes
+    addToCartStates = List<bool>.filled(filteredServices.length, false);
+  }
 
   Future<void> addToCart(Servicefirebase service) async {
     print("adding to cart");
     await cartController.addToCart(serviceId: service.id);
     print("added to cart");
 
-    setState(() {
-      cartController.totalAmount += service.price;
-    });
+    cartController.totalAmount.value += service.price;
+
+    if (!mounted) return;
 
     final snackBar = SnackBar(
       backgroundColor: primaryColor,
-      content: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                'Total Amount: \₹${cartController.totalAmount.toStringAsFixed(2)}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+      content: Obx(() => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Total Amount: \₹${cartController.totalAmount.value.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                Get.toNamed(AppRoutes.CART);
-              },
-              child: Text(
-                'Checkout',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: primaryColor,
-                  fontFamily: 'Raleway',
+                ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.CART);
+                    setState(() {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    });
+                  },
+                  child: Text(
+                    'Checkout',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: primaryColor,
+                      fontFamily: 'Raleway',
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
                 ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          )),
       duration: Duration(days: 1), // Snackbar duration
     );
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    cartController.totalAmount.listen((newTotal) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    });
   }
 
   @override
@@ -196,6 +211,9 @@ class _ServicePageState extends State<ServicePage> {
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount: filteredServices.length,
                                 itemBuilder: (context, index) {
+                                  if (index >= addToCartStates.length) {
+                                    return Container();
+                                  }
                                   final service = filteredServices[index];
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -221,7 +239,6 @@ class _ServicePageState extends State<ServicePage> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-
                                                   ExtendedImage.network(
                                                     service.image,
                                                     fit: BoxFit.fitWidth,
@@ -342,7 +359,6 @@ class _ServicePageState extends State<ServicePage> {
                                             ),
                                             //add button
                                             Positioned(
-                                              // width: 80,
                                               top: MediaQuery.of(context)
                                                       .size
                                                       .height *
@@ -351,8 +367,7 @@ class _ServicePageState extends State<ServicePage> {
                                                       .size
                                                       .width *
                                                   0.04,
-                                              child: !addToCartStates[
-                                                      index] // Check the state for this service
+                                              child: !addToCartStates[index]
                                                   ? CustomElevatedButton(
                                                       onPressed: () {
                                                         addToCart(service);
@@ -367,6 +382,9 @@ class _ServicePageState extends State<ServicePage> {
                                                       onPressed: () {
                                                         Get.toNamed(
                                                             AppRoutes.CART);
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .hideCurrentSnackBar();
                                                       },
                                                       text: 'Go to cart',
                                                     ),

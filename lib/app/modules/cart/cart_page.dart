@@ -19,9 +19,8 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.find();
   final ServiceController serviceController = Get.find();
-  final BookingController bookingController =
-      Get.put(BookingController()); // Get the BookingController instance
-  final HomeController homeController =Get.put(HomeController());
+  final BookingController bookingController = Get.put(BookingController());
+  final HomeController homeController = Get.put(HomeController());
 
   double? totalAmount;
   double? tax;
@@ -34,6 +33,7 @@ class _CartPageState extends State<CartPage> {
     super.initState();
     fetchCartData();
     fetchUserCurrentCar();
+    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 
   Future<void> fetchCartData() async {
