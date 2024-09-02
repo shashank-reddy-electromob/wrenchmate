@@ -14,7 +14,7 @@ class SearchControllerClass extends GetxController {
   var popularServices = <ServiceFirebase>[].obs;
   var topCategories = <ServiceFirebase>[].obs;
   var topServices = <ServiceFirebase>[].obs;
-
+//commment to check
   @override
   void onInit() {
     super.onInit();
