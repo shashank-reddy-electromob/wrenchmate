@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+
   Future<void> fetchUserData() async {
     userData = await controller?.fetchUserData() as Map<String, dynamic>?;
     addressIndex = userData?['current_address'];
