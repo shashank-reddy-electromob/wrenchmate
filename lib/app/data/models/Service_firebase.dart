@@ -10,6 +10,7 @@ class Servicefirebase {
   String warranty;
   double averageReview;
   int numberOfReviews;
+  List<String> carmodel; // Add this line
 
   Servicefirebase({
     required this.id,
@@ -23,6 +24,7 @@ class Servicefirebase {
     required this.warranty,
     required this.averageReview,
     required this.numberOfReviews,
+    required this.carmodel, // Add this line
   });
 
   Map<String, dynamic> toMap() {
@@ -37,6 +39,7 @@ class Servicefirebase {
       'warranty': warranty,
       'averageReview': averageReview,
       'numberOfReviews': numberOfReviews,
+      'carmodel': carmodel
     };
   }
 
@@ -53,6 +56,7 @@ class Servicefirebase {
       warranty: map['warranty'] ?? '',
       averageReview: map['averageReview']?.toDouble() ?? 0.0,
       numberOfReviews: map['numberOfReviews'] ?? 0,
+      carmodel: map['carmodel']??[],
     );
   }
 }

@@ -41,6 +41,7 @@ class ServiceController extends GetxController {
           warranty: data['warranty'] ?? '',
           averageReview: data['averageReview']?.toDouble() ?? 0.0,
           numberOfReviews: data['numberOfReviews'] ?? 0,
+          carmodel: List<String>.from(data['carmodel'] ?? []),
         );
       }).toList(); // Ensure the list type is correct
     } catch (e) {
@@ -171,6 +172,7 @@ class ServiceController extends GetxController {
             : data['price']?.toDouble() ?? 0.0,
         time: data['time'] ?? '',
         warranty: data['warranty'] ?? '',
+        carmodel: List<String>.from(data['carmodel'] ?? []),
       );
       print("calling fetchReviews");
       await fetchReviewsForService(selectedService.value!);
@@ -214,6 +216,7 @@ class ServiceController extends GetxController {
             : data['price']?.toDouble() ?? 0.0,
         time: data['time'] ?? '',
         warranty: data['warranty'] ?? '',
+        carmodel: List<String>.from(data['carmodel'] ?? []),
       ));
     } catch (e) {
       print("Error fetching service data by ID: $e");
@@ -237,6 +240,51 @@ class ServiceController extends GetxController {
     } catch (e) {
       print("Error adding review: $e");
       // Handle error appropriately (e.g., show a message to the user)
+    }
+  }
+
+  Future<void> fetchServicesForUser(String category, List<String> userCarDetails) async {
+    try {
+      loading.value = true; // Start loading
+      print("Fetching services for category: $category");
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Service')
+          .where('category', isEqualTo: category)
+          .get();
+      print("Number of services fetched: ${querySnapshot.size}");
+
+      // Fetch services
+      services.value = querySnapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        print("Service Data: $data");
+        return Servicefirebase(
+          id: doc.id,
+          category: data['category'] ?? '',
+          description: data['description'] ?? '',
+          discount: data['discount'] ?? 0,
+          name: data['name'] ?? '',
+          image: data['image'] ?? '',
+          price: (data['price'] is int)
+              ? (data['price'] as int).toDouble()
+              : data['price']?.toDouble() ?? 0.0,
+          time: data['time'] ?? '',
+          warranty: data['warranty'] ?? '',
+          averageReview: data['averageReview']?.toDouble() ?? 0.0,
+          numberOfReviews: data['numberOfReviews'] ?? 0,
+          carmodel: List<String>.from(data['carmodel'] ?? []),
+        );
+      }).where((service) {
+        // Filter services based on user's car models
+        return service.carmodel.any((model) {
+          return userCarDetails.any((carDetail) {
+            return carDetail.split(';')[0] == model;
+          });
+        });
+      }).toList(); // Ensure the list type is correct
+    } catch (e) {
+      print("Error fetching services: $e");
+    } finally {
+      loading.value = false;
     }
   }
 }

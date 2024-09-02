@@ -14,6 +14,7 @@ import '../../controllers/cart_controller.dart';
 import '../../data/models/Service_firebase.dart';
 import '../../routes/app_routes.dart';
 import '../../controllers/service_controller.dart';
+import '../../controllers/auth_controller.dart'; // Import AuthController
 
 class ServicePage extends StatefulWidget {
   @override
@@ -25,17 +26,25 @@ class _ServicePageState extends State<ServicePage> {
   late String service;
   late CartController cartController;
   final ServiceController serviceController = Get.put(ServiceController());
+  final AuthController authController = Get.put(AuthController()); // Initialize AuthController
   List<bool> addToCartStates = [];
 
+  @override
   void initState() {
     super.initState();
     cartController = Get.put(CartController());
     service = Get.arguments;
     print(service);
-    serviceController.fetchServices(service).then((_) {
-      setState(() {
-        addToCartStates =
-            List<bool>.filled(serviceController.services.length, false);
+
+    // Initialize addToCartStates with a default value
+    addToCartStates = List<bool>.filled(serviceController.services.length, false);
+
+    // Fetch user car details asynchronously
+    authController.getUserCarDetails().then((userCarDetails) {
+      serviceController.fetchServicesForUser(service, userCarDetails.cast<String>()).then((_) {
+        setState(() {
+          addToCartStates = List<bool>.filled(serviceController.services.length, false);
+        });
       });
     });
   }

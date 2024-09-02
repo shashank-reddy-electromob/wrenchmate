@@ -30,11 +30,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     cartController = Get.put(CartController());
-
     user = FirebaseAuth.instance.currentUser!;
     controller = Get.put(HomeController());
     fetchUserData();
   }
+
 
   Future<void> fetchUserData() async {
     userData = await controller?.fetchUserData() as Map<String, dynamic>?;
