@@ -109,4 +109,11 @@ class AppTextStyle {
     letterSpacing: 1,
     fontWeight: FontWeight.w300,
   );
+  static const TextStyle mediumgreyRaleway12 = TextStyle(
+    fontFamily: 'Raleway',
+    fontSize: 12,
+    color: textgrey,
+    letterSpacing: 1,
+    fontWeight: FontWeight.w500,
+  );
 }

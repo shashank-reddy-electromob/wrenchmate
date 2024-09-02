@@ -6,6 +6,8 @@ import 'package:wrenchmate_user_app/app/data/models/Service_Firebase.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart';
+import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
+import 'package:wrenchmate_user_app/app/widgets/bluebuttoncircular.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
@@ -50,11 +52,58 @@ class _ServicePageState extends State<ServicePage> {
       }).toList();
     }
   }
+  // double totalAmount = 0.0;
 
   Future<void> addToCart(ServiceFirebase service) async {
     print("adding to cart");
     await cartController.addToCart(serviceId: service.id);
     print("added to cart");
+
+    setState(() {
+      cartController.totalAmount += service.price;
+    });
+
+    final snackBar = SnackBar(
+      backgroundColor: primaryColor,
+      content: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                'Total Amount: \₹${cartController.totalAmount.toStringAsFixed(2)}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                Get.toNamed(AppRoutes.CART);
+              },
+              child: Text(
+                'Checkout',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: primaryColor,
+                  fontFamily: 'Raleway',
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+      duration: Duration(days: 1), // Snackbar duration
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
@@ -317,8 +366,7 @@ class _ServicePageState extends State<ServicePage> {
                                                         addToCart(service);
                                                         setState(() {
                                                           addToCartStates[
-                                                                  index] =
-                                                              true; // Update only this service's state
+                                                              index] = true;
                                                         });
                                                       },
                                                       text: '+Add',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
+import 'package:wrenchmate_user_app/utils/color.dart';
 
 class ApplyCouponScreen extends StatefulWidget {
   const ApplyCouponScreen({super.key});
@@ -47,6 +48,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Enter Coupon Code',
+                  hintStyle: TextStyle(fontFamily: 'Poppins'),
                   suffixIcon: TextButton(
                     onPressed: _isButtonEnabled
                         ? () {
@@ -57,6 +59,7 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                     child: Text(
                       'Apply',
                       style: TextStyle(
+                        fontFamily: 'Poppins',
                         color: _isButtonEnabled
                             ? Colors.blue // Enabled color
                             : Colors.grey, // Disabled color
@@ -73,8 +76,9 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                 'Best Coupon',
                 style: TextStyle(
                   color: Color(0xff5D5D5D),
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 16,
                 ),
               ),
               SizedBox(height: 12),
@@ -91,8 +95,9 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                 'More Offers',
                 style: TextStyle(
                   color: Color(0xff5D5D5D),
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 16,
                 ),
               ),
               SizedBox(height: 12),
@@ -174,6 +179,7 @@ class CouponCard extends StatelessWidget {
                       Text(
                         code,
                         style: TextStyle(
+                          fontFamily: 'Poppins',
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -182,8 +188,11 @@ class CouponCard extends StatelessWidget {
                         onPressed: onApply,
                         child: Text(
                           'Apply',
-                          style:
-                              TextStyle(color: Color(0xff3371FF), fontSize: 14),
+                          style: TextStyle(
+                            color: Color(0xff3371FF),
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                          ),
                         ),
                       ),
                     ],
@@ -191,17 +200,19 @@ class CouponCard extends StatelessWidget {
                   Text(
                     discount,
                     style: TextStyle(
-                      color: Colors.green,
-                      fontSize: 14,
-                    ),
+                        color: Color(0xff4CD964),
+                        fontFamily: 'Poppins',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
                   ),
                   SizedBox(height: 4),
                   Divider(),
                   Text(
                     description,
                     style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
+                      color: textgrey,
+                      fontFamily: 'Poppins',
+                      fontSize: 10,
                     ),
                   ),
                 ],

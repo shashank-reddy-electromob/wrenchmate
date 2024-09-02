@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/containerButton.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/pricing.dart';
+import 'package:wrenchmate_user_app/utils/color.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
 import '../../controllers/booking_controller.dart'; // Import the BookingController
@@ -89,8 +91,10 @@ class _CartPageState extends State<CartPage> {
                         horizontal: 16.0, vertical: 8),
                     child: Text(
                       'Order Summary',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins'),
                     ),
                   ),
                   Container(
@@ -130,7 +134,6 @@ class _CartPageState extends State<CartPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  // Service Image
                                   Row(
                                     children: [
                                       ClipRRect(
@@ -149,18 +152,14 @@ class _CartPageState extends State<CartPage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            service.name,
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold),
-                                          ),
+                                          Text(service.name,
+                                              style:
+                                                  AppTextStyle.mediumRaleway12),
                                           SizedBox(height: 4),
                                           Text(
                                             '₹ ${service.price.toStringAsFixed(2)}', // Display price
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.green),
+                                            style: AppTextStyle.semiboldpurple12
+                                                .copyWith(color: blackColor),
                                           ),
                                         ],
                                       ),
@@ -228,10 +227,14 @@ class _CartPageState extends State<CartPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Total", style: TextStyle(fontSize: 18)),
+                            Text("Total",
+                                style: TextStyle(
+                                    fontSize: 16, fontFamily: 'Raleway')),
                             Text('\₹ ${finalAmount?.toStringAsFixed(2)}',
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500)),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Poppins')),
                           ],
                         ),
                       ],
@@ -264,13 +267,18 @@ class _CartPageState extends State<CartPage> {
                       Text(
                           '\₹ ${finalAmount?.toStringAsFixed(2)}', // This will now update dynamically
                           style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.w500)),
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Poppins')),
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           'View Detailed Bill',
-                          style:
-                              TextStyle(color: Color(0xff2095FD), fontSize: 16),
+                          style: TextStyle(
+                              color: primaryColor,
+                              fontSize: 14,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
                     ],
@@ -285,7 +293,7 @@ class _CartPageState extends State<CartPage> {
                         foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(18),
                         ),
                       ),
                       onPressed: () async {
@@ -296,7 +304,7 @@ class _CartPageState extends State<CartPage> {
                           );
 
                           await bookingController.addBooking(
-                            serviceIds, 
+                            serviceIds,
                             'confirmed', // status
                             DateTime.now(), // confirmation_date
                             null, // outForService_date
@@ -318,7 +326,10 @@ class _CartPageState extends State<CartPage> {
                       },
                       child: Text(
                         "Proceed to Pay",
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   )

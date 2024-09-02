@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/modules/cart/coupon.dart';
+import 'package:wrenchmate_user_app/app/modules/payment/payment.dart';
 import 'package:wrenchmate_user_app/app/modules/product/productscreen.dart';
 import 'package:wrenchmate_user_app/app/modules/tracking/chatscreen.dart';
 import 'package:wrenchmate_user_app/app/modules/tracking/tracking_page.dart';
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      // home: TrackingPage(),
+      // home: ApplyCouponScreen(),
       initialRoute: FirebaseAuth.instance.currentUser == null
           ? AppPages.INITIAL
           : AppPages.BOTTOMNAV,

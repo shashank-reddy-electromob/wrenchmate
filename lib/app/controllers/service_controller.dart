@@ -8,11 +8,10 @@ import '../data/models/user_module.dart';
 class ServiceController extends GetxController {
   var services = <ServiceFirebase>[].obs;
   var reviews = <Review>[].obs; // Use Review model
-  var users = <User>[].obs;     // Use User model
-  var faqs = <FAQ>[].obs;       // Use FAQ model
+  var users = <User>[].obs; // Use User model
+  var faqs = <FAQ>[].obs; // Use FAQ model
   var loading = true.obs; // Loading state
   var selectedService = Rxn<ServiceFirebase>(); // To store the selected service
-
 
   Future<void> fetchServices(String category) async {
     try {
@@ -35,14 +34,15 @@ class ServiceController extends GetxController {
           discount: data['discount'] ?? 0,
           name: data['name'] ?? '',
           image: data['image'] ?? '',
-          price: (data['price'] is int) ? (data['price'] as int).toDouble() : data['price']?.toDouble() ?? 0.0,
+          price: (data['price'] is int)
+              ? (data['price'] as int).toDouble()
+              : data['price']?.toDouble() ?? 0.0,
           time: data['time'] ?? '',
           warranty: data['warranty'] ?? '',
           averageReview: data['averageReview']?.toDouble() ?? 0.0,
           numberOfReviews: data['numberOfReviews'] ?? 0,
         );
       }).toList(); // Ensure the list type is correct
-
     } catch (e) {
       print("Error fetching services: $e");
     } finally {
@@ -57,7 +57,8 @@ class ServiceController extends GetxController {
           .collection('Review')
           .where('serviceId', isEqualTo: service.id)
           .get();
-      print("Number of reviews fetched for service ${service.id}: ${reviewSnapshot.size}");
+      print(
+          "Number of reviews fetched for service ${service.id}: ${reviewSnapshot.size}");
 
       List<String> userIds = []; // Collect user IDs
 
@@ -68,14 +69,15 @@ class ServiceController extends GetxController {
           serviceId: reviewData['serviceId'],
           userId: reviewData['userId'],
           message: reviewData['message'],
-          rating: (reviewData['rating'] is int) ? (reviewData['rating'] as int).toDouble() : reviewData['rating'] as double,
+          rating: (reviewData['rating'] is int)
+              ? (reviewData['rating'] as int).toDouble()
+              : reviewData['rating'] as double,
         ));
         userIds.add(reviewData['userId']); // Add user ID to the list
       }
 
       // Fetch user data for all user IDs
       await fetchUsers(userIds);
-
     } catch (e) {
       print("Error fetching reviews: $e");
     }
@@ -88,7 +90,8 @@ class ServiceController extends GetxController {
           .collection('Faq')
           .where('serviceId', isEqualTo: serviceId)
           .get();
-      print("Number of FAQs fetched for service $serviceId: ${faqSnapshot.size}");
+      print(
+          "Number of FAQs fetched for service $serviceId: ${faqSnapshot.size}");
 
       faqs.value = faqSnapshot.docs.map((doc) {
         var faqData = doc.data() as Map<String, dynamic>;
@@ -114,11 +117,9 @@ class ServiceController extends GetxController {
   // Function to fetch user data
   Future<void> fetchUser(String userId) async {
     try {
-      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-          .collection('User')
-          .doc(userId)
-          .get();
-      
+      DocumentSnapshot userSnapshot =
+          await FirebaseFirestore.instance.collection('User').doc(userId).get();
+
       if (userSnapshot.exists) {
         var userData = userSnapshot.data() as Map<String, dynamic>;
         print("User Data for user $userId: $userData");
@@ -156,7 +157,8 @@ class ServiceController extends GetxController {
       var data = doc.data() as Map<String, dynamic>;
       print("returned $data ");
       selectedService.value = ServiceFirebase(
-        averageReview: data['averageReview']?.toDouble() ?? 0.0, // Ensure this is a double
+        averageReview:
+            data['averageReview']?.toDouble() ?? 0.0, // Ensure this is a double
         numberOfReviews: data['numberOfReviews'] ?? 0, // Ensure this is an int
         id: doc.id,
         category: data['category'] ?? '',
@@ -164,7 +166,9 @@ class ServiceController extends GetxController {
         discount: data['discount'] ?? 0,
         name: data['name'] ?? '',
         image: data['image'] ?? '',
-        price: (data['price'] is int) ? (data['price'] as int).toDouble() : data['price']?.toDouble() ?? 0.0,
+        price: (data['price'] is int)
+            ? (data['price'] as int).toDouble()
+            : data['price']?.toDouble() ?? 0.0,
         time: data['time'] ?? '',
         warranty: data['warranty'] ?? '',
       );
@@ -188,7 +192,7 @@ class ServiceController extends GetxController {
   Future<void> fetchServiceDataById(String serviceId) async {
     try {
       print("Fetching service data by ID: $serviceId");
-      loading.value = true; 
+      loading.value = true;
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('Service')
           .doc(serviceId)
@@ -205,7 +209,9 @@ class ServiceController extends GetxController {
         discount: data['discount'] ?? 0,
         name: data['name'] ?? '',
         image: data['image'] ?? '',
-        price: (data['price'] is int) ? (data['price'] as int).toDouble() : data['price']?.toDouble() ?? 0.0,
+        price: (data['price'] is int)
+            ? (data['price'] as int).toDouble()
+            : data['price']?.toDouble() ?? 0.0,
         time: data['time'] ?? '',
         warranty: data['warranty'] ?? '',
       ));
@@ -217,7 +223,8 @@ class ServiceController extends GetxController {
   }
 
   // Function to add a new review
-  Future<void> addReview(String serviceId, String userId, String message, double rating) async {
+  Future<void> addReview(
+      String serviceId, String userId, String message, double rating) async {
     try {
       // Create a new review document
       await FirebaseFirestore.instance.collection('Review').add({

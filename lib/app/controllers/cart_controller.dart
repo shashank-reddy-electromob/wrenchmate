@@ -6,8 +6,9 @@ import 'service_controller.dart'; // Import the ServiceController
 class CartController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ServiceController serviceController = Get.find();
-  var isLoading = true.obs; // Loading state
+  var isLoading = true.obs; 
   var cartItems = <Map<String, dynamic>>[].obs;
+  double totalAmount = 0.0;
 
   Future<void> addToCart({required String serviceId}) async {
     try {

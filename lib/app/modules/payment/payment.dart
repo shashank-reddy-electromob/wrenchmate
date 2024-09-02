@@ -4,6 +4,8 @@ import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:wrenchmate_user_app/app/widgets/bluebuttoncircular.dart';
+import 'package:wrenchmate_user_app/utils/color.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
 class PaymentScreen extends StatefulWidget {
   @override
@@ -35,7 +37,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
           children: <Widget>[
             Text(
               'Cards',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway'),
             ),
             SizedBox(height: 10),
             Card(
@@ -57,7 +62,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         leading: Image.network(
                             'https://i.pinimg.com/736x/38/2f/0a/382f0a8cbcec2f9d791702ef4b151443.jpg',
                             width: 50),
-                        title: Text('Axis Bank **** **** **** 8395'),
+                        title: Text(
+                          'Axis Bank **** **** **** 8395',
+                          style: AppTextStyle.mediumgreyRaleway12,
+                        ),
                         trailing: Radio(
                           value: 1,
                           groupValue: _selectedCardIndex,
@@ -82,7 +90,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         leading: Image.network(
                             'https://w7.pngwing.com/pngs/646/268/png-transparent-visa-credit-card-debit-card-visa-blue-text-trademark.png',
                             width: 50),
-                        title: Text('HDFC Bank **** **** **** 6246'),
+                        title: Text(
+                          'HDFC Bank **** **** **** 6246',
+                          style: AppTextStyle.mediumgreyRaleway12,
+                        ),
                         trailing: Radio(
                           value: 2,
                           groupValue: _selectedCardIndex,
@@ -113,7 +124,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ),
                         title: Text('Add New Cards',
                             style: TextStyle(
-                                color: Color(0xff606060), fontSize: 14)),
+                                color: Color(0xff606060),
+                                fontSize: 14,
+                                fontFamily: 'Raleway')),
                         onTap: () {
                           _showAddCardBottomSheet(context);
                         },
@@ -124,7 +137,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
             SizedBox(height: 20),
             Text(
               'UPI',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway'),
             ),
             SizedBox(height: 10),
             Card(
@@ -147,7 +163,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png',
                             width: 24,
                             height: 24),
-                        title: Text('Google Pay'),
+                        title: Text(
+                          'Google Pay',
+                          style: AppTextStyle.mediumgreyRaleway12,
+                        ),
                         trailing: Radio(
                           value: 1,
                           groupValue: _selectedUpiIndex,
@@ -173,7 +192,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvfA-R2BKVmud5D-BOkkDhkRI2HeaB_HBPoZWD88o-FuzFczqNzlO8F2-YdWOqnEiYxFk&usqp=CAU',
                             width: 24,
                             height: 24),
-                        title: Text('PhonePe'),
+                        title: Text(
+                          'PhonePe',
+                          style: AppTextStyle.mediumgreyRaleway12,
+                        ),
                         trailing: Radio(
                           value: 2,
                           groupValue: _selectedUpiIndex,
@@ -204,7 +226,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ),
                         title: Text('Add New UPI',
                             style: TextStyle(
-                                color: Color(0xff606060), fontSize: 14)),
+                                color: Color(0xff606060),
+                                fontSize: 14,
+                                fontFamily: 'Raleway')),
                         onTap: () {
                           _showAddUpiBottomSheet(context);
                         },
@@ -215,7 +239,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
             SizedBox(height: 20),
             Text(
               'More Payment Options',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Raleway'),
             ),
             SizedBox(height: 10),
             Card(
@@ -236,7 +263,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         dense: true,
                         leading:
                             Icon(Icons.account_balance, color: Colors.blue),
-                        title: Text('Net Banking'),
+                        title: Text(
+                          'Net Banking',
+                          style: AppTextStyle.mediumgreyRaleway12,
+                        ),
                         trailing: Icon(Icons.arrow_forward_ios),
                         onTap: () {},
                       ),
@@ -252,7 +282,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       child: ListTile(
                         dense: true,
                         leading: Icon(Icons.local_shipping, color: Colors.blue),
-                        title: Text('Cash on Delivery'),
+                        title: Text(
+                          'Cash on Delivery',
+                          style: AppTextStyle.mediumgreyRaleway12,
+                        ),
                         trailing: Icon(Icons.arrow_forward_ios),
                         onTap: () {},
                       ),
@@ -274,9 +307,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       children: <Widget>[
                         Text('₹12,000',
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Text('View detailed bill',
-                            style: TextStyle(color: Colors.blue)),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Poppins')),
+                        Text(
+                          'View detailed bill',
+                          style: TextStyle(
+                              color: primaryColor,
+                              fontSize: 14,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500),
+                        ),
                       ],
                     ),
                   ),
@@ -377,7 +418,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         child: Text(
                           'Add Card',
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins'),
                         ),
                       ),
                       SizedBox(height: 10),
@@ -385,7 +428,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         child: Text(
                           'Start typing to add your credit card details.\nEverything will update according to your data.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(
+                              color: textgrey,
+                              fontFamily: 'Raleway',
+                              fontSize: 14),
                         ),
                       ),
                       SizedBox(height: 20),
@@ -409,7 +455,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               Text(
                                 '1244 1234 1345 3255',
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins'),
                               ),
                               SizedBox(height: 20),
                               Row(
@@ -421,12 +469,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       Text(
                                         'Card Holder',
                                         style: TextStyle(
-                                            color: Colors.grey[700],
+                                            color: textgrey,
+                                            fontFamily: 'Poppins',
                                             fontSize: 12),
                                       ),
                                       Text(
                                         'Yessie',
                                         style: TextStyle(
+                                            color: textgrey,
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -437,12 +487,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       Text(
                                         'Expires',
                                         style: TextStyle(
-                                            color: Colors.grey[700],
+                                            fontFamily: 'Poppins',
+                                            color: textgrey,
                                             fontSize: 12),
                                       ),
                                       Text(
                                         '02/25',
                                         style: TextStyle(
+                                            fontFamily: 'Poppins',
+                                            color: textgrey,
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -450,7 +503,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   )
                                 ],
                               ),
-                              // SizedBox(height: 10),
+                              SizedBox(height: 10),
                             ],
                           ),
                         ),
@@ -562,7 +615,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         child: Text(
                           'Add UPI',
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins'),
                         ),
                       ),
                       SizedBox(height: 40),
@@ -570,7 +625,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         child: Text(
                           'Start typing to add your UPI ID.\nEverything will update according to your data.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
+                          style:
+                              TextStyle(color: textgrey, fontFamily: 'Raleway'),
                         ),
                       ),
                       SizedBox(height: 50),
@@ -710,6 +766,7 @@ class _CongratulationsDialogState extends State<CongratulationsDialog>
                     'Ta-da!',
                     style: TextStyle(
                       fontSize: 24,
+                      fontFamily: 'Raleway',
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -719,6 +776,7 @@ class _CongratulationsDialogState extends State<CongratulationsDialog>
                     'Congratulations',
                     style: TextStyle(
                       fontSize: 24,
+                      fontFamily: 'Raleway',
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -728,6 +786,7 @@ class _CongratulationsDialogState extends State<CongratulationsDialog>
                     'You’re now part of our family, enjoy your special offers.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: 'Raleway',
                       fontSize: 16,
                       color: Colors.white70,
                     ),

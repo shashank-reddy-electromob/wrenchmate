@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/offers_slider.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:google_api_availability/google_api_availability.dart';
+import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/home_controller.dart';
 import 'drawer.dart';
@@ -27,6 +29,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    cartController = Get.put(CartController());
+
     user = FirebaseAuth.instance.currentUser!;
     controller = Get.put(HomeController());
     fetchUserData();
@@ -51,9 +55,51 @@ class _HomePageState extends State<HomePage> {
   double yOffSet = 0;
   double scaleFactor = 1;
   bool isDrawerOpen = false;
+  late CartController cartController;
 
   void _onTap() {
     setState(() {
+      final snackBar = SnackBar(
+        backgroundColor: primaryColor,
+        content: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Total Amount: \₹${cartController.totalAmount.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  Get.toNamed(AppRoutes.CART);
+                },
+                child: Text(
+                  'Checkout',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: primaryColor,
+                    fontFamily: 'Raleway',
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        duration: Duration(days: 1), // Snackbar duration
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
       xOffSet = 0;
       yOffSet = 0;
       scaleFactor = 1;
@@ -118,6 +164,9 @@ class _HomePageState extends State<HomePage> {
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
+
                                         xOffSet = 230;
                                         yOffSet =
                                             MediaQuery.of(context).size.height *
