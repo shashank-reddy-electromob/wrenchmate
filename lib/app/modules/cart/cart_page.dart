@@ -21,8 +21,7 @@ class _CartPageState extends State<CartPage> {
   final ServiceController serviceController = Get.find();
   final BookingController bookingController =
       Get.put(BookingController()); // Get the BookingController instance
-  final HomeController homeController =
-      Get.find(); // Get the HomeController instance
+  final HomeController homeController =Get.put(HomeController());
 
   double? totalAmount;
   double? tax;

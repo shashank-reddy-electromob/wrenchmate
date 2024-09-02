@@ -11,7 +11,7 @@ import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
-import '../../data/models/Service_Firebase.dart';
+import '../../data/models/Service_firebase.dart';
 import '../../data/models/user_module.dart';
 import '../../routes/app_routes.dart';
 
@@ -24,7 +24,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   String selectedTab = 'description';
   late List<bool> _isVisibleList;
   final ServiceController controller = Get.find();
-  late ServiceFirebase service;
+  late Servicefirebase service;
   bool addtocart = false;
   late CartController cartController;
 
@@ -37,7 +37,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     _isVisibleList = List<bool>.filled(controller.faqs.length, false);
   }
 
-  void fetchData(ServiceFirebase service) async {
+  void fetchData(Servicefirebase service) async {
     controller.reviews.clear();
     await controller.fetchReviewsForService(service);
     await controller.fetchFAQsForService(service.id);
@@ -45,7 +45,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     _isVisibleList = List<bool>.filled(controller.faqs.length, false);
   }
 
-  Future<void> addToCart(ServiceFirebase service) async {
+  Future<void> addToCart(Servicefirebase service) async {
     print("adding to cart");
     await cartController.addToCart(serviceId: service.id);
     print("added to cart");

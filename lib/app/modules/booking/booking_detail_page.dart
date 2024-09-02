@@ -6,7 +6,7 @@ import 'package:wrenchmate_user_app/app/modules/booking/widgets/payment_details.
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/timelineTile.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 
-import '../../data/models/Service_Firebase.dart';
+import '../../data/models/Service_firebase.dart';
 import '../../data/models/booking_model.dart';
 import '../../routes/app_routes.dart';
 
@@ -21,7 +21,7 @@ class BookingDetailPage extends StatefulWidget {
 }
 
 class _BookingDetailPageState extends State<BookingDetailPage> {
-  late ServiceFirebase service;
+  late Servicefirebase service;
   late Booking booking;
 
   @override

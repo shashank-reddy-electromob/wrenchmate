@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import '../data/models/Service_Firebase.dart';
+import '../data/models/Service_firebase.dart';
 import '../data/models/faq_model.dart';
 import '../data/models/review_model.dart';
 import '../data/models/user_module.dart';
 
 class ServiceController extends GetxController {
-  var services = <ServiceFirebase>[].obs;
+  var services = <Servicefirebase>[].obs;
   var reviews = <Review>[].obs; // Use Review model
   var users = <User>[].obs; // Use User model
   var faqs = <FAQ>[].obs; // Use FAQ model
   var loading = true.obs; // Loading state
-  var selectedService = Rxn<ServiceFirebase>(); // To store the selected service
+  var selectedService = Rxn<Servicefirebase>(); // To store the selected service
 
   Future<void> fetchServices(String category) async {
     try {
@@ -27,7 +27,7 @@ class ServiceController extends GetxController {
       services.value = querySnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
         print("Service Data: $data");
-        return ServiceFirebase(
+        return Servicefirebase(
           id: doc.id,
           category: data['category'] ?? '',
           description: data['description'] ?? '',
@@ -51,7 +51,7 @@ class ServiceController extends GetxController {
   }
 
   // Function to fetch reviews for a specific service
-  Future<void> fetchReviewsForService(ServiceFirebase service) async {
+  Future<void> fetchReviewsForService(Servicefirebase service) async {
     try {
       QuerySnapshot reviewSnapshot = await FirebaseFirestore.instance
           .collection('Review')
@@ -156,7 +156,7 @@ class ServiceController extends GetxController {
           .get();
       var data = doc.data() as Map<String, dynamic>;
       print("returned $data ");
-      selectedService.value = ServiceFirebase(
+      selectedService.value = Servicefirebase(
         averageReview:
             data['averageReview']?.toDouble() ?? 0.0, // Ensure this is a double
         numberOfReviews: data['numberOfReviews'] ?? 0, // Ensure this is an int
@@ -200,7 +200,7 @@ class ServiceController extends GetxController {
       var data = doc.data() as Map<String, dynamic>;
       print("Returned service data: $data");
 
-      services.add(ServiceFirebase(
+      services.add(Servicefirebase(
         averageReview: data['averageReview']?.toDouble() ?? 0.0,
         numberOfReviews: data['numberOfReviews'] ?? 0,
         id: doc.id,

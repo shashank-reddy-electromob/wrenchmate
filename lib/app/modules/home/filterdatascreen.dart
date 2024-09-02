@@ -28,7 +28,7 @@ class FilteredResultsPage extends StatelessWidget {
             itemCount: searchController.searchFilterResults.length,
             itemBuilder: (context, index) {
               final result = searchController.searchFilterResults[index];
-              final service = ServiceFirebase.fromMap(
+              final service = Servicefirebase.fromMap(
                 result.data() as Map<String, dynamic>,
                 result.id,
               );

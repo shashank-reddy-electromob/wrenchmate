@@ -2,7 +2,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wrenchmate_user_app/app/data/models/Service_Firebase.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart';
@@ -12,6 +11,7 @@ import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
+import '../../data/models/Service_firebase.dart';
 import '../../routes/app_routes.dart';
 import '../../controllers/service_controller.dart';
 
@@ -40,7 +40,7 @@ class _ServicePageState extends State<ServicePage> {
     });
   }
 
-  List<ServiceFirebase> get filteredServices {
+  List<Servicefirebase> get filteredServices {
     if (selectedCategory == 'Show All') {
       return serviceController.services; // Show all services
     } else {
@@ -54,7 +54,7 @@ class _ServicePageState extends State<ServicePage> {
   }
   // double totalAmount = 0.0;
 
-  Future<void> addToCart(ServiceFirebase service) async {
+  Future<void> addToCart(Servicefirebase service) async {
     print("adding to cart");
     await cartController.addToCart(serviceId: service.id);
     print("added to cart");
@@ -221,17 +221,9 @@ class _ServicePageState extends State<ServicePage> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  // Image.network(
-                                                  //   //"https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
-                                                  //   service.image,
-                                                  //   //"https://drive.google.com/file/d/1w2J5kLlvbJXM9CMUEI5-BhT4RMyFLf68",
-                                                  //   fit: BoxFit.fitWidth,
-                                                  //   width: MediaQuery.of(context).size.width-32,
-                                                  //   height: MediaQuery.of(context).size.height * 0.17,),
+
                                                   ExtendedImage.network(
-                                                    //"https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
                                                     service.image,
-                                                    //"https://drive.google.com/file/d/1w2J5kLlvbJXM9CMUEI5-BhT4RMyFLf68",
                                                     fit: BoxFit.fitWidth,
                                                     cache: true,
                                                     width:
