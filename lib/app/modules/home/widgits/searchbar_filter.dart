@@ -9,7 +9,9 @@ import '../../../routes/app_routes.dart';
 
 class searchbar extends StatefulWidget {
   final bool showFilter;
-  const searchbar({super.key, this.showFilter = true});
+  final bool readonly; // Add readonly argument
+
+  const searchbar({super.key, this.showFilter = true, this.readonly = false}); // Update constructor
 
   @override
   State<searchbar> createState() => _searchbarState();
@@ -33,9 +35,12 @@ class _searchbarState extends State<searchbar> {
               color: Color(0xffF7F7F7),
               child: Center(
                 child: TextField(
+                  readOnly: widget.readonly, // Set readonly property
                   onTap: () async {
-                    print("AppRoutes.SEARCHSCREEN");
-                    Get.toNamed(AppRoutes.SEARCHSCREEN);
+                    if (widget.readonly) { // Check if readonly is false
+                      print("AppRoutes.SEARCHSCREEN");
+                      Get.toNamed(AppRoutes.SEARCHSCREEN);
+                    }
                   },
                   decoration: InputDecoration(
                     hintText: "Search services and packages",
