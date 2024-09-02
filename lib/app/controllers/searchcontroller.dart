@@ -11,9 +11,9 @@ class SearchControllerClass extends GetxController {
       <QueryDocumentSnapshot>[].obs;
   final RxList<String> searchHistory = <String>[].obs;
   final ServiceController serviceController = Get.find();
-  var popularServices = <ServiceFirebase>[].obs;
-  var topCategories = <ServiceFirebase>[].obs;
-  var topServices = <ServiceFirebase>[].obs;
+  var popularServices = <Servicefirebase>[].obs;
+  var topCategories = <Servicefirebase>[].obs;
+  var topServices = <Servicefirebase>[].obs;
 
   @override
   void onInit() {
@@ -82,7 +82,7 @@ class SearchControllerClass extends GetxController {
             .get();
 
         if (serviceDoc.exists) {
-          ServiceFirebase service = ServiceFirebase.fromMap(
+          Servicefirebase service = Servicefirebase.fromMap(
               serviceDoc.data() as Map<String, dynamic>, serviceId);
           topServices.add(service);
         }
@@ -113,7 +113,7 @@ class SearchControllerClass extends GetxController {
         print("Service Document: ${serviceDoc.data()}");
 
         if (serviceDoc.exists) {
-          ServiceFirebase service = ServiceFirebase.fromMap(
+          Servicefirebase service = Servicefirebase.fromMap(
               serviceDoc.data() as Map<String, dynamic>, serviceId);
           topCategories.add(service);
         }
@@ -144,7 +144,7 @@ class SearchControllerClass extends GetxController {
         print("Service Document: ${serviceDoc.data()}");
 
         if (serviceDoc.exists) {
-          ServiceFirebase service = ServiceFirebase.fromMap(
+          Servicefirebase service = Servicefirebase.fromMap(
               serviceDoc.data() as Map<String, dynamic>, serviceId);
           popularServices.add(service);
         }

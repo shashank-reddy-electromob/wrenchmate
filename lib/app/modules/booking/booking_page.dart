@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/tabButton.dart';
 import '../../controllers/booking_controller.dart';
 import '../../controllers/service_controller.dart';
-import '../../data/models/Service_Firebase.dart';
 import '../../data/models/booking_model.dart';
 import '../../routes/app_routes.dart';
 
@@ -21,8 +21,8 @@ class BookingPage extends StatefulWidget {
 class _BookingPageState extends State<BookingPage> {
   String selectedTab = 'currBooking';
   List<Map<String, dynamic>> bookings = []; // Store fetched bookings
-  List<ServiceFirebase> currentServices = []; // Store services for current bookings
-  List<ServiceFirebase> historyServices = []; // Store services for history bookings
+  List<Servicefirebase> currentServices = []; // Store services for current bookings
+  List<Servicefirebase> historyServices = []; // Store services for history bookings
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _BookingPageState extends State<BookingPage> {
     final ServiceController serviceController = Get.put(ServiceController());
     for (var booking in bookings) {
       for (var serviceId in booking['service_list']) {
-        ServiceFirebase service = await _fetchServiceDetails(serviceController, serviceId);
+        Servicefirebase service = await _fetchServiceDetails(serviceController, serviceId);
         if (booking['status'] == 'confirmed' || booking['status'] == 'ongoing') {
           currentServices.add(service); // Add to current bookings
         } else if (booking['status'] == 'completed') {
@@ -51,7 +51,7 @@ class _BookingPageState extends State<BookingPage> {
     setState(() {});
   }
 
-  Future<ServiceFirebase> _fetchServiceDetails(ServiceController serviceController, String serviceId) async {
+  Future<Servicefirebase> _fetchServiceDetails(ServiceController serviceController, String serviceId) async {
     await serviceController.fetchServiceDataById(serviceId);
     return serviceController.services.firstWhere((service) => service.id == serviceId); // Return the service
   }
@@ -143,7 +143,7 @@ class _BookingPageState extends State<BookingPage> {
 }
 
 class BookingTile extends StatelessWidget {
-  final ServiceFirebase service; // Change to accept ServiceFirebase
+  final Servicefirebase service; // Change to accept ServiceFirebase
   final Booking booking; // Change to accept Booking
   final String selectedTab; // Change to accept Booking
 

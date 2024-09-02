@@ -1,4 +1,4 @@
-class ServiceFirebase {
+class Servicefirebase {
   String id;
   String category;
   String description;
@@ -11,7 +11,7 @@ class ServiceFirebase {
   double averageReview;
   int numberOfReviews;
 
-  ServiceFirebase({
+  Servicefirebase({
     required this.id,
     required this.category,
     required this.description,
@@ -40,8 +40,8 @@ class ServiceFirebase {
     };
   }
 
-  factory ServiceFirebase.fromMap(Map<String, dynamic> map, String id) {
-    return ServiceFirebase(
+  factory Servicefirebase.fromMap(Map<String, dynamic> map, String id) {
+    return Servicefirebase(
       id: id,
       category: map['category'] ?? '',
       description: map['description'] ?? '',

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/review%20widgets/deliveryReview.dart';
 
 import '../../controllers/service_controller.dart';
-import '../../data/models/Service_Firebase.dart';
+import '../../data/models/Service_firebase.dart';
 import '../../widgets/blueButton.dart';
 
 class reviewPage extends StatefulWidget {
@@ -16,7 +16,7 @@ class reviewPage extends StatefulWidget {
 }
 
 class _reviewPageState extends State<reviewPage> {
-  final ServiceFirebase services = Get.arguments;
+  final Servicefirebase services = Get.arguments;
   final ServiceController serviceController = Get.find(); // Get the ServiceController instance
   TextEditingController _controller = TextEditingController();
   int _rating = 0;
