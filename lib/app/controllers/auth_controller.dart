@@ -27,7 +27,7 @@ class AuthController extends GetxController {
           FirebaseAuth.instance.currentUser!.metadata.creationTime ==
               FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
       if (isNewUser) {
-        Get.toNamed(AppRoutes.REGISTER);
+        Get.toNamed(AppRoutes.REGISTER, arguments: "");
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV);
       }
