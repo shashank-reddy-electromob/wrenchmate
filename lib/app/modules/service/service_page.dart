@@ -8,6 +8,7 @@ import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart'
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:wrenchmate_user_app/app/widgets/bluebuttoncircular.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
+import 'package:wrenchmate_user_app/globalVariables.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
@@ -26,8 +27,11 @@ class _ServicePageState extends State<ServicePage> {
   late String service;
   late CartController cartController;
   final ServiceController serviceController = Get.put(ServiceController());
-  final AuthController authController = Get.put(AuthController()); // Initialize AuthController
+  final AuthController authController = Get.put(AuthController());
   List<bool> addToCartStates = [];
+
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
@@ -36,14 +40,16 @@ class _ServicePageState extends State<ServicePage> {
     service = Get.arguments;
     print(service);
 
-    // Initialize addToCartStates with a default value
-    addToCartStates = List<bool>.filled(serviceController.services.length, false);
+    addToCartStates =
+        List<bool>.filled(serviceController.services.length, false);
 
-    // Fetch user car details asynchronously
     authController.getUserCarDetails().then((userCarDetails) {
-      serviceController.fetchServicesForUser(service, userCarDetails.cast<String>()).then((_) {
+      serviceController
+          .fetchServicesForUser(service, userCarDetails.cast<String>())
+          .then((_) {
         setState(() {
-          addToCartStates = List<bool>.filled(serviceController.services.length, false);
+          addToCartStates =
+              List<bool>.filled(serviceController.services.length, false);
         });
       });
     });
@@ -65,73 +71,13 @@ class _ServicePageState extends State<ServicePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Update addToCartStates length when filteredServices changes
     addToCartStates = List<bool>.filled(filteredServices.length, false);
-  }
-
-  Future<void> addToCart(Servicefirebase service) async {
-    print("adding to cart");
-    await cartController.addToCart(serviceId: service.id);
-    print("added to cart");
-
-    cartController.totalAmount.value += service.price;
-
-    if (!mounted) return;
-
-    final snackBar = SnackBar(
-      backgroundColor: primaryColor,
-      content: Obx(() => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Total Amount: \₹${cartController.totalAmount.value.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed(AppRoutes.CART);
-                    setState(() {
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    });
-                  },
-                  child: Text(
-                    'Checkout',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: primaryColor,
-                      fontFamily: 'Raleway',
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          )),
-      duration: Duration(days: 1), // Snackbar duration
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-    cartController.totalAmount.listen((newTotal) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldMessengerKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: service == "Repairing" || service == "Body Parts"
@@ -378,7 +324,14 @@ class _ServicePageState extends State<ServicePage> {
                                               child: !addToCartStates[index]
                                                   ? CustomElevatedButton(
                                                       onPressed: () {
-                                                        addToCart(service);
+                                                        cartController
+                                                            .addToCartSnackbar(
+                                                          context,
+                                                          cartController,
+                                                          service,
+                                                          scaffoldMessengerKey,
+                                                        );
+                                                        // addToCart(service);
                                                         setState(() {
                                                           addToCartStates[
                                                               index] = true;

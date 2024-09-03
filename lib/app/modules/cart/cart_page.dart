@@ -7,9 +7,9 @@ import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
-import '../../controllers/booking_controller.dart'; // Import the BookingController
-import '../../controllers/home_controller.dart'; // Import the HomeController
-import '../../widgets/custombackbutton.dart'; // Import the ServiceController
+import '../../controllers/booking_controller.dart'; 
+import '../../controllers/home_controller.dart'; 
+import '../../widgets/custombackbutton.dart'; 
 
 class CartPage extends StatefulWidget {
   @override
@@ -63,6 +63,7 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -80,6 +81,10 @@ class _CartPageState extends State<CartPage> {
           Obx(() {
             if (cartController.isLoading.value) {
               return Center(child: CircularProgressIndicator());
+            }
+
+            if (cartController.cartItems.isEmpty) {
+              return Center(child: Text("Your cart is empty"));
             }
             return SingleChildScrollView(
               child: Column(
@@ -172,11 +177,7 @@ class _CartPageState extends State<CartPage> {
                                       await cartController
                                           .deleteServicesFromCart(
                                               cartItem['serviceId']);
-                                      setState(() {
-                                        cartController.cartItems
-                                            .removeAt(index);
-                                        calculateTotal();
-                                      });
+                                      calculateTotal();
                                     },
                                   ),
                                 ],

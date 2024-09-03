@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             )),
-        duration: Duration(days: 1), // Snackbar duration
+        duration: Duration(days: 1), 
       );
 
       ScaffoldMessenger.of(context).showSnackBar(snackBar);

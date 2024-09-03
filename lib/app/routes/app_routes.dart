@@ -26,4 +26,5 @@ class AppRoutes {
   static const TRACKING = '/tracking';
   static const BOTTOMNAV = '/bottomnav';
   static const SEARCHSCREEN = '/searchScreen';
+  static const PRODUCT_DETAILS = '/product-details';
 }
