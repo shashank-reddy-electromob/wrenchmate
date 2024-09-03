@@ -103,7 +103,7 @@ class AuthController extends GetxController {
           await FirebaseAuth.instance.signInWithProvider(googleProvider);
       bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
       if (isNewUser == true) {
-        Get.toNamed(AppRoutes.REGISTER);
+        Get.toNamed(AppRoutes.REGISTER, arguments: "");
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV);
       }
