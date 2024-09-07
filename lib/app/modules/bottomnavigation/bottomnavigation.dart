@@ -2,13 +2,9 @@ import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:wrenchmate_user_app/app/modules/home/drawer.dart';
 import 'package:wrenchmate_user_app/app/modules/home/home_page.dart';
-import 'package:flutter/services.dart'; // Import this for SystemNavigator
-
-import '../../controllers/home_controller.dart';
+import 'package:flutter/services.dart';
 import '../../routes/app_routes.dart';
-import '../booking/booking_page.dart';
 import '../car/car_page.dart';
 import '../product/productscreen.dart';
 import '../subscription/subscription_page.dart';
@@ -26,7 +22,6 @@ class _bottomnavigationState extends State<bottomnavigation> {
 
   static List<Widget> _widgetOptions = [
     HomePage(),
-    // BookingPage(),
     ProductScreen(),
     CarPage(),
     SupportPage(),

@@ -22,8 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
-  final TextEditingController alternateNumberController =
-      TextEditingController();
+  final TextEditingController alternateNumberController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
@@ -71,10 +70,10 @@ class _RegisterPageState extends State<RegisterPage> {
         numberController.text.isNotEmpty ? numberController.text : null;
     String? alternateNumber = alternateNumberController.text.isNotEmpty
         ? alternateNumberController.text
-        : null;
-    String? email = emailController.text.isNotEmpty ? emailController.text : "";
+        : '';
+    String? email = emailController.text.isNotEmpty ? emailController.text : '';
     String? address =
-        addressController.text.isNotEmpty ? addressController.text : "";
+        addressController.text.isNotEmpty ? addressController.text : '';
     String? profileImagePath;
 
     if (_image != null) {
@@ -85,14 +84,6 @@ class _RegisterPageState extends State<RegisterPage> {
       Get.snackbar('Error', 'Invalid or empty name field');
     } else if (number == null || !RegExp(r'^\d{10}$').hasMatch(number)) {
       Get.snackbar('Error', 'Invalid or empty number field');
-    } else if (alternateNumber == null ||
-        !RegExp(r'^\d{10}$').hasMatch(alternateNumber)) {
-      Get.snackbar('Error', 'Invalid or empty alternate number field');
-    } else if (email == null ||
-        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-      Get.snackbar('Error', 'Invalid or empty email field');
-    } else if (address == null) {
-      address = '';
     } else {
       try {
         await controller.addUserToFirestore(
@@ -121,7 +112,6 @@ class _RegisterPageState extends State<RegisterPage> {
     userId = FirebaseAuth.instance.currentUser!.phoneNumber;
     controller = Get.find();
     if (userId != null) {
-      // Extract the last 10 digits of the phone number
       numberController.text = userId!.substring(userId!.length - 10);
     }
   }
