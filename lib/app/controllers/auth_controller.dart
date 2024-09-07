@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/localstorage/localstorage.dart';
 import 'package:wrenchmate_user_app/main.dart';
 import '../routes/app_routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
@@ -12,6 +13,18 @@ class AuthController extends GetxController {
   int? resendToken;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  SharedPreferences? prefs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initPrefs();
+  }
+
+  Future<void> _initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+  }
 
   Future<void> handleSignIn(PhoneAuthCredential credential,
       TextEditingController otpcontroller) async {
