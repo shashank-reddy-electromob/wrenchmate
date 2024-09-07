@@ -129,6 +129,7 @@ class ServicesType extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
+              width: 35,
               imagePath,
               fit: BoxFit.cover,
             ),

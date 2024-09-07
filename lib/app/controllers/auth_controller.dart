@@ -192,12 +192,20 @@ class AuthController extends GetxController {
 
   void logout() async {
     try {
-      print("logout in lauth controller");
+      print("Attempting to log out...");
+      if (FirebaseAuth.instance == null) {
+        throw Exception("FirebaseAuth instance is null");
+      }
       await FirebaseAuth.instance.signOut();
+      print("Sign-out successful");
+
+      if (AppRoutes.LOGIN == null) {
+        throw Exception("AppRoutes.LOGIN is null");
+      }
       Get.toNamed(AppRoutes.LOGIN);
     } catch (e) {
       print("Logout failed: $e");
-      Get.snackbar("Error", "Logout failed: ${e.toString()}");
+      //Get.snackbar("Error", "Logout failed: ${e.toString()}");
     }
   }
 }

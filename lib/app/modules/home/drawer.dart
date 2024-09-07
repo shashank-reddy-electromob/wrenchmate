@@ -59,7 +59,7 @@ class _drawerPageState extends State<drawerPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white60,
+      color: Colors.white,
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
