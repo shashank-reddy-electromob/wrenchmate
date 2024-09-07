@@ -27,7 +27,7 @@ class _CartPageState extends State<CartPage> {
   double? tax;
   double? finalAmount;
   List<String> deletedServiceIds = [];
-  int? currentCar;
+  String? currentCar;
 
   @override
   void initState() {
@@ -318,7 +318,7 @@ class _CartPageState extends State<CartPage> {
                             '', // confirmation_note
                             '', // outForService_note
                             '', // completed_note
-                            currentCar! as String, // Pass the current car
+                            currentCar.toString(), // Ensure currentCar is passed as a String
                           );
 
                           // Optionally show a success message
