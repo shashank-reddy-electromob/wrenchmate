@@ -10,6 +10,7 @@ import '../../controllers/service_controller.dart';
 import '../../controllers/booking_controller.dart'; 
 import '../../controllers/home_controller.dart'; 
 import '../../widgets/custombackbutton.dart'; 
+import '../../routes/app_routes.dart'; // Import AppRoutes
 
 class CartPage extends StatefulWidget {
   @override
@@ -17,8 +18,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final CartController cartController = Get.find();
-  final ServiceController serviceController = Get.find();
+  final CartController cartController = Get.put(CartController());
+  final ServiceController serviceController = Get.put(ServiceController());
   final BookingController bookingController = Get.put(BookingController());
   final HomeController homeController = Get.put(HomeController());
 
@@ -33,12 +34,16 @@ class _CartPageState extends State<CartPage> {
     super.initState();
     fetchCartData();
     fetchUserCurrentCar();
-    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 
   Future<void> fetchCartData() async {
     await cartController.fetchCartItems();
-    calculateTotal();
+    if (cartController.cartItems.isEmpty) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    } else {
+      calculateTotal();
+    }
   }
 
   Future<void> fetchUserCurrentCar() async {
@@ -63,7 +68,6 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -177,7 +181,11 @@ class _CartPageState extends State<CartPage> {
                                       await cartController
                                           .deleteServicesFromCart(
                                               cartItem['serviceId']);
-                                      calculateTotal();
+                                      if (cartController.cartItems.isEmpty) {
+                                        Get.offAllNamed(AppRoutes.BOTTOMNAV); // Redirect to BottomNavigation if cart is empty
+                                      } else {
+                                        calculateTotal();
+                                      }
                                     },
                                   ),
                                 ],

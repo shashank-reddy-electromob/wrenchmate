@@ -1,5 +1,7 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import '../../controllers/auth_controller.dart';
@@ -12,6 +14,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _phonenumbercontroller = TextEditingController();
+  String _countryCode = '+91'; // Default country code for India
   bool _isLoading = false;
   bool _isLoadingGoogle = false;
   final AuthController controller = Get.find();
@@ -23,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
     final AuthController controller = Get.find();
     print("calling the controller functions");
     await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: '+91${_phonenumbercontroller.text}',
+      phoneNumber: '$_countryCode${_phonenumbercontroller.text}', // Use selected country code
       verificationCompleted: (PhoneAuthCredential credential) {
         controller.handleSignIn(credential, _phonenumbercontroller);
         setState(() {
@@ -78,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        padding: EdgeInsets.all(16),
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -97,13 +99,14 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 128),
+              SizedBox(height: 80),
               //logo
               Image.asset(
-                'assets/images/wrench_mate_logo.png',
+                height: 140,
+                'assets/images/logo.png',
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 32.0),
+              SizedBox(height: 64.0),
               //text
               Text(
                 "Log In",
@@ -120,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
               //textfield
               SizedBox(height: 24.0),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0),
@@ -128,10 +131,32 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: Row(
                     children: [
+                      CountryCodePicker(
+                        onChanged: (country) {
+                          setState(() {
+                            _countryCode = country.dialCode!;
+                          });
+                        },
+                        initialSelection: 'IN', // Set default to India
+                        favorite: ['+91', 'IN'],
+                        hideMainText: true,
+                        showOnlyCountryWhenClosed: true, // Show only the flag when closed
+                        alignLeft: true, // Align the flag to the center
+                        padding: EdgeInsets.zero, // Remove padding
+                        flagDecoration: BoxDecoration(
+                          shape: BoxShape.circle, // Make the flag circular
+                        ),
+                        hideSearch: true,
+                        showDropDownButton: true, // Show the dropdown arrow
+                        textStyle: TextStyle(fontSize: 0), // Hide the country name
+                      ),
                       Expanded(
                         child: TextField(
                           controller: _phonenumbercontroller,
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(10), // Limit to 10 digits
+                          ],
                           decoration: InputDecoration(
                             hintText: 'Enter number',
                             hintStyle: TextStyle(
@@ -142,6 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             filled: true,
                             fillColor: Colors.transparent,
+                            contentPadding: EdgeInsets.symmetric(vertical: 0), // Remove vertical padding
                           ),
                           style: TextStyle(
                               fontSize: 22.0), // Increased entered text size
@@ -154,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 32.0),
               //submit
               Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  width: MediaQuery.of(context).size.width * 0.85,
                   child: _isLoading
                       ? Center(
                           child: CircularProgressIndicator(
@@ -174,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 32.0),
               //google
               Container(
-                width: MediaQuery.of(context).size.width * 0.8,
+                width: MediaQuery.of(context).size.width * 0.85,
                 height: 60,
                 child: _isLoadingGoogle
                     ? Center(
@@ -211,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 16.0),
               //facebook
               Container(
-                width: MediaQuery.of(context).size.width * 0.8,
+                width: MediaQuery.of(context).size.width * 0.85,
                 height: 60,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
