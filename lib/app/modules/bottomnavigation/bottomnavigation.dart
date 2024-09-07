@@ -58,22 +58,22 @@ class _bottomnavigationState extends State<bottomnavigation> {
             // SlidingContainer(isVisible: _selectedIndex == 0),
           ],
         ),
-        floatingActionButton: DraggableFab(
-            child: ClipOval(
-          child: Material(
-            color: Colors.blue,
-            child: InkWell(
-              splashColor: Colors.blueAccent,
-              onTap: () {
-                Get.toNamed(AppRoutes.TRACKING);
-              },
-              child: SizedBox(
-                width: 60,
-                height: 60,
-              ),
-            ),
-          ),
-        )),
+        // floatingActionButton: DraggableFab(
+        //     child: ClipOval(
+        //   child: Material(
+        //     color: Colors.blue,
+        //     child: InkWell(
+        //       splashColor: Colors.blueAccent,
+        //       onTap: () {
+        //         Get.toNamed(AppRoutes.TRACKING);
+        //       },
+        //       child: SizedBox(
+        //         width: 60,
+        //         height: 60,
+        //       ),
+        //     ),
+        //   ),
+        // )),
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
