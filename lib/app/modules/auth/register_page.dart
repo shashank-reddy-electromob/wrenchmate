@@ -5,9 +5,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:wrenchmate_user_app/app/localstorage/localstorage.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/widgets/CustomTextField.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
+import 'package:wrenchmate_user_app/main.dart';
 import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
 
@@ -79,7 +81,9 @@ class _RegisterPageState extends State<RegisterPage> {
     String? address =
         addressController.text.isNotEmpty ? addressController.text : '';
     String? profileImagePath;
-
+      prefs?.setBool(LocalStorage.isLogin, true) ?? false;
+      print(
+          "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
     if (_image != null) {
       profileImagePath = await uploadImageToStorage(_image!);
     }

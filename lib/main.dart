@@ -11,6 +11,7 @@ import 'package:wrenchmate_user_app/app/modules/tracking/tracking_page.dart';
 import 'app/bindings/initial_binding.dart';
 import 'app/routes/app_pages.dart';
 import 'firebase_options.dart';
+
 SharedPreferences? prefs;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

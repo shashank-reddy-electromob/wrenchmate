@@ -134,6 +134,9 @@ class AuthController extends GetxController {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithProvider(googleProvider);
       bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
+      prefs?.setBool(LocalStorage.isLogin, true) ?? false;
+      print(
+          "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
       if (isNewUser == true) {
         Get.toNamed(AppRoutes.REGISTER, arguments: "");
       } else {
