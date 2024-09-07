@@ -113,7 +113,7 @@ class AuthController extends GetxController {
       if (prefs == null) {
         throw Exception("Preferences object is null");
       }
-      prefs!.setBool(LocalStorage.isLogin, true);
+      prefs?.setBool(LocalStorage.isLogin, true) ?? false;
       print(
           "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
 

@@ -48,7 +48,7 @@ class _drawerPageState extends State<drawerPage> {
     try {
       final AuthController controller = Get.find();
       controller.logout();
-      prefs!.setBool(LocalStorage.isLogin, false);
+      prefs?.setBool(LocalStorage.isLogin, false) ?? false;
 
       Get.toNamed(AppRoutes.LOGIN);
     } catch (e) {

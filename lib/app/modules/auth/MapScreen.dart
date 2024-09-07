@@ -10,8 +10,6 @@ import '../../routes/app_routes.dart';
 import '../../widgets/blueButton.dart';
 import '../../widgets/custombackbutton.dart';
 
-
-
 class MapScreen extends StatefulWidget {
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -26,11 +24,9 @@ class _MapScreenState extends State<MapScreen> {
 
   late final AuthController controller;
 
-
   bool isFlatNumberEmpty = false;
   bool isLocalityEmpty = false;
   bool isLandmarkEmpty = false;
-
 
   @override
   void initState() {
@@ -84,7 +80,7 @@ class _MapScreenState extends State<MapScreen> {
     mapController = controller;
   }
 
-    void _saveAddress() {
+  void _saveAddress() {
     print(_address);
     controller.updateUserAddress(_address!).then((success) {
       if (success) {
@@ -97,73 +93,84 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.transparent,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
         leading: Custombackbutton(),
-        title: Text("Add Address", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w400)),
+        title: Text("Add Address",
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Poppins')),
       ),
       body: initialCameraPosition == null
           ? Center(child: CircularProgressIndicator())
           : Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  showBottomDrawer(context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Color(0xffF7F7F7)
-                    ),
-                    child: AbsorbPointer(
-                      absorbing: true,
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'No address selected',
-                          hintStyle: TextStyle(color: Color(0xff858585), fontSize: 24),
-                          prefixIcon: Icon(Icons.search, color: Color(0xff838383)),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    showBottomDrawer(context);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xffF7F7F7)),
+                      child: AbsorbPointer(
+                        absorbing: true,
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'No address selected',
+                            hintStyle: TextStyle(
+                                color: Color(0xff858585),
+                                fontSize: 24,
+                                fontFamily: 'Poppins'),
+                            prefixIcon:
+                                Icon(Icons.search, color: Color(0xff838383)),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                          ),
+                          controller:
+                              TextEditingController(text: "Search Location"),
                         ),
-                        controller: TextEditingController(text: "Search Location"),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: GoogleMap(
-                  onMapCreated: _onMapCreated,
-                  initialCameraPosition: CameraPosition(
-                    target: initialCameraPosition!,
-                    zoom: 16.0,
-                  ),
-                  onTap: (LatLng latLng) {
-                    setState(() {
-                      initialCameraPosition = latLng;
-                    });
-                    _getAddressFromLatLng(latLng);
-                  },
-                  markers: {
-                    Marker(
-                      markerId: MarkerId('selected-location'),
-                      position: initialCameraPosition!,
-                      draggable: true,
-                      onDragEnd: (LatLng newPosition) {
-                        setState(() {
-                          initialCameraPosition = newPosition;
-                        });
-                        _getAddressFromLatLng(newPosition);
-                      },
+                Expanded(
+                  child: GoogleMap(
+                    onMapCreated: _onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: initialCameraPosition!,
+                      zoom: 16.0,
                     ),
-                  },
+                    onTap: (LatLng latLng) {
+                      setState(() {
+                        initialCameraPosition = latLng;
+                      });
+                      _getAddressFromLatLng(latLng);
+                    },
+                    markers: {
+                      Marker(
+                        markerId: MarkerId('selected-location'),
+                        position: initialCameraPosition!,
+                        draggable: true,
+                        onDragEnd: (LatLng newPosition) {
+                          setState(() {
+                            initialCameraPosition = newPosition;
+                          });
+                          _getAddressFromLatLng(newPosition);
+                        },
+                      ),
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
     );
   }
 
@@ -195,7 +202,9 @@ class _MapScreenState extends State<MapScreen> {
             ),
             child: Column(
               children: [
-                SizedBox(height: 16,),
+                SizedBox(
+                  height: 16,
+                ),
                 const Row(
                   children: [
                     Padding(
@@ -249,18 +258,29 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16,),
+                SizedBox(
+                  height: 16,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.location_on, color: Colors.black, size: 16,),
-                    Text(place.locality ?? "", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+                    Icon(
+                      Icons.location_on,
+                      color: Colors.black,
+                      size: 16,
+                    ),
+                    Text(
+                      place.locality ?? "",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
                   ],
                 ),
                 CustomErrorField(
                   controller: flatnubercontroller,
                   hintText: "Flat Number",
-                  errorText: isFlatNumberEmpty ? "Flat Number is required" : null,
+                  errorText:
+                      isFlatNumberEmpty ? "Flat Number is required" : null,
                 ),
                 CustomErrorField(
                   controller: localitycontroller,
@@ -288,8 +308,7 @@ class _MapScreenState extends State<MapScreen> {
                       if (!isFlatNumberEmpty &&
                           !isLocalityEmpty &&
                           !isLandmarkEmpty) {
-                        _address =
-                        "${flatnubercontroller.text}, "
+                        _address = "${flatnubercontroller.text}, "
                             "${place.name}, "
                             "${landmarkcontroller.text}, "
                             "${localitycontroller.text}, "
@@ -309,4 +328,5 @@ class _MapScreenState extends State<MapScreen> {
         },
       ),
     );
-  }}
+  }
+}
