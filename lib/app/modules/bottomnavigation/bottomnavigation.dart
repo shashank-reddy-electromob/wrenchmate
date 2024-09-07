@@ -1,22 +1,23 @@
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:wrenchmate_user_app/app/modules/home/home_page.dart';
+import 'package:flutter/services.dart';
 import '../../routes/app_routes.dart';
 import '../car/car_page.dart';
 import '../product/productscreen.dart';
 import '../subscription/subscription_page.dart';
 import '../support/support_page.dart';
 
-class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({super.key});
+class bottomnavigation extends StatefulWidget {
+  const bottomnavigation({super.key});
 
   @override
-  State<BottomNavigation> createState() => _BottomNavigationState();
+  State<bottomnavigation> createState() => _bottomnavigationState();
 }
 
-class _BottomNavigationState extends State<BottomNavigation> {
+class _bottomnavigationState extends State<bottomnavigation> {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = [
@@ -40,7 +41,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       });
       return false;
     } else {
-      SystemNavigator.pop();
+      SystemNavigator.pop(); // Exits the app
       return false;
     }
   }
@@ -54,38 +55,25 @@ class _BottomNavigationState extends State<BottomNavigation> {
         body: Stack(
           children: [
             _widgetOptions.elementAt(_selectedIndex),
+            // SlidingContainer(isVisible: _selectedIndex == 0),
           ],
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: ClipOval(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              shape: BoxShape.circle,
-            ),
-            padding: EdgeInsets.all(12),
-            child: InkWell(
-              splashColor: Colors.blueAccent,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 2;
-                });
-              },
-              child: SizedBox(
-                width: 40,
-                height: 40,
-                child: ImageIcon(
-                  AssetImage('assets/icons/car.png'),
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
+        // floatingActionButton: ClipOval(
+        //   child: Material(
+        //     color: Colors.blue,
+        //     child: InkWell(
+        //       splashColor: Colors.blueAccent,
+        //       onTap: () {
+        //         Get.toNamed(AppRoutes.TRACKING);
+        //       },
+        //       child: SizedBox(
+        //         width: 60,
+        //         height: 60,
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        // fl
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -103,7 +91,26 @@ class _BottomNavigationState extends State<BottomNavigation> {
               label: 'Product',
             ),
             BottomNavigationBarItem(
-              icon: SizedBox(width: 10),
+              icon: Transform.translate(
+                offset: Offset(0, -8), // Adjust the vertical position here
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  padding: EdgeInsets.all(12),
+                  child: ImageIcon(
+                    AssetImage('assets/icons/car.png'),
+                    color: Colors.white,
+                  ),
+                ),
+              ),
               label: '',
             ),
             BottomNavigationBarItem(
@@ -128,7 +135,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          showUnselectedLabels: true,
         ),
       ),
     );
