@@ -25,56 +25,34 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final AuthController controller = Get.find();
-
-    // Validate phone number before proceeding
-    if (_phonenumbercontroller.text.isEmpty ||
-        _phonenumbercontroller.text.length < 10) {
-      Get.snackbar("Error", "Please enter a valid phone number");
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
-    try {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber:
-            '$_countryCode${_phonenumbercontroller.text}', // Ensure correct format
-        verificationCompleted: (PhoneAuthCredential credential) {
-          controller.handleSignIn(credential, _phonenumbercontroller);
-          setState(() {
-            _isLoading = false;
-          });
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          print("Verification failed: ${e.message}");
-          Get.snackbar("Error", "Login failed: ${e.message}");
-          setState(() {
-            _isLoading = false;
-          });
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          print("OTP sent: $verificationId");
-          Get.toNamed(AppRoutes.OTP,
-              arguments: '$_countryCode${_phonenumbercontroller.text}');
-          controller.verificationid.value = verificationId;
-          controller.resendToken =
-              resendToken ?? 0; // Handle potential null value
-          setState(() {
-            _isLoading = false;
-          });
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          controller.verificationid.value = verificationId;
-        },
-      );
-    } catch (e) {
-      print("Error during phone verification: $e");
-      Get.snackbar("Error", "Something went wrong: $e");
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    print("calling the controller functions");
+    print('$_countryCode${_phonenumbercontroller.text}');
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '$_countryCode${_phonenumbercontroller.text}',
+      verificationCompleted: (PhoneAuthCredential credential) {
+        controller.handleSignIn(credential, _phonenumbercontroller);
+        setState(() {
+          _isLoading = false;
+        });
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print("Verification failed: ${e.message}");
+        Get.snackbar("Error", "Login failed: ${e.toString()}");
+        setState(() {
+          _isLoading = false;
+        });
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        print("OTP sent: $verificationId");
+        Get.toNamed(AppRoutes.OTP,
+            arguments: '+91${_phonenumbercontroller.text}');
+        controller.verificationid.value = verificationId;
+        controller.resendToken = resendToken;
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        controller.verificationid.value = verificationId;
+      },
+    );
   }
 
   void dispose() {

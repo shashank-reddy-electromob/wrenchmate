@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/localstorage/localstorage.dart';
 import 'package:wrenchmate_user_app/main.dart';
 import '../routes/app_routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
@@ -12,6 +13,18 @@ class AuthController extends GetxController {
   int? resendToken;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  SharedPreferences? prefs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initPrefs();
+  }
+
+  Future<void> _initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+  }
 
   Future<void> handleSignIn(PhoneAuthCredential credential,
       TextEditingController otpcontroller) async {
@@ -80,14 +93,27 @@ class AuthController extends GetxController {
   Future<void> verifyOTP(String otp, String phoneNumber,
       TextEditingController otpcontroller) async {
     try {
-      print(verificationid);
+      if (verificationid.value.isEmpty) {
+        throw Exception("Verification ID is null or empty");
+      }
+      if (otp.isEmpty) {
+        throw Exception("OTP is null or empty");
+      }
+
+      print("Verification ID: ${verificationid.value}");
+      print("OTP: $otp");
+
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: verificationid.toString(), smsCode: otp);
+          verificationId: verificationid.value, smsCode: otp);
       await FirebaseAuth.instance.signInWithCredential(credential);
       bool isNewUser =
           FirebaseAuth.instance.currentUser!.metadata.creationTime ==
               FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
-      prefs?.setBool(LocalStorage.isLogin, true) ?? true;
+
+      if (prefs == null) {
+        throw Exception("Preferences object is null");
+      }
+      prefs!.setBool(LocalStorage.isLogin, true);
 
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
