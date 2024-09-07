@@ -37,16 +37,9 @@ class _ProductScreenState extends State<ProductScreen> {
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Custombackbutton(),
-                SizedBox(width: 16),
-                Text(
-                  "Product",
-                  style: AppTextStyle.semiboldRaleway19,
-                ),
-              ],
+            child: Text(
+              "Product",
+              style: AppTextStyle.semiboldRaleway19,
             ),
           ),
         ),

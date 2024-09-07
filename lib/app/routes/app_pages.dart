@@ -74,7 +74,7 @@ class AppPages {
         binding: HomeBinding()),
     GetPage(
         name: AppRoutes.BOTTOMNAV,
-        page: () => bottomnavigation(),
+        page: () => BottomNavigation(),
         binding: bottomnavigationBindings()),
     GetPage(
         name: AppRoutes.SERVICE,

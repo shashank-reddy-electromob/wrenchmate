@@ -80,7 +80,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   size: 22,
                 ),
                 onPressed: () {
-                  // add to fav logic
                 },
               ),
             ),
@@ -104,7 +103,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: ExtendedImage.network(
-                          'https://via.placeholder.com/150',
+                          product.image,
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height * 0.3,
                           fit: BoxFit.cover,
@@ -308,19 +307,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget ReviewWidget() {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        // final review = controller.reviews[index];
-        return ListTile(
-          title:
-              Text('review.userName'), // Assuming review has a userName field
-          subtitle: Text('review.review'), // Assuming review has a review field
-          trailing: Text("", style: TextStyle(color: Colors.orange)),
-        );
-      },
-    );
+    return Center(child: Text("No review yet"));
+    // return ListView.builder(
+    //   shrinkWrap: true,
+    //   physics: NeverScrollableScrollPhysics(),
+    //   itemCount: 5,
+    //   itemBuilder: (context, index) {
+    //     // final review = controller.reviews[index];
+    //     return ListTile(
+    //       title:
+    //           Text('review.userName'), // Assuming review has a userName field
+    //       subtitle: Text('review.review'), // Assuming review has a review field
+    //       trailing: Text("", style: TextStyle(color: Colors.orange)),
+    //     );
+    //   },
+    // );
   }
 }
