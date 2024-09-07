@@ -42,7 +42,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<String?> uploadImageToStorage(File image) async {
     try {
-      String userId = FirebaseAuth.instance.currentUser!.uid;
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw Exception('User not logged in');
+      }
+      String userId = currentUser.uid;
       final storageReference = FirebaseStorage.instance.ref('/Users');
       final fileName = image.path.split('/').last;
       final dateStamp = DateTime.now().microsecondsSinceEpoch;
@@ -109,11 +113,18 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    userId = FirebaseAuth.instance.currentUser!.phoneNumber;
-    controller = Get.find();
-    if (userId != null) {
-      numberController.text = userId!.substring(userId!.length - 10);
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      userId = currentUser.phoneNumber;
+      controller = Get.find();
+      if (userId != null) {
+        numberController.text = userId!.substring(userId!.length - 10);
+      }
+    } else {
+      // Handle the case where the user is not logged in
+      Get.snackbar('Error', 'User not logged in');
     }
+    print("userId: $userId"); // Add this line to log userId
   }
 
   @override
@@ -184,7 +195,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               CustomTextField(
                 controller: numberController,
-                hintText: userId!,
+                hintText: userId ?? 'Enter your number', // Add null check here
               ),
               CustomTextField(
                 controller: alternateNumberController,

@@ -35,7 +35,11 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<Map<String, dynamic>> _fetchUserData() async {
-    Map<String, dynamic> data = await homeController.fetchUserData() as Map<String, dynamic>;
+    Map<String, dynamic>? data = await homeController.fetchUserData() as Map<String, dynamic>?;
+
+    if (data == null) {
+      throw Exception('Failed to fetch user data');
+    }
 
     // Populate the controllers with fetched data and store original data
     nameController.text = data['User_name'] ?? '';
