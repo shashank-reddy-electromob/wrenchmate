@@ -1,15 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:wrenchmate_user_app/app/controllers/searchcontroller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
+import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
+import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
+import 'package:wrenchmate_user_app/utils/textstyles.dart';
 
-import '../../../utils/textstyles.dart';
-import '../../controllers/searchcontroller.dart';
 import '../../data/models/Service_firebase.dart';
-import '../../routes/app_routes.dart';
-import '../../widgets/custombackbutton.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -22,7 +20,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Get.lazyPut(() => SearchControllerClass());
+    Get.lazyPut(() => SearchControllerClass());
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -120,8 +118,8 @@ class _SearchPageState extends State<SearchPage> {
                                   BorderSideEnum.right
                                 ],
                                 imagePath: 'assets/services/car wash.png',
-                                onTap: () => navigateToServicePage(
-                                    category.category.toString()),
+                                onTap: () =>
+                                    navigateToServicePage(category.category),
                               ))
                           .toList(),
                     ),
@@ -143,7 +141,12 @@ class _SearchPageState extends State<SearchPage> {
                                     arguments: service);
                               },
                               child: _buildTopServiceCard(
-                                  service as Servicefirebase),
+                                serviceName: service.name,
+                                imageUrl: service.image,
+                                time: service.time,
+                                warranty: service.warranty,
+                                description: service.description,
+                              ),
                             ))
                         .toList(),
                   );
@@ -176,11 +179,21 @@ class _SearchPageState extends State<SearchPage> {
             onTap: () {
               Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: service);
             },
-            child: _buildTopServiceCard(service),
+            child: _buildTopServiceCard(
+              serviceName: service.name,
+              imageUrl: service.image,
+              time: service.time,
+              warranty: service.warranty,
+              description: service.description,
+            ),
           );
         }).toList(),
       );
     }
+  }
+
+  void navigateToServicePage(String service) {
+    Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: service);
   }
 
   Widget _buildChip(String label) {
@@ -194,7 +207,13 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildTopServiceCard(Servicefirebase service) {
+  Widget _buildTopServiceCard({
+    required String serviceName,
+    required String imageUrl,
+    required String time,
+    required String warranty,
+    required String description,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -203,7 +222,7 @@ class _SearchPageState extends State<SearchPage> {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Image.network(
-              service.image,
+              imageUrl,
               height: 70,
               width: 70,
               fit: BoxFit.fill,
@@ -215,7 +234,7 @@ class _SearchPageState extends State<SearchPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  service.name,
+                  serviceName,
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Poppins',
@@ -225,12 +244,12 @@ class _SearchPageState extends State<SearchPage> {
                 SizedBox(height: 4),
                 Row(
                   children: [
-                    Text('Takes ${service.time}',
+                    Text('Takes $time',
                         style: AppTextStyle.mediumdmsans13.copyWith(
                             color: Color(0xff616161),
                             fontWeight: FontWeight.w500)),
                     SizedBox(width: 4),
-                    Text('${service.warranty} Warranty',
+                    Text('$warranty Warranty',
                         style: AppTextStyle.mediumdmsans13.copyWith(
                             color: Color(0xff616161),
                             fontWeight: FontWeight.w500)),
@@ -245,9 +264,5 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
     );
-  }
-
-  navigateToServicePage(String s) {
-    Get.toNamed(AppRoutes.SERVICE, arguments: s);
   }
 }

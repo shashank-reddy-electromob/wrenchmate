@@ -151,7 +151,6 @@ class _CartPageState extends State<CartPage> {
                                             height: 60),
                                       ),
                                       SizedBox(width: 16),
-                                      // Service Details
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -161,7 +160,7 @@ class _CartPageState extends State<CartPage> {
                                                   AppTextStyle.mediumRaleway12),
                                           SizedBox(height: 4),
                                           Text(
-                                            '₹ ${service.price.toStringAsFixed(2)}', // Display price
+                                            '₹ ${service.price.toStringAsFixed(2)}', 
                                             style: AppTextStyle.semiboldpurple12
                                                 .copyWith(color: blackColor),
                                           ),
@@ -169,7 +168,6 @@ class _CartPageState extends State<CartPage> {
                                       ),
                                     ],
                                   ),
-                                  // Remove Item Button
                                   IconButton(
                                     icon: Icon(Icons.delete_rounded,
                                         color: Colors.red),

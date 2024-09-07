@@ -55,7 +55,7 @@ class HomeController extends GetxController {
           await _firestore.collection('User').doc(userId).get();
 
       Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-      int currentCarIndex = userData['User_currentCar'];
+      int currentCarIndex = userData['User_carDetails'];
       String currentCar = userData['User_carDetails'][currentCarIndex];
       return currentCar;
     } catch (e) {

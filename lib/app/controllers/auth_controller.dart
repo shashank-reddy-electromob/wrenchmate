@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/localstorage/localstorage.dart';
+import 'package:wrenchmate_user_app/main.dart';
 import '../routes/app_routes.dart';
 
 class AuthController extends GetxController {
@@ -85,6 +87,8 @@ class AuthController extends GetxController {
       bool isNewUser =
           FirebaseAuth.instance.currentUser!.metadata.creationTime ==
               FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
+      prefs!.setBool(LocalStorage.isLogin, true);
+
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
       } else {
@@ -133,6 +137,7 @@ class AuthController extends GetxController {
         if (profileImagePath != null && profileImagePath.isNotEmpty)
           'User_profile_image': profileImagePath,
         'User_carDetails': [],
+        'User_currentCar': 0,
       });
       await _firestore
           .collection('User')

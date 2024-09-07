@@ -26,7 +26,8 @@ class _CarPageState extends State<CarPage> {
   late TextEditingController insuranceExpController;
   late TextEditingController pucExpController;
 
-  final CarController carController = Get.put(CarController()); // Initialize the CarController
+  final CarController carController =
+      Get.put(CarController()); // Initialize the CarController
 
   late PageController _pageController;
 
@@ -49,15 +50,13 @@ class _CarPageState extends State<CarPage> {
 
   void fetchUserCurrentCarIndex() async {
     String userId = FirebaseAuth.instance.currentUser!.uid;
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('User')
-        .doc(userId)
-        .get();
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('User').doc(userId).get();
     if (userDoc.exists) {
       setState(() {
         userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
       });
-      fetchCarDetails(); // Fetch car details after getting the current car index
+      fetchCarDetails();
     }
   }
 
@@ -76,10 +75,12 @@ class _CarPageState extends State<CarPage> {
       var car = userCars[index];
       carModel = car['car_model'];
       petrolOrDiesel = car['fuel_type'];
-      carType = car['car_type'] ; // Add this line
-      regYearController.text = _formatDateTimeRegi((car['registration_year']).toDate());
+      carType = car['car_type'];
+      regYearController.text =
+          _formatDateTimeRegi((car['registration_year']).toDate());
       regNoController.text = car['registration_number'] ?? '19HY7983298989';
-      insuranceExpController.text = _formatDateTime((car['insurance_expiration']).toDate());
+      insuranceExpController.text =
+          _formatDateTime((car['insurance_expiration']).toDate());
       pucExpController.text = _formatDateTime((car['puc_expiration']).toDate());
       print("Displaying car at index $index: $car");
     }
@@ -114,24 +115,21 @@ class _CarPageState extends State<CarPage> {
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
     return formatter.format(dateTime);
   }
+
   String _formatDateTimeRegi(DateTime? dateTime) {
     if (dateTime == null) return '';
     final DateFormat formatter = DateFormat('yyyy');
     return formatter.format(dateTime);
   }
 
-  Future<void> _loadImage() async {
-    // Simulate image loading without delay
-  }
+  Future<void> _loadImage() async {}
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 16
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -143,7 +141,7 @@ class _CarPageState extends State<CarPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      carModel, // Update this line
+                      carModel,
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -164,12 +162,22 @@ class _CarPageState extends State<CarPage> {
                 Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.chevron_left, color: userCurrentCarIndex == 0 ? Colors.grey : Colors.black),
-                      onPressed: userCurrentCarIndex == 0 ? null : () => navigateCarDetails(-1),
+                      icon: Icon(Icons.chevron_left,
+                          color: userCurrentCarIndex == 0
+                              ? Colors.grey
+                              : Colors.black),
+                      onPressed: userCurrentCarIndex == 0
+                          ? null
+                          : () => navigateCarDetails(-1),
                     ),
                     IconButton(
-                      icon: Icon(Icons.chevron_right, color: userCurrentCarIndex == userCars.length - 1 ? Colors.grey : Colors.black),
-                      onPressed: userCurrentCarIndex == userCars.length - 1 ? null : () => navigateCarDetails(1),
+                      icon: Icon(Icons.chevron_right,
+                          color: userCurrentCarIndex == userCars.length - 1
+                              ? Colors.grey
+                              : Colors.black),
+                      onPressed: userCurrentCarIndex == userCars.length - 1
+                          ? null
+                          : () => navigateCarDetails(1),
                     ),
                   ],
                 ),
@@ -192,12 +200,18 @@ class _CarPageState extends State<CarPage> {
                   itemBuilder: (context, index) {
                     var car = userCars[index];
                     return Image.asset(
-                      car['car_type'] == 'Sedan' ? 'assets/car/sedan.png' :
-                      car['car_type'] == 'SUV' ? 'assets/car/suv.png' :
-                      car['car_type'] == 'Compact SUV' ? 'assets/car/compact_suv.png' :
-                      car['car_type'] == 'Hatchback' ? 'assets/car/hatchback.png' : "",
+                      car['car_type'] == 'Sedan'
+                          ? 'assets/car/sedan.png'
+                          : car['car_type'] == 'SUV'
+                              ? 'assets/car/suv.png'
+                              : car['car_type'] == 'Compact SUV'
+                                  ? 'assets/car/compact_suv.png'
+                                  : car['car_type'] == 'Hatchback'
+                                      ? 'assets/car/hatchback.png'
+                                      : "",
                       height: 150,
-                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                      errorBuilder: (BuildContext context, Object exception,
+                          StackTrace? stackTrace) {
                         return CircularProgressIndicator();
                       },
                     );
@@ -207,7 +221,6 @@ class _CarPageState extends State<CarPage> {
             ),
             SizedBox(height: 20),
 
-            // Car Detail Section
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -319,7 +332,7 @@ class _CarPageState extends State<CarPage> {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Get.toNamed(AppRoutes.CAR_REGISTER);
                     },
                     child: GradientContainer(
@@ -327,7 +340,8 @@ class _CarPageState extends State<CarPage> {
                       colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
                       width: MediaQuery.of(context).size.width / 2 - 36,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18.0, vertical: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -338,7 +352,8 @@ class _CarPageState extends State<CarPage> {
                             SizedBox(height: 10),
                             Text(
                               'Add New Car',
-                              style: TextStyle(color: Colors.white, fontSize: 14),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 14),
                             )
                           ],
                         ),
@@ -357,7 +372,8 @@ class _CarPageState extends State<CarPage> {
                       colors: [Color(0xffFEA563), Color(0xffFF5F81)],
                       width: MediaQuery.of(context).size.width / 2 - 36,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18.0, vertical: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -367,7 +383,8 @@ class _CarPageState extends State<CarPage> {
                             ),
                             Text(
                               'Service History',
-                              style: TextStyle(color: Colors.white, fontSize: 14),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 14),
                             )
                           ],
                         ),

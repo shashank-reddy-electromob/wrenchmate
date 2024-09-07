@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/home_controller.dart';
+import 'package:wrenchmate_user_app/app/localstorage/localstorage.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/drawer/tabs.dart';
+import 'package:wrenchmate_user_app/main.dart';
 import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
 
@@ -46,6 +48,8 @@ class _drawerPageState extends State<drawerPage> {
     try {
       final AuthController controller = Get.find();
       controller.logout();
+      prefs!.setBool(LocalStorage.isLogin, false);
+
       Get.toNamed(AppRoutes.LOGIN);
     } catch (e) {
       Get.snackbar("Error", "Logout failed: ${e.toString()}");
