@@ -72,7 +72,8 @@ class _ProductScreenState extends State<ProductScreen> {
                   final product = productController.products[index];
                   return GestureDetector(
                     onTap: () {
-                      Get.toNamed(AppRoutes.PRODUCT_DETAILS, arguments: product);
+                      Get.toNamed(AppRoutes.PRODUCT_DETAILS,
+                          arguments: product);
                     },
                     child: Stack(
                       children: [
@@ -148,7 +149,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
                             child: Image.network(
-                              'https://via.placeholder.com/150',
+                              product.image,
                               width: 100,
                               height: 100,
                               fit: BoxFit.cover,

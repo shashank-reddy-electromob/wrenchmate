@@ -10,9 +10,9 @@ class _OnBoardingState extends State<OnBoarding> {
   int _currentPage = 0;
   final PageController _pageController = PageController(initialPage: 0);
 
-
   final List<String> _pages = [
-    'assets/onboarding/iPhoneX.svg','assets/onboarding/iPhoneX2.svg','assets/onboarding/iPhoneX3.svg'
+    'assets/onboarding/iPhoneX.svg', 'assets/onboarding/iPhoneX2.svg',
+    'assets/onboarding/iPhoneX3.svg'
     // OnboardingData(
     //   image: 'assets/onboarding/iPhoneX.svg',
     //   title: 'Create Your Profile',
@@ -118,6 +118,7 @@ class CustomBottomSheet extends StatelessWidget {
             'Lorem ipsum dolor sit amet consectetur.',
             style: TextStyle(
               fontSize: 20,
+              fontFamily: 'Poppins',
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
@@ -127,6 +128,7 @@ class CustomBottomSheet extends StatelessWidget {
             'In publishing and graphic design, Lorem is a placeholder text commonly used.',
             style: TextStyle(
               fontSize: 16,
+              fontFamily: 'Poppins',
               color: Colors.white70,
             ),
           ),
@@ -139,6 +141,7 @@ class CustomBottomSheet extends StatelessWidget {
                 child: Text(
                   'Skip',
                   style: TextStyle(
+                    fontFamily: 'Raleway',
                     fontSize: 16,
                     color: Colors.white70,
                   ),
@@ -162,6 +165,7 @@ class CustomBottomSheet extends StatelessWidget {
                 child: Text(
                   currentPage == totalPages - 1 ? 'Finish' : 'Next',
                   style: TextStyle(
+                    fontFamily: 'Raleway',
                     fontSize: 16,
                     color: Colors.white,
                   ),

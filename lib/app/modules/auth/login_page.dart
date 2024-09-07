@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _isLoading = true;
     });
+
     final AuthController controller = Get.find();
     print("calling the controller functions");
     print('$_countryCode${_phonenumbercontroller.text}');
@@ -112,6 +113,7 @@ class _LoginPageState extends State<LoginPage> {
               Text(
                 "Log In",
                 style: TextStyle(
+                    fontFamily: 'Raleway',
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Color(0xff120D26)),
@@ -119,7 +121,10 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 12.0),
               Text(
                 "Hello, Welcome back to your account.",
-                style: TextStyle(fontSize: 16, color: Color(0xff969696)),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xff969696),
+                    fontFamily: 'Poppins'),
               ),
               //textfield
               SizedBox(height: 24.0),
@@ -141,7 +146,8 @@ class _LoginPageState extends State<LoginPage> {
                         initialSelection: 'IN', // Set default to India
                         favorite: ['+91', 'IN'],
                         hideMainText: true,
-                        showOnlyCountryWhenClosed: true, // Show only the flag when closed
+                        showOnlyCountryWhenClosed:
+                            true, // Show only the flag when closed
                         alignLeft: true, // Align the flag to the center
                         padding: EdgeInsets.zero, // Remove padding
                         flagDecoration: BoxDecoration(
@@ -149,18 +155,21 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         hideSearch: true,
                         showDropDownButton: true, // Show the dropdown arrow
-                        textStyle: TextStyle(fontSize: 0), // Hide the country name
+                        textStyle:
+                            TextStyle(fontSize: 0), // Hide the country name
                       ),
                       Expanded(
                         child: TextField(
                           controller: _phonenumbercontroller,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
-                            LengthLimitingTextInputFormatter(10), // Limit to 10 digits
+                            LengthLimitingTextInputFormatter(
+                                10), // Limit to 10 digits
                           ],
                           decoration: InputDecoration(
                             hintText: 'Enter number',
                             hintStyle: TextStyle(
+                                fontFamily: 'Poppins',
                                 color: Colors.grey,
                                 fontSize: 22.0), // Increased hint text size
                             border: OutlineInputBorder(
@@ -168,7 +177,8 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             filled: true,
                             fillColor: Colors.transparent,
-                            contentPadding: EdgeInsets.symmetric(vertical: 0), // Remove vertical padding
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 0), // Remove vertical padding
                           ),
                           style: TextStyle(
                               fontSize: 22.0), // Increased entered text size
@@ -195,6 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                 "OR",
                 style: TextStyle(
                     fontSize: 22,
+                    fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold,
                     color: Color(0xff969696)),
               ),
@@ -225,11 +236,13 @@ class _LoginPageState extends State<LoginPage> {
                               'assets/images/google logo.png',
                               fit: BoxFit.cover,
                             ),
-                            SizedBox(width: 8),
+                            SizedBox(width: 18),
                             Text(
                               'Login With Google',
                               style: TextStyle(
-                                  color: Color(0xff120D26), fontSize: 20),
+                                  fontFamily: 'Poppins',
+                                  color: Color(0xff120D26),
+                                  fontSize: 16),
                             ),
                           ],
                         ),
@@ -257,11 +270,13 @@ class _LoginPageState extends State<LoginPage> {
                         'assets/images/facebok_logo.png',
                         fit: BoxFit.cover,
                       ),
-                      SizedBox(width: 8),
+                      SizedBox(width: 18),
                       Text(
                         'Login With Facebook',
-                        style:
-                            TextStyle(color: Color(0xff120D26), fontSize: 20),
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: Color(0xff120D26),
+                            fontSize: 16),
                       ),
                     ],
                   ),
