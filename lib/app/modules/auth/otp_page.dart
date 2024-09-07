@@ -60,7 +60,8 @@ class _optpageState extends State<optpage> {
     });
     final AuthController controller = Get.find();
     try {
-      await controller.verifyOTP(otpcontroller.text.toString(), number, otpcontroller);
+      await controller.verifyOTP(
+          otpcontroller.text.toString(), number, otpcontroller);
     } catch (e) {
       print("Exception caught in _verifyotp: $e");
       Get.snackbar("Error", e.toString());
@@ -72,7 +73,7 @@ class _optpageState extends State<optpage> {
 
   void _resendotp() {
     setState(() {
-      buttonVisiblity=false;
+      buttonVisiblity = false;
       _start = 60;
     });
     final AuthController controller = Get.find();
@@ -81,7 +82,8 @@ class _optpageState extends State<optpage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
@@ -90,34 +92,41 @@ class _optpageState extends State<optpage> {
             Container(
               height: 60,
             ),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xffF6F6F5),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: IconButton(
-            icon: Icon(
-              CupertinoIcons.back,
-              color: Color(0xff1E1E1E),
-              size: 22,
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xffF6F6F5),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: IconButton(
+                icon: Icon(
+                  CupertinoIcons.back,
+                  color: Color(0xff1E1E1E),
+                  size: 22,
+                ),
+                onPressed: () {
+                  Get.toNamed(AppRoutes.LOGIN);
+                },
+              ),
             ),
-            onPressed: () {
-              Get.toNamed(AppRoutes.LOGIN);            },
-          ),
-        ),
             Container(
               height: 20,
             ),
             Text(
               "Verification",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins'),
             ),
             Container(
               height: 10,
             ),
             Text(
               "We've send you the verification \ncode on ${number}",
-              style: TextStyle(fontSize: 20, color: Color(0xff969696)),
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Color(0xff969696),
+                  fontFamily: 'Poppins'),
             ),
             Container(
               height: 20,
@@ -152,33 +161,42 @@ class _optpageState extends State<optpage> {
             Container(
               height: 20,
             ),
-            _isLoading?
-            Center(child: CircularProgressIndicator(color: Color(0xff1671D8))):
-            blueButton(
-              text: "VERIFY",
-              onTap: _isLoading ? null : _verifyotp,
-            ),
+            _isLoading
+                ? Center(
+                    child: CircularProgressIndicator(color: Color(0xff1671D8)))
+                : blueButton(
+                    text: "VERIFY",
+                    onTap: _isLoading ? null : _verifyotp,
+                  ),
             Container(
               height: 20,
             ),
-            buttonVisiblity?
-            Align(
-              alignment: Alignment.center,
-              child: GestureDetector(
-                child: Text("Resend otp",style: TextStyle(fontSize: 18,color: Color(0xff1671D8)),),
-                onTap: _resendotp,
-              ),
-            ): Row(mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
+            buttonVisiblity
+                ? Align(
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      child: Text(
+                        "Resend otp",
+                        style:
+                            TextStyle(fontSize: 18, color: Color(0xff1671D8)),
+                      ),
+                      onTap: _resendotp,
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
                         ' Re-send code in ',
                         style: TextStyle(fontSize: 18),
-                      ),Text(
-                        '0:${_start}',
-                        style: TextStyle(fontSize: 18,color: Color(0xff1671D8)),
                       ),
-                  ],
-                ),
+                      Text(
+                        '0:${_start}',
+                        style:
+                            TextStyle(fontSize: 18, color: Color(0xff1671D8)),
+                      ),
+                    ],
+                  ),
           ],
         ),
       ),

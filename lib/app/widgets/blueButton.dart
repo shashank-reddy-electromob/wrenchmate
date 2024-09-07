@@ -23,7 +23,7 @@ class blueButton extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-                fontSize: 24, color: Colors.white, fontFamily: 'Raleway'),
+                fontSize: 20, color: Colors.white, fontFamily: 'Raleway'),
           ),
         ),
         style: ElevatedButton.styleFrom(

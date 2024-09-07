@@ -87,7 +87,7 @@ class AuthController extends GetxController {
       bool isNewUser =
           FirebaseAuth.instance.currentUser!.metadata.creationTime ==
               FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
-      prefs!.setBool(LocalStorage.isLogin, true);
+      prefs?.setBool(LocalStorage.isLogin, true) ?? true;
 
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
