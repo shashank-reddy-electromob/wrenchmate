@@ -27,11 +27,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      home: ProductScreen(),
-      // initialRoute: prefs?.getBool(LocalStorage.isLogin) ?? true
-      //     ? AppPages.INITIAL
-      //     : AppPages.BOTTOMNAV,
-      // getPages: AppPages.routes,
+      // home: ProductScreen(),
+      initialRoute: prefs?.getBool(LocalStorage.isLogin) ?? true
+          ? AppPages.BOTTOMNAV
+          : AppPages.INITIAL,
+      getPages: AppPages.routes,
     );
   }
 }
