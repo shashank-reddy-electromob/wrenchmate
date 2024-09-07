@@ -25,8 +25,9 @@ class _LoginPageState extends State<LoginPage> {
     });
     final AuthController controller = Get.find();
     print("calling the controller functions");
+    print('$_countryCode${_phonenumbercontroller.text}');
     await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: '$_countryCode${_phonenumbercontroller.text}', // Use selected country code
+      phoneNumber: '$_countryCode${_phonenumbercontroller.text}',
       verificationCompleted: (PhoneAuthCredential credential) {
         controller.handleSignIn(credential, _phonenumbercontroller);
         setState(() {

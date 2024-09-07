@@ -80,13 +80,26 @@ class AuthController extends GetxController {
   Future<void> verifyOTP(String otp, String phoneNumber,
       TextEditingController otpcontroller) async {
     try {
-      print(verificationid);
+      if (verificationid.value.isEmpty) {
+        throw Exception("Verification ID is null or empty");
+      }
+      if (otp.isEmpty) {
+        throw Exception("OTP is null or empty");
+      }
+
+      print("Verification ID: ${verificationid.value}");
+      print("OTP: $otp");
+
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: verificationid.toString(), smsCode: otp);
+          verificationId: verificationid.value, smsCode: otp);
       await FirebaseAuth.instance.signInWithCredential(credential);
       bool isNewUser =
           FirebaseAuth.instance.currentUser!.metadata.creationTime ==
               FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
+
+      if (prefs == null) {
+        throw Exception("Preferences object is null");
+      }
       prefs!.setBool(LocalStorage.isLogin, true);
 
       if (isNewUser) {
