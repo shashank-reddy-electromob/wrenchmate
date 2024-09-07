@@ -114,6 +114,8 @@ class AuthController extends GetxController {
         throw Exception("Preferences object is null");
       }
       prefs!.setBool(LocalStorage.isLogin, true);
+      print(
+          "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
 
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
