@@ -48,20 +48,26 @@ class HomeController extends GetxController {
   //     Get.snackbar("Error", "Failed to fetch search results: ${e.toString()}");
   //   }
   // }
-  Future<int> fetchUserCurrentCar() async {
+  Future<String?> fetchUserCurrentCar() async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot userDoc =
-          await _firestore.collection('User').doc(userId).get();
+      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
 
-      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-      int currentCarIndex = userData['User_carDetails'];
-      String currentCar = userData['User_carDetails'][currentCarIndex];
-      return currentCarIndex; // Return the index instead of the car name
+      if (userDoc.exists) {
+        int? currentCarIndex = userDoc['User_currentCar'] as int?;
+        if (currentCarIndex != null) {
+          List<String> carDetails = (userDoc['User_carDetails'] as List<dynamic>).cast<String>();
+          if (currentCarIndex < carDetails.length) {
+            String carDetail = carDetails[currentCarIndex];
+            print("the car is: "+carDetail.split(';').first);
+            return carDetail.split(';').first;
+          }
+        }
+      }
     } catch (e) {
       print("Failed to fetch user current car: $e");
-      return -1; // Return a default value or handle the error appropriately
     }
+    return null;
   }
   Future<void> updateUserProfile(Map<String, dynamic> updatedData) async {
     try {

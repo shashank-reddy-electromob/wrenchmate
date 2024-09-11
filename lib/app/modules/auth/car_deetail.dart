@@ -37,7 +37,7 @@ class _CarDetailsState extends State<CarDetails> {
 
   final List<String> carNames = ['Hatchback', 'Sedan', 'Compact SUV', 'SUV'];
   final List<String> carImages = [
-    'assets/car/Hatchback.png',
+    'assets/car/hatchback.png',
     'assets/car/sedan.png',
     'assets/car/compact_suv.png',
     'assets/car/suv.png'
