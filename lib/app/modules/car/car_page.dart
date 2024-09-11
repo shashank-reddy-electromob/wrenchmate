@@ -27,7 +27,7 @@ class _CarPageState extends State<CarPage> {
   late TextEditingController pucExpController;
 
   final CarController carController =
-      Get.put(CarController()); // Initialize the CarController
+      Get.put(CarController());
 
   late PageController _pageController;
 
@@ -66,6 +66,7 @@ class _CarPageState extends State<CarPage> {
     if (userCars.isNotEmpty) {
       setState(() {
         updateCarDetails(userCurrentCarIndex);
+        _pageController.jumpToPage(userCurrentCarIndex); // Add this line
       });
     }
   }
