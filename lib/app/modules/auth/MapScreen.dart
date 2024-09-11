@@ -20,7 +20,13 @@ class _MapScreenState extends State<MapScreen> {
   loc.LocationData? currentLocation;
   LatLng? initialCameraPosition;
   String? _address;
+  bool? isExist=false;
   late Placemark place;
+
+  TextEditingController flatnubercontroller = TextEditingController();
+  TextEditingController localitycontroller = TextEditingController();
+  TextEditingController landmarkcontroller = TextEditingController();
+
 
   late final AuthController controller;
 
@@ -33,6 +39,23 @@ class _MapScreenState extends State<MapScreen> {
     super.initState();
     controller = Get.find();
     _fetchCurrentLocation();
+    _loadAddressFromArguments();
+  }
+
+  void _loadAddressFromArguments() {
+    final address = Get.arguments as String?;
+    if (address != null) {
+      print("in map screen, adress"+address);
+      List<String> addressParts = address.split(',');
+      addressParts = addressParts.map((part) => part.trim()).toList();
+      print(addressParts[0]);
+      setState(() {
+        isExist=true;
+        flatnubercontroller.text=addressParts[0];
+        localitycontroller.text=addressParts[3];
+        landmarkcontroller.text=addressParts[2];
+      });
+    }
   }
 
   void _fetchCurrentLocation() async {
@@ -83,9 +106,11 @@ class _MapScreenState extends State<MapScreen> {
   void _saveAddress() {
     print(_address);
     controller.updateUserAddress(_address!).then((success) {
-      if (success) {
+      if (success && isExist==true) {
+        Get.toNamed(AppRoutes.BOTTOMNAV);
+      } else if (success && isExist==false) {
         Get.toNamed(AppRoutes.CAR_REGISTER);
-      } else {
+      } else{
         print('Failed to update address');
       }
     });
@@ -174,9 +199,6 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  TextEditingController flatnubercontroller = TextEditingController();
-  TextEditingController localitycontroller = TextEditingController();
-  TextEditingController landmarkcontroller = TextEditingController();
 
   void showBottomDrawer(BuildContext context) {
     showModalBottomSheet(
