@@ -34,7 +34,7 @@ class _MenuTabState extends State<MenuTab> {
         onEnter: (_) => _onHover(true),
         onExit: (_) => _onHover(false),
         child: Container(
-          width: 200,
+          // width: 200,
           decoration: BoxDecoration(
             color: isSelected || _isHovered
                 ? Color(0xff2666DE)
@@ -45,7 +45,7 @@ class _MenuTabState extends State<MenuTab> {
               end: Alignment.centerRight,
             ),
           ),
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(
             children: [
               Icon(

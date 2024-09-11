@@ -35,6 +35,8 @@ class ProductController extends GetxController {
     }
   }
 
+  var selectedProduct = Rxn<Product>(); // To store the selected service
+
   Future<void> fetchProductById(String productId) async {
     try {
       print("Fetching product data by ID: $productId");
@@ -48,7 +50,7 @@ class ProductController extends GetxController {
         var data = doc.data() as Map<String, dynamic>;
         print("Returned product data: $data");
 
-        products.add(Product(
+        selectedProduct.value = Product(
           id: doc.id,
           description: data['description'] ?? '',
           price:
@@ -62,7 +64,8 @@ class ProductController extends GetxController {
               ? (data['averageReview'] as int).toDouble()
               : data['averageReview'] as double? ?? 0.0),
           numberOfReviews: data['numberofReviews'] ?? 0,
-        ));
+        );
+        await fetchReviewsForProduct(selectedProduct.value!);
       } else {
         print("No product found with ID: $productId");
       }
@@ -82,7 +85,7 @@ class ProductController extends GetxController {
       print(
           "Number of reviews fetched for service ${product.id}: ${reviewSnapshot.size}");
 
-      List<String> userIds = []; 
+      List<String> userIds = [];
 
       for (var doc in reviewSnapshot.docs) {
         var reviewData = doc.data() as Map<String, dynamic>;

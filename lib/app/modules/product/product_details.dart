@@ -38,11 +38,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   void fetchData(Product product) async {
-    // controller.reviews.clear();
-    // await controller.fetchReviewsForProduct(product); // Adjust method to fetch reviews for Product
-    // await controller.fetchFAQsForProduct(product.id); // Adjust method to fetch FAQs for Product
-
-    // _isVisibleList = List<bool>.filled(controller.faqs.length, false);
+    controller.reviews.clear();
+    await controller.fetchReviewsForProduct(product);
   }
 
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -79,8 +76,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   color: Color(0xff1E1E1E),
                   size: 22,
                 ),
-                onPressed: () {
-                },
+                onPressed: () {},
               ),
             ),
           ),
@@ -221,15 +217,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               Positioned(
                 top: MediaQuery.of(context).size.height * 0.055,
                 right: MediaQuery.of(context).size.width * 0.04,
-                child: (addtocart == false)
+                child: addtocart == false
                     ? CustomElevatedButton(
                         onPressed: () {
-                          // cartController.addToCartSnackbar(
-                          //   context,
-                          //   cartController,
-                          //   service,
-                          //   scaffoldMessengerKey,
-                          // );
                           setState(() {
                             addtocart = true;
                           });
@@ -239,24 +229,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     : CustomElevatedButton(
                         onPressed: () {
                           Get.toNamed(AppRoutes.CART);
-                                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         },
                         text: 'Go to cart',
                       ),
-                // child: CustomElevatedButton(
-                //   onPressed: () {
-                //
-                //     // showModalBottomSheet(
-                //     //   context: context,
-                //     //   isScrollControlled: true,
-                //     //   builder: (context) {
-                //     //     return BottomSheet();
-                //     //   },
-                //     // );
-                //   },
-                //   text: 'Add+',
-                // )
               ),
             ],
           ),
@@ -309,20 +285,73 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget ReviewWidget() {
-    return Center(child: Text("No review yet"));
-    // return ListView.builder(
-    //   shrinkWrap: true,
-    //   physics: NeverScrollableScrollPhysics(),
-    //   itemCount: 5,
-    //   itemBuilder: (context, index) {
-    //     // final review = controller.reviews[index];
-    //     return ListTile(
-    //       title:
-    //           Text('review.userName'), // Assuming review has a userName field
-    //       subtitle: Text('review.review'), // Assuming review has a review field
-    //       trailing: Text("", style: TextStyle(color: Colors.orange)),
-    //     );
-    //   },
-    // );
+    if (controller.reviews.isEmpty) {
+      return Center(
+        child: Text("No review yet"),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: controller.reviews.length,
+      itemBuilder: (context, serviceIndex) {
+        var review = controller.reviews[serviceIndex];
+        var user = controller.users[serviceIndex];
+        return Container(
+          color: Color(0xffF6F6F5),
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    ClipOval(
+                        child: user.userProfileImage.isEmpty
+                            ? Icon(Icons.account_circle, size: 45.0)
+                            : Image.network(
+                                user.userProfileImage,
+                                fit: BoxFit.cover,
+                                height: 45.0,
+                                width: 45.0,
+                              )),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user.userName.isNotEmpty ? user.userName : 'Unknown',
+                          style: AppTextStyle.semibold14,
+                        ),
+                        Row(
+                          children: List.generate(5, (index) {
+                            return Icon(
+                              index < review.rating
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: Colors.yellow,
+                              size: 20,
+                            );
+                          }),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(height: 10),
+                Text(
+                  review.message,
+                  style:
+                      AppTextStyle.medium10.copyWith(color: Color(0xff575757)),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

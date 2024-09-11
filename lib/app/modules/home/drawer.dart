@@ -65,25 +65,21 @@ class _drawerPageState extends State<drawerPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 30.0, top: 60),
+            padding: const EdgeInsets.only(left: 20.0, top: 60),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      child: ClipOval(
-                        child: (widget.userProfileImage.isNotEmpty)
-                            ? Image.network(
-                                widget.userProfileImage,
-                                fit: BoxFit.cover,
-                                height: 85.0,
-                                width: 85.0,
-                              )
-                            : Image.asset("assets/images/person.png"),
-                      ),
-                    ),
-                  ],
+                Container(
+                  child: ClipOval(
+                    child: (widget.userProfileImage.isNotEmpty)
+                        ? Image.network(
+                            widget.userProfileImage,
+                            fit: BoxFit.cover,
+                            height: 85.0,
+                            width: 85.0,
+                          )
+                        : Image.asset("assets/images/person.png"),
+                  ),
                 ),
                 Row(
                   children: [
