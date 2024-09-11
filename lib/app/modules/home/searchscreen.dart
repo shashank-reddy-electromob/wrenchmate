@@ -83,6 +83,8 @@ class _SearchPageState extends State<SearchPage> {
                                 onTap: () {
                                   Get.toNamed(AppRoutes.SERVICE_DETAIL,
                                       arguments: service);
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
                                 },
                                 child: ServiceCard(
                                   serviceName: service.name,
@@ -139,6 +141,8 @@ class _SearchPageState extends State<SearchPage> {
                               onTap: () {
                                 Get.toNamed(AppRoutes.SERVICE_DETAIL,
                                     arguments: service);
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
                               },
                               child: _buildTopServiceCard(
                                 serviceName: service.name,
@@ -178,6 +182,7 @@ class _SearchPageState extends State<SearchPage> {
           return GestureDetector(
             onTap: () {
               Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: service);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
             child: _buildTopServiceCard(
               serviceName: service.name,
@@ -193,6 +198,8 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void navigateToServicePage(String service) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
     Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: service);
   }
 

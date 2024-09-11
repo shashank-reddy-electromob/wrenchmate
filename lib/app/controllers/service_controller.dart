@@ -51,7 +51,6 @@ class ServiceController extends GetxController {
     }
   }
 
-  // Function to fetch reviews for a specific service
   Future<void> fetchReviewsForService(Servicefirebase service) async {
     try {
       QuerySnapshot reviewSnapshot = await FirebaseFirestore.instance
@@ -61,12 +60,14 @@ class ServiceController extends GetxController {
       print(
           "Number of reviews fetched for service ${service.id}: ${reviewSnapshot.size}");
 
-      List<String> userIds = []; // Collect user IDs
+      List<String> userIds = []; 
 
       for (var doc in reviewSnapshot.docs) {
         var reviewData = doc.data() as Map<String, dynamic>;
         print("Review Data for service ${service.id}: $reviewData");
         reviews.add(Review(
+          productId: "NA",
+
           serviceId: reviewData['serviceId'],
           userId: reviewData['userId'],
           message: reviewData['message'],
@@ -84,7 +85,6 @@ class ServiceController extends GetxController {
     }
   }
 
-  // Function to fetch FAQs for a specific service
   Future<void> fetchFAQsForService(String serviceId) async {
     try {
       QuerySnapshot faqSnapshot = await FirebaseFirestore.instance
@@ -149,45 +149,44 @@ class ServiceController extends GetxController {
   // Function to fetch service by ID
   Future<void> fetchServiceById(String serviceId) async {
     try {
-      print("fetching the service by id $serviceId");
-      loading.value = true; // Start loading
+      print("Fetching service by ID: $serviceId");
+      loading.value = true;
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('Service')
           .doc(serviceId)
           .get();
-      var data = doc.data() as Map<String, dynamic>;
-      print("returned $data ");
-      selectedService.value = Servicefirebase(
-        averageReview:
-            data['averageReview']?.toDouble() ?? 0.0, // Ensure this is a double
-        numberOfReviews: data['numberOfReviews'] ?? 0, // Ensure this is an int
-        id: doc.id,
-        category: data['category'] ?? '',
-        description: data['description'] ?? '',
-        discount: data['discount'] ?? 0,
-        name: data['name'] ?? '',
-        image: data['image'] ?? '',
-        price: (data['price'] is int)
-            ? (data['price'] as int).toDouble()
-            : data['price']?.toDouble() ?? 0.0,
-        time: data['time'] ?? '',
-        warranty: data['warranty'] ?? '',
-        carmodel: List<String>.from(data['carmodel'] ?? []),
-      );
-      print("calling fetchReviews");
-      await fetchReviewsForService(selectedService.value!);
-      print("Fetched reviews for service: ${selectedService.value!.id}");
-      await fetchFAQsForService(serviceId);
-      print("Fetched FAQs for service: $serviceId");
 
-      // Fetch user data for each review
-      for (var review in reviews) {
-        await fetchUser(review.userId);
+      var data = doc.data();
+      if (data != null) {
+        var serviceData = data as Map<String, dynamic>;
+        print("Returned service data: $serviceData");
+
+        selectedService.value = Servicefirebase(
+          id: doc.id,
+          category: serviceData['category'] ?? '',
+          description: serviceData['description'] ?? '',
+          discount: serviceData['discount'] ?? 0,
+          name: serviceData['name'] ?? '',
+          image: serviceData['image'] ?? '',
+          price: (serviceData['price'] is int)
+              ? (serviceData['price'] as int).toDouble()
+              : serviceData['price']?.toDouble() ?? 0.0,
+          time: serviceData['time'] ?? '',
+          warranty: serviceData['warranty'] ?? '',
+          averageReview: serviceData['averageReview']?.toDouble() ?? 0.0,
+          numberOfReviews: serviceData['numberOfReviews'] ?? 0,
+          carmodel: List<String>.from(serviceData['carmodel'] ?? []),
+        );
+
+        await fetchReviewsForService(selectedService.value!);
+        await fetchFAQsForService(serviceId);
+      } else {
+        print("Service with ID $serviceId does not exist.");
       }
     } catch (e) {
       print("Error fetching service by ID: $e");
     } finally {
-      loading.value = false; // Stop loading
+      loading.value = false;
     }
   }
 
@@ -243,9 +242,10 @@ class ServiceController extends GetxController {
     }
   }
 
-  Future<void> fetchServicesForUser(String category, List<String> userCarDetails) async {
+  Future<void> fetchServicesForUser(
+      String category, List<String> userCarDetails) async {
     try {
-      loading.value = true; // Start loading
+      loading.value = true;
       print("Fetching services for category: $category");
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('Service')

@@ -91,6 +91,8 @@ class _serviceswidgitState extends State<serviceswidgit> {
 
   void navigateToServicePage(String service) {
     Get.toNamed(AppRoutes.SERVICE, arguments: service);
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
   }
 }
 

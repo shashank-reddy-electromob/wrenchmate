@@ -1,15 +1,18 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
+import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
+import 'package:wrenchmate_user_app/app/data/models/product_model.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/containerButton.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/pricing.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
-import '../../controllers/booking_controller.dart'; 
-import '../../controllers/home_controller.dart'; 
-import '../../widgets/custombackbutton.dart'; 
+import '../../controllers/booking_controller.dart';
+import '../../controllers/home_controller.dart';
+import '../../widgets/custombackbutton.dart';
 import '../../routes/app_routes.dart'; // Import AppRoutes
 
 class CartPage extends StatefulWidget {
@@ -20,6 +23,7 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.put(CartController());
   final ServiceController serviceController = Get.put(ServiceController());
+  final ProductController productController = Get.put(ProductController());
   final BookingController bookingController = Get.put(BookingController());
   final HomeController homeController = Get.put(HomeController());
 
@@ -32,37 +36,67 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
-    fetchCartData();
-    fetchUserCurrentCar();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      fetchCartData();
+    });
   }
 
   Future<void> fetchCartData() async {
     await cartController.fetchCartItems();
     if (cartController.cartItems.isEmpty) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
     } else {
       calculateTotal();
     }
   }
 
   Future<void> fetchUserCurrentCar() async {
-    currentCar = await homeController.fetchUserCurrentCar();
-    setState(() {});
+    try {
+      var result = await homeController.fetchUserCurrentCar();
+      if (result is List) {
+        throw TypeError();
+      }
+      if (result is int) {
+        currentCar = result;
+      } else {
+        throw Exception('Unexpected type');
+      }
+      setState(() {});
+    } catch (e) {
+      print("Failed to fetch user current car: $e");
+    }
   }
 
   void calculateTotal() {
-    setState(() {
-      totalAmount = cartController.cartItems.fold<double>(0, (sum, item) {
-        var service = serviceController.services.firstWhere(
-          (s) => s.id == item['serviceId'],
-        );
-        return sum + (service?.price ?? 0);
-      });
+    try {
+      setState(() {
+        totalAmount = cartController.cartItems.fold<double>(0, (sum, item) {
+          if (item['productId'] != "NA") {
+            var product = productController.products.firstWhere(
+              (p) => p.id == item['productId'],
+              // orElse: () => null,
+            );
+            sum += product.price ?? 0;
+          }
 
-      tax = totalAmount! * 0.1;
-      finalAmount = (totalAmount! + tax!);
-    });
+          if (item['serviceId'] != "NA") {
+            var service = serviceController.services.firstWhere(
+              (s) => s.id == item['serviceId'],
+              // orElse: () => null,
+            );
+            sum += service.price ?? 0;
+          }
+
+          return sum;
+        });
+
+        tax = totalAmount! * 0.1;
+        finalAmount = (totalAmount! + tax!);
+      });
+    } catch (e) {
+      print("Error calculating total: $e");
+    }
   }
 
   @override
@@ -120,85 +154,162 @@ class _CartPageState extends State<CartPage> {
                       ],
                     ),
                     child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: cartController.cartItems.length,
-                      itemBuilder: (context, index) {
-                        var cartItem = cartController.cartItems[index];
-                        var service = serviceController.services.firstWhere(
-                          (s) => s.id == cartItem['serviceId'],
-                        );
-                        return Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: cartController.cartItems.length,
+                        itemBuilder: (context, index) {
+                          var cartItem = cartController.cartItems[index];
+
+                          if (cartItem['productId'] == "NA" &&
+                              cartItem['serviceId'] == "NA") {
+                            return SizedBox.shrink();
+                          }
+
+                          Widget itemWidget;
+
+                          if (cartItem['productId'] != "NA") {
+                            var product = productController.products.firstWhere(
+                              (p) => p.id == cartItem['productId'],
+                              orElse: () => Product(
+                                id: cartItem['productId'],
+                                description: '',
+                                price: 0,
+                                productName: '',
+                                image: 'https://via.placeholder.com/150',
+                                quantitiesAvailable: [],
+                                quantity: '',
+                                averageReview: 0.0,
+                                numberOfReviews: 0,
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: ExtendedImage.network(
-                                            //"https://carfixo.in/wp-content/uploads/2022/05/car-wash-2.jpg",
-                                            service.image,
-                                            fit: BoxFit.cover,
-                                            cache: true,
-                                            width: 80,
-                                            height: 60),
-                                      ),
-                                      SizedBox(width: 16),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(service.name,
-                                              style:
-                                                  AppTextStyle.mediumRaleway12),
-                                          SizedBox(height: 4),
-                                          Text(
-                                            '₹ ${service.price.toStringAsFixed(2)}', 
-                                            style: AppTextStyle.semiboldpurple12
-                                                .copyWith(color: blackColor),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                            );
+
+                            itemWidget = Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: ExtendedImage.network(
+                                    product.image,
+                                    fit: BoxFit.cover,
+                                    cache: true,
+                                    width: 80,
+                                    height: 60,
                                   ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete_rounded,
-                                        color: Colors.red),
-                                    onPressed: () async {
-                                      await cartController
-                                          .deleteServicesFromCart(
-                                              cartItem['serviceId']);
-                                      if (cartController.cartItems.isEmpty) {
-                                        Get.offAllNamed(AppRoutes.BOTTOMNAV); // Redirect to BottomNavigation if cart is empty
-                                      } else {
-                                        calculateTotal();
-                                      }
-                                    },
-                                  ),
-                                ],
+                                ),
+                                SizedBox(width: 16),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(product.productName,
+                                        style: AppTextStyle.mediumRaleway12),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      '₹ ${product.price.toStringAsFixed(2)}',
+                                      style: AppTextStyle.semiboldpurple12
+                                          .copyWith(color: blackColor),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          } else if (cartItem['serviceId'] != "NA") {
+                            var service = serviceController.services.firstWhere(
+                              (s) => s.id == cartItem['serviceId'],
+                              orElse: () => Servicefirebase(
+                                id: cartItem['serviceId'],
+                                category: '',
+                                description: '',
+                                discount: 0,
+                                name: '',
+                                image: 'https://via.placeholder.com/150',
+                                price: 0.0,
+                                time: '',
+                                warranty: '',
+                                averageReview: 0.0,
+                                numberOfReviews: 0,
+                                carmodel: [],
                               ),
-                            ),
-                            Divider(
-                              color: Color(0xFFF0F0F0),
-                              thickness: 1,
-                              indent: 16,
-                              endIndent: 16,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                            );
+
+                            itemWidget = Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: ExtendedImage.network(
+                                    service.image,
+                                    fit: BoxFit.cover,
+                                    cache: true,
+                                    width: 80,
+                                    height: 60,
+                                  ),
+                                ),
+                                SizedBox(width: 16),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(service.name,
+                                        style: AppTextStyle.mediumRaleway12),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      '₹ ${service.price.toStringAsFixed(2)}',
+                                      style: AppTextStyle.semiboldpurple12
+                                          .copyWith(color: blackColor),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          } else {
+                            itemWidget = SizedBox.shrink();
+                          }
+
+                          return Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    itemWidget,
+                                    IconButton(
+                                      icon: Icon(Icons.delete_rounded,
+                                          color: Colors.red),
+                                      onPressed: () async {
+                                        if (cartItem['productId'] != "NA") {
+                                          await cartController
+                                              .deleteProductsFromCart(
+                                                  cartItem['productId']);
+                                        } else if (cartItem['serviceId'] !=
+                                            "NA") {
+                                          await cartController
+                                              .deleteServicesFromCart(
+                                                  cartItem['serviceId']);
+                                        }
+                                        if (cartController.cartItems.isEmpty) {
+                                          Get.offAllNamed(AppRoutes.BOTTOMNAV);
+                                        } else {
+                                          calculateTotal();
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Divider(
+                                color: Color(0xFFF0F0F0),
+                                thickness: 1,
+                                indent: 16,
+                                endIndent: 16,
+                              ),
+                            ],
+                          );
+                        }),
                   ),
                   containerButton(
                     text: "Apply Coupon",
@@ -318,7 +429,7 @@ class _CartPageState extends State<CartPage> {
                             '', // confirmation_note
                             '', // outForService_note
                             '', // completed_note
-                            currentCar! as String, // Pass the current car
+                            currentCar.toString(), // Pass the current car
                           );
 
                           // Optionally show a success message

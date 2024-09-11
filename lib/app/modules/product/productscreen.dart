@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/controllers/auth_controller.dart';
+import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
@@ -16,14 +18,17 @@ class ProductScreen extends StatefulWidget {
 
 class _ProductScreenState extends State<ProductScreen> {
   late final ProductController productController;
+  List<bool> addToCartStates = [];
+  final AuthController authController = Get.put(AuthController());
+  late CartController cartController;
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
     super.initState();
-    // Initialize the ProductController
     productController = Get.put(ProductController());
-    // Optionally fetch data or initialize state
-    // productController.fetchProducts(); // Example
+    cartController = Get.put(CartController());
   }
 
   @override
@@ -59,6 +64,12 @@ class _ProductScreenState extends State<ProductScreen> {
                     child: Text(productController.errorMessage.value));
               }
 
+              // Initialize addToCartStates here when products are loaded
+              if (addToCartStates.isEmpty) {
+                addToCartStates =
+                    List<bool>.filled(productController.products.length, false);
+              }
+
               return ListView.builder(
                 itemCount: productController.products.length,
                 itemBuilder: (context, index) {
@@ -67,6 +78,8 @@ class _ProductScreenState extends State<ProductScreen> {
                     onTap: () {
                       Get.toNamed(AppRoutes.PRODUCT_DETAILS,
                           arguments: product);
+                                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
                     },
                     child: Stack(
                       children: [
@@ -116,18 +129,32 @@ class _ProductScreenState extends State<ProductScreen> {
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 8.0),
-                                        child: CustomElevatedButton(
-                                          onPressed: () {
-                                            // showModalBottomSheet(
-                                            //   context: context,
-                                            //   isScrollControlled: true,
-                                            //   builder: (context) {
-                                            //     // return BottomSheet();
-                                            //   },
-                                            // );
-                                          },
-                                          text: 'Add+',
-                                        ),
+                                        child: !addToCartStates[index]
+                                            ? CustomElevatedButton(
+                                                onPressed: () {
+                                                  cartController
+                                                      .addProductToCartSnackbar(
+                                                    context,
+                                                    cartController,
+                                                    product,
+                                                    scaffoldMessengerKey,
+                                                  );
+                                                  setState(() {
+                                                    addToCartStates[index] =
+                                                        true;
+                                                  });
+                                                },
+                                                text: '+Add',
+                                              )
+                                            : CustomElevatedButton(
+                                                onPressed: () {
+                                                  Get.toNamed(AppRoutes.CART);
+                                                  ScaffoldMessenger.of(context)
+                                                      .hideCurrentSnackBar();
+                                                },
+                                                
+                                                text: 'Go to cart',
+                                              ),
                                       ),
                                     ],
                                   ),

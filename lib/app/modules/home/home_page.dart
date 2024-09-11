@@ -43,28 +43,8 @@ class _HomePageState extends State<HomePage> {
     if (cartController.totalAmount.value > 0.0) {
       print(
           "cartController.totalAmount.value :: ${cartController.totalAmount.value}");
-
-      _onTap();
     }
   }
-
-  // RxDouble totalAmount = 0.0.obs;
-  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  // Future<void> fetchTotalCost() async {
-  //   try {
-  //     String userId = FirebaseAuth.instance.currentUser!.uid;
-  //     DocumentSnapshot userDoc =
-  //         await _firestore.collection('User').doc(userId).get();
-
-  //     if (userDoc.exists) {
-  //       totalAmount.value = userDoc['total_cost_cart'] ?? 0.0;
-  //       print("totalAmount.value :: ${totalAmount.value}");
-  //     }
-  //   } catch (e) {
-  //     print("Error fetching total cost: $e");
-  //   }
-  // }
 
   Future<void> fetchUserData() async {
     userData = await controller?.fetchUserData() as Map<String, dynamic>?;
@@ -87,67 +67,65 @@ class _HomePageState extends State<HomePage> {
   bool isDrawerOpen = false;
   late CartController cartController;
 
-  void _onTap() {
-    setState(() {
-      final snackBar = SnackBar(
-        backgroundColor: primaryColor,
-        content: Obx(() => Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Total Amount: \₹${cartController.totalAmount.value.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.CART);
-                      setState(() {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      });
-                    },
-                    child: Text(
-                      'Checkout',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: primaryColor,
-                        fontFamily: 'Raleway',
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            )),
-        duration: Duration(days: 1), 
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-      cartController.totalAmount.listen((newTotal) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      });
-      xOffSet = 0;
-      yOffSet = 0;
-      scaleFactor = 1;
-      isDrawerOpen = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    if (cartController.totalAmount.value > 0.0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (cartController.totalAmount.value > 0.0) {
+          final snackBar = SnackBar(
+            backgroundColor: primaryColor,
+            content: Obx(() => Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Total Amount: ₹${cartController.totalAmount.value.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.CART);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        },
+                        child: Text(
+                          'Checkout',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: primaryColor,
+                            fontFamily: 'Raleway',
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height * 0.01, left: 10, right: 10
+            ),
+            duration: Duration(days: 1),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+          cartController.totalAmount.listen((newTotal) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          });
+        }
+      });
+    }
     return Scaffold(
       body: Stack(
         children: [
@@ -163,7 +141,12 @@ class _HomePageState extends State<HomePage> {
           GestureDetector(
             onTap: () {
               if (isDrawerOpen) {
-                _onTap();
+                setState(() {
+                  xOffSet = 0;
+                  yOffSet = 0;
+                  scaleFactor = 1;
+                  isDrawerOpen = false;
+                });
               }
             },
             child: AnimatedContainer(
@@ -189,9 +172,7 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
-                      Container(
-                        height: 40,
-                      ),
+                      Container(height: 40),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
@@ -235,7 +216,6 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   SizedBox(width: 10),
                                   Expanded(
-                                    // Keep this Expanded
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -252,7 +232,6 @@ class _HomePageState extends State<HomePage> {
                                               color: Color(0xffFF5402),
                                             ),
                                             Expanded(
-                                              // Keep this Expanded
                                               child: Text(
                                                 userData?['User_address'] !=
                                                         null
@@ -272,15 +251,13 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             ),
-                            //notification
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Color(
-                                      0xffE7E7E7), // Set the border color to grey
-                                  width: 1.0, // Set the border width
+                                  color: Color(0xffE7E7E7),
+                                  width: 1.0,
                                 ),
                               ),
                               child: IconButton(
@@ -290,18 +267,16 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 onPressed: () {
                                   Get.toNamed(AppRoutes.NOTIFICATIONS);
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
                                 },
                               ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      searchbar(
-                        readonly: true,
-                      ),
+                      SizedBox(height: 12),
+                      searchbar(readonly: true),
                       offersSliders(),
                       serviceswidgit(),
                       toprecommendedservices(),

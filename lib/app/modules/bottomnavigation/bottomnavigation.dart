@@ -1,9 +1,8 @@
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:wrenchmate_user_app/app/modules/home/home_page.dart';
 import 'package:flutter/services.dart';
+import 'package:wrenchmate_user_app/app/modules/home/home_page.dart';
 import '../../routes/app_routes.dart';
 import '../car/car_page.dart';
 import '../product/productscreen.dart';
@@ -41,7 +40,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
       });
       return false;
     } else {
-      SystemNavigator.pop(); // Exits the app
+      SystemNavigator.pop();
       return false;
     }
   }
@@ -55,75 +54,70 @@ class _bottomnavigationState extends State<bottomnavigation> {
         body: Stack(
           children: [
             _widgetOptions.elementAt(_selectedIndex),
-            // SlidingContainer(isVisible: _selectedIndex == 0),
           ],
         ),
-        // floatingActionButton: ClipOval(
-        //   child: Material(
-        //     color: Colors.blue,
-        //     child: InkWell(
-        //       splashColor: Colors.blueAccent,
-        //       onTap: () {
-        //         Get.toNamed(AppRoutes.TRACKING);
-        //       },
-        //       child: SizedBox(
-        //         width: 60,
-        //         height: 60,
-        //       ),
-        //     ),
-        //   ),
-        // ),
-        // fl
+        // floatingActionButtonAnimator:   ,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: ClipOval(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              shape: BoxShape.circle,
+            ),
+            padding: EdgeInsets.all(12),
+            child: InkWell(
+              splashColor: Colors.blueAccent,
+              onTap: () {
+                setState(() {
+                  _selectedIndex = 2;
+                });
+              },
+              child: SizedBox(
+                width: 30,
+                height: 30,
+                child: ImageIcon(
+                  AssetImage('assets/icons/car.png'),
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
         bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/home.png'),
-                size: 30,
+                size: 20,
               ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/product.png'),
-                size: 30,
+                size: 20,
               ),
               label: 'Product',
             ),
             BottomNavigationBarItem(
-              icon: Transform.translate(
-                offset: Offset(0, -8), // Adjust the vertical position here
-                child: Container(
-                  height: 60,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  padding: EdgeInsets.all(12),
-                  child: ImageIcon(
-                    AssetImage('assets/icons/car.png'),
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              icon: SizedBox(width: 10),
               label: '',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/support.png'),
-                size: 30,
+                size: 20,
               ),
               label: 'Help',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/subscription.png'),
-                size: 30,
+                size: 20,
               ),
               label: 'Subscription',
             ),
@@ -135,6 +129,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.transparent,
           elevation: 0,
+          showUnselectedLabels: true,
         ),
       ),
     );

@@ -1,4 +1,6 @@
 class Product {
+  String id;
+
   final String description;
   final int price;
   final String productName;
@@ -9,6 +11,7 @@ class Product {
   final int numberOfReviews; // New field
 
   Product({
+    required this.id,
     required this.description,
     required this.price,
     required this.productName,
@@ -19,8 +22,10 @@ class Product {
     required this.numberOfReviews,
   });
 
-  factory Product.fromDocument(Map<String, dynamic> doc) {
+  factory Product.fromDocument(Map<String, dynamic> doc, String id) {
     return Product(
+      id: id,
+
       description: doc['description'] ?? '',
       price: doc['price'] ?? 0,
       productName: doc['product_name'] ?? '',

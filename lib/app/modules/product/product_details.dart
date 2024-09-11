@@ -239,6 +239,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     : CustomElevatedButton(
                         onPressed: () {
                           Get.toNamed(AppRoutes.CART);
+                                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
                         },
                         text: 'Go to cart',
                       ),

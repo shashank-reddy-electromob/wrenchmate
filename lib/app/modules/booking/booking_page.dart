@@ -181,6 +181,8 @@ class BookingTile extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           Get.toNamed(AppRoutes.BOOKING_DETAIL, arguments: {'service': service, 'booking': booking});
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
         },
         child: Container(
           decoration: BoxDecoration(

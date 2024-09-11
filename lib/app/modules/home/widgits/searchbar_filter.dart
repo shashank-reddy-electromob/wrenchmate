@@ -35,11 +35,13 @@ class _searchbarState extends State<searchbar> {
               color: Color(0xffF7F7F7),
               child: Center(
                 child: TextField(
-                  readOnly: widget.readonly, // Set readonly property
+                  readOnly: widget.readonly,
                   onTap: () async {
-                    if (widget.readonly) { // Check if readonly is false
+                    if (widget.readonly) { 
                       print("AppRoutes.SEARCHSCREEN");
                       Get.toNamed(AppRoutes.SEARCHSCREEN);
+                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
                     }
                   },
                   decoration: InputDecoration(

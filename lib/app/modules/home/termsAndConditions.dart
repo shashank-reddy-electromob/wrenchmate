@@ -58,7 +58,8 @@ class _termsAndConditionsState extends State<termsAndConditions> {
         backgroundColor: Colors.transparent,
         title: Text(
           'Terms & Condition',
-          style: TextStyle(fontFamily: 'Raleway', fontWeight: FontWeight.w500),
+          style: TextStyle(
+              fontFamily: 'Raleway', fontWeight: FontWeight.w500, fontSize: 20),
         ),
         leading: Padding(
           padding: const EdgeInsets.all(6.0),
@@ -93,7 +94,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Color(0xff494949),
-                      fontSize: 24,
+                      fontSize: 20,
                       fontFamily: 'Poppins'),
                 ),
                 SizedBox(height: 8),
@@ -111,7 +112,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Color(0xff494949),
-                      fontSize: 24,
+                      fontSize: 20,
                       fontFamily: 'Poppins'),
                 ),
                 SizedBox(height: 8),
@@ -129,7 +130,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Color(0xff494949),
-                      fontSize: 24,
+                      fontSize: 20,
                       fontFamily: 'Poppins'),
                 ),
                 SizedBox(height: 8),
@@ -147,6 +148,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                     alignment: Alignment.center,
                     child: blueButton(
                       text: 'ACCEPT',
+                      fontSize: 16,
                       onTap: () {},
                     )),
                 SizedBox(height: 90)
@@ -176,7 +178,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                     child: Text(
                       _isAtBottom ? 'Scroll to Top' : 'Scroll to Bottom',
                       style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 16,
                           color: Colors.blue,
                           fontFamily: 'Raleway'),
                     ),

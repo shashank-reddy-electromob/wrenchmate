@@ -9,6 +9,7 @@ class Servicefirebase {
   String time;
   String warranty;
   double averageReview;
+  
   int numberOfReviews;
   List<String> carmodel; // Add this line
 

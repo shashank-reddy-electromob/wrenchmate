@@ -216,13 +216,13 @@ class _TrackingPageState extends State<TrackingPage> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.phone, color: Colors.white, size: 30),
-                        onPressed: () {
-                        },
+                        onPressed: () {},
                       ),
                       IconButton(
                         icon: Icon(Icons.chat, color: Colors.white, size: 30),
                         onPressed: () {
                           Get.toNamed(AppRoutes.CHATSCREEN);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         },
                       ),
                     ],

@@ -267,6 +267,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 ),
                 onPressed: () {
                   Get.toNamed(AppRoutes.PAYMENT);
+                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
                 },
                 child: Ink(
                   decoration: BoxDecoration(

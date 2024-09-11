@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 class blueButton extends StatelessWidget {
   final String text;
   final double buttonHeight;
-  // final double buttonHeight;
+  final double fontSize;
   final onTap;
   const blueButton(
       {super.key,
       required this.text,
       required this.onTap,
+      this.fontSize = 20.0,
       this.buttonHeight = 16.0});
 
   @override
@@ -23,7 +24,7 @@ class blueButton extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-                fontSize: 20, color: Colors.white, fontFamily: 'Raleway'),
+                fontSize: fontSize, color: Colors.white, fontFamily: 'Raleway'),
           ),
         ),
         style: ElevatedButton.styleFrom(

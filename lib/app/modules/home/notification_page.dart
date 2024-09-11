@@ -54,10 +54,10 @@ class NotificationPage extends StatelessWidget {
             onDismissed: (direction) {
               if (direction == DismissDirection.startToEnd) {
                 readList
-                    .add(dummyNotifications[index]); // Add item to "read" list
+                    .add(dummyNotifications[index]);
               } else if (direction == DismissDirection.endToStart) {
                 archiveList.add(
-                    dummyNotifications[index]); // Add item to "archive" list
+                    dummyNotifications[index]);
               }
             },
             child: Container(

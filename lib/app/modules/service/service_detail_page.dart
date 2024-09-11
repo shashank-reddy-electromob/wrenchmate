@@ -277,6 +277,8 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               : CustomElevatedButton(
                   onPressed: () {
                     Get.toNamed(AppRoutes.CART);
+                                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
                   },
                   text: 'Go to cart',
                 ),

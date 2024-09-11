@@ -36,6 +36,8 @@ class FilteredResultsPage extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: service);
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
                 },
                 child: _buildTopServiceCard(
                   serviceName: service.name,
