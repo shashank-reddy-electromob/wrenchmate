@@ -20,8 +20,8 @@ class CarController extends GetxController {
   Future<void> addCar({
     required String fuelType,
     required String registrationNumber,
-    required DateTime registrationYear,
-    required DateTime pucExpiration,
+    DateTime? registrationYear, // Optional
+    DateTime? pucExpiration, // Optional
     required DateTime insuranceExpiration,
     required String transmission,
     required String carType,
@@ -30,22 +30,31 @@ class CarController extends GetxController {
     try {
       String carTypeId = carTypeToIdMap[carType]!;
 
-      DocumentReference docRef= await _firestore
+      Map<String, dynamic> carData = {
+        'fuel_type': fuelType,
+        'registration_number': registrationNumber,
+        'insurance_expiration': insuranceExpiration,
+        'transmission': transmission,
+      };
+
+      if (registrationYear != null) {
+        carData['registration_year'] = registrationYear;
+      }
+
+      if (pucExpiration != null) {
+        carData['puc_expiration'] = pucExpiration;
+      }
+
+      DocumentReference docRef = await _firestore
           .collection('car')
           .doc('PeVE6MdvLwzcePpmZfp0')
           .collection(carType)
           .doc(carTypeId)
-          .collection(carModel).add({
-        'fuel_type': fuelType,
-        'registration_number': registrationNumber,
-        'registration_year': registrationYear,
-        'puc_expiration': pucExpiration,
-        'insurance_expiration': insuranceExpiration,
-        'transmission': transmission,
-      });
+          .collection(carModel)
+          .add(carData);
 
       DocumentSnapshot userDoc =
-      await _firestore.collection('User').doc(userId).get();
+          await _firestore.collection('User').doc(userId).get();
 
       List<dynamic> currentCarDetails = userDoc.get('User_carDetails') ?? [];
 

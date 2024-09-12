@@ -59,23 +59,27 @@ class _CarDetailsState extends State<CarDetails> {
 
   void addCar() async {
     if (selectedCarModel == null ||
-        regNoController.text.isEmpty || 
-        regYearController.text.isEmpty || 
-        insuranceExpController.text.isEmpty || 
-        pucExpDateController.text.isEmpty) {
-      Get.snackbar('Error', 'Please fill all fields');
+        selectedTransmissionType == null ||
+        selectedFuelType == null ||
+        regNoController.text.isEmpty ||
+        insuranceExpController.text.isEmpty) {
+      Get.snackbar('Error', 'Please fill all required fields');
       return;
     }
 
     await carController?.addCar(
       fuelType: selectedFuelType ?? '',
       registrationNumber: regNoController.text,
-      registrationYear: DateFormat('dd/MM/yyyy').parse(regYearController.text),
-      pucExpiration: DateFormat('dd/MM/yyyy').parse(pucExpDateController.text),
       insuranceExpiration: DateFormat('dd/MM/yyyy').parse(insuranceExpController.text),
       transmission: selectedTransmissionType ?? '',
       carType: carNames[selectedIndex ?? 0],
       carModel: selectedCarModel ?? '',
+      registrationYear: regYearController.text.isNotEmpty 
+          ? DateFormat('dd/MM/yyyy').parse(regYearController.text) 
+          : null,
+      pucExpiration: pucExpDateController.text.isNotEmpty 
+          ? DateFormat('dd/MM/yyyy').parse(pucExpDateController.text) 
+          : null,
     );
   }
 
@@ -220,7 +224,7 @@ class _CarDetailsState extends State<CarDetails> {
                     CustomDropdown(
                       label: "Car Transmission Type",
                       value: selectedTransmissionType,
-                      items: ["Manual", "Automatic"],
+                      items: ["Manual", "Automatic","IMT"],
                       onChanged: (value) {
                         setState(() {
                           selectedTransmissionType = value;
@@ -347,6 +351,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      textCapitalization: TextCapitalization.characters,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(color: Color(0xFFB8B8BC)),

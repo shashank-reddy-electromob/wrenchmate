@@ -27,7 +27,7 @@ class _CarPageState extends State<CarPage> {
   late TextEditingController pucExpController;
 
   final CarController carController =
-      Get.put(CarController()); // Initialize the CarController
+      Get.put(CarController());
 
   late PageController _pageController;
 
@@ -66,6 +66,7 @@ class _CarPageState extends State<CarPage> {
     if (userCars.isNotEmpty) {
       setState(() {
         updateCarDetails(userCurrentCarIndex);
+        _pageController.jumpToPage(userCurrentCarIndex); // Add this line
       });
     }
   }
@@ -73,15 +74,19 @@ class _CarPageState extends State<CarPage> {
   void updateCarDetails(int index) {
     if (index >= 0 && index < userCars.length) {
       var car = userCars[index];
-      carModel = car['car_model'];
-      petrolOrDiesel = car['fuel_type'];
-      carType = car['car_type'];
-      regYearController.text =
-          _formatDateTimeRegi((car['registration_year']).toDate());
-      regNoController.text = car['registration_number'] ?? '19HY7983298989';
-      insuranceExpController.text =
-          _formatDateTime((car['insurance_expiration']).toDate());
-      pucExpController.text = _formatDateTime((car['puc_expiration']).toDate());
+      carModel = car['car_model'] ?? '--';
+      petrolOrDiesel = car['fuel_type'] ?? '--';
+      carType = car['car_type'] ?? '--';
+      regYearController.text = car['registration_year'] != null
+          ? _formatDateTimeRegi((car['registration_year']).toDate())
+          : '--';
+      regNoController.text = car['registration_number'] ?? '--';
+      insuranceExpController.text = car['insurance_expiration'] != null
+          ? _formatDateTime((car['insurance_expiration']).toDate())
+          : '--';
+      pucExpController.text = car['puc_expiration'] != null
+          ? _formatDateTime((car['puc_expiration']).toDate())
+          : '--';
       print("Displaying car at index $index: $car");
     }
   }

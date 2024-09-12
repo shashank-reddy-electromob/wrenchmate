@@ -77,8 +77,8 @@ class _bottomnavigationState extends State<bottomnavigation> {
                 });
               },
               child: SizedBox(
-                width: 30,
-                height: 30,
+                width: 36,
+                height: 36,
                 child: ImageIcon(
                   AssetImage('assets/icons/car.png'),
                   color: Colors.white,
@@ -92,14 +92,14 @@ class _bottomnavigationState extends State<bottomnavigation> {
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/home.png'),
-                size: 20,
+                size: 25,
               ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/product.png'),
-                size: 20,
+                size: 25,
               ),
               label: 'Product',
             ),
@@ -110,14 +110,14 @@ class _bottomnavigationState extends State<bottomnavigation> {
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/support.png'),
-                size: 20,
+                size: 25,
               ),
               label: 'Help',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/subscription.png'),
-                size: 20,
+                size: 25,
               ),
               label: 'Subscription',
             ),
