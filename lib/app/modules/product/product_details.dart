@@ -2,6 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/controllers/auth_controller.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
 import 'package:wrenchmate_user_app/app/data/models/product_model.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/desc_faq_review.dart';
@@ -24,15 +25,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   String selectedTab = 'description';
   late List<bool> _isVisibleList;
   final ProductController controller = Get.find();
-  late Product product; // Use Product model instead of Servicefirebase
+  late Product product;
   bool addtocart = false;
   late CartController cartController;
+  late final ProductController productController;
+  List<bool> addToCartStates = [];
+  final AuthController authController = Get.put(AuthController());
+
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
     super.initState();
     product = Get.arguments;
     cartController = Get.put(CartController());
+    productController = Get.put(ProductController());
+
     fetchData(product);
     // _isVisibleList = List<bool>.filled(controller.faqs.length, false);
   }
@@ -41,9 +50,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     controller.reviews.clear();
     await controller.fetchReviewsForProduct(product);
   }
-
-  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void dispose() {
@@ -83,6 +89,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ],
       ),
       body: Obx(() {
+        if (addToCartStates.isEmpty) {
+          addToCartStates =
+              List<bool>.filled(productController.products.length, false);
+        }
         if (controller.isLoading.value) {
           return Center(child: CircularProgressIndicator());
         } else {
@@ -220,6 +230,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 child: addtocart == false
                     ? CustomElevatedButton(
                         onPressed: () {
+                          cartController.addProductToCartSnackbar(
+                            context,
+                            cartController,
+                            product,
+                            selectedQuantity??product.quantity,
+                            scaffoldMessengerKey,
+                          );
                           setState(() {
                             addtocart = true;
                           });
@@ -247,19 +264,29 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  Widget buildQuantityButton(String text, {bool isSelected = false}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 4),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: isSelected ? primaryColor : Colors.grey.shade200,
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black54,
+  String? selectedQuantity;
+
+  Widget buildQuantityButton(String quantity) {
+    bool isSelected = selectedQuantity == quantity;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedQuantity = quantity;
+        });
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 4),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? primaryColor : Colors.grey.shade200,
+          ),
+          child: Text(
+            quantity,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.black54,
+            ),
           ),
         ),
       ),

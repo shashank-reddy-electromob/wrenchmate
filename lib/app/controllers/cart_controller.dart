@@ -118,13 +118,14 @@ Future<void> fetchCartItems() async {
   }
 
   Future<void> addToCart(
-      {required String serviceId, required String productId}) async {
+      {required String serviceId, required String productId, required String quantity}) async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
       await _firestore.collection('Cart').add({
         'serviceId': serviceId,
         'productId': productId,
         'userId': userId,
+        'productQuantity': quantity,
       });
       await fetchCartItems();
       await updateTotalCost();
@@ -178,7 +179,7 @@ void addToCartSnackbar(
 ) async {
   print("adding to cart");
 
-  await cartController.addToCart(serviceId: service.id, productId: 'NA');
+  await cartController.addToCart(serviceId: service.id, productId: 'NA', quantity: 'NA');
 
   print("added to cart");
 
@@ -285,11 +286,12 @@ void addToCartSnackbar(
     BuildContext context,
     CartController cartController,
     Product product,
+    String productQuantity,
     GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
   ) async {
     print("product adding to cart");
 
-    await cartController.addToCart(serviceId: 'NA', productId: product.id);
+    await cartController.addToCart(serviceId: 'NA', productId: product.id, quantity: productQuantity);
 
     print("product added to cart");
 

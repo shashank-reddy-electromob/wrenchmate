@@ -137,6 +137,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                                     context,
                                                     cartController,
                                                     product,
+                                                    product.quantity,
                                                     scaffoldMessengerKey,
                                                   );
                                                   setState(() {
