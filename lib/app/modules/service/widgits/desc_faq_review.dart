@@ -23,7 +23,7 @@ class descFaqReview extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.24,
         decoration: BoxDecoration(
             color: isSelected ? primaryColor : Colors.white,
-            borderRadius: BorderRadius.circular(12)),
+            borderRadius: BorderRadius.circular(8)),
         child: Text(
           textAlign: TextAlign.center,
           text,

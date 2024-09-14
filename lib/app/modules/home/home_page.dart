@@ -226,9 +226,11 @@ class _HomePageState extends State<HomePage> {
                                           style: AppTextStyle.boldRaleway15,
                                         ),
                                         GestureDetector(
-                                          onTap: (){
+                                          onTap: () {
                                             print("address");
-                                            Get.toNamed(AppRoutes.MAPSCREEN, arguments: userData?['User_address']);
+                                            Get.toNamed(AppRoutes.MAPSCREEN,
+                                                arguments:
+                                                    userData?['User_address']);
                                           },
                                           child: Row(
                                             children: [
@@ -241,7 +243,8 @@ class _HomePageState extends State<HomePage> {
                                                 child: Text(
                                                   userData?['User_address'] !=
                                                           null
-                                                      ? userData!['User_address']
+                                                      ? userData![
+                                                              'User_address']
                                                           .split(',')
                                                           .take(3)
                                                           .join(', ')
@@ -261,7 +264,7 @@ class _HomePageState extends State<HomePage> {
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(5),
                                 border: Border.all(
                                   color: Color(0xffE7E7E7),
                                   width: 1.0,

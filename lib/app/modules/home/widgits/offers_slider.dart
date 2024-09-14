@@ -39,6 +39,7 @@ class _offersSlidersState extends State<offersSliders> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         CarouselSlider.builder(
           itemCount: offer_widgits.length,
@@ -47,7 +48,7 @@ class _offersSlidersState extends State<offersSliders> {
           },
           carouselController: _offersslidercontroller,
           options: CarouselOptions(
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: MediaQuery.of(context).size.height * 0.27,
               autoPlay: true,
               autoPlayInterval: Duration(seconds: 3),
               viewportFraction: 1,
@@ -57,7 +58,6 @@ class _offersSlidersState extends State<offersSliders> {
                 });
               }),
         ),
-        SizedBox(height: 12),
         buildindicator(),
       ],
     );
@@ -110,24 +110,13 @@ class OfferCard extends StatelessWidget {
         // height: 150,
         // width: 330,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
           image: DecorationImage(
             image: AssetImage(imagePath),
-            fit: BoxFit.fitHeight,
+            // fit: BoxFit.fitHeight,
           ),
         ),
         child: Padding(
-          // decoration: BoxDecoration(
-          //   borderRadius: BorderRadius.circular(20),
-          //   gradient: LinearGradient(
-          //     colors: [
-          //       Colors.black.withOpacity(0.7),
-          //       Colors.transparent,
-          //     ],
-          //     begin: Alignment.centerLeft,
-          //     end: Alignment.centerRight,
-          //   ),
-          // ),
           padding: EdgeInsets.symmetric(vertical: 26, horizontal: 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,7 +140,7 @@ class OfferCard extends StatelessWidget {
                     style:
                         AppTextStyle.semibold16.copyWith(color: Colors.white),
                   ),
-                  SizedBox(height: 5),
+                  // SizedBox(height: 5),
                   Row(
                     children: [
                       Text(
@@ -166,7 +155,7 @@ class OfferCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  // SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

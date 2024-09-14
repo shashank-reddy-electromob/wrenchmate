@@ -176,8 +176,8 @@ class _ServicePageState extends State<ServicePage> {
                                       onTap: () {
                                         Get.toNamed(AppRoutes.SERVICE_DETAIL,
                                             arguments: service);
-                                                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
                                       },
                                       child: Container(
                                         margin:

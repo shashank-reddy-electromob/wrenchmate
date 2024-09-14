@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
+import 'package:wrenchmate_user_app/utils/color.dart';
 import '../../controllers/home_controller.dart';
 import '../auth/widgets/CustomTextField.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,7 +16,8 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
-  final TextEditingController alternateNumberController = TextEditingController();
+  final TextEditingController alternateNumberController =
+      TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
   final HomeController homeController = Get.put(HomeController());
@@ -25,7 +28,8 @@ class _EditProfileState extends State<EditProfile> {
   Map<String, dynamic>? originalUserData;
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -35,7 +39,8 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<Map<String, dynamic>> _fetchUserData() async {
-    Map<String, dynamic>? data = await homeController.fetchUserData() as Map<String, dynamic>?;
+    Map<String, dynamic>? data =
+        await homeController.fetchUserData() as Map<String, dynamic>?;
 
     if (data == null) {
       throw Exception('Failed to fetch user data');
@@ -47,7 +52,6 @@ class _EditProfileState extends State<EditProfile> {
     alternateNumberController.text = data['User_number'][1] ?? '';
     emailController.text = data['User_email'] ?? '';
 
-    // Save the original data for comparison
     originalUserData = Map<String, dynamic>.from(data);
 
     return data;
@@ -56,7 +60,6 @@ class _EditProfileState extends State<EditProfile> {
   Future<void> _updateUserProfile() async {
     Map<String, dynamic> updatedData = {};
 
-    // Compare current values with original values and add only changed fields
     if (nameController.text != originalUserData?['User_name']) {
       updatedData['User_name'] = nameController.text;
     }
@@ -64,15 +67,19 @@ class _EditProfileState extends State<EditProfile> {
       updatedData['User_email'] = emailController.text;
     }
     if (numberController.text != originalUserData?['User_number'][0]) {
-      updatedData['User_number'] = [numberController.text, alternateNumberController.text];
+      updatedData['User_number'] = [
+        numberController.text,
+        alternateNumberController.text
+      ];
     }
     if (alternateNumberController.text != originalUserData?['User_number'][1]) {
-      updatedData['User_number'] = [numberController.text, alternateNumberController.text];
+      updatedData['User_number'] = [
+        numberController.text,
+        alternateNumberController.text
+      ];
     }
 
-    // Check if a new image was selected and is different from the original image
     if (_image != null) {
-      // Assuming `originalUserData['User_profile_image']` contains the original image URL or path
       String originalImagePath = originalUserData?['User_profile_image'] ?? '';
       if (_image!.path != originalImagePath) {
         updatedData['User_profile_image'] = _image;
@@ -88,9 +95,11 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('User Profile'),
+      appBar: CustomAppBar(
+        title: 'Profile',
+        onBackButtonPressed: () {
+          Navigator.of(context).pop();
+        },
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _fetchUserData(),
@@ -99,7 +108,22 @@ class _EditProfileState extends State<EditProfile> {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error fetching user data'));
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            return Center(child: Text('No user data found'));
           } else {
+            String userProfileImage =
+                snapshot.data?['User_profile_image'] ?? '';
+            String userName = snapshot.data?['User_name'] ?? '';
+            String userEmail = snapshot.data?['User_email'] ?? '';
+            String primaryNumber = snapshot.data?['User_number'] != null &&
+                    snapshot.data!['User_number'].isNotEmpty
+                ? snapshot.data!['User_number'][0] ?? ''
+                : '';
+            String alternateNumber = snapshot.data?['User_number'] != null &&
+                    snapshot.data!['User_number'].length > 1
+                ? snapshot.data!['User_number'][1] ?? ''
+                : '';
+
             return SingleChildScrollView(
               child: Container(
                 height: MediaQuery.of(context).size.height - 100,
@@ -109,57 +133,110 @@ class _EditProfileState extends State<EditProfile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                        child: GestureDetector(
-                          onTap: _pickImage,
-                          child: ClipOval(
-                            child: _image != null
-                                ? Image.file(
-                              _image!,
-                              fit: BoxFit.cover,
-                              height: 95.0,
-                              width: 95.0,
-                            )
-                                : Image.network(
-                              snapshot.data?['User_profile_image'],
-                              fit: BoxFit.cover,
-                              height: 95.0,
-                              width: 95.0,
+                        child: Stack(
+                          children: [
+                            GestureDetector(
+                              onTap: _pickImage,
+                              child: Container(
+                                width: 105.0,
+                                height: 105.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Color(0xff515151),
+                                    width: 3.0,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: _image != null
+                                      ? Image.file(
+                                          _image!,
+                                          fit: BoxFit.cover,
+                                          height: 95.0,
+                                          width: 95.0,
+                                        )
+                                      : (userProfileImage.isNotEmpty
+                                          ? Image.network(
+                                              userProfileImage,
+                                              fit: BoxFit.cover,
+                                              height: 95.0,
+                                              width: 95.0,
+                                            )
+                                          : Icon(
+                                              Icons.person,
+                                              size: 95.0,
+                                            )),
+                                ),
+                              ),
                             ),
-                          ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: _pickImage,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Color(0xff515151),
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: 16,
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      color: primaryColor,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(height: 20),
                       CustomTextField(
-                        controller: nameController,
+                        controller: nameController..text = userName,
                         hintText: 'Name',
                       ),
                       SizedBox(height: 10),
                       CustomTextField(
-                        controller: emailController,
+                        controller: emailController..text = userEmail,
                         hintText: 'Email',
                       ),
                       SizedBox(height: 10),
                       CustomTextField(
-                        controller: numberController,
+                        controller: numberController..text = primaryNumber,
                         hintText: 'Primary Number',
                       ),
                       SizedBox(height: 10),
                       CustomTextField(
-                        controller: alternateNumberController,
+                        controller: alternateNumberController
+                          ..text = alternateNumber,
                         hintText: 'Alternate Number',
                       ),
                       Spacer(),
                       _isLoading
-                          ? Center(child: CircularProgressIndicator(color: Color(0xff1671D8)))
-                          : blueButton(text: "EDIT", onTap: () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        await _updateUserProfile();
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      }),
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                  color: Color(0xff1671D8)),
+                            )
+                          : blueButton(
+                              text: "EDIT",
+                              buttonHeight: 12,
+                              onTap: () async {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                await _updateUserProfile();
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              },
+                            ),
                     ],
                   ),
                 ),

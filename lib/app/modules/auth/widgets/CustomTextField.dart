@@ -14,28 +14,22 @@ class CustomTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         cursorColor: Colors.grey,
-        style: TextStyle(
-          color: Colors.black, // Entered text color
-          fontSize: 18, // Entered text size
-        ),
+        style:
+            TextStyle(color: Colors.black, fontSize: 16, fontFamily: 'Poppins'),
         decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Color(0xffE9E9E9), // Hint text color
-            fontSize: 18, // Hint text size
-          ),
-          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.grey, // Active bottom border color
+            hintText: hintText,
+            hintStyle: TextStyle(
+                color: Color(0xffE9E9E9), fontSize: 16, fontFamily: 'Poppins'),
+            contentPadding: EdgeInsets.symmetric(vertical: 16.0),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+              ),
             ),
-          ),
-          border: UnderlineInputBorder(
-            borderSide: BorderSide(
+            border: UnderlineInputBorder(
+                borderSide: BorderSide(
               color: Colors.grey,
-            )
-          )
-        ),
+            ))),
       ),
     );
   }

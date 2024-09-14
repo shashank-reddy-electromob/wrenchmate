@@ -19,7 +19,7 @@ class _serviceswidgitState extends State<serviceswidgit> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
       child: Column(
         children: [
           Header(
@@ -91,8 +91,7 @@ class _serviceswidgitState extends State<serviceswidgit> {
 
   void navigateToServicePage(String service) {
     Get.toNamed(AppRoutes.SERVICE, arguments: service);
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 }
 
