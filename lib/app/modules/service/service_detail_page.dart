@@ -78,9 +78,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                   color: Color(0xff1E1E1E),
                   size: 22,
                 ),
-                onPressed: () {
-                  //add to fav logic
-                },
+                onPressed: () {},
               ),
             ),
           ),
@@ -122,7 +120,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                     height: 70,
                     decoration: BoxDecoration(
                       color: Color(0xffF6F6F5),
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -185,7 +183,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       width: MediaQuery.of(context).size.width * 0.86,
       height: MediaQuery.of(context).size.height * 0.23,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(15),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -277,8 +275,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               : CustomElevatedButton(
                   onPressed: () {
                     Get.toNamed(AppRoutes.CART);
-                                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   },
                   text: 'Go to cart',
                 ),
@@ -299,109 +296,6 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
       ]),
     );
   }
-
-  // Widget BottomSheet() {
-  //   return Container(
-  //     height: MediaQuery.of(context).size.height * 0.3,
-  //     width: double.infinity,
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(20.0),
-  //         topRight: Radius.circular(20.0),
-  //       ),
-  //     ),
-  //     child: StatefulBuilder(
-  //       builder: (BuildContext context, StateSetter setState) {
-  //         return Column(
-  //           children: [
-  //             Container(
-  //               height: 6,
-  //               margin: EdgeInsets.only(top: 8),
-  //               width: 80,
-  //               decoration: BoxDecoration(
-  //                 color: Colors.grey.shade300,
-  //                 borderRadius: BorderRadius.circular(8),
-  //               ),
-  //             ),
-  //             SizedBox(height: 18),
-  //             Text(
-  //               "Choose a Service Type",
-  //               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-  //             ),
-  //             SizedBox(height: 36),
-  //             Padding(
-  //               padding: const EdgeInsets.symmetric(horizontal: 18.0),
-  //               child: Column(
-  //                 children: [
-  //                   Row(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Text(
-  //                         "Showroom Quality\n ₹ ${service.price}",
-  //                         style: TextStyle(
-  //                             color: Colors.black,
-  //                             fontSize: 22,
-  //                             fontWeight: FontWeight.w400),
-  //                       ),
-  //                       (addtocart == false)
-  //                           ? CustomElevatedButton(
-  //                               onPressed: () {
-  //                                 addToCart(service);
-  //                                 setState(() {
-  //                                   addtocart = true;
-  //                                 });
-  //                               },
-  //                               text: '+Add',
-  //                             )
-  //                           : CustomElevatedButton(
-  //                               onPressed: () {
-  //                                 Navigator.pop(context);
-  //                                 Get.toNamed(AppRoutes.CART);
-  //                               },
-  //                               text: 'Go to cart',
-  //                             ),
-  //                     ],
-  //                   ),
-  //                   SizedBox(height: 18),
-  //                   Row(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     children: [
-  //                       Text(
-  //                         "Normal Quality\n ₹ ${service.price}",
-  //                         style: TextStyle(
-  //                             color: Colors.black,
-  //                             fontSize: 22,
-  //                             fontWeight: FontWeight.w400),
-  //                       ),
-  //                       (addtocart == false)
-  //                           ? CustomElevatedButton(
-  //                               onPressed: () {
-  //                                 addToCart(service);
-  //                                 setState(() {
-  //                                   addtocart = true;
-  //                                 });
-  //                               },
-  //                               text: '+Add',
-  //                             )
-  //                           : CustomElevatedButton(
-  //                               onPressed: () {
-  //                                 Navigator.pop(context);
-  //                                 Get.toNamed(AppRoutes.CART);
-  //                               },
-  //                               text: 'Go to cart',
-  //                             ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 
   Widget DescriptionWidget() {
     return Container(
@@ -431,7 +325,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           children: [
             ListTile(
               title: Text(
-                faq.question, // Use FAQ model
+                faq.question,
                 style: AppTextStyle.medium10.copyWith(
                   color: _isVisibleList[serviceIndex]
                       ? Color(0xff3778F2)

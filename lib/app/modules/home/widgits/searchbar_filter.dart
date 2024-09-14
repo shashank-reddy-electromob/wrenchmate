@@ -9,9 +9,9 @@ import '../../../routes/app_routes.dart';
 
 class searchbar extends StatefulWidget {
   final bool showFilter;
-  final bool readonly; // Add readonly argument
+  final bool readonly;
 
-  const searchbar({super.key, this.showFilter = true, this.readonly = false}); // Update constructor
+  const searchbar({super.key, this.showFilter = true, this.readonly = false});
 
   @override
   State<searchbar> createState() => _searchbarState();
@@ -30,18 +30,24 @@ class _searchbarState extends State<searchbar> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
+              decoration: BoxDecoration(
+                color: Color(0xffF7F7F7),
+                borderRadius: BorderRadius.circular(10), // Rounded corners
+                border: Border.all(
+                  color: Color(0xffF7F7F7), // Border color
+                  width: 1.0, // Border width
+                ),
+              ),
               width: MediaQuery.of(context).size.width * 0.75,
               height: 50,
-              color: Color(0xffF7F7F7),
               child: Center(
                 child: TextField(
                   readOnly: widget.readonly,
                   onTap: () async {
-                    if (widget.readonly) { 
+                    if (widget.readonly) {
                       print("AppRoutes.SEARCHSCREEN");
                       Get.toNamed(AppRoutes.SEARCHSCREEN);
-                                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
                     }
                   },
                   decoration: InputDecoration(
@@ -89,7 +95,7 @@ class CustomIconButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Color(0xff3B7FFF),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: IconButton(
         icon: icon,

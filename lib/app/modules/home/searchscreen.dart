@@ -34,16 +34,26 @@ class _SearchPageState extends State<SearchPage> {
                     Custombackbutton(),
                     SizedBox(width: 10),
                     Expanded(
-                      child: TextField(
-                        controller: searchController.searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Search services & Packages',
-                          hintStyle: AppTextStyle.mediumRaleway12,
-                          prefixIcon: Icon(Icons.search, color: Colors.grey),
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Color(0xffF5F5F5),
-                          contentPadding: EdgeInsets.all(10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xffF5F5F5),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Color(0xffF5F5F5),
+                            width: 1.0,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: searchController.searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Search services & Packages',
+                            hintStyle: AppTextStyle.mediumRaleway12,
+                            prefixIcon: Icon(Icons.search, color: Colors.grey),
+                            border:
+                                InputBorder.none, // Removes the default border
+                            contentPadding: EdgeInsets.all(
+                                10), // Padding inside the text field
+                          ),
                         ),
                       ),
                     ),
