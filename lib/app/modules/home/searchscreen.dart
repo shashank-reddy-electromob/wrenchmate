@@ -192,7 +192,7 @@ class _SearchPageState extends State<SearchPage> {
       }
       return true; // Allow pop
     },
-    child: Scaffold(
+    child: Scaffold(backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
