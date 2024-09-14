@@ -16,56 +16,54 @@ class toprecommendedservices extends StatefulWidget {
 class _toprecommendedservicesState extends State<toprecommendedservices> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 20),
-      child: Column(
-        children: [
-          Header(
-            text: "Top Recommended Services",
-            onTap: () {},
-            seeall: 'See all',
-          ),
-          Row(
-            children: [
-              ServiceCard(
-                serviceName: "General Wash",
-                price: "1,400",
-                rating: 4.9,
-                imagePath: 'assets/car/toprecommended1.png',
-                colors: [
-                  Color(0xff9DB3E5),
-                  Color(0xff3E31BF)
-                ], // Make sure you have an image in your assets
-              ),
-              // GradientContainer(
-              //   width: MediaQuery.of(context).size.width/2-36,
-              //   height: 120,
-              //   colors: [Color(0xff9DB3E5), Color(0xff3E31BF)], // Define the gradient colors
-              //   child: Text(""),
-              // ),
-              ServiceCard(
-                serviceName: "General Check-up",
-                price: "1,400",
-                rating: 4.9,
-                imagePath: 'assets/car/toprecommended2.png',
-                colors: [
-                  Color(0xffFEA563),
-                  Color(0xffFF5F81)
-                ], // Make sure you have an image in your assets
-              ),
-              // GradientContainer(
-              //   width: MediaQuery.of(context).size.width / 2 - 36,
-              //   height: 120,
-              //   colors: [
-              //     Color(0xffFEA563),
-              //     Color(0xffFF5F81)
-              //   ], // Define the gradient colors
-              //   child: Text(""),
-              // ),
-            ],
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Header(
+          text: "Top Recommended Services",
+          onTap: () {},
+          seeall: '',
+        ),
+        SizedBox(height: 8,),
+        Row(
+          children: [
+            ServiceCard(
+              serviceName: "General Wash",
+              price: "1,400",
+              rating: 4.9,
+              imagePath: 'assets/car/toprecommended1.png',
+              colors: [
+                Color(0xff9DB3E5),
+                Color(0xff3E31BF)
+              ], // Make sure you have an image in your assets
+            ),
+            // GradientContainer(
+            //   width: MediaQuery.of(context).size.width/2-36,
+            //   height: 120,
+            //   colors: [Color(0xff9DB3E5), Color(0xff3E31BF)], // Define the gradient colors
+            //   child: Text(""),
+            // ),
+            ServiceCard(
+              serviceName: "General Check-up",
+              price: "1,400",
+              rating: 4.9,
+              imagePath: 'assets/car/toprecommended2.png',
+              colors: [
+                Color(0xffFEA563),
+                Color(0xffFF5F81)
+              ], // Make sure you have an image in your assets
+            ),
+            // GradientContainer(
+            //   width: MediaQuery.of(context).size.width / 2 - 36,
+            //   height: 120,
+            //   colors: [
+            //     Color(0xffFEA563),
+            //     Color(0xffFF5F81)
+            //   ], // Define the gradient colors
+            //   child: Text(""),
+            // ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -87,7 +85,7 @@ class GradientContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(right:16.0,bottom: 20),
       child: Container(
         width: width,
         height: height,
