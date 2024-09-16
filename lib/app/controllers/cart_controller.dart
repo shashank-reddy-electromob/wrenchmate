@@ -37,69 +37,66 @@ class CartController extends GetxController {
     }
   }
 
-Future<void> fetchCartItems() async {
-  try {
-    isLoading.value = true;
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    QuerySnapshot snapshot = await _firestore
-        .collection('Cart')
-        .where('userId', isEqualTo: userId)
-        .get();
+  Future<void> fetchCartItems() async {
+    try {
+      isLoading.value = true;
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
+          .where('userId', isEqualTo: userId)
+          .get();
 
-    cartItems.value = snapshot.docs
-        .map((doc) => doc.data() as Map<String, dynamic>)
-        .toList();
+      cartItems.value = snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
 
-    Set<String> uniqueServiceIds = {};
-    Set<String> uniqueProductIds = {};
+      Set<String> uniqueServiceIds = {};
+      Set<String> uniqueProductIds = {};
 
-    for (var item in cartItems) {
-      if (item['serviceId'] != "NA") {
-        uniqueServiceIds.add(item['serviceId']);
+      for (var item in cartItems) {
+        if (item['serviceId'] != "NA") {
+          uniqueServiceIds.add(item['serviceId']);
+        }
+        if (item['productId'] != "NA") {
+          uniqueProductIds.add(item['productId']);
+        }
       }
-      if (item['productId'] != "NA") {
-        uniqueProductIds.add(item['productId']);
+
+      for (var serviceId in uniqueServiceIds) {
+        await serviceController.fetchServiceDataById(serviceId);
       }
-    }
+      for (var productId in uniqueProductIds) {
+        await productController.fetchProductById(productId);
+      }
+      // await fetchProductDetails(uniqueProductIds);
 
-    for (var serviceId in uniqueServiceIds) {
-      await serviceController.fetchServiceDataById(serviceId);
+      await updateTotalCost();
+    } catch (e) {
+      print("Error fetching cart items: $e");
+    } finally {
+      isLoading.value = false;
     }
-    for (var productId in uniqueProductIds) {
-      await productController.fetchProductById(productId);
-    }
-    // await fetchProductDetails(uniqueProductIds);
-
-    await updateTotalCost();
-  } catch (e) {
-    print("Error fetching cart items: $e");
-  } finally {
-    isLoading.value = false;
   }
-}
-
-
-
 
   Future<void> updateTotalCost() async {
     try {
       double subtotal = 0.0;
 
-      // Loop through cart items and calculate service price if serviceId exists
       for (var item in cartItems) {
-        if (item['serviceId'] != 'NA') {
-          var service = serviceController.services
-              .firstWhere((s) => s.id == item['serviceId']);
-          subtotal += service?.price?.toDouble() ?? 0.0;
-        }
+        subtotal += (item['price'] * item['unitsquantity']);
+        // if (item['serviceId'] != 'NA') {
+        //   var service = serviceController.services
+        //       .firstWhere((s) => s.id == item['serviceId']);
+        //   subtotal += service?.price?.toDouble() ?? 0.0;
+        // }
 
-        if (item['productId'] != 'NA') {
-          var product = await _firestore
-              .collection('Product')
-              .doc(item['productId'])
-              .get();
-          subtotal += (product['price'] ?? 0.0).toDouble();
-        }
+        // if (item['productId'] != 'NA') {
+        //   var product = await _firestore
+        //       .collection('Product')
+        //       .doc(item['productId'])
+        //       .get();
+        //   subtotal += (product['price'] ?? 0.0).toDouble();
+        // }
       }
 
       double tax = subtotal * 0.10;
@@ -117,16 +114,40 @@ Future<void> fetchCartItems() async {
     }
   }
 
-  Future<void> addToCart(
-      {required String serviceId, required String productId, required String quantity}) async {
+  Future<void> addToCart({
+    required String serviceId,
+    required String productId,
+    required String quantity,
+    required double price,
+  }) async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      await _firestore.collection('Cart').add({
-        'serviceId': serviceId,
-        'productId': productId,
-        'userId': userId,
-        'productQuantity': quantity,
-      });
+
+      QuerySnapshot existingItems = await _firestore
+          .collection('Cart')
+          .where('userId', isEqualTo: userId)
+          .where('productId', isEqualTo: productId)
+          .where('productQuantity', isEqualTo: quantity)
+          .limit(1)
+          .get();
+
+      if (existingItems.docs.isNotEmpty) {
+        DocumentSnapshot item = existingItems.docs.first;
+        int currentUnitsQuantity = item.get('unitsquantity') ?? 1;
+        await _firestore.collection('Cart').doc(item.id).update({
+          'unitsquantity': currentUnitsQuantity + 1,
+        });
+      } else {
+        await _firestore.collection('Cart').add({
+          'serviceId': serviceId,
+          'productId': productId,
+          'userId': userId,
+          'productQuantity': quantity,
+          'price': price,
+          'unitsquantity': 1,
+        });
+      }
+
       await fetchCartItems();
       await updateTotalCost();
     } catch (e) {
@@ -153,134 +174,149 @@ Future<void> fetchCartItems() async {
     }
   }
 
-  Future<void> deleteProductsFromCart(String serviceId) async {
-    try {
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      QuerySnapshot snapshot = await _firestore
-          .collection('Cart')
-          .where('userId', isEqualTo: userId)
-          .where('productId', isEqualTo: serviceId)
-          .get();
+Future<void> deleteProductsFromCart(String productId, int unitsQuantity) async {
+  try {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    QuerySnapshot snapshot = await _firestore
+        .collection('Cart')
+        .where('userId', isEqualTo: userId)
+        .where('productId', isEqualTo: productId)
+        .get();
 
-      for (var doc in snapshot.docs) {
+    for (var doc in snapshot.docs) {
+      int currentUnitsQuantity = doc['unitsquantity'];
+      
+      if (currentUnitsQuantity > 1) {
+        await doc.reference.update({
+          'unitsquantity': currentUnitsQuantity - 1,
+        });
+      } else {
         await doc.reference.delete();
       }
-
-      await fetchCartItems();
-    } catch (e) {
-      print("Error deleting service from cart: $e");
     }
+
+    await fetchCartItems();
+  } catch (e) {
+    print("Error deleting product from cart: $e");
   }
-void addToCartSnackbar(
-  BuildContext context,
-  CartController cartController,
-  Servicefirebase service,
-  GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
-) async {
-  print("adding to cart");
+}
 
-  await cartController.addToCart(serviceId: service.id, productId: 'NA', quantity: 'NA');
+  void addToCartSnackbar(
+    BuildContext context,
+    CartController cartController,
+    Servicefirebase service,
+    GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
+  ) async {
+    print("adding to cart");
 
-  print("added to cart");
+    double price = service.price;
 
-  double updatedAmount = cartController.totalAmount.value;
+    await cartController.addToCart(
+      serviceId: service.id,
+      productId: 'NA',
+      quantity: 'NA',
+      price: price,
+    );
 
-  if (!context.mounted) return;
+    print("added to cart");
 
-  final snackBarContent = Obx(() => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                'Total Amount: \₹${updatedAmount.toStringAsFixed(2)}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Get.toNamed(AppRoutes.CART);
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              child: Text(
-                'Checkout',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: primaryColor,
-                  fontFamily: 'Raleway',
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ));
+    double updatedAmount = cartController.totalAmount.value;
 
-  // ScaffoldMessenger.of(context).showSnackBar(
-  //   SnackBar(
-  //     key: ValueKey('cartSnackBar'),
-  //     backgroundColor: primaryColor,
-  //     content: snackBarContent,
-  //     duration: Duration(days: 1),
-  //   ),
-  // );
-
-  cartController.totalAmount.listen((newTotal) {
     if (!context.mounted) return;
 
-    // ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    final snackBarContent = Obx(() => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Total Amount: \₹${updatedAmount.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Get.toNamed(AppRoutes.CART);
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+                child: Text(
+                  'Checkout',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: primaryColor,
+                    fontFamily: 'Raleway',
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ));
+
     // ScaffoldMessenger.of(context).showSnackBar(
     //   SnackBar(
     //     key: ValueKey('cartSnackBar'),
     //     backgroundColor: primaryColor,
-    //     content: Obx(() => Padding(
-    //           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-    //           child: Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //             children: [
-    //               Expanded(
-    //                 child: Text(
-    //                   'Total Amount: \₹${newTotal.toStringAsFixed(2)}',
-    //                   style: TextStyle(
-    //                     color: Colors.white,
-    //                     fontSize: 18,
-    //                     fontWeight: FontWeight.bold,
-    //                   ),
-    //                 ),
-    //               ),
-    //               ElevatedButton(
-    //                 onPressed: () {
-    //                   Get.toNamed(AppRoutes.CART);
-    //                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    //                 },
-    //                 child: Text(
-    //                   'Checkout',
-    //                   style: TextStyle(
-    //                     fontSize: 16,
-    //                     color: primaryColor,
-    //                     fontFamily: 'Raleway',
-    //                   ),
-    //                 ),
-    //                 style: ElevatedButton.styleFrom(
-    //                   backgroundColor: Colors.white,
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         )),
+    //     content: snackBarContent,
     //     duration: Duration(days: 1),
     //   ),
     // );
-  
-  });
-}
+
+    cartController.totalAmount.listen((newTotal) {
+      if (!context.mounted) return;
+
+      // ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     key: ValueKey('cartSnackBar'),
+      //     backgroundColor: primaryColor,
+      //     content: Obx(() => Padding(
+      //           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+      //           child: Row(
+      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //             children: [
+      //               Expanded(
+      //                 child: Text(
+      //                   'Total Amount: \₹${newTotal.toStringAsFixed(2)}',
+      //                   style: TextStyle(
+      //                     color: Colors.white,
+      //                     fontSize: 18,
+      //                     fontWeight: FontWeight.bold,
+      //                   ),
+      //                 ),
+      //               ),
+      //               ElevatedButton(
+      //                 onPressed: () {
+      //                   Get.toNamed(AppRoutes.CART);
+      //                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      //                 },
+      //                 child: Text(
+      //                   'Checkout',
+      //                   style: TextStyle(
+      //                     fontSize: 16,
+      //                     color: primaryColor,
+      //                     fontFamily: 'Raleway',
+      //                   ),
+      //                 ),
+      //                 style: ElevatedButton.styleFrom(
+      //                   backgroundColor: Colors.white,
+      //                 ),
+      //               ),
+      //             ],
+      //           ),
+      //         )),
+      //     duration: Duration(days: 1),
+      //   ),
+      // );
+    });
+  }
 
   void addProductToCartSnackbar(
     BuildContext context,
@@ -291,7 +327,14 @@ void addToCartSnackbar(
   ) async {
     print("product adding to cart");
 
-    await cartController.addToCart(serviceId: 'NA', productId: product.id, quantity: productQuantity);
+    double totalPrice = product.getPriceForQuantity(productQuantity);
+
+    await cartController.addToCart(
+      serviceId: 'NA',
+      productId: product.id,
+      quantity: productQuantity,
+      price: totalPrice,
+    );
 
     print("product added to cart");
 
@@ -306,7 +349,7 @@ void addToCartSnackbar(
             children: [
               Expanded(
                 child: Text(
-                  'Total Amount: \₹${updatedAmount.toStringAsFixed(2)}',
+                  'Total Amount: ₹${updatedAmount.toStringAsFixed(2)}',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -360,7 +403,7 @@ void addToCartSnackbar(
                   children: [
                     Expanded(
                       child: Text(
-                        'Total Amount: \₹${newTotal.toStringAsFixed(2)}',
+                        'Total Amount: ₹${newTotal.toStringAsFixed(2)}',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -393,4 +436,21 @@ void addToCartSnackbar(
       );
     });
   }
+
+  Future<bool> isServiceInCart(String serviceId) async {
+  try {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    QuerySnapshot snapshot = await _firestore
+        .collection('Cart')
+        .where('userId', isEqualTo: userId)
+        .where('serviceId', isEqualTo: serviceId)
+        .get();
+
+    return snapshot.docs.isNotEmpty;
+  } catch (e) {
+    print("Error checking if service is in cart: $e");
+    return false;
+  }
+}
+
 }

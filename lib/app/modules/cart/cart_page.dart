@@ -72,21 +72,22 @@ class _CartPageState extends State<CartPage> {
     try {
       setState(() {
         totalAmount = cartController.cartItems.fold<double>(0, (sum, item) {
-          if (item['productId'] != "NA") {
-            var product = productController.products.firstWhere(
-              (p) => p.id == item['productId'],
-              // orElse: () => null,
-            );
-            sum += product.price ?? 0;
-          }
+          sum += (item['price'] * item['unitsquantity']);
+          // if (item['productId'] != "NA") {
+          //   var product = productController.products.firstWhere(
+          //     (p) => p.id == item['productId'],
+          //     // orElse: () => null,
+          //   );
+          //   sum += product.price ?? 0;
+          // }
 
-          if (item['serviceId'] != "NA") {
-            var service = serviceController.services.firstWhere(
-              (s) => s.id == item['serviceId'],
-              // orElse: () => null,
-            );
-            sum += service.price ?? 0;
-          }
+          // if (item['serviceId'] != "NA") {
+          //   var service = serviceController.services.firstWhere(
+          //     (s) => s.id == item['serviceId'],
+          //     // orElse: () => null,
+          //   );
+          //   sum += service.price ?? 0;
+          // }
 
           return sum;
         });
@@ -178,6 +179,7 @@ class _CartPageState extends State<CartPage> {
                                 productName: '',
                                 image: 'https://via.placeholder.com/150',
                                 quantitiesAvailable: [],
+                                pricesAvailable: [],
                                 quantity: '',
                                 averageReview: 0.0,
                                 numberOfReviews: 0,
@@ -204,7 +206,9 @@ class _CartPageState extends State<CartPage> {
                                         style: AppTextStyle.mediumRaleway12),
                                     SizedBox(height: 4),
                                     Text(
-                                      '₹ ${product.price.toStringAsFixed(2)}',
+                                      cartItem['unitsquantity'] > 1
+                                          ? '₹ ${cartItem['price']} x ${cartItem['unitsquantity']}'
+                                          : '₹ ${cartItem['price']}',
                                       style: AppTextStyle.semiboldpurple12
                                           .copyWith(color: blackColor),
                                     ),
@@ -284,13 +288,16 @@ class _CartPageState extends State<CartPage> {
                                         if (cartItem['productId'] != "NA") {
                                           await cartController
                                               .deleteProductsFromCart(
-                                                  cartItem['productId']);
+                                            cartItem['productId'],
+                                            cartItem['unitsquantity'],
+                                          );
                                         } else if (cartItem['serviceId'] !=
                                             "NA") {
                                           await cartController
                                               .deleteServicesFromCart(
                                                   cartItem['serviceId']);
                                         }
+
                                         if (cartController.cartItems.isEmpty) {
                                           Get.offAllNamed(AppRoutes.BOTTOMNAV);
                                         } else {
@@ -429,7 +436,8 @@ class _CartPageState extends State<CartPage> {
                             '', // confirmation_note
                             '', // outForService_note
                             '', // completed_note
-                            currentCar.toString(), // Ensure currentCar is passed as a String
+                            currentCar
+                                .toString(), // Ensure currentCar is passed as a String
                           );
 
                           // Optionally show a success message

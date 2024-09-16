@@ -41,7 +41,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     product = Get.arguments;
     cartController = Get.put(CartController());
     productController = Get.put(ProductController());
-
+    selectedPrice = product.price.toDouble();
     fetchData(product);
     // _isVisibleList = List<bool>.filled(controller.faqs.length, false);
   }
@@ -215,7 +215,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           Text(product.productName, style: AppTextStyle.semibold18),
           Row(
             children: [
-              Text("₹ ${product.price}", style: AppTextStyle.semibold14),
+              Text("₹ ${selectedPrice ?? product.price}",
+                  style: AppTextStyle.semibold14),
               // Spacer(),
               Icon(Icons.star, color: Colors.yellow, size: 16),
               Text("${product.averageReview}",
@@ -234,7 +235,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             context,
                             cartController,
                             product,
-                            selectedQuantity??product.quantity,
+                            selectedQuantity ?? product.quantity,
                             scaffoldMessengerKey,
                           );
                           setState(() {
@@ -256,7 +257,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           SizedBox(height: 8),
           Row(
             children: product.quantitiesAvailable
-                .map((quantity) => buildQuantityButton(quantity))
+                .asMap()
+                .entries
+                .map((entry) => buildQuantityButton(entry.value,
+                    double.parse(product.pricesAvailable[entry.key])))
                 .toList(),
           ),
         ],
@@ -265,13 +269,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   String? selectedQuantity;
+  double? selectedPrice;
 
-  Widget buildQuantityButton(String quantity) {
+  Widget buildQuantityButton(String quantity, double price) {
     bool isSelected = selectedQuantity == quantity;
     return GestureDetector(
       onTap: () {
         setState(() {
           selectedQuantity = quantity;
+          selectedPrice = price; // Update the selected price
         });
       },
       child: Padding(

@@ -59,6 +59,7 @@ class ProductController extends GetxController {
           image: data['image'] ?? 'https://via.placeholder.com/150',
           quantitiesAvailable:
               List<String>.from(data['quantities_available'] ?? []),
+          pricesAvailable: List<String>.from(data['prices_available'] ?? []),
           quantity: data['quantity'] ?? '',
           averageReview: (data['averageReview'] is int
               ? (data['averageReview'] as int).toDouble()
