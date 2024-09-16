@@ -289,7 +289,10 @@ class _HomePageState extends State<HomePage> {
                       searchbar(readonly: true),
                       offersSliders(),
                       serviceswidgit(),
-                      toprecommendedservices(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal:  20.0),
+                        child: toprecommendedservices(),
+                      ),
                     ],
                   ),
                 ),

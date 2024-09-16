@@ -106,7 +106,7 @@ class ServicesType extends StatelessWidget {
   const ServicesType({
     Key? key,
     required this.text,
-    this.borderSides = const [], // Default to no borders
+    this.borderSides = const [],
     this.borderColor = const Color(0xffE7E7E7),
     this.borderWidth = 1.0,
     required this.imagePath,
