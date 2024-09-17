@@ -287,7 +287,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: 12),
                       searchbar(readonly: true),
-                      offersSliders(),
+                      OffersSliders(),
                       serviceswidgit(),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal:  20.0),
