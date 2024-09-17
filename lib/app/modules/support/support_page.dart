@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wrenchmate_user_app/app/modules/support/widgets/socialmediatabs.dart';
 import '../../controllers/support_controller.dart';
 import '../booking/widgets/tabButton.dart';
@@ -11,6 +12,11 @@ class SupportPage extends StatefulWidget {
 
 class _SupportPageState extends State<SupportPage> {
   String selectedTab = 'FAQ';
+  final Uri _facebookurl = Uri.parse('https://www.facebook.com/share/ukeBPBwWBrstR7vo/?mibextid=qi2Omg');
+  final Uri _instagramurl = Uri.parse('https://www.instagram.com/wrench_mate?igsh=bXZxcGFnNDhreW1u&utm_source=qr');
+  final Uri _xurl = Uri.parse('https://x.com/Wrench_Mate?t=HghACtlqQa3syL4W3wzv3A&s=08');
+
+
 
   final List<Map<String, String>> faqs = [
     {
@@ -103,15 +109,22 @@ class _SupportPageState extends State<SupportPage> {
                     CustomContainer(
                         imagePath: 'assets/socials/facebook.png',
                         text: "Facebook",
-                        onTap: () {}), // Provide a valid function
+                        onTap: () async {
+                          await launchUrl(_facebookurl);
+                    }),
                     CustomContainer(
                         imagePath: 'assets/socials/instagram.png',
                         text: "Instagram",
-                        onTap: () {}), // Provide a valid function
+                        onTap: () async {
+                          await launchUrl(_instagramurl);
+                        }),
                     CustomContainer(
                         imagePath: 'assets/socials/twt.png',
                         text: "Twitter",
-                        onTap: () {}), // Provide a valid function
+                        onTap: () async {
+                          await launchUrl(_xurl);
+                        }
+                    ), // Provide a valid function
                   ],
                 ),
             ],
