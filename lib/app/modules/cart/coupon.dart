@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 
@@ -12,6 +16,7 @@ class ApplyCouponScreen extends StatefulWidget {
 class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isButtonEnabled = false;
+  final CartController cartController = Get.find<CartController>();
 
   @override
   void initState() {
@@ -29,6 +34,14 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
     super.dispose();
   }
 
+  Future<List<Map<String, dynamic>>> _fetchCoupons() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('Coupon').get();
+    return snapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,98 +51,91 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
           Navigator.of(context).pop();
         },
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  hintText: 'Enter Coupon Code',
-                  hintStyle: TextStyle(fontFamily: 'Poppins'),
-                  suffixIcon: TextButton(
-                    onPressed: _isButtonEnabled
-                        ? () {
-                            // Handle apply coupon code logic here
-                            print("Coupon code applied: ${_controller.text}");
-                          }
-                        : null, // Disable the button when the text is empty
-                    child: Text(
-                      'Apply',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        color: _isButtonEnabled
-                            ? Colors.blue // Enabled color
-                            : Colors.grey, // Disabled color
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _fetchCoupons(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No Coupons Available'));
+          } else {
+            final coupons = snapshot.data!;
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: 'Enter Coupon Code',
+                        hintStyle: TextStyle(fontFamily: 'Poppins'),
+                        suffixIcon: TextButton(
+                          onPressed: _isButtonEnabled
+                              ? () {
+                                  print(
+                                      "Coupon code applied: ${_controller.text}");
+                                }
+                              : null,
+                          child: Text(
+                            'Apply',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              color:
+                                  _isButtonEnabled ? Colors.blue : Colors.grey,
+                            ),
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    SizedBox(height: 24),
+                    Text(
+                      'Available Coupons',
+                      style: TextStyle(
+                        color: Color(0xff5D5D5D),
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: coupons.length,
+                      itemBuilder: (context, index) {
+                        final coupon = coupons[index];
+                        return CouponCard(
+                          color: primaryColor,
+                          code: coupon['name'] ?? 'N/A',
+                          discount: 'Save up to ${coupon['price']}',
+                          description: coupon['description'] ??
+                              'No Description Available',
+                          onApply: () {
+                            String couponCode = coupon['name'];
+                            if (couponCode.isNotEmpty) {
+                              cartController.applyCoupon(
+                                  couponCode, coupon['price']);
+                            } else {
+                              Get.snackbar("Invalid Input",
+                                  "Please enter a valid coupon code");
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 24),
-              Text(
-                'Best Coupon',
-                style: TextStyle(
-                  color: Color(0xff5D5D5D),
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              SizedBox(height: 12),
-              CouponCard(
-                color: Colors.blue,
-                code: 'WM023',
-                discount: 'Save upto 40%',
-                description:
-                    'Lorem ipsum dolor sit amet consectetur. Tristique ridiculus nulla eget eget ac risus arcu natoque.',
-                onApply: () {},
-              ),
-              SizedBox(height: 24),
-              Text(
-                'More Offers',
-                style: TextStyle(
-                  color: Color(0xff5D5D5D),
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              SizedBox(height: 12),
-              ListView(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                children: [
-                  CouponCard(
-                    color: Colors.grey.shade300,
-                    code: 'WM023',
-                    discount: 'Save upto 40%',
-                    description:
-                        'Lorem ipsum dolor sit amet consectetur. Tristique ridiculus nulla eget eget ac risus arcu natoque.',
-                    onApply: () {
-                      // Handle apply more offer
-                    },
-                  ),
-                  CouponCard(
-                    color: Colors.grey.shade300,
-                    code: 'WM023',
-                    discount: 'Save upto 40%',
-                    description:
-                        'Lorem ipsum dolor sit amet consectetur. Tristique ridiculus nulla eget eget ac risus arcu natoque.',
-                    onApply: () {
-                      // Handle apply more offer
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+            );
+          }
+        },
       ),
     );
   }

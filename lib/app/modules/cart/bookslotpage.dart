@@ -5,12 +5,12 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 
-class BookingDetailsScreen extends StatefulWidget {
+class BookSlot extends StatefulWidget {
   @override
-  _BookingDetailsScreenState createState() => _BookingDetailsScreenState();
+  _BookSlotState createState() => _BookSlotState();
 }
 
-class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
+class _BookSlotState extends State<BookSlot> {
   int selectedAddressIndex = 0;
   int selectedDateIndex = 0;
   SfRangeValues _values = SfRangeValues(40.0, 80.0);
@@ -31,7 +31,6 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Address Selection
                 Text(
                   'Address',
                   style: TextStyle(

@@ -12,10 +12,12 @@ class AppRoutes {
   static const String FILTERED_RESULTS = '/filteredResults';
 
   static const PAYMENT = '/payment';
+  static const COUPOUNS = '/coupons';
   static const CART = '/cart';
   static const BOOKING_DETAILS = '/booking-details';
   static const BOOKING = '/booking';
   static const BOOKING_DETAIL = '/booking-detail';
+  static const BOOK_SLOT = '/book-slot';
   static const REVIEW = '/review';
   static const CAR = '/car';
   static const CAR_REGISTER = '/car-register';

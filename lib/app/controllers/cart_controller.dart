@@ -174,32 +174,33 @@ class CartController extends GetxController {
     }
   }
 
-Future<void> deleteProductsFromCart(String productId, int unitsQuantity) async {
-  try {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    QuerySnapshot snapshot = await _firestore
-        .collection('Cart')
-        .where('userId', isEqualTo: userId)
-        .where('productId', isEqualTo: productId)
-        .get();
+  Future<void> deleteProductsFromCart(
+      String productId, int unitsQuantity) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
+          .where('userId', isEqualTo: userId)
+          .where('productId', isEqualTo: productId)
+          .get();
 
-    for (var doc in snapshot.docs) {
-      int currentUnitsQuantity = doc['unitsquantity'];
-      
-      if (currentUnitsQuantity > 1) {
-        await doc.reference.update({
-          'unitsquantity': currentUnitsQuantity - 1,
-        });
-      } else {
-        await doc.reference.delete();
+      for (var doc in snapshot.docs) {
+        int currentUnitsQuantity = doc['unitsquantity'];
+
+        if (currentUnitsQuantity > 1) {
+          await doc.reference.update({
+            'unitsquantity': currentUnitsQuantity - 1,
+          });
+        } else {
+          await doc.reference.delete();
+        }
       }
-    }
 
-    await fetchCartItems();
-  } catch (e) {
-    print("Error deleting product from cart: $e");
+      await fetchCartItems();
+    } catch (e) {
+      print("Error deleting product from cart: $e");
+    }
   }
-}
 
   void addToCartSnackbar(
     BuildContext context,
@@ -438,19 +439,44 @@ Future<void> deleteProductsFromCart(String productId, int unitsQuantity) async {
   }
 
   Future<bool> isServiceInCart(String serviceId) async {
-  try {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    QuerySnapshot snapshot = await _firestore
-        .collection('Cart')
-        .where('userId', isEqualTo: userId)
-        .where('serviceId', isEqualTo: serviceId)
-        .get();
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
+          .where('userId', isEqualTo: userId)
+          .where('serviceId', isEqualTo: serviceId)
+          .get();
 
-    return snapshot.docs.isNotEmpty;
-  } catch (e) {
-    print("Error checking if service is in cart: $e");
-    return false;
+      return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      print("Error checking if service is in cart: $e");
+      return false;
+    }
   }
-}
 
+  RxString appliedCoupon = ''.obs;
+  RxDouble discountAmount = 0.0.obs;
+
+  void applyCoupon(String couponCode, double amount) {
+    appliedCoupon.value = couponCode;
+    if (couponCode != '') {
+      discountAmount.value = amount;
+    } else {
+      discountAmount.value = 0.0;
+      Get.snackbar("Invalid Coupon", "The coupon code is not valid");
+    }
+
+    updateTotalWithDiscount();
+  }
+
+  void updateTotalWithDiscount() {
+    totalAmount.value -= discountAmount.value;
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    _firestore.collection('User').doc(userId).update({
+      'total_cost_cart': totalAmount.value,
+    });
+
+    Get.toNamed(AppRoutes.CART);
+  }
 }

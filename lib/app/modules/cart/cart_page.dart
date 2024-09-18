@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
 import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
 import 'package:wrenchmate_user_app/app/data/models/product_model.dart';
+import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/containerButton.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/pricing.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
@@ -320,7 +321,9 @@ class _CartPageState extends State<CartPage> {
                   ),
                   containerButton(
                     text: "Apply Coupon",
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.COUPOUNS);
+                    },
                     icon: Icons.add_card,
                   ),
                   //pricings
@@ -344,6 +347,11 @@ class _CartPageState extends State<CartPage> {
                         Pricing(
                             text: "Subtotal", price: totalAmount.toString()),
                         Pricing(text: "Tax", price: tax.toString()),
+                        if (cartController.discountAmount.value > 0)
+                          Pricing(
+                              text: "Discount Applied:",
+                              price:
+                                  '-₹${cartController.discountAmount.value.toStringAsFixed(2)}'),
                         Divider(
                           color: Color(0xFFF0F0F0),
                           thickness: 1,
@@ -354,7 +362,8 @@ class _CartPageState extends State<CartPage> {
                             Text("Total",
                                 style: TextStyle(
                                     fontSize: 16, fontFamily: 'Raleway')),
-                            Text('\₹ ${finalAmount?.toStringAsFixed(2)}',
+                            Text(
+                                '₹ ${(cartController.totalAmount.value - cartController.discountAmount.value).toStringAsFixed(2)}',
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -366,11 +375,13 @@ class _CartPageState extends State<CartPage> {
                   ),
                   containerButton(
                     text: "Booking Detail",
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.BOOK_SLOT);
+                    },
                     icon: Icons.file_copy_outlined,
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.12,
                   )
                 ],
               ),
@@ -389,7 +400,7 @@ class _CartPageState extends State<CartPage> {
                   Column(
                     children: [
                       Text(
-                          '\₹ ${finalAmount?.toStringAsFixed(2)}', // This will now update dynamically
+                          '₹${(cartController.totalAmount.value - cartController.discountAmount.value).toStringAsFixed(2)}', // This will now update dynamically
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,

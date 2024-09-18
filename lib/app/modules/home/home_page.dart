@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Total Amount: ₹${cartController.totalAmount.value.toStringAsFixed(2)}',
+                          'Total Amount: ₹${(cartController.totalAmount.value - cartController.discountAmount.value).toStringAsFixed(2)}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -113,12 +113,13 @@ class _HomePageState extends State<HomePage> {
                 )),
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.only(
-              bottom: MediaQuery.of(context).size.height * 0.01, left: 10, right: 10
-            ),
+                bottom: MediaQuery.of(context).size.height * 0.01,
+                left: 10,
+                right: 10),
             duration: Duration(days: 1),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    
+
           cartController.totalAmount.listen((newTotal) {
             if (!mounted) return;
             ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -290,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                       OffersSliders(),
                       serviceswidgit(),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal:  20.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: toprecommendedservices(),
                       ),
                     ],

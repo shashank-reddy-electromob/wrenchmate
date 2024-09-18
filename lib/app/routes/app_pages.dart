@@ -3,6 +3,8 @@ import 'package:wrenchmate_user_app/app/bindings/product_bidings.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_register.dart';
 import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
+import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
+import 'package:wrenchmate_user_app/app/modules/cart/coupon.dart';
 import 'package:wrenchmate_user_app/app/modules/home/filterdatascreen.dart';
 import 'package:wrenchmate_user_app/app/modules/home/searchscreen.dart';
 import 'package:wrenchmate_user_app/app/modules/product/product_details.dart';
@@ -139,5 +141,13 @@ class AppPages {
         name: AppRoutes.PRODUCT_DETAILS,
         page: () => ProductDetailPage(),
         binding: ProductBinding()),
+    GetPage(
+        name: AppRoutes.BOOK_SLOT,
+        page: () => BookSlot(),
+        binding: CartBinding()), 
+    GetPage(
+        name: AppRoutes.COUPOUNS,
+        page: () => ApplyCouponScreen(),
+        binding: CartBinding()),        
   ];
 }
