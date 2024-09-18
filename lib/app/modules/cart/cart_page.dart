@@ -351,7 +351,7 @@ class _CartPageState extends State<CartPage> {
                           Pricing(
                               text: "Discount Applied:",
                               price:
-                                  '-₹${cartController.discountAmount.value.toStringAsFixed(2)}'),
+                                  '-${cartController.discountAmount.value.toStringAsFixed(2)}'),
                         Divider(
                           color: Color(0xFFF0F0F0),
                           thickness: 1,

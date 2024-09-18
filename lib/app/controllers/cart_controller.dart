@@ -457,17 +457,22 @@ class CartController extends GetxController {
   RxString appliedCoupon = ''.obs;
   RxDouble discountAmount = 0.0.obs;
 
-  void applyCoupon(String couponCode, double amount) {
-    appliedCoupon.value = couponCode;
-    if (couponCode != '') {
-      discountAmount.value = amount;
-    } else {
-      discountAmount.value = 0.0;
-      Get.snackbar("Invalid Coupon", "The coupon code is not valid");
-    }
-
-    updateTotalWithDiscount();
+void applyCoupon(String couponCode, double amount) {
+  if (appliedCoupon.value.isNotEmpty) {
+    totalAmount.value += discountAmount.value; 
   }
+
+  appliedCoupon.value = couponCode;
+  if (couponCode != '') {
+    discountAmount.value = amount;
+    totalAmount.value -= discountAmount.value; 
+  } else {
+    discountAmount.value = 0.0;
+    Get.snackbar("Invalid Coupon", "The coupon code is not valid");
+  }
+
+  updateTotalWithDiscount();
+}
 
   void updateTotalWithDiscount() {
     totalAmount.value -= discountAmount.value;
