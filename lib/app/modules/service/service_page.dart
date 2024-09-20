@@ -68,11 +68,11 @@ class _ServicePageState extends State<ServicePage> {
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    addToCartStates = List<bool>.filled(filteredServices.length, false);
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   addToCartStates = List<bool>.filled(filteredServices.length, false);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -313,7 +313,6 @@ class _ServicePageState extends State<ServicePage> {
                                                 ],
                                               ),
                                             ),
-                                            //add button
                                             Positioned(
                                               top: MediaQuery.of(context)
                                                       .size
@@ -325,19 +324,40 @@ class _ServicePageState extends State<ServicePage> {
                                                   0.04,
                                               child: !addToCartStates[index]
                                                   ? CustomElevatedButton(
-                                                      onPressed: () {
-                                                        cartController
-                                                            .addToCartSnackbar(
-                                                          context,
-                                                          cartController,
-                                                          service,
-                                                          scaffoldMessengerKey,
-                                                        );
-                                                        // addToCart(service);
-                                                        setState(() {
-                                                          addToCartStates[
-                                                              index] = true;
-                                                        });
+                                                      onPressed: () async {
+                                                        String serviceId =
+                                                            service.id;
+                                                        bool isInCart =
+                                                            await cartController
+                                                                .isServiceInCart(
+                                                                    serviceId);
+
+                                                        if (isInCart) {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                  'Service already in cart'),
+                                                              duration:
+                                                                  Duration(
+                                                                      seconds:
+                                                                          2),
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          cartController
+                                                              .addToCartSnackbar(
+                                                            context,
+                                                            cartController,
+                                                            service,
+                                                            scaffoldMessengerKey,
+                                                          );
+                                                          // setState(() {
+                                                            addToCartStates[
+                                                                index] = true;
+                                                          // });
+                                                        }
                                                       },
                                                       text: '+Add',
                                                     )
@@ -351,7 +371,7 @@ class _ServicePageState extends State<ServicePage> {
                                                       },
                                                       text: 'Go to cart',
                                                     ),
-                                            ),
+                                            )
                                           ],
                                         ),
                                       ),

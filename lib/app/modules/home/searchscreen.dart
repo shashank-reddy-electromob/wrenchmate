@@ -22,13 +22,15 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final ServiceController serviceController = Get.put(ServiceController());
   final TextEditingController _searchController = TextEditingController();
-  List<Servicefirebase> topServices = []; // List of services from topServices collection
-  List<String> topServiceIds = []; // Store the list of IDs from topServices collection
+  List<Servicefirebase> topServices =
+      []; // List of services from topServices collection
+  List<String> topServiceIds =
+      []; // Store the list of IDs from topServices collection
   List<Servicefirebase> services = <Servicefirebase>[];
   List<Servicefirebase> _resultList = [];
   List<String> topCategories = [];
   List<String> searchHistory = [];
-  bool _istyping=false;
+  bool _istyping = false;
   bool _isSearching = false;
 
   final Map<String, String> categoryImageMap = {
@@ -87,19 +89,21 @@ class _SearchPageState extends State<SearchPage> {
     searchResultList();
   }
 
-
   getClientData() async {
     // Fetch the current user data (assuming you have the user ID)
     String userId = FirebaseAuth.instance.currentUser!.uid;
 
-    var userDoc = await FirebaseFirestore.instance.collection("User").doc(userId).get();
+    var userDoc =
+        await FirebaseFirestore.instance.collection("User").doc(userId).get();
 
     if (userDoc.exists) {
       // Extract the list of car details
-      List<String> userCarDetails = List<String>.from(userDoc.data()?['User_carDetails'] ?? []);
+      List<String> userCarDetails =
+          List<String>.from(userDoc.data()?['User_carDetails'] ?? []);
 
       // Extract car models from the User_carDetails
-      List<String> userCarModels = userCarDetails.map((detail) => detail.split(';')[0]).toList();
+      List<String> userCarModels =
+          userCarDetails.map((detail) => detail.split(';')[0]).toList();
 
       // Fetch services that match the user's car models
       var data = await FirebaseFirestore.instance
@@ -128,15 +132,13 @@ class _SearchPageState extends State<SearchPage> {
       }).toList();
 
       topServices = services.where((service) {
-            return topServiceIds.contains(service.id);
-          }).toList();
+        return topServiceIds.contains(service.id);
+      }).toList();
       setState(() {
         _resultList = services;
       });
-    } else {
-    }
+    } else {}
   }
-
 
   // Dynamic searching as you type
   void searchResultList() {
@@ -153,7 +155,6 @@ class _SearchPageState extends State<SearchPage> {
       });
     }
   }
-
 
   @override
   void didChangeDependencies() {
@@ -182,265 +183,278 @@ class _SearchPageState extends State<SearchPage> {
     Get.lazyPut(() => SearchControllerClass());
     return WillPopScope(
         onWillPop: () async {
-      // Check if the text controller has any input
-      if (_searchController.text.isNotEmpty) {
-        _searchController.clear(); // Clear the text controller
-        setState(() {
-          _isSearching = false;
-        });
-        return false; // Prevent pop
-      }
-      return true; // Allow pop
-    },
-    child: Scaffold(backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          // Check if the text controller has any input
+          if (_searchController.text.isNotEmpty) {
+            _searchController.clear(); // Clear the text controller
+            setState(() {
+              _isSearching = false;
+            });
+            return false; // Prevent pop
+          }
+          return true; // Allow pop
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Custombackbutton(),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: const InputDecoration(
-                          hintText: 'Search services & Packages',
-                          hintStyle: AppTextStyle.mediumRaleway12,
-                          prefixIcon: Icon(Icons.search, color: Colors.grey),
-                          border: InputBorder.none,
-                          filled: true,
-                          fillColor: Color(0xffF5F5F5),
-                          contentPadding: EdgeInsets.all(10),
+                    Row(
+                      children: [
+                        Custombackbutton(),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: const InputDecoration(
+                              hintText: 'Search services & Packages',
+                              hintStyle: AppTextStyle.mediumRaleway12,
+                              prefixIcon:
+                                  Icon(Icons.search, color: Colors.grey),
+                              border: InputBorder.none,
+                              filled: true,
+                              fillColor: Color(0xffF5F5F5),
+                              contentPadding: EdgeInsets.all(10),
+                            ),
+                            onSubmitted: (text) {
+                              if (text.isNotEmpty) {
+                                saveSearchHistory(
+                                    text); // Save the search history when Enter is pressed
+                                searchResultList();
+                              }
+                            },
+                            onChanged: (text) {
+                              searchResultList(); // Perform search dynamically as the user types
+                            },
+                          ),
                         ),
-                        onSubmitted: (text) {
-                          if (text.isNotEmpty) {
-                            saveSearchHistory(text); // Save the search history when Enter is pressed
-                            searchResultList();
-                          }
-                        },
-                        onChanged: (text) {
-                          searchResultList(); // Perform search dynamically as the user types
-                        },
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                if (!_isSearching) ...[
-                  // Show the search history label if not empty
-                  searchHistory.isNotEmpty
-                      ? Text(
-                          'Your search history',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              fontFamily: 'Poppins'))
-                      : Container(),
-                  searchHistory.isNotEmpty ? SizedBox(height: 10) : Container(),
-                  searchHistory.isNotEmpty
-                      ? SizedBox(
-                          height: 40,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: searchHistory.length,
-                            itemBuilder: (context, index) {
-                              final reversedHistory =
-                                  searchHistory.reversed.toList();
-                              return GestureDetector(
-                                onTap: () {
-                                  _searchController.text =
-                                      reversedHistory[index];
-                                  searchResultList();
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xffEEEEEE),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        reversedHistory[index],
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Color(0xff04565A),
+                    SizedBox(height: 20),
+                    if (!_isSearching) ...[
+                      // Show the search history label if not empty
+                      searchHistory.isNotEmpty
+                          ? Text('Your search history',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  fontFamily: 'Poppins'))
+                          : Container(),
+                      searchHistory.isNotEmpty
+                          ? SizedBox(height: 10)
+                          : Container(),
+                      searchHistory.isNotEmpty
+                          ? SizedBox(
+                              height: 40,
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: searchHistory.length,
+                                itemBuilder: (context, index) {
+                                  final reversedHistory =
+                                      searchHistory.reversed.toList();
+                                  return GestureDetector(
+                                    onTap: () {
+                                      _searchController.text =
+                                          reversedHistory[index];
+                                      searchResultList();
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xffEEEEEE),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            reversedHistory[index],
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Color(0xff04565A),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            },
+                                  );
+                                },
+                              ),
+                            )
+                          : Container(),
+                      SizedBox(height: 20),
+                      Text('Popular Services',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              fontFamily: 'Poppins')),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          ServiceCard(
+                            serviceName: "General Wash",
+                            price: "1,400",
+                            rating: 4.9,
+                            imagePath: 'assets/car/toprecommended1.png',
+                            colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
                           ),
-                        )
-                      : Container(),
-                  SizedBox(height: 20),
-                  Text('Popular Services',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          fontFamily: 'Poppins')),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      ServiceCard(
-                        serviceName: "General Wash",
-                        price: "1,400",
-                        rating: 4.9,
-                        imagePath: 'assets/car/toprecommended1.png',
-                        colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
+                          ServiceCard(
+                            serviceName: "General Check-up",
+                            price: "1,400",
+                            rating: 4.9,
+                            imagePath: 'assets/car/toprecommended2.png',
+                            colors: [Color(0xffFEA563), Color(0xffFF5F81)],
+                          ),
+                        ],
                       ),
-                      ServiceCard(
-                        serviceName: "General Check-up",
-                        price: "1,400",
-                        rating: 4.9,
-                        imagePath: 'assets/car/toprecommended2.png',
-                        colors: [Color(0xffFEA563), Color(0xffFF5F81)],
+                      Text('Top Categories',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              fontFamily: 'Poppins')),
+                      SizedBox(height: 10),
+                      SizedBox(
+                        height: 100, // Adjust height if needed
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: topCategories.length,
+                          itemBuilder: (context, index) {
+                            var category = topCategories[index];
+                            return Container(
+                                margin: EdgeInsets.only(right: 12),
+                                child: ServicesType(
+                                  text: category,
+                                  imagePath: categoryImageMap[category] ??
+                                      'assets/icon.png', // Use the mapped image or a default
+                                  borderSides: [
+                                    BorderSideEnum.bottom,
+                                    BorderSideEnum.right,
+                                    BorderSideEnum.top,
+                                    BorderSideEnum.left
+                                  ],
+                                  onTap: () {
+                                    navigateToServicePage(category);
+                                  },
+                                ));
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Text('Top Services',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              fontFamily: 'Poppins')),
+                      SizedBox(height: 10),
+                      // Display topServices only (filtered by topServiceIds)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: topServices.length,
+                        itemBuilder: (context, index) {
+                          var service = topServices[index];
+                          return InkWell(
+                            onTap: () {
+                              Get.toNamed(AppRoutes.SERVICE_DETAIL,
+                                  arguments: service);
+                            },
+                            splashColor: Colors.grey.withOpacity(0.3),
+                            child: Container(
+                              height: 90,
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(vertical: 4),
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: ExtendedImage.network(
+                                      service.image,
+                                      fit: BoxFit.cover,
+                                      cache: true,
+                                      height: 80,
+                                      width: 80,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      '${service.name} in ${service.category}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
-                  ),
-                  Text('Top Categories',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          fontFamily: 'Poppins')),
-                  SizedBox(height: 10),
-                  SizedBox(
-                    height: 100, // Adjust height if needed
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: topCategories.length,
-                      itemBuilder: (context, index) {
-                        var category = topCategories[index];
-                        return Container(
-                            margin: EdgeInsets.only(right: 12),
-                            child: ServicesType(
-                              text: category,
-                              imagePath: categoryImageMap[category] ??
-                                  'assets/icon.png', // Use the mapped image or a default
-                              borderSides: [
-                                BorderSideEnum.bottom,
-                                BorderSideEnum.right,
-                                BorderSideEnum.top,
-                                BorderSideEnum.left
-                              ],
-                              onTap: () {
-                                navigateToServicePage(category);
-                              },
-                            ));
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Text('Top Services',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          fontFamily: 'Poppins')),
-                  SizedBox(height: 10),
-                  // Display topServices only (filtered by topServiceIds)
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: topServices.length,
-                    itemBuilder: (context, index) {
-                      var service = topServices[index];
-                      return InkWell(
-                        onTap: () {
-                          Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                              arguments: service);
+                    if (_isSearching) ...[
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: _resultList.length,
+                        itemBuilder: (context, index) {
+                          var service = _resultList[index];
+                          return InkWell(
+                            onTap: () {
+                              Get.toNamed(AppRoutes.SERVICE_DETAIL,
+                                  arguments: service);
+                            },
+                            splashColor: Colors.grey.withOpacity(0.3),
+                            child: Container(
+                              height: 90,
+                              width: double.infinity,
+                              margin: EdgeInsets.symmetric(vertical: 4),
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: ExtendedImage.network(
+                                      service.image,
+                                      fit: BoxFit.cover,
+                                      cache: true,
+                                      height: 80,
+                                      width: 80,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      '${service.name} in ${service.category}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
                         },
-                        splashColor: Colors.grey.withOpacity(0.3),
-                        child: Container(
-                          height: 90,
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: ExtendedImage.network(
-                                  service.image,
-                                  fit: BoxFit.cover,
-                                  cache: true,
-                                  height: 80,
-                                  width: 80,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                '${service.name} in ${service.category}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-                // Display search results
-                if (_isSearching)...[
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: _resultList.length,
-                    itemBuilder: (context, index) {
-                      var service = _resultList[index];
-                      return InkWell(
-                        onTap: () {
-                          Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                              arguments: service);
-                        },
-                        splashColor: Colors.grey.withOpacity(0.3),
-                        child: Container(
-                          height: 90,
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: ExtendedImage.network(
-                                  service.image,
-                                  fit: BoxFit.cover,
-                                  cache: true,
-                                  height: 80,
-                                  width: 80,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                '${service.name} in ${service.category}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ]
-              ],
+                      ),
+                    ]
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 
   void navigateToServicePage(String service) {

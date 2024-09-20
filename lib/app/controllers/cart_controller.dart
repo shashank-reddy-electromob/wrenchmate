@@ -83,20 +83,10 @@ class CartController extends GetxController {
       double subtotal = 0.0;
 
       for (var item in cartItems) {
-        subtotal += (item['price'] * item['unitsquantity']);
-        // if (item['serviceId'] != 'NA') {
-        //   var service = serviceController.services
-        //       .firstWhere((s) => s.id == item['serviceId']);
-        //   subtotal += service?.price?.toDouble() ?? 0.0;
-        // }
+        double price = (item['price'] ?? 0).toDouble(); // Handle null
+        int quantity = (item['unitsquantity'] ?? 1); // Handle null
 
-        // if (item['productId'] != 'NA') {
-        //   var product = await _firestore
-        //       .collection('Product')
-        //       .doc(item['productId'])
-        //       .get();
-        //   subtotal += (product['price'] ?? 0.0).toDouble();
-        // }
+        subtotal += price * quantity;
       }
 
       double tax = subtotal * 0.10;
@@ -123,29 +113,49 @@ class CartController extends GetxController {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
 
-      QuerySnapshot existingItems = await _firestore
-          .collection('Cart')
-          .where('userId', isEqualTo: userId)
-          .where('productId', isEqualTo: productId)
-          .where('productQuantity', isEqualTo: quantity)
-          .limit(1)
-          .get();
+      if (productId != "NA") {
+        QuerySnapshot existingItems = await _firestore
+            .collection('Cart')
+            .where('userId', isEqualTo: userId)
+            .where('productId', isEqualTo: productId)
+            .limit(1)
+            .get();
 
-      if (existingItems.docs.isNotEmpty) {
-        DocumentSnapshot item = existingItems.docs.first;
-        int currentUnitsQuantity = item.get('unitsquantity') ?? 1;
-        await _firestore.collection('Cart').doc(item.id).update({
-          'unitsquantity': currentUnitsQuantity + 1,
-        });
+        if (existingItems.docs.isNotEmpty) {
+          DocumentSnapshot item = existingItems.docs.first;
+          int currentUnitsQuantity = item.get('unitsquantity') ?? 1;
+          await _firestore.collection('Cart').doc(item.id).update({
+            'unitsquantity': currentUnitsQuantity + 1,
+          });
+        } else {
+          await _firestore.collection('Cart').add({
+            'serviceId': serviceId,
+            'productId': productId,
+            'userId': userId,
+            'productQuantity': quantity,
+            'price': price ?? 0.0, // Default value if null
+            'unitsquantity': 1, // Default quantity
+          });
+        }
       } else {
-        await _firestore.collection('Cart').add({
-          'serviceId': serviceId,
-          'productId': productId,
-          'userId': userId,
-          'productQuantity': quantity,
-          'price': price,
-          'unitsquantity': 1,
-        });
+        QuerySnapshot existingItems = await _firestore
+            .collection('Cart')
+            .where('userId', isEqualTo: userId)
+            .where('serviceId', isEqualTo: serviceId)
+            .where('productId', isEqualTo: "NA")
+            .limit(1)
+            .get();
+
+        if (existingItems.docs.isEmpty) {
+          await _firestore.collection('Cart').add({
+            'serviceId': serviceId,
+            'productId': "NA",
+            'userId': userId,
+            'productQuantity': quantity,
+            'price': price,
+            // 'unitsquantity': 1,
+          });
+        }
       }
 
       await fetchCartItems();
@@ -437,11 +447,14 @@ class CartController extends GetxController {
       );
     });
   }
+// bool isServiceInCart(Servicefirebase service) {
+//   return cartItems.any((item) => item.id == service.id);
+// }
 
   Future<bool> isServiceInCart(String serviceId) async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      QuerySnapshot snapshot = await _firestore
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('Cart')
           .where('userId', isEqualTo: userId)
           .where('serviceId', isEqualTo: serviceId)
@@ -457,22 +470,22 @@ class CartController extends GetxController {
   RxString appliedCoupon = ''.obs;
   RxDouble discountAmount = 0.0.obs;
 
-void applyCoupon(String couponCode, double amount) {
-  if (appliedCoupon.value.isNotEmpty) {
-    totalAmount.value += discountAmount.value; 
-  }
+  void applyCoupon(String couponCode, double amount) {
+    if (appliedCoupon.value.isNotEmpty) {
+      totalAmount.value += discountAmount.value;
+    }
 
-  appliedCoupon.value = couponCode;
-  if (couponCode != '') {
-    discountAmount.value = amount;
-    totalAmount.value -= discountAmount.value; 
-  } else {
-    discountAmount.value = 0.0;
-    Get.snackbar("Invalid Coupon", "The coupon code is not valid");
-  }
+    appliedCoupon.value = couponCode;
+    if (couponCode != '') {
+      discountAmount.value = amount;
+      totalAmount.value -= discountAmount.value;
+    } else {
+      discountAmount.value = 0.0;
+      Get.snackbar("Invalid Coupon", "The coupon code is not valid");
+    }
 
-  updateTotalWithDiscount();
-}
+    updateTotalWithDiscount();
+  }
 
   void updateTotalWithDiscount() {
     totalAmount.value -= discountAmount.value;

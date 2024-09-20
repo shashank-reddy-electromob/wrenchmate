@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/offers_slider.dart';
+import 'package:wrenchmate_user_app/app/modules/home/widgits/persistentnotification.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
@@ -38,11 +39,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> initalCall() async {
     await cartController.fetchTotalCost();
-    print(
-        "cartController.totalAmount.value :: ${cartController.totalAmount.value}");
+    print("cartController.totalAmount.value :: ${cartController.totalAmount.value}");
     if (cartController.totalAmount.value > 0.0) {
-      print(
-          "cartController.totalAmount.value :: ${cartController.totalAmount.value}");
+      print("cartController.totalAmount.value :: ${cartController.totalAmount.value}");
     }
   }
 
@@ -69,65 +68,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // snackbar
-    if (cartController.totalAmount.value > 0.0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (cartController.totalAmount.value > 0.0) {
-          final snackBar = SnackBar(
-            backgroundColor: primaryColor,
-            content: Obx(() => Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Total Amount: ₹${(cartController.totalAmount.value - cartController.discountAmount.value).toStringAsFixed(2)}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.CART);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        },
-                        child: Text(
-                          'Checkout',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: primaryColor,
-                            fontFamily: 'Raleway',
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.01,
-                left: 10,
-                right: 10),
-            duration: Duration(days: 1),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-          cartController.totalAmount.listen((newTotal) {
-            if (!mounted) return;
-            ScaffoldMessenger.of(context).removeCurrentSnackBar();
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          });
-        }
-      });
-    }
     return Scaffold(
       body: Stack(
         children: [
@@ -298,6 +238,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: PersistentNotification(
+              totalAmount: cartController.totalAmount,
+              discountAmount: cartController.discountAmount,
             ),
           ),
         ],

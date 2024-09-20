@@ -73,24 +73,10 @@ class _CartPageState extends State<CartPage> {
     try {
       setState(() {
         totalAmount = cartController.cartItems.fold<double>(0, (sum, item) {
-          sum += (item['price'] * item['unitsquantity']);
-          // if (item['productId'] != "NA") {
-          //   var product = productController.products.firstWhere(
-          //     (p) => p.id == item['productId'],
-          //     // orElse: () => null,
-          //   );
-          //   sum += product.price ?? 0;
-          // }
-
-          // if (item['serviceId'] != "NA") {
-          //   var service = serviceController.services.firstWhere(
-          //     (s) => s.id == item['serviceId'],
-          //     // orElse: () => null,
-          //   );
-          //   sum += service.price ?? 0;
-          // }
-
-          return sum;
+          double price = item['price'] ?? 0.0; // Use 0.0 if price is null
+          int unitsQuantity =
+              item['unitsquantity'] ?? 0; // Use 0 if unitsquantity is null
+          return sum + (price * unitsQuantity);
         });
 
         tax = totalAmount! * 0.1;
