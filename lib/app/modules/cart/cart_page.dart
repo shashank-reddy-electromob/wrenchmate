@@ -39,6 +39,7 @@ class _CartPageState extends State<CartPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      fetchUserCurrentCar();
       fetchCartData();
     });
   }
@@ -55,14 +56,8 @@ class _CartPageState extends State<CartPage> {
   Future<void> fetchUserCurrentCar() async {
     try {
       var result = await homeController.fetchUserCurrentCar();
-      if (result is List) {
-        throw TypeError();
-      }
-      if (result is int) {
-        currentCar = result;
-      } else {
-        throw Exception('Unexpected type');
-      }
+      print("cart page pe hu"+result.toString());
+      currentCar = result.toString();
       setState(() {});
     } catch (e) {
       print("Failed to fetch user current car: $e");
@@ -428,8 +423,7 @@ class _CartPageState extends State<CartPage> {
                           '', // confirmation_note
                           '', // outForService_note
                           '', // completed_note
-                          currentCar
-                              .toString(), // Ensure currentCar is passed as a String
+                          currentCar!, // Ensure currentCar is passed as a String
                         );
 
                         // Optionally show a success message

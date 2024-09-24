@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   late final user;
   HomeController? controller;
   Map<String, dynamic>? userData;
+  late int addressIndex;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchUserData() async {
     userData = await controller?.fetchUserData() as Map<String, dynamic>?;
+   addressIndex=userData?['current_address'];
     setState(() {});
   }
 
@@ -171,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                                             print("address");
                                             Get.toNamed(AppRoutes.MAPSCREEN,
                                                 arguments:
-                                                    userData?['User_address']);
+                                                    userData?['User_address'][addressIndex]);
                                           },
                                           child: Row(
                                             children: [
@@ -185,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                                                   userData?['User_address'] !=
                                                           null
                                                       ? userData![
-                                                              'User_address']
+                                                              'User_address'][addressIndex]
                                                           .split(',')
                                                           .take(3)
                                                           .join(', ')

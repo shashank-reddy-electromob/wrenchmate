@@ -52,20 +52,47 @@ class AuthController extends GetxController {
     }
   }
 
+  // Future<bool> updateUserAddress(String address) async {
+  //   try {
+  //     String userId = FirebaseAuth.instance.currentUser!.uid;
+  //     await _firestore.collection('User').doc(userId).update({
+  //       'User_address': address,
+  //     });
+  //     print("User address updated");
+  //     return true; // Indicate success
+  //   } catch (e) {
+  //     print("Failed to update address: $e");
+  //     Get.snackbar("Error", "Failed to update address: ${e.toString()}");
+  //     return false; // Indicate failure
+  //   }
+  // }
+
   Future<bool> updateUserAddress(String address) async {
-    try {
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      await _firestore.collection('User').doc(userId).update({
-        'User_address': address,
-      });
-      print("User address updated");
-      return true; // Indicate success
-    } catch (e) {
-      print("Failed to update address: $e");
-      Get.snackbar("Error", "Failed to update address: ${e.toString()}");
-      return false; // Indicate failure
-    }
+  try {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+
+    List<dynamic> userAddressArray = userDoc['User_address'];
+    int currentAddressIndex = userDoc['current_address'];
+
+    userAddressArray[currentAddressIndex] = address;
+    print("currentAddressIndex");
+    print(userAddressArray);
+    print(currentAddressIndex);
+
+    await _firestore.collection('User').doc(userId).update({
+      'User_address': userAddressArray,
+    });
+
+    print("User address updated at index $currentAddressIndex");
+    return true; // Indicate success
+  } catch (e) {
+    print("Failed to update address: $e");
+    Get.snackbar("Error", "Failed to update address: ${e.toString()}");
+    return false; // Indicate failure
   }
+}
+
 
   void resendOTP(
       String phoneNumber, TextEditingController otpcontroller) async {
@@ -164,20 +191,12 @@ class AuthController extends GetxController {
         'User_name': name,
         'User_number': [number, alternateNumber],
         'User_email': email,
-        if (address != null && address.isNotEmpty) 'User_address': address,
+        if (address != null && address.isNotEmpty) 'User_address': [address],
         if (profileImagePath != null && profileImagePath.isNotEmpty)
           'User_profile_image': profileImagePath,
         'User_carDetails': [],
         'User_currentCar': 0,
       });
-      await _firestore
-          .collection('User')
-          .doc(userId)
-          .collection('SearchHistory')
-          .add({
-        'user search': [],
-      });
-      print("SearchHistory subcollection added to Firestore");
       print("User added to Firestore");
       Get.toNamed(AppRoutes.MAPSCREEN);
     } catch (e) {

@@ -19,7 +19,7 @@ class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
   loc.LocationData? currentLocation;
   LatLng? initialCameraPosition;
-  String? _address;
+  String? address;
   bool? isExist=false;
   late Placemark place;
 
@@ -88,13 +88,13 @@ class _MapScreenState extends State<MapScreen> {
       );
       place = placemarks[0];
       setState(() {
-        _address =
+        address =
             "${place?.street}, ${place?.locality}, ${place?.postalCode}, ${place?.country}";
       });
     } catch (e) {
       print('Error getting address: $e');
       setState(() {
-        _address = "Error fetching address";
+        address = "Error fetching address";
       });
     }
   }
@@ -104,13 +104,14 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _saveAddress() {
-    print(_address);
-    controller.updateUserAddress(_address!).then((success) {
-      if (success && isExist==true) {
+    print("kya yahi pyaar hai? ${address}");
+
+    controller.updateUserAddress(address!).then((success) {
+      if (success && isExist == true) {
         Get.toNamed(AppRoutes.BOTTOMNAV);
-      } else if (success && isExist==false) {
+      } else if (success && isExist == false) {
         Get.toNamed(AppRoutes.CAR_REGISTER);
-      } else{
+      } else {
         print('Failed to update address');
       }
     });
@@ -330,7 +331,7 @@ class _MapScreenState extends State<MapScreen> {
                       if (!isFlatNumberEmpty &&
                           !isLocalityEmpty &&
                           !isLandmarkEmpty) {
-                        _address = "${flatnubercontroller.text}, "
+                        address = "${flatnubercontroller.text}, "
                             "${place.name}, "
                             "${landmarkcontroller.text}, "
                             "${localitycontroller.text}, "
