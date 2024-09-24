@@ -172,9 +172,7 @@ class _HomePageState extends State<HomePage> {
                                           onTap: () {
                                             print("address");
                                             Get.toNamed(AppRoutes.MAPSCREEN,
-                                                arguments:
-                                                    userData?['User_address'][addressIndex]);
-                                          },
+                                                arguments: {'isnew': false, 'address': userData?['User_address'][addressIndex]},);},
                                           child: Row(
                                             children: [
                                               Icon(
