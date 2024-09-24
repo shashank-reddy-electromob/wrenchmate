@@ -1,9 +1,13 @@
-import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:date_picker_timeline/date_picker_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
-import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
+
+import '../../controllers/cart_controller.dart';
+import '../../routes/app_routes.dart';
+import '../../widgets/custombackbutton.dart';
 
 class BookSlot extends StatefulWidget {
   @override
@@ -14,15 +18,31 @@ class _BookSlotState extends State<BookSlot> {
   int selectedAddressIndex = 0;
   int selectedDateIndex = 0;
   SfRangeValues _values = SfRangeValues(40.0, 80.0);
+  DateTime selectedDate = DateTime.now();
+
+  final CartController cartController = Get.put(CartController());
+
+  @override
+  void initState() {
+    super.initState();
+    cartController.fetchUserAddresses();
+    cartController.fetchUserCurrentAddressIndex();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Booking Details',
-        onBackButtonPressed: () {
-          Navigator.of(context).pop();
-        },
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Text(
+          "Booking Details",
+          style: TextStyle(fontWeight: FontWeight.w500, fontFamily: 'Raleway'),
+        ),
+        leading: Padding(
+            padding: const EdgeInsets.all(6.0), child: Custombackbutton()),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -39,56 +59,74 @@ class _BookSlotState extends State<BookSlot> {
                   ),
                 ),
                 SizedBox(height: 12),
-                Card(
-                  shape: RoundedRectangleBorder(
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
-                      ...List.generate(2, (index) {
-                        return ListTile(
-                          leading:
-                              Icon(Icons.location_on, color: Colors.orange),
-                          title: Text(
-                            '234, FTS colony, HYD, 300012',
-                            style: TextStyle(fontSize: 9),
-                          ),
-                          trailing: Radio<int>(
-                            value: index,
-                            groupValue: selectedAddressIndex,
-                            onChanged: (int? value) {
-                              setState(() {
-                                selectedAddressIndex = value!;
-                              });
-                            },
-                          ),
-                          onTap: () {
-                            setState(() {
-                              selectedAddressIndex = index;
-                            });
+                      Obx(() {
+                        if (cartController.addresses.isEmpty) {
+                          return Text('No addresses found.');
+                        }
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: cartController.addresses.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(cartController.addresses[index]),
+                              trailing: Obx(() => Radio<int>(
+                                    value: index,
+                                    groupValue: cartController
+                                        .currentAddressIndex.value,
+                                    onChanged: (int? value) {
+                                      setState(() {
+                                        cartController
+                                            .currentAddressIndex.value = value!;
+                                      });
+                                    },
+                                  )),
+                            );
                           },
                         );
                       }),
-                      // Divider(height: 1),
-                      ListTile(
-                        leading: Container(
-                          color: Color(0xffD2EAFF),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Icon(Icons.add, color: Colors.blue),
+                      Container(
+                        height: 30,
+                        width: 100,
+                        color: Colors.blue,
+                        child: GestureDetector(
+                          onTap: () {
+                            Get.toNamed(
+                              AppRoutes.MAPSCREEN,
+                              arguments: {
+                                'isnew': true,
+                                'address': cartController
+                                    .addresses[selectedAddressIndex]
+                              },
+                            );
+                          },
+                          child: Center(
+                            child: Text(
+                              'Go to Map',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
-                        title: Text('Add New Address'),
-                        onTap: () {
-                          // Handle add new address
-                        },
                       ),
                     ],
                   ),
                 ),
-
                 SizedBox(height: 24),
-
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -100,36 +138,44 @@ class _BookSlotState extends State<BookSlot> {
                       ),
                     ),
                     SizedBox(height: 12),
-                    EasyDateTimeLine(
-                      initialDate: DateTime.now(),
-                      onDateChange: (selectedDate) {
-                        print('Selected Date: $selectedDate');
-                      },
-                      headerProps: const EasyHeaderProps(
-                        monthPickerType: MonthPickerType.switcher,
-                        dateFormatter: DateFormatter.fullDateDMY(),
-                      ),
-                      dayProps: const EasyDayProps(
-                        dayStructure: DayStructure.dayStrDayNum,
-                        activeDayStyle: DayStyle(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Color(0xff3371FF),
-                                Color(0xff3371FF),
-                              ],
-                            ),
+                    Container(
+                      height: 120,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade300,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
                           ),
+                        ],
+                      ),
+                      child: DatePicker(
+                        DateTime.now(),
+                        initialSelectedDate: DateTime.now(),
+                        daysCount: 7,
+                        onDateChange: (newDate) {
+                          setState(() {
+                            selectedDate = newDate;
+                          });
+                        },
+                        selectionColor: Colors.blue,
+                        dateTextStyle:
+                            TextStyle(fontSize: 20, color: Color(0xffA8A8A8)),
+                        monthTextStyle:
+                            TextStyle(fontSize: 12, color: Color(0xffA8A8A8)),
+                        dayTextStyle: TextStyle(
+                          fontSize: 0,
                         ),
                       ),
                     ),
                     SizedBox(height: 24),
                   ],
                 ),
-
                 Text(
                   'Select Time',
                   style: TextStyle(
@@ -187,10 +233,13 @@ class _BookSlotState extends State<BookSlot> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 24),
-
-                blueButton(text: 'Reservation', onTap: () {}),
+                blueButton(
+                  text: 'Reservation',
+                  onTap: () {
+                    print('Selected Address Index: $selectedAddressIndex');
+                  },
+                ),
               ],
             ),
           ),
