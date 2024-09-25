@@ -34,11 +34,27 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     print("Current status: ${booking.status ?? "unknown"}"); // Debugging line
   }
 
+  String _getCarImage(String carType) {
+    switch (carType) {
+      case 'Compact SUV':
+        return 'assets/car/compact_suv.png';
+      case 'Hatchback':
+        return 'assets/car/hatchback.png';
+      case 'SUV':
+        return 'assets/car/suv.png';
+      case 'Sedan':
+        return 'assets/car/sedan.png';
+      default:
+        return 'assets/car/default_car.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Use the booking and service details
     final String serviceName = service.name; // Use service name
     final String statusName = booking.status ?? "unknown";
+    final String carType = booking.car_details ?? "unknown";
     final double servicePrice = service.price; // Use service price
     final String bookingDate = booking.confirmationDate != null 
         ? formatDateTime(booking.confirmationDate!) 
@@ -73,6 +89,13 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
                   children: [
+                    // Car image
+                    Image.asset(
+                      _getCarImage(carType), // Get car image
+                      height: 60,
+                      width: 100,
+                    ),
+                    SizedBox(width: 16), // Space between image and text
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
