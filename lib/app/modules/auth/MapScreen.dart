@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geocoding/geocoding.dart';
+import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/widgets/CustomErrorFields.dart';
 import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
@@ -21,14 +24,15 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? initialCameraPosition;
   String? address;
   bool? isExist=false;
+  bool? isnew=false;
   late Placemark place;
 
   TextEditingController flatnubercontroller = TextEditingController();
   TextEditingController localitycontroller = TextEditingController();
   TextEditingController landmarkcontroller = TextEditingController();
 
-
   late final AuthController controller;
+  late final CartController Cartcontroller;
 
   bool isFlatNumberEmpty = false;
   bool isLocalityEmpty = false;
@@ -40,20 +44,33 @@ class _MapScreenState extends State<MapScreen> {
     controller = Get.find();
     _fetchCurrentLocation();
     _loadAddressFromArguments();
+    _loadIsNewFromArguments();
   }
 
   void _loadAddressFromArguments() {
-    final address = Get.arguments as String?;
-    if (address != null) {
-      print("in map screen, adress"+address);
-      List<String> addressParts = address.split(',');
-      addressParts = addressParts.map((part) => part.trim()).toList();
-      print(addressParts[0]);
+    final args = Get.arguments as Map<String, dynamic>?;
+    if (args != null && args.containsKey('address')) {
+      final address = args['address'] as String?;
+      if (address != null) {
+        print("in map screen, address: $address");
+        List<String> addressParts = address.split(',');
+        addressParts = addressParts.map((part) => part.trim()).toList();
+        print(addressParts[0]);
+        setState(() {
+          isExist = true;
+          flatnubercontroller.text = addressParts[0];
+          localitycontroller.text = addressParts[3];
+          landmarkcontroller.text = addressParts[2];
+        });
+      }
+    }
+  }
+
+  void _loadIsNewFromArguments() {
+    final args = Get.arguments as Map<String, dynamic>?;
+    if (args != null && args.containsKey('isnew')) {
       setState(() {
-        isExist=true;
-        flatnubercontroller.text=addressParts[0];
-        localitycontroller.text=addressParts[3];
-        landmarkcontroller.text=addressParts[2];
+        isnew = args['isnew'];
       });
     }
   }
@@ -104,17 +121,25 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _saveAddress() {
-    print("kya yahi pyaar hai? ${address}");
-
-    controller.updateUserAddress(address!).then((success) {
-      if (success && isExist == true) {
-        Get.toNamed(AppRoutes.BOTTOMNAV);
-      } else if (success && isExist == false) {
-        Get.toNamed(AppRoutes.CAR_REGISTER);
-      } else {
-        print('Failed to update address');
-      }
-    });
+    if (isnew == false) {
+      controller.updateUserAddress(address!).then((success) {
+        if (success && isExist == true) {
+          Get.toNamed(AppRoutes.BOTTOMNAV);
+        } else if (success && isExist == false) {
+          Get.toNamed(AppRoutes.CAR_REGISTER);
+        } else {
+          print('Failed to update address');
+        }
+      });
+    } else {
+      controller.addAddressToList(address!).then((success) {
+        if (success && isExist == true) {
+          Get.toNamed(AppRoutes.BOOK_SLOT);
+        } else {
+          print('Failed to add address');
+        }
+      });
+    }
   }
 
   @override
