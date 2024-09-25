@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:wrenchmate_user_app/app/controllers/auth_controller.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 
 import '../../controllers/cart_controller.dart';
@@ -21,12 +22,16 @@ class _BookSlotState extends State<BookSlot> {
   DateTime selectedDate = DateTime.now();
 
   final CartController cartController = Get.put(CartController());
+  final AuthController authcontroller = Get.put(AuthController());
 
   @override
   void initState() {
     super.initState();
     cartController.fetchUserAddresses();
     cartController.fetchUserCurrentAddressIndex();
+  }
+  void _updateCurrentAddress(int selectedAddressIndex) {
+    authcontroller.updateCurrentAddress(selectedAddressIndex);
   }
 
   @override
@@ -83,27 +88,62 @@ class _BookSlotState extends State<BookSlot> {
                           shrinkWrap: true,
                           itemCount: cartController.addresses.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(cartController.addresses[index]),
-                              trailing: Obx(() => Radio<int>(
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Color(0xFFF6F6F5), // Border color
+                                  width: 2.0, // Border width
+                                ),
+                              ),
+                              margin: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                              padding: EdgeInsets.only(left: 12, top: 4, bottom: 4),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,  // Align icon and text properly
+                                      children: [
+                                        Icon(
+                                          Icons.location_on_outlined,
+                                          color: Color(0XFFFF5402),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            '${cartController.addresses[index].split(',')[0]}, ${cartController.addresses[index].split(',')[4]}',
+                                            softWrap: true,  // Allows the text to wrap
+                                            overflow: TextOverflow.visible,  // Prevents clipping
+                                            style: TextStyle(fontSize: 16),  // Optional: Adjust font size
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Obx(() => Radio<int>(
                                     value: index,
-                                    groupValue: cartController
-                                        .currentAddressIndex.value,
+                                    groupValue: cartController.currentAddressIndex.value,
                                     onChanged: (int? value) {
-                                      setState(() {
-                                        cartController
-                                            .currentAddressIndex.value = value!;
-                                      });
+                                      cartController.currentAddressIndex.value = value!;
                                     },
+                                    activeColor: Color(0XFF1671D8), // Active color when selected
+                                    fillColor: MaterialStateProperty.resolveWith<Color>((states) {
+                                      if (states.contains(MaterialState.selected)) {
+                                        return Color(0XFF1671D8); // Active color
+                                      }
+                                      return Color(0XFF1671D8); // Inactive color
+                                    }),
                                   )),
+                                ],
+                              ),
                             );
                           },
                         );
+
                       }),
-                      Container(
-                        height: 30,
-                        width: 100,
-                        color: Colors.blue,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12.0,top: 4),
                         child: GestureDetector(
                           onTap: () {
                             Get.toNamed(
@@ -115,14 +155,33 @@ class _BookSlotState extends State<BookSlot> {
                               },
                             );
                           },
-                          child: Center(
-                            child: Text(
-                              'Go to Map',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFE3F2FD), // Light blue background color
+                                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                                ),
+                                padding: EdgeInsets.all(8), // Padding inside the container
+                                child: Icon(
+                                  Icons.add,  // Add icon
+                                  color: Color(0xFF1671D8),  // Blue color for the plus icon
+                                  size: 24,  // Icon size
+                                ),
+                              ),
+                              SizedBox(width: 12), // Space between the icon and the text
+                              // Text widget
+                              Text(
+                                "Add New Address",
+                                style: TextStyle(
+                                  fontSize: 18, // Font size
+                                  color: Color(0xff606060), // Text color (gray)
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -237,7 +296,15 @@ class _BookSlotState extends State<BookSlot> {
                 blueButton(
                   text: 'Reservation',
                   onTap: () {
+                    selectedAddressIndex = cartController.currentAddressIndex.value;
+                    _updateCurrentAddress(selectedAddressIndex);
                     print('Selected Address Index: $selectedAddressIndex');
+                    
+                    // Pass the selected date and time back to CartPage
+                    Get.back(result: {
+                      'selectedDate': selectedDate,
+                      'selectedTimeRange': _values,
+                    });
                   },
                 ),
               ],
@@ -247,4 +314,6 @@ class _BookSlotState extends State<BookSlot> {
       ),
     );
   }
+
+
 }
