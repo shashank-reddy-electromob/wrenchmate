@@ -1,6 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
 import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
 import 'package:wrenchmate_user_app/app/data/models/product_model.dart';
@@ -33,6 +34,8 @@ class _CartPageState extends State<CartPage> {
   double? finalAmount;
   List<String> deletedServiceIds = [];
   String? currentCar;
+  DateTime? selectedDate;
+  SfRangeValues? selectedTimeRange;
 
   @override
   void initState() {
@@ -356,12 +359,18 @@ class _CartPageState extends State<CartPage> {
                       ),
                     ),
                     containerButton(
-                      text: "Booking Detail",
-                      onPressed: () {
-                        Get.toNamed(AppRoutes.BOOK_SLOT);
-                      },
-                      icon: Icons.file_copy_outlined,
-                    ),
+            text: "Booking Detail",
+            onPressed: () async {
+              var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+              if (result != null) {
+                setState(() {
+                  selectedDate = result['selectedDate'];
+                  selectedTimeRange = result['selectedTimeRange'];
+                });
+              }
+            },
+            icon: Icons.file_copy_outlined,
+          ),
                   ],
                 ),
               );
@@ -413,7 +422,6 @@ class _CartPageState extends State<CartPage> {
                           cartController.cartItems
                               .map((item) => item['serviceId']),
                         );
-
                         await bookingController.addBooking(
                           serviceIds,
                           'confirmed', // status
@@ -424,7 +432,9 @@ class _CartPageState extends State<CartPage> {
                           '', // outForService_note
                           '', // completed_note
                           currentCar!, // Ensure currentCar is passed as a String
-                        );
+                          selectedDate, // Pass the selected date
+                    selectedTimeRange, // Pass the selected time range
+                  );
 
                         // Optionally show a success message
                         Get.snackbar(
