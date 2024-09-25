@@ -100,19 +100,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   width: double.infinity,
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: isMonthly
-                          ? [
-                              Colors.lightBlue.shade200,
-                              Colors.lightBlue.shade300,
-                            ]
-                          : [
-                              Colors.lightBlue.shade400,
-                              Colors.lightBlue.shade500,
-                            ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: Color(0xffC6DFFE),
+
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
@@ -120,7 +109,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     children: isMonthly
                         ? [
                             Text(
-                              'Lorem ipsum dolor sit amet.',
+                              'Lorem  dolor sit amet.',
                               style: TextStyle(
                                   fontFamily: 'Raleway',
                                   fontSize: 14,
@@ -218,37 +207,54 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                           ],
                   ),
                 ),
-                SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ChoiceChip(
-                      showCheckmark: false,
-                      label: Text(
-                        'Monthly',
-                        style: AppTextStyle.medium14,
-                      ),
-                      selected: isMonthly,
-                      selectedColor: Colors.lightBlue.shade300,
-                      onSelected: (selected) {
+                    GestureDetector(
+                      onTap: () {
                         setState(() {
                           isMonthly = true;
                         });
                       },
-                    ),
-                    ChoiceChip(
-                      showCheckmark: false,
-                      label: Text(
-                        'Quarterly',
-                        style: AppTextStyle.medium14,
+                      child: Container(
+                        width: (MediaQuery.of(context).size.width * 0.5)-16, // Half the width of the upper container
+                        height: 40, // Adjust height as needed
+                        decoration: BoxDecoration(
+                          color: isMonthly ? Color(0xffC6DFFE) : Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: isMonthly ? Border.all(color: Color(0xffC6DFFE)):Border.all(color: Colors.transparent),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Monthly',
+                          style: AppTextStyle.medium14,
+                        ),
+                        // Add onTap functionality
+
                       ),
-                      selected: !isMonthly,
-                      selectedColor: Colors.lightBlue.shade300,
-                      onSelected: (selected) {
+                    ),
+                    GestureDetector(
+                      onTap: () {
                         setState(() {
                           isMonthly = false;
                         });
                       },
+                      child: Container(
+                        width: (MediaQuery.of(context).size.width * 0.5)-16, // Half the width of the upper container
+                        height: 40, // Adjust height as needed
+                        decoration: BoxDecoration(
+                          color: !isMonthly ? Color(0xffC6DFFE) : Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: !isMonthly ? Border.all(color: Color(0xffC6DFFE)):Border.all(color: Colors.transparent),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Quarterly',
+                          style: AppTextStyle.medium14,
+                        ),
+                        // Add onTap functionality
+
+                      ),
                     ),
                   ],
                 ),
@@ -296,7 +302,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
             Center(
               child: TextButton.icon(
                 onPressed: () {},
@@ -306,6 +311,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         TextStyle(color: Colors.grey, fontFamily: 'Poppins')),
               ),
             ),
+            SizedBox(height: 32,)
           ],
         ),
       ),
