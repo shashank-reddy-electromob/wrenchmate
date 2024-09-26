@@ -101,110 +101,103 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Color(0xffC6DFFE),
-
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: isMonthly
+                        ? BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    )
+                        : BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                      bottomLeft: Radius.circular(16),
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: isMonthly
                         ? [
-                            Text(
-                              'Lorem  dolor sit amet.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Consectetur adipiscing elit.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Sed do eiusmod tempor.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Lorem ipsum dolor sit amet.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Consectetur adipiscing elit.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Sed do eiusmod tempor.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ]
+                      Text(
+                        'Lorem  dolor sit amet.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Consectetur adipiscing elit.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Sed do eiusmod tempor.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Lorem ipsum dolor sit amet.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Consectetur adipiscing elit.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Sed do eiusmod tempor.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ]
                         : [
-                            Text(
-                              'Lorem ipsum dolor sit amet.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Consectetur adipiscing elit.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Sed do eiusmod tempor.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Lorem ipsum dolor sit amet.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Consectetur adipiscing elit.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              'Sed do eiusmod tempor.',
-                              style: TextStyle(
-                                  fontFamily: 'Raleway',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                      Text(
+                        'Lorem ipsum dolor sit amet.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Consectetur adipiscing elit.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Sed do eiusmod tempor.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Lorem ipsum dolor sit amet.',
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ),
                 Row(
@@ -217,20 +210,29 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         });
                       },
                       child: Container(
-                        width: (MediaQuery.of(context).size.width * 0.5)-16, // Half the width of the upper container
-                        height: 40, // Adjust height as needed
-                        decoration: BoxDecoration(
-                          color: isMonthly ? Color(0xffC6DFFE) : Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: isMonthly ? Border.all(color: Color(0xffC6DFFE)):Border.all(color: Colors.transparent),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Monthly',
-                          style: AppTextStyle.medium14,
-                        ),
-                        // Add onTap functionality
+                        color: isMonthly? Colors.transparent:Color(0xffC6DFFE),
+                        child: Container(
+                          width: (MediaQuery.of(context).size.width * 0.5)-16,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: isMonthly ? Color(0xffC6DFFE) : Colors.white,
+                            borderRadius: isMonthly
+                                ? BorderRadius.only(
+                              bottomRight: Radius.circular(16),
+                              bottomLeft: Radius.circular(16),
+                            )
+                                : BorderRadius.only(
+                              topRight: Radius.circular(16),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Monthly',
+                            style: AppTextStyle.medium14,
+                          ),
+                          // Add onTap functionality
 
+                        ),
                       ),
                     ),
                     GestureDetector(
@@ -240,20 +242,28 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         });
                       },
                       child: Container(
-                        width: (MediaQuery.of(context).size.width * 0.5)-16, // Half the width of the upper container
-                        height: 40, // Adjust height as needed
-                        decoration: BoxDecoration(
-                          color: !isMonthly ? Color(0xffC6DFFE) : Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: !isMonthly ? Border.all(color: Color(0xffC6DFFE)):Border.all(color: Colors.transparent),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Quarterly',
-                          style: AppTextStyle.medium14,
-                        ),
-                        // Add onTap functionality
+                        color: !isMonthly? Colors.transparent:Color(0xffC6DFFE),
+                        child: Container(
+                          width: (MediaQuery.of(context).size.width * 0.5)-16, // Half the width of the upper container
+                          height: 52, // Adjust height as needed
+                          decoration: BoxDecoration(
+                            color: !isMonthly ? Color(0xffC6DFFE) : Colors.white,
+                            borderRadius: !isMonthly
+                                ? BorderRadius.only(
+                              bottomRight: Radius.circular(16),
+                              bottomLeft: Radius.circular(16),
+                            )
+                                : BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                            ),                        ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Quarterly',
+                            style: AppTextStyle.medium14,
+                          ),
+                          // Add onTap functionality
 
+                        ),
                       ),
                     ),
                   ],
