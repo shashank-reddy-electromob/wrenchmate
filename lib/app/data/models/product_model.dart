@@ -1,6 +1,5 @@
 class Product {
   String id;
-
   final String description;
   final int price;
   final String productName;
@@ -28,7 +27,7 @@ class Product {
     return Product(
       id: id,
       description: doc['description'] ?? '',
-      price: doc['price'] ?? 0,
+      price: doc['price'] is int ? doc['price'] : 0, // Ensure 'price' is an int
       productName: doc['product_name'] ?? '',
       image: doc['image'] ?? 'https://via.placeholder.com/150',
       quantitiesAvailable: List<String>.from(doc['quantities_available'] ?? []),
@@ -37,13 +36,14 @@ class Product {
       averageReview: (doc['averageReview'] is int
           ? (doc['averageReview'] as int).toDouble()
           : (doc['averageReview'] as double? ?? 0.0)),
-      numberOfReviews: doc['numberofReviews'] ?? 0,
+      numberOfReviews: doc['numberOfReviews'] ?? 0,  // Consistent naming
     );
   }
+
   double getPriceForQuantity(String selectedQuantity) {
     int index = quantitiesAvailable.indexOf(selectedQuantity);
     if (index != -1 && index < pricesAvailable.length) {
-      return double.parse(pricesAvailable[index]);
+      return double.tryParse(pricesAvailable[index]) ?? 0.0; // Safer parsing
     }
     return 0.0; 
   }

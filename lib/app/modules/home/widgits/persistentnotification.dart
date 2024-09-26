@@ -28,7 +28,7 @@ class PersistentNotification extends StatelessWidget {
                   'Total Amount: ₹${(totalAmount.value - discountAmount.value).toStringAsFixed(2)}',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -40,7 +40,7 @@ class PersistentNotification extends StatelessWidget {
                 child: Text(
                   'Checkout',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     color: primaryColor,
                     fontFamily: 'Raleway',
                   ),

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/auth_controller.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
 import 'package:wrenchmate_user_app/app/data/models/product_model.dart';
+import 'package:wrenchmate_user_app/app/modules/home/widgits/persistentnotification.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/desc_faq_review.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/seperator.dart';
@@ -59,6 +60,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: addtocart == true
+          ? FloatingActionButton(
+              onPressed: () {
+                Get.toNamed(AppRoutes.CART);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+              backgroundColor: primaryColor, // Adjust the background color
+              child: Icon(
+                Icons.shopping_cart, // Cart icon
+                color: Colors.white, // Icon color
+              ),
+              shape: CircleBorder(), // Ensures the button remains circular
+            )
+          : null,
       key: scaffoldMessengerKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -147,6 +162,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   ),
                   if (selectedTab == 'description') DescriptionWidget(),
                   if (selectedTab == 'review') ReviewWidget(),
+                  // Positioned(
+                  //   bottom: 0,
+                  //   left: 0,
+                  //   right: 0,
+                  //   child: PersistentNotification(
+                  //     totalAmount: cartController.totalAmount,
+                  //     discountAmount: cartController.discountAmount,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -226,32 +250,35 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   style: TextStyle(color: Colors.black54)),
               Spacer(),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.055,
-                right: MediaQuery.of(context).size.width * 0.04,
-                child: addtocart == false
-                    ? CustomElevatedButton(
-                        onPressed: () {
-                          cartController.addProductToCartSnackbar(
-                            context,
-                            cartController,
-                            product,
-                            selectedQuantity ?? product.quantity,
-                            scaffoldMessengerKey,
-                          );
-                          setState(() {
-                            addtocart = true;
-                          });
-                        },
-                        text: '+Add',
-                      )
-                    : CustomElevatedButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.CART);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        },
-                        text: 'Go to cart',
-                      ),
-              ),
+                  top: MediaQuery.of(context).size.height * 0.055,
+                  right: MediaQuery.of(context).size.width * 0.04,
+                  child:
+                      //  addtocart == false
+                      //     ?
+                      CustomElevatedButton(
+                    onPressed: () {
+                      cartController.addProductToCartSnackbar(
+                        context,
+                        cartController,
+                        product,
+                        selectedQuantity ?? product.quantity,
+                        scaffoldMessengerKey,
+                      );
+                      setState(() {
+                        addtocart = true;
+                      });
+                    },
+                    text: '+Add',
+                  )
+                  // : CustomElevatedButton(
+                  //     onPressed: () {
+                  //       Get.toNamed(AppRoutes.CART);
+                  //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  //     },
+                  //     textSize: 12,
+                  //     text: 'Go to cart',
+                  //   ),
+                  ),
             ],
           ),
           SizedBox(height: 8),

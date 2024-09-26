@@ -199,6 +199,11 @@ class _CartPageState extends State<CartPage> {
                                       style: AppTextStyle.semiboldpurple12
                                           .copyWith(color: blackColor),
                                     ),
+                                    Text(
+                                      '${cartItem['productQuantity']}',
+                                      style: AppTextStyle.mediumdmsans11
+                                          .copyWith(color: blackColor),
+                                    ),
                                   ],
                                 ),
                               ],
@@ -276,7 +281,7 @@ class _CartPageState extends State<CartPage> {
                                           await cartController
                                               .deleteProductsFromCart(
                                             cartItem['productId'],
-                                            cartItem['unitsquantity'],
+                                            cartItem['productQuantity'],
                                           );
                                         } else if (cartItem['serviceId'] !=
                                             "NA") {
