@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wrenchmate_user_app/app/controllers/searchcontroller.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
@@ -23,14 +22,13 @@ class _SearchPageState extends State<SearchPage> {
   final ServiceController serviceController = Get.put(ServiceController());
   final TextEditingController _searchController = TextEditingController();
   List<Servicefirebase> topServices =
-      []; // List of services from topServices collection
+      [];
   List<String> topServiceIds =
-      []; // Store the list of IDs from topServices collection
+      [];
   List<Servicefirebase> services = <Servicefirebase>[];
   List<Servicefirebase> _resultList = [];
   List<String> topCategories = [];
   List<String> searchHistory = [];
-  bool _istyping = false;
   bool _isSearching = false;
 
   final Map<String, String> categoryImageMap = {
@@ -50,7 +48,6 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
-  // Fetch top service IDs from topServices collection
   Future<void> getTopServiceIds() async {
     var data = await FirebaseFirestore.instance.collection("topServices").get();
     topServiceIds = data.docs.map((doc) => doc['serviceId'] as String).toList();
@@ -180,12 +177,10 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => SearchControllerClass());
     return WillPopScope(
         onWillPop: () async {
-          // Check if the text controller has any input
           if (_searchController.text.isNotEmpty) {
-            _searchController.clear(); // Clear the text controller
+            _searchController.clear();
             setState(() {
               _isSearching = false;
             });
@@ -235,7 +230,6 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                     SizedBox(height: 20),
                     if (!_isSearching) ...[
-                      // Show the search history label if not empty
                       searchHistory.isNotEmpty
                           ? Text('Your search history',
                               style: TextStyle(

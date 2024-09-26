@@ -131,11 +131,6 @@ class _ServicePageState extends State<ServicePage> {
                               ),
                               //filter
                               CustomIconButton(
-                                icon: Icon(
-                                  Icons.filter_list,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
                                 onPressed: () {},
                               ),
                             ],
