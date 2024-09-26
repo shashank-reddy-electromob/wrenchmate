@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart'; // Import Firestore
 
 class BookingController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   Future<void> addBooking(
-    List<String> serviceList,
+    List<String> serviceIds,
     String status,
     DateTime confirmationDate,
     DateTime? outForServiceDate,
@@ -15,12 +16,14 @@ class BookingController extends GetxController {
     String confirmationNote,
     String outForServiceNote,
     String completedNote,
-    String cardetails,
+    String currentCar,
+    DateTime? selectedDate, // New parameter
+    SfRangeValues? selectedTimeRange, // New parameter
   ) async {
     try {
       await _firestore.collection('Booking').add({
         'user_id':userId,
-        'service_list': serviceList,
+        'service_list': serviceIds,
         'status': status,
         'confirmation_date': confirmationDate,
         'outForService_date': outForServiceDate,
@@ -28,10 +31,14 @@ class BookingController extends GetxController {
         'confirmation_note': confirmationNote,
         'outForService_note': outForServiceNote,
         'completed_note': completedNote,
-        'car_details': cardetails
+        'car_details': currentCar,
+        'selected_date': selectedDate != null ? selectedDate.toIso8601String() : null, // Add selected date
+        'selected_time_range': selectedTimeRange != null ? {
+          'start': selectedTimeRange.start,
+          'end': selectedTimeRange.end,
+        } : null, 
       });
     } catch (e) {
-      // Handle Firestore errors
       throw Exception("Failed to add booking: $e");
     }
   }

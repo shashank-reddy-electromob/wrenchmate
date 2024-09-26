@@ -17,10 +17,49 @@ class CartController extends GetxController {
   var cartItems = <Map<String, dynamic>>[].obs;
   RxDouble totalAmount = 0.0.obs;
 
+  var addresses = <String>[].obs;
+  var currentAddressIndex = 0.obs;
+
+  Future<void> fetchUserAddresses() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+
+      if (userDoc.exists) {
+        List<String> userAddresses = (userDoc['User_address'] as List<dynamic>).cast<String>();
+        addresses.value = userAddresses;
+        print("User addresses fetched successfully: ${addresses.value}");
+      }
+    } catch (e) {
+      print("Failed to fetch user addresses: $e");
+      Get.snackbar("Error", "Failed to fetch user addresses: ${e.toString()}");
+    }
+  }
+
+  Future<void> fetchUserCurrentAddressIndex() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+
+      if (userDoc.exists) {
+        int? currentAddressIndex = userDoc['current_address'] as int?;
+        if (currentAddressIndex != null) {
+          this.currentAddressIndex.value = currentAddressIndex;
+          print("Current address index fetched successfully: ${this.currentAddressIndex.value}");
+        }
+      }
+    } catch (e) {
+      print("Failed to fetch current address index: $e");
+      Get.snackbar("Error", "Failed to fetch current address index: ${e.toString()}");
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
     fetchCartItems();
+     fetchUserAddresses();
+    fetchUserCurrentAddressIndex();
   }
 
   Future<void> fetchTotalCost() async {

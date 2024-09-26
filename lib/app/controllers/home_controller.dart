@@ -13,7 +13,6 @@ class HomeController extends GetxController {
   Future<Map?> fetchUserData() async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      print("aryan is great" + userId);
 
       DocumentSnapshot userDoc =
           await _firestore.collection('User').doc(userId).get();
@@ -27,6 +26,12 @@ class HomeController extends GetxController {
       Get.snackbar("Error", "Failed to fetch user data: ${e.toString()}");
       return null;
     }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchUserData();
   }
 
   // var searchResults = [].obs;

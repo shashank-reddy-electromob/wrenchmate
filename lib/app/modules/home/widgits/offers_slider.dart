@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -54,10 +55,6 @@ class _OffersSlidersState extends State<OffersSliders> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -69,7 +66,7 @@ class _OffersSlidersState extends State<OffersSliders> {
             },
             carouselController: _offersSliderController,
             options: CarouselOptions(
-              height: MediaQuery.of(context).size.height * 0.27,
+              height: MediaQuery.of(context).size.height * 0.24,
               autoPlay: true,
               autoPlayInterval: Duration(seconds: 3),
               viewportFraction: 1,
@@ -132,87 +129,14 @@ class OfferCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          image: DecorationImage(
-            image: NetworkImage(imagePath),
-            fit: BoxFit.cover,
-          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: ExtendedImage.network(
+          imagePath,
+          fit: BoxFit.cover,
         ),
-        // child: Padding(
-        //   padding: EdgeInsets.symmetric(vertical: 26, horizontal: 18),
-        //   child: Column(
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Container(
-        //         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        //         decoration: BoxDecoration(
-        //           color: Color(0xffF7FAFF),
-        //           borderRadius: BorderRadius.circular(12),
-        //         ),
-        //         child: Text('Latest Offer',
-        //             style: AppTextStyle.medium10
-        //                 .copyWith(color: Color(0xff00246B))),
-        //       ),
-        //       Column(
-        //         crossAxisAlignment: CrossAxisAlignment.start,
-        //         children: [
-        //           Text(
-        //             offerTitle,
-        //             style:
-        //                 AppTextStyle.semibold16.copyWith(color: Colors.white),
-        //           ),
-        //           Row(
-        //             children: [
-        //               Text(
-        //                 'Get upto ',
-        //                 style:
-        //                     AppTextStyle.medium10.copyWith(color: Colors.white),
-        //               ),
-        //               Text(
-        //                 discountText,
-        //                 style:
-        //                     AppTextStyle.bold24.copyWith(color: Colors.white),
-        //               ),
-        //             ],
-        //           ),
-        //           Row(
-        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //             children: [
-        //               ElevatedButton(
-        //                 onPressed: () {},
-        //                 style: ElevatedButton.styleFrom(
-        //                   backgroundColor: Color(0xffFF5402),
-        //                   shape: RoundedRectangleBorder(
-        //                     borderRadius: BorderRadius.circular(8),
-        //                   ),
-        //                 ),
-        //                 child: Text(
-        //                   'Book Now',
-        //                   style: TextStyle(
-        //                       color: Colors.white, fontFamily: 'Poppins'),
-        //                 ),
-        //               ),
-        //               Text(
-        //                 'All washing services included | T&C applied',
-        //                 style: TextStyle(
-        //                   fontFamily: 'Poppins',
-        //                   color: Colors.white.withOpacity(0.8),
-        //                   fontSize: 6,
-        //                 ),
-        //                 maxLines: 1,
-        //                 overflow: TextOverflow.ellipsis,
-        //               ),
-        //             ],
-        //           ),
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        // ),
-      ),
+      )
+
     );
   }
 }
