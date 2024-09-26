@@ -24,11 +24,50 @@ class _BookSlotState extends State<BookSlot> {
   final CartController cartController = Get.put(CartController());
   final AuthController authcontroller = Get.put(AuthController());
 
+  // Length of the line segments
+  final int segmentCount = 48;
+  final ScrollController _scrollController = ScrollController();
+  bool _isAtStart = true;
+  bool _isAtEnd = false;
+
+
+  Color getColor(int index) {
+    int hour = index ~/ 2; // Calculate the hour from the segment index
+    if (hour >= 0 && hour < 8) {
+      return Colors.grey; // Grey from 00:00 to 08:00
+    } else if (hour >= 8 && hour < 21) {
+      return Colors.blue; // Blue from 08:00 to 21:00
+    } else {
+      return Colors.grey; // Grey from 21:00 to 24:00
+    }
+  }
+
+  String getTimeLabel(int index) {
+    int hours = index ~/ 2; // 2 segments per hour
+    int minutes = (index % 2 == 0) ? 0 : 30; // Alternates between :00 and :30
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+  }
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_scrollListener);
     cartController.fetchUserAddresses();
     cartController.fetchUserCurrentAddressIndex();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    setState(() {
+      _isAtStart = _scrollController.position.pixels <= 0;
+      _isAtEnd = _scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent;
+    });
   }
   void _updateCurrentAddress(int selectedAddressIndex) {
     authcontroller.updateCurrentAddress(selectedAddressIndex);
@@ -243,55 +282,94 @@ class _BookSlotState extends State<BookSlot> {
                   ),
                 ),
                 SizedBox(height: 12),
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SfRangeSlider(
-                          activeColor: Color(0xff3371FF),
-                          min: 0.0,
-                          max: 100.0,
-                          values: _values,
-                          interval: 20,
-                          showTicks: true,
-                          showLabels: true,
-                          enableTooltip: true,
-                          minorTicksPerInterval: 1,
-                          onChanged: (SfRangeValues values) {
-                            setState(() {
-                              _values = values;
-                            });
-                          },
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShaderMask(
+                      shaderCallback: (bounds) {
+                        return LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: _getGradientColors(),
+                          stops: [0.0, 0.1, 0.9, 1.0],
+                        ).createShader(bounds);
+                      },
+                      blendMode: BlendMode.dstIn, // Applies the gradient as a mask
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: _scrollController,
+                        child: Column(
                           children: [
-                            Text('00:00 PM'),
-                            Text('01:00 AM'),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.settings, color: Colors.grey),
-                            SizedBox(width: 8),
-                            Text(
-                              'Available',
-                              style: TextStyle(color: Colors.blue),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: List.generate(segmentCount, (index) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      width: 30,
+                                      height: 5,
+                                      color: getColor(index), // Use dynamic color
+                                    ),
+                                    SizedBox(height: 5),
+                                    Container(
+                                      width: 1.5,
+                                      height: index % 2 == 0 ? 20 : 10,
+                                      color: Colors.black,
+                                    ),
+                                  ],
+                                );
+                              }),
+                            ),
+                            SizedBox(height: 5),
+                            Row(
+                              children: List.generate(segmentCount, (index) {
+                                return Container(
+                                  width: 30,
+                                  child: index % 2 == 0
+                                      ? Text(
+                                    getTimeLabel(index),
+                                    style: TextStyle(fontSize: 10),
+                                    textAlign: TextAlign.center,
+                                  )
+                                      : SizedBox(), // Empty for half-hours
+                                );
+                              }),
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    SizedBox(height: 12,),
+                    Row(
+                      children: [
+                        Container(height: 8,width: 8,color: Color(0xffBABABA),),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text("Unavailable"),
+                        ),
+                        Container(height: 8,width: 8,  margin: const EdgeInsets.only(left: 16.0),color: Color(0xff59A1E5),),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text("Available"),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
+              ),
                 SizedBox(height: 24),
                 blueButton(
                   text: 'Reservation',
@@ -314,6 +392,28 @@ class _BookSlotState extends State<BookSlot> {
       ),
     );
   }
-
-
+  List<Color> _getGradientColors() {
+    if (_isAtStart) {
+      return [
+        Colors.white, // Start fully opaque
+        Colors.white.withOpacity(0.8), // Transition to semi-transparent
+        Colors.transparent.withOpacity(0.3), // Fully transparent towards the end
+        Colors.transparent
+      ];
+    } else if (_isAtEnd) {
+      return [
+        Colors.transparent, // Fully transparent at the start
+        Colors.transparent.withOpacity(0.3), // Gradual transition to opaque
+        Colors.white.withOpacity(0.8), // Semi-transparent towards the middle
+        Colors.white // Fully opaque at the end
+      ];
+    } else {
+      return [
+        Colors.transparent.withOpacity(0.0), // Transparent on the left edge
+        Colors.transparent.withOpacity(0.8), // Semi-transparent towards the center
+        Colors.transparent.withOpacity(0.8), // Semi-transparent again on the other side
+        Colors.transparent.withOpacity(0.0)  // Fully transparent on the right edge
+      ];
+    }
+  }
 }
