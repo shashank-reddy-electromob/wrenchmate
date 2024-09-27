@@ -121,19 +121,25 @@ class _BottomSheetState extends State<BottomSheet> {
     print(selectedRating);
     print(minPrice);
     print(maxPrice);
-    
+
+    Get.toNamed(AppRoutes.SEARCHSCREEN, arguments: {
+      'selectedServices': selectedServices,
+      'selectedDiscount': selectedDiscount,
+      'selectedRating': selectedRating,
+      'minPrice': minPrice,
+      'maxPrice': maxPrice,
+    });
   }
 
   List<String> selectedServices = [];
   String selectedDiscount = '';
   String selectedRating = '';
-  double minPrice = 0;
-  double maxPrice = double.infinity;
+  double minPrice = 120;
+  double maxPrice = 5000;
 
   List<String> services = [
     "Car Wash",
     "Detailing",
-    "Repair",
     "Wheel Service",
     "Accessories",
     "Denting and Painting",
@@ -174,22 +180,26 @@ class _BottomSheetState extends State<BottomSheet> {
               ),
             ),
             SizedBox(height: 16),
-            RangeSliderWidget(
-                // onRangeChanged: (min, max) {
-                //   setState(() {
-                //     minPrice = min;
-                //     maxPrice = max;
-                //   });
-                // },
-                ),
-            SizedBox(height: 16),
-            _buildServiceTypes(),
-            SizedBox(height: 16),
-            _buildDiscountTypes(),
-            SizedBox(height: 16),
-            _buildRatingTypes(),
-            SizedBox(height: 32),
-            _buildClearAllApplyButtons(),
+            Column(          crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: [
+                RangeSliderWidget(
+                  onRangeChanged: (min, max) {
+                    setState(() {
+                      minPrice = min;
+                      maxPrice = max;
+                    });
+                  },
+                    ),
+                _buildServiceTypes(),
+                SizedBox(height: 8),
+                _buildDiscountTypes(),
+                SizedBox(height: 8),
+                _buildRatingTypes(),
+                SizedBox(height: 8),
+                _buildClearAllApplyButtons(),
+              ],
+            ),
           ],
         ),
       ),
@@ -408,9 +418,14 @@ class _BottomSheetState extends State<BottomSheet> {
 }
 
 class RangeSliderWidget extends StatefulWidget {
+  final Function(double, double) onRangeChanged; // Add this
+
+  RangeSliderWidget({required this.onRangeChanged}); // Add this
+
   @override
   _RangeSliderWidgetState createState() => _RangeSliderWidgetState();
 }
+
 
 class _RangeSliderWidgetState extends State<RangeSliderWidget> {
   double _lowerValue = 1299;
@@ -420,7 +435,6 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
     100,
     30,
     30,
-
     80,
     10,
     100,
@@ -458,6 +472,7 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
                 _lowerValue = lowerValue;
                 _upperValue = upperValue;
               });
+              widget.onRangeChanged(lowerValue, upperValue);
             },
             handler: FlutterSliderHandler(
               decoration: BoxDecoration(),
