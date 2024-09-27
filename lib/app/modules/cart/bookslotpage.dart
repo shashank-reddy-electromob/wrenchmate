@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +18,10 @@ class BookSlot extends StatefulWidget {
 }
 
 class _BookSlotState extends State<BookSlot> {
+  double _iconPosition=0;
   int selectedAddressIndex = 0;
   int selectedDateIndex = 0;
-  SfRangeValues _values = SfRangeValues(40.0, 80.0);
+  String _values='';
   DateTime selectedDate = DateTime.now();
 
   final CartController cartController = Get.put(CartController());
@@ -29,7 +32,6 @@ class _BookSlotState extends State<BookSlot> {
   final ScrollController _scrollController = ScrollController();
   bool _isAtStart = true;
   bool _isAtEnd = false;
-
 
   Color getColor(int index) {
     int hour = index ~/ 2; // Calculate the hour from the segment index
@@ -47,6 +49,7 @@ class _BookSlotState extends State<BookSlot> {
     int minutes = (index % 2 == 0) ? 0 : 30; // Alternates between :00 and :30
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
   }
+
   @override
   void initState() {
     super.initState();
@@ -69,6 +72,7 @@ class _BookSlotState extends State<BookSlot> {
           _scrollController.position.maxScrollExtent;
     });
   }
+
   void _updateCurrentAddress(int selectedAddressIndex) {
     authcontroller.updateCurrentAddress(selectedAddressIndex);
   }
@@ -135,14 +139,18 @@ class _BookSlotState extends State<BookSlot> {
                                   width: 2.0, // Border width
                                 ),
                               ),
-                              margin: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                              padding: EdgeInsets.only(left: 12, top: 4, bottom: 4),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 4),
+                              padding:
+                                  EdgeInsets.only(left: 12, top: 4, bottom: 4),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,  // Align icon and text properly
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start, // Align icon and text properly
                                       children: [
                                         Icon(
                                           Icons.location_on_outlined,
@@ -152,37 +160,47 @@ class _BookSlotState extends State<BookSlot> {
                                         Expanded(
                                           child: Text(
                                             '${cartController.addresses[index].split(',')[0]}, ${cartController.addresses[index].split(',')[4]}',
-                                            softWrap: true,  // Allows the text to wrap
-                                            overflow: TextOverflow.visible,  // Prevents clipping
-                                            style: TextStyle(fontSize: 16),  // Optional: Adjust font size
+                                            softWrap:
+                                                true, // Allows the text to wrap
+                                            overflow: TextOverflow
+                                                .visible, // Prevents clipping
+                                            style: TextStyle(
+                                                fontSize:
+                                                    16), // Optional: Adjust font size
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   Obx(() => Radio<int>(
-                                    value: index,
-                                    groupValue: cartController.currentAddressIndex.value,
-                                    onChanged: (int? value) {
-                                      cartController.currentAddressIndex.value = value!;
-                                    },
-                                    activeColor: Color(0XFF1671D8), // Active color when selected
-                                    fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-                                      if (states.contains(MaterialState.selected)) {
-                                        return Color(0XFF1671D8); // Active color
-                                      }
-                                      return Color(0XFF1671D8); // Inactive color
-                                    }),
-                                  )),
+                                        value: index,
+                                        groupValue: cartController
+                                            .currentAddressIndex.value,
+                                        onChanged: (int? value) {
+                                          cartController.currentAddressIndex
+                                              .value = value!;
+                                        },
+                                        activeColor: Color(
+                                            0XFF1671D8), // Active color when selected
+                                        fillColor: MaterialStateProperty
+                                            .resolveWith<Color>((states) {
+                                          if (states.contains(
+                                              MaterialState.selected)) {
+                                            return Color(
+                                                0XFF1671D8); // Active color
+                                          }
+                                          return Color(
+                                              0XFF1671D8); // Inactive color
+                                        }),
+                                      )),
                                 ],
                               ),
                             );
                           },
                         );
-
                       }),
                       Padding(
-                        padding: const EdgeInsets.only(left: 12.0,top: 4),
+                        padding: const EdgeInsets.only(left: 12.0, top: 4),
                         child: GestureDetector(
                           onTap: () {
                             Get.toNamed(
@@ -198,17 +216,23 @@ class _BookSlotState extends State<BookSlot> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFE3F2FD), // Light blue background color
-                                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                                  color: Color(
+                                      0xFFE3F2FD), // Light blue background color
+                                  borderRadius: BorderRadius.circular(
+                                      12), // Rounded corners
                                 ),
-                                padding: EdgeInsets.all(8), // Padding inside the container
+                                padding: EdgeInsets.all(
+                                    8), // Padding inside the container
                                 child: Icon(
-                                  Icons.add,  // Add icon
-                                  color: Color(0xFF1671D8),  // Blue color for the plus icon
-                                  size: 24,  // Icon size
+                                  Icons.add, // Add icon
+                                  color: Color(
+                                      0xFF1671D8), // Blue color for the plus icon
+                                  size: 24, // Icon size
                                 ),
                               ),
-                              SizedBox(width: 12), // Space between the icon and the text
+                              SizedBox(
+                                  width:
+                                      12), // Space between the icon and the text
                               // Text widget
                               Text(
                                 "Add New Address",
@@ -274,6 +298,7 @@ class _BookSlotState extends State<BookSlot> {
                     SizedBox(height: 24),
                   ],
                 ),
+                //time text
                 Text(
                   'Select Time',
                   style: TextStyle(
@@ -282,107 +307,154 @@ class _BookSlotState extends State<BookSlot> {
                   ),
                 ),
                 SizedBox(height: 12),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade300,
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ShaderMask(
-                      shaderCallback: (bounds) {
-                        return LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: _getGradientColors(),
-                          stops: [0.0, 0.1, 0.9, 1.0],
-                        ).createShader(bounds);
-                      },
-                      blendMode: BlendMode.dstIn, // Applies the gradient as a mask
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        controller: _scrollController,
-                        child: Column(
+                //time picker
+                Container(
+                  padding: EdgeInsets.only(left: 16,right: 16, bottom: 32,top:8),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      ShaderMask(
+                        shaderCallback: (bounds) {
+                          return LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: _getGradientColors(),
+                            stops: [0.0, 0.1, 0.9, 1.0],
+                          ).createShader(bounds);
+                        },
+                        blendMode: BlendMode.dstIn, // Applies the gradient as a mask
+                        child: Stack(
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: List.generate(segmentCount, (index) {
-                                return Column(
-                                  children: [
-                                    Container(
-                                      width: 30,
-                                      height: 5,
-                                      color: getColor(index), // Use dynamic color
-                                    ),
-                                    SizedBox(height: 5),
-                                    Container(
-                                      width: 1.5,
-                                      height: index % 2 == 0 ? 20 : 10,
-                                      color: Colors.black,
-                                    ),
-                                  ],
-                                );
-                              }),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              controller: _scrollController,
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 40,),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: List.generate(segmentCount, (index) {
+                                      return Column(
+                                        children: [
+                                          Container(
+                                            width: 30,
+                                            height: 5,
+                                            color: getColor(index), // Use dynamic color
+                                          ),
+                                          SizedBox(height: 5),
+                                          Container(
+                                            width: 1.5,
+                                            height: index % 2 == 0 ? 20 : 10,
+                                            color: Colors.black,
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    children: List.generate(segmentCount, (index) {
+                                      return Container(
+                                        width: 30,
+                                        child: index % 2 == 0
+                                            ? Text(
+                                          getTimeLabel(index),
+                                          style: TextStyle(fontSize: 10),
+                                          textAlign: TextAlign.center,
+                                        )
+                                            : SizedBox(), // Empty for half-hours
+                                      );
+                                    }),
+                                  ),
+                                ],
+                              ),
                             ),
-                            SizedBox(height: 5),
-                            Row(
-                              children: List.generate(segmentCount, (index) {
-                                return Container(
-                                  width: 30,
-                                  child: index % 2 == 0
-                                      ? Text(
-                                    getTimeLabel(index),
-                                    style: TextStyle(fontSize: 10),
-                                    textAlign: TextAlign.center,
-                                  )
-                                      : SizedBox(), // Empty for half-hours
-                                );
-                              }),
+                            // Sliding icon
+                            Positioned(
+                              left: _iconPosition,
+                              top: 10,
+                              child: GestureDetector(
+                                onHorizontalDragUpdate: (DragUpdateDetails details) {
+                                  setState(() {
+                                    // Update the position of the icon
+                                    _iconPosition += details.delta.dx;
+
+                                    // Restrict the icon movement within the scrollable width
+                                    if (_iconPosition < 0) {
+                                      _iconPosition = 0;
+                                    } else if (_iconPosition > MediaQuery.of(context).size.width - 30) {
+                                      _iconPosition = MediaQuery.of(context).size.width - 30;
+                                    }
+                                  });
+                                },
+                                onHorizontalDragEnd: (DragEndDetails details) {
+                                  // Calculate the closest time index based on icon position
+                                  double segmentWidth = 30.0; // Each segment width in pixels
+                                  int closestIndex = (_iconPosition / segmentWidth).round();
+                                  _values=getTimeLabel(closestIndex);
+                                  print('Selected Time: ${getTimeLabel(closestIndex)}');
+
+                                },
+                                child: Icon(Icons.settings_rounded, size: 24, color: Color(0xff3A3A3A)),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    SizedBox(height: 12,),
-                    Row(
-                      children: [
-                        Container(height: 8,width: 8,color: Color(0xffBABABA),),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text("Unavailable"),
-                        ),
-                        Container(height: 8,width: 8,  margin: const EdgeInsets.only(left: 16.0),color: Color(0xff59A1E5),),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text("Available"),
-                        ),
-                      ],
-                    )
-                  ],
+                      SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Container(
+                            height: 8,
+                            width: 8,
+                            color: Color(0xffBABABA),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text("Unavailable"),
+                          ),
+                          Container(
+                            height: 8,
+                            width: 8,
+                            margin: const EdgeInsets.only(left: 16.0),
+                            color: Color(0xff59A1E5),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text("Available"),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
                 SizedBox(height: 24),
+                //reservation
                 blueButton(
                   text: 'Reservation',
                   onTap: () {
-                    selectedAddressIndex = cartController.currentAddressIndex.value;
+                    selectedAddressIndex =
+                        cartController.currentAddressIndex.value;
                     _updateCurrentAddress(selectedAddressIndex);
                     print('Selected Address Index: $selectedAddressIndex');
-                    
-                    // Pass the selected date and time back to CartPage
-                    Get.back(result: {
-                      'selectedDate': selectedDate,
-                      'selectedTimeRange': _values,
-                    });
+                    print('Selected Address Index: $selectedDate');
+                    print('Selected Address Index: $_values');
+
+                    // Get.back(result: {
+                    //   'selectedDate': selectedDate,
+                    //   'selectedTimeRange': _values,
+                    // });
                   },
                 ),
               ],
@@ -392,27 +464,32 @@ class _BookSlotState extends State<BookSlot> {
       ),
     );
   }
+
   List<Color> _getGradientColors() {
     if (_isAtStart) {
       return [
         Colors.white, // Start fully opaque
         Colors.white.withOpacity(0.8), // Transition to semi-transparent
-        Colors.transparent.withOpacity(0.3), // Fully transparent towards the end
+        Colors.transparent
+            .withOpacity(0.6), // Fully transparent towards the end
         Colors.transparent
       ];
     } else if (_isAtEnd) {
       return [
         Colors.transparent, // Fully transparent at the start
-        Colors.transparent.withOpacity(0.3), // Gradual transition to opaque
+        Colors.transparent.withOpacity(0.6), // Gradual transition to opaque
         Colors.white.withOpacity(0.8), // Semi-transparent towards the middle
         Colors.white // Fully opaque at the end
       ];
     } else {
       return [
         Colors.transparent.withOpacity(0.0), // Transparent on the left edge
-        Colors.transparent.withOpacity(0.8), // Semi-transparent towards the center
-        Colors.transparent.withOpacity(0.8), // Semi-transparent again on the other side
-        Colors.transparent.withOpacity(0.0)  // Fully transparent on the right edge
+        Colors.transparent
+            .withOpacity(0.8), // Semi-transparent towards the center
+        Colors.transparent
+            .withOpacity(0.8), // Semi-transparent again on the other side
+        Colors.transparent
+            .withOpacity(0.0) // Fully transparent on the right edge
       ];
     }
   }
