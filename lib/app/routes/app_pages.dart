@@ -62,8 +62,7 @@ class AppPages {
         name: AppRoutes.MAPSCREEN,
         page: () => MapScreen(),
         binding: AuthBinding()),
-    GetPage(
-        name: AppRoutes.FILTERED_RESULTS, page: () => FilteredResultsPage()),
+
     GetPage(
         name: AppRoutes.EDITPROFILE,
         page: () => EditProfile(),

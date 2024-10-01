@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
-import '../../controllers/subscription_controller.dart';
 import '../../routes/app_routes.dart';
-
-// class SubscriptionPage extends StatefulWidget {
-//   @override
-//   _SubscriptionPageState createState() => _SubscriptionPageState();
-// }
-
-// class _SubscriptionPageState extends State<SubscriptionPage> {
-//   bool isMonthly = true;
 
 class SubscriptionPage extends StatefulWidget {
   @override
@@ -24,22 +15,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     icon: Icon(Icons.arrow_back, color: Colors.black),
-      //     onPressed: () {
-      //     },
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       icon: Icon(Icons.more_vert, color: Colors.black),
-      //       onPressed: () {
-      //       },
-      //     ),
-      //   ],
-      // ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 16.0,

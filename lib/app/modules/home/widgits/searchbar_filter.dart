@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:get/get.dart';
-import 'package:wrenchmate_user_app/app/controllers/searchcontroller.dart';
-import 'package:wrenchmate_user_app/app/modules/home/searchscreen.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../../routes/app_routes.dart';
@@ -63,11 +61,6 @@ class _searchbarState extends State<searchbar> {
           //filter
           if (widget.showFilter)
             CustomIconButton(
-              icon: Icon(
-                Icons.filter_list,
-                color: Colors.white,
-                size: 24,
-              ),
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
@@ -85,21 +78,25 @@ class _searchbarState extends State<searchbar> {
 }
 
 class CustomIconButton extends StatelessWidget {
-  final Icon icon;
   final VoidCallback onPressed;
 
-  CustomIconButton({required this.icon, required this.onPressed});
+  CustomIconButton({required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Color(0xff3B7FFF),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: IconButton(
-        icon: icon,
-        onPressed: onPressed,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Color(0xff3B7FFF),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Image.asset(
+          width: 28,
+          'assets/icons/IC_Filter.png',
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -111,8 +108,6 @@ class BottomSheet extends StatefulWidget {
 }
 
 class _BottomSheetState extends State<BottomSheet> {
-  final SearchControllerClass searchController =
-      Get.put(SearchControllerClass());
   void onApplyFilters(
     List<String> selectedServices,
     String selectedDiscount,
@@ -121,27 +116,30 @@ class _BottomSheetState extends State<BottomSheet> {
     double maxPrice,
   ) async {
     print("onApplyFilters called");
-    await searchController.fetchFilteredSearchResults(
-      selectedServices: selectedServices,
-      selectedDiscount: selectedDiscount,
-      selectedRating: selectedRating,
-      minPrice: minPrice,
-      maxPrice: maxPrice,
-    );
+    print(selectedServices);
+    print(selectedDiscount);
+    print(selectedRating);
+    print(minPrice);
+    print(maxPrice);
 
-    Get.toNamed('/filteredResults');
+    Get.toNamed(AppRoutes.SEARCHSCREEN, arguments: {
+      'selectedServices': selectedServices,
+      'selectedDiscount': selectedDiscount,
+      'selectedRating': selectedRating,
+      'minPrice': minPrice,
+      'maxPrice': maxPrice,
+    });
   }
 
   List<String> selectedServices = [];
   String selectedDiscount = '';
   String selectedRating = '';
-  double minPrice = 0;
-  double maxPrice = double.infinity;
+  double minPrice = 120;
+  double maxPrice = 5000;
 
   List<String> services = [
     "Car Wash",
     "Detailing",
-    "Repair",
     "Wheel Service",
     "Accessories",
     "Denting and Painting",
@@ -182,22 +180,26 @@ class _BottomSheetState extends State<BottomSheet> {
               ),
             ),
             SizedBox(height: 16),
-            RangeSliderWidget(
-                // onRangeChanged: (min, max) {
-                //   setState(() {
-                //     minPrice = min;
-                //     maxPrice = max;
-                //   });
-                // },
-                ),
-            SizedBox(height: 16),
-            _buildServiceTypes(),
-            SizedBox(height: 16),
-            _buildDiscountTypes(),
-            SizedBox(height: 16),
-            _buildRatingTypes(),
-            SizedBox(height: 32),
-            _buildClearAllApplyButtons(),
+            Column(          crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: [
+                RangeSliderWidget(
+                  onRangeChanged: (min, max) {
+                    setState(() {
+                      minPrice = min;
+                      maxPrice = max;
+                    });
+                  },
+                    ),
+                _buildServiceTypes(),
+                SizedBox(height: 8),
+                _buildDiscountTypes(),
+                SizedBox(height: 8),
+                _buildRatingTypes(),
+                SizedBox(height: 8),
+                _buildClearAllApplyButtons(),
+              ],
+            ),
           ],
         ),
       ),
@@ -398,19 +400,6 @@ class _BottomSheetState extends State<BottomSheet> {
                   minPrice,
                   maxPrice,
                 );
-                // Navigator.of(context).push(
-                // MaterialPageRoute(
-                //   builder: (context) => SearchPage(
-                //       // filters: {
-                //       //   'selectedServices': selectedServices,
-                //       //   'selectedDiscount': selectedDiscount,
-                //       //   'selectedRating': selectedRating,
-                //       //   'minPrice': minPrice,
-                //       //   'maxPrice': maxPrice,
-                //       // },
-                //       ),
-                // ),
-                // );
               },
               child: Text(
                 "APPLY",
@@ -429,23 +418,34 @@ class _BottomSheetState extends State<BottomSheet> {
 }
 
 class RangeSliderWidget extends StatefulWidget {
+  final Function(double, double) onRangeChanged; // Add this
+
+  RangeSliderWidget({required this.onRangeChanged}); // Add this
+
   @override
   _RangeSliderWidgetState createState() => _RangeSliderWidgetState();
 }
+
 
 class _RangeSliderWidgetState extends State<RangeSliderWidget> {
   double _lowerValue = 1299;
   double _upperValue = 3999;
   List<int> itemCounts = [
-    80,
-    10,
-    20,
-    60,
     70,
     100,
     30,
+    30,
+    80,
+    10,
+    100,
     40,
     90,
+    90,
+    20,
+    60,
+    40,
+    50,
+    70,
     50,
   ];
 
@@ -472,6 +472,7 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
                 _lowerValue = lowerValue;
                 _upperValue = upperValue;
               });
+              widget.onRangeChanged(lowerValue, upperValue);
             },
             handler: FlutterSliderHandler(
               decoration: BoxDecoration(),
@@ -578,7 +579,7 @@ class BarChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = primaryColor.withOpacity(0.5)
+      ..color = primaryColor.withOpacity(0.1)
       ..style = PaintingStyle.fill;
 
     double barWidth = 300 / itemCounts.length;
