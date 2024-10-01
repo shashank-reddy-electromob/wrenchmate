@@ -52,8 +52,26 @@ class _termsAndConditionsState extends State<termsAndConditions> {
   }
 
   _openEmail() async {
-    const email = 'mailto:ptejeshreddy22@gmail.com';
+    const email = 'mailto:contact@wrenchmate.in';
     await launch(email);
+  }
+
+  _openDialer() async {
+    const phoneNumber = 'tel:+91-7386565050';
+    await launch(phoneNumber);
+  }
+
+  String address = "Janaki nagar, langer house, Hyderabad, Telangana, India";
+
+  Future<void> _openMap() async {
+    final Uri googleMapsUrl =
+        Uri.parse("https://www.google.com/maps/search/?api=1&query=$address");
+
+    if (await canLaunchUrl(googleMapsUrl)) {
+      await launchUrl(googleMapsUrl);
+    } else {
+      throw 'Could not open the map for the address: $address';
+    }
   }
 
   @override
@@ -96,7 +114,24 @@ class _termsAndConditionsState extends State<termsAndConditions> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Please read these terms and conditions carefully before using Our Service.',
+                  'Wrench Mate - Terms and Conditions\n',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      color: Color(0xff494949),
+                      fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  'Effective Date: 01-10-24\n',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      color: Color(0xff494949),
+                      fontWeight: FontWeight.w500),
+                ),
+
+                Text(
+                  'Welcome to Wrench Mate! These terms and conditions ("Terms") govern your use of the Wrench Mate mobile application (the “App”) and services provided through it. By downloading, accessing, or using the App, you agree to these Terms. Please read them carefully before using the App.',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Poppins',
@@ -105,7 +140,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Interpretation and Definitions',
+                  '1. Eligibility',
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Color(0xff494949),
@@ -114,21 +149,7 @@ class _termsAndConditionsState extends State<termsAndConditions> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  '''Interpretation
-The words of which the initial letter is capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
-
-Definitions
-For the purposes of these Terms and Conditions:
-
-Affiliate: An entity that controls, is controlled by, or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest, or other securities entitled to vote for election of directors or other managing authority.
-Country: Refers to Telangana, India.
-Company: (referred to as either "the Company", "We", "Us", or "Our" in this Agreement) refers to Wrenchmate, Plot no B5, Janaki Nagar, Langer House, Hyderabad-500008.
-Device: Any device that can access the Service such as a computer, a cellphone, or a digital tablet.
-Service: Refers to the Website.
-Terms and Conditions: (also referred to as "Terms") mean these Terms and Conditions that form the entire agreement between You and the Company regarding the use of the Service.
-Third-party Social Media Service: Any services or content provided by a third-party that may be displayed, included, or made available by the Service.
-Website: Refers to Wrenchmate, accessible from wrenchmate.in.
-You: The individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.''',
+                  '''You must be at least 18 years old and legally capable of entering into a binding contract as per Indian laws to use the Wrench Mate app. If you are under 18, you may use the App only under the supervision of a parent or legal guardian.''',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Poppins',
@@ -137,7 +158,7 @@ You: The individual accessing or using the Service, or the company, or other leg
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Acknowledgment',
+                  '2. Services Provided',
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Color(0xff494949),
@@ -146,15 +167,7 @@ You: The individual accessing or using the Service, or the company, or other leg
                 ),
                 SizedBox(height: 8),
                 Text(
-                  '''These are the Terms and Conditions governing the use of this Service and the agreement that operates between You and the Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the Service.
-
-Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms and Conditions. These Terms and Conditions apply to all visitors, users, and others who access or use the Service.
-
-By accessing or using the Service, You agree to be bound by these Terms and Conditions. If You disagree with any part of these Terms and Conditions, then You may not access the Service.
-
-You represent that you are over the age of 18. The Company does not permit those under 18 to use the Service.
-
-Your access to and use of the Service is also conditioned on Your acceptance of and compliance with the Privacy Policy of the Company. Our Privacy Policy describes Our policies and procedures on the collection, use, and disclosure of Your personal information when You use the Application or the Website and tells You about Your privacy rights and how the law protects You. Please read Our Privacy Policy carefully before using Our Service.''',
+                  '''Wrench Mate provides a platform where users can book automotive services, including car washing, detailing, repairs, and accessory purchases through third-party service providers. We act as a facilitator and do not directly provide these services.''',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Poppins',
@@ -163,7 +176,7 @@ Your access to and use of the Service is also conditioned on Your acceptance of 
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Links to Other Website',
+                  '3. Account Registration',
                   style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Color(0xff494949),
@@ -172,179 +185,246 @@ Your access to and use of the Service is also conditioned on Your acceptance of 
                 ),
                 SizedBox(height: 8),
                 Text(
-                  '''Our Service may contain links to third-party websites or services that are not owned or controlled by the Company.
+                  '''To use our services, you must register and maintain an account with accurate, complete, and up-to-date information. You are responsible for safeguarding your account credentials and for all activity conducted under your account.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '4. Booking and Payments',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''Users can book services via the App and must make payments electronically, including credit/debit cards, UPI, or other authorized methods. All payments are in Indian Rupees (INR).
+You agree to pay for all services booked through the App, including applicable taxes.
+Cancellations and refunds are subject to our Cancellation Policy.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '5. Cancellation and Refunds',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''You can cancel a service booking up to 24 hours before the scheduled time for a full refund.
+Cancellations made within 24 hours of the service time may incur charges.
+Refunds will be processed within [X] business days.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '6. User Responsibilities',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''By using the App, you agree:
 
-The Company has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third-party websites or services. You further acknowledge and agree that the Company shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such content, goods, or services available on or through any such websites or services.
+Not to engage in fraudulent activities.
+To provide accurate information and refrain from using the App for unlawful purposes.
+To respect intellectual property rights and not misuse Wrench Mate content or services.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '7. Pricing and Promotions',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''Service pricing is listed within the App, and prices are subject to change. Promotional offers may be available from time to time, and their terms are subject to specific conditions.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '8. Third-Party Services',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''Wrench Mate partners with independent third-party service providers. We are not responsible for their actions, service quality, or damages arising during the service process. Users are encouraged to directly address any issues related to service quality with the respective provider.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '9. Limitation of Liability',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''Wrench Mate is not liable for any indirect, incidental, or consequential damages related to the use of the App, including but not limited to delays in service, errors, or issues with third-party service providers. Our liability is limited to the value of the services booked.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '10. Termination of Account',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''We may suspend or terminate your account if you breach these Terms, misuse the App, or engage in unlawful activities. You may close your account at any time by contacting us.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '11. Privacy',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''Wrench Mate is committed to protecting your privacy. We collect and use your personal data in accordance with our Privacy Policy, which complies with Indian data protection laws.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '12. Modifications',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''Wrench Mate reserves the right to modify these Terms at any time. Users will be notified of any significant changes, and continued use of the App after changes are made constitutes acceptance of the revised Terms.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '13. Dispute Resolution',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''Any disputes arising from these Terms or the services provided will be governed by Indian law. All disputes will be subject to the exclusive jurisdiction of the courts in Hyderabad, Telangana.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '14. Governing Law',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''These Terms are governed by and construed in accordance with the laws of India.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '15. Contact Information',
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff494949),
+                      fontSize: 20,
+                      fontFamily: 'Poppins'),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''For support or questions related to these Terms, you may contact us at:
 
-We strongly advise You to read the terms and conditions and privacy policies of any third-party websites or services that You visit.''',
+Wrench Mate Pvt. Ltd.''',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Poppins',
                     color: Color(0xff494949),
                   ),
                 ),
-                SizedBox(height: 16),
-                Text(
-                  'Termination',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff494949),
-                      fontSize: 20,
-                      fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '''We may terminate or suspend Your access immediately, without prior notice or liability, for any reason whatsoever, including without limitation if You breach these Terms and Conditions.
-
-Upon termination, Your right to use the Service will cease immediately.''',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    color: Color(0xff494949),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Limitation of Liability',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff494949),
-                      fontSize: 20,
-                      fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '''Notwithstanding any damages that You might incur, the entire liability of the Company and any of its suppliers under any provision of these Terms and Your exclusive remedy for all of the foregoing shall be limited to the amount actually paid by You through the Service or 100 USD if You haven't purchased anything through the Service.
-
-To the maximum extent permitted by applicable law, in no event shall the Company or its suppliers be liable for any special, incidental, indirect, or consequential damages whatsoever (including, but not limited to, damages for loss of profits, loss of data or other information, business interruption, personal injury, or loss of privacy arising out of or in any way related to the use of or inability to use the Service, third-party software and/or third-party hardware used with the Service, or otherwise in connection with any provision of these Terms), even if the Company or any supplier has been advised of the possibility of such damages and even if the remedy fails of its essential purpose.''',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    color: Color(0xff494949),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  '"AS IS" and "AS AVAILABLE" Disclaimer',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff494949),
-                      fontSize: 20,
-                      fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '''The Service is provided to You "AS IS" and "AS AVAILABLE" and with all faults and defects without warranty of any kind. To the maximum extent permitted under applicable law, the Company, on its own behalf and on behalf of its Affiliates and its and their respective licensors and service providers, expressly disclaims all warranties, whether express, implied, statutory, or otherwise, with respect to the Service, including all implied warranties of merchantability, fitness for a particular purpose, title and non-infringement, and warranties that may arise out of course of dealing, course of performance, usage, or trade practice. Without limitation to the foregoing, the Company provides no warranty or undertaking, and makes no representation of any kind that the Service will meet Your requirements, achieve any intended results, be compatible or work with any other software, applications, systems or services, operate without interruption, meet any performance or reliability standards or be error-free or that any errors or defects can or will be corrected.''',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    color: Color(0xff494949),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Governing Law',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff494949),
-                      fontSize: 20,
-                      fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '''The laws of the Country, excluding its conflicts of law rules, shall govern these Terms and Your use of the Service. Your use of the Application may also be subject to other local, state, national, or international laws.''',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    color: Color(0xff494949),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Disputes Resolution',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff494949),
-                      fontSize: 20,
-                      fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '''If You have any concern or dispute about the Service, You agree to first try to resolve the dispute informally by contacting the Company.''',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    color: Color(0xff494949),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Severability and Waiver',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff494949),
-                      fontSize: 20,
-                      fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '''Severability
-If any provision of these Terms is held to be unenforceable or invalid, such provision will be changed and interpreted to accomplish the objectives of such provision to the greatest extent possible under applicable law and the remaining provisions will continue in full force and effect.
-
-Waiver
-Except as provided herein, the failure to exercise a right or to require performance of an obligation under these Terms shall not affect a party's ability to exercise such right or require such performance at any time thereafter, nor shall the waiver of a breach constitute a waiver of any subsequent breach.''',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    color: Color(0xff494949),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Changes to These Terms and Conditions',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff494949),
-                      fontSize: 20,
-                      fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '''We reserve the right, at Our sole discretion, to modify or replace these Terms at any time. If a revision is material, We will make reasonable efforts to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at Our sole discretion.
-
-By continuing to access or use Our Service after those revisions become effective, You agree to be bound by the revised terms. If You do not agree to the new terms, in whole or in part, please stop using the website and the Service.''',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    color: Color(0xff494949),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Contact Us',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff494949),
-                      fontSize: 20,
-                      fontFamily: 'Poppins'),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '''If you have any questions about these Terms and Conditions, You can contact us:''',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    color: Color(0xff494949),
-                  ),
-                ),
-
                 GestureDetector(
                   onTap: _openEmail,
                   child: Text.rich(
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: 'By Email: ',
+                          text: 'By email: ',
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: 'Poppins',
@@ -352,7 +432,7 @@ By continuing to access or use Our Service after those revisions become effectiv
                           ),
                         ),
                         TextSpan(
-                          text: 'ptejeshreddy22@gmail.com',
+                          text: 'contact@wrenchmate.in',
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: 'Poppins',
@@ -363,6 +443,73 @@ By continuing to access or use Our Service after those revisions become effectiv
                         ),
                       ],
                     ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: _openDialer,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Phone: ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            color: Color(0xff494949),
+                          ),
+                        ),
+                        TextSpan(
+                          text: '+91-7386565050',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            color:
+                                Colors.blue, // Blue color for the phone number
+                            decoration: TextDecoration
+                                .underline, // Underline for the phone number
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: _openMap,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Address: ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            color: Color(0xff494949),
+                          ),
+                        ),
+                        TextSpan(
+                          text: '$address',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            color:
+                                Colors.blue, // Blue color for the phone number
+                            decoration: TextDecoration
+                                .underline, // Underline for the phone number
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  '''By using Wrench Mate, you confirm that you have read and agree to these Terms and Conditions. If you do not agree, please refrain from using our services.''',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: Color(0xff494949),
                   ),
                 ),
                 SizedBox(height: 24),

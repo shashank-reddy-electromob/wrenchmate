@@ -61,6 +61,19 @@ class _refundPolicyState extends State<refundPolicy> {
     await launch(phoneNumber);
   }
 
+  String address = "Janaki nagar, langer house, Hyderabad, Telangana, India";
+
+  Future<void> _openMap() async {
+    final Uri googleMapsUrl =
+        Uri.parse("https://www.google.com/maps/search/?api=1&query=$address");
+
+    if (await canLaunchUrl(googleMapsUrl)) {
+      await launchUrl(googleMapsUrl);
+    } else {
+      throw 'Could not open the map for the address: $address';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,6 +113,22 @@ class _refundPolicyState extends State<refundPolicy> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'Wrench Mate - Refund Policy\n',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      color: Color(0xff494949),
+                      fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  'Effective Date: 01-10-24\n',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      color: Color(0xff494949),
+                      fontWeight: FontWeight.w500),
+                ),
                 Text(
                   'At Wrench Mate, we are committed to providing high-quality car care services. If you are not entirely satisfied with your service, we\'re here to help. Please review our refund policy below:',
                   style: TextStyle(
@@ -263,6 +292,35 @@ Services that fall under special offers or discounts are non-refundable.''',
                     ),
                   ),
                 ),
+                GestureDetector(
+                  onTap: _openMap,
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Address: ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            color: Color(0xff494949),
+                          ),
+                        ),
+                        TextSpan(
+                          text: '$address',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            color:
+                                Colors.blue, // Blue color for the phone number
+                            decoration: TextDecoration
+                                .underline, // Underline for the phone number
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
                 // SizedBox(height: 16),
                 // //accept
                 // Align(
