@@ -6,6 +6,8 @@ class AppRoutes {
   static const EDITPROFILE = '/editprofile';
   static const NOTIFICATIONS = '/notifications';
   static const TERMSANDCONDITIONS = '/termsAndConditions';
+  static const REFUNDPOLICY = '/refundpolicy';
+  static const PRIVACYPOLICY = '/privacypolicy';
   static const SERVICE = '/service';
   static const SERVICE_DETAIL = '/service-detail';
   static const SUBSCRIPTION = '/subscription';

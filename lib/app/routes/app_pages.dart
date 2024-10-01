@@ -6,6 +6,8 @@ import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigatio
 import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/coupon.dart';
 import 'package:wrenchmate_user_app/app/modules/home/filterdatascreen.dart';
+import 'package:wrenchmate_user_app/app/modules/home/privacypolicy.dart';
+import 'package:wrenchmate_user_app/app/modules/home/refundpolicy.dart';
 import 'package:wrenchmate_user_app/app/modules/home/searchscreen.dart';
 import 'package:wrenchmate_user_app/app/modules/product/product_details.dart';
 import 'package:wrenchmate_user_app/app/modules/tracking/chatscreen.dart';
@@ -73,6 +75,14 @@ class AppPages {
     GetPage(
         name: AppRoutes.TERMSANDCONDITIONS,
         page: () => termsAndConditions(),
+        binding: HomeBinding()),
+        GetPage(
+        name: AppRoutes.PRIVACYPOLICY,
+        page: () => privacyPolicy(),
+        binding: HomeBinding()),
+        GetPage(
+        name: AppRoutes.REFUNDPOLICY,
+        page: () => refundPolicy(),
         binding: HomeBinding()),
     GetPage(
         name: AppRoutes.BOTTOMNAV,

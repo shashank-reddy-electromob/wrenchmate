@@ -45,7 +45,7 @@ class _MenuTabState extends State<MenuTab> {
               end: Alignment.centerRight,
             ),
           ),
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
           child: Row(
             children: [
               Icon(

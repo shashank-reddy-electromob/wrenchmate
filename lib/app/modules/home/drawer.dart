@@ -38,8 +38,12 @@ class _drawerPageState extends State<drawerPage> {
     } else if (index == 2) {
       Get.toNamed(AppRoutes.TERMSANDCONDITIONS);
     } else if (index == 3) {
-      Get.toNamed(AppRoutes.SUPPORT);
+      Get.toNamed(AppRoutes.REFUNDPOLICY);
     } else if (index == 4) {
+      Get.toNamed(AppRoutes.PRIVACYPOLICY);
+    } else if (index == 5) {
+      Get.toNamed(AppRoutes.SUPPORT);
+    } else if (index == 6) {
       print("rate us");
     } else {}
   }
@@ -143,11 +147,25 @@ class _drawerPageState extends State<drawerPage> {
             index: 3,
             selectedIndex: _selectedIndex,
             onTap: _onTabTapped,
+            icon: Icons.article,
+            text: 'Refund Policy',
+          ),
+          MenuTab(
+            index: 4,
+            selectedIndex: _selectedIndex,
+            onTap: _onTabTapped,
+            icon: Icons.article,
+            text: 'Privacy Policy',
+          ),
+          MenuTab(
+            index: 5,
+            selectedIndex: _selectedIndex,
+            onTap: _onTabTapped,
             icon: Icons.contact_phone,
             text: 'Contact us',
           ),
           MenuTab(
-            index: 4,
+            index: 6,
             selectedIndex: _selectedIndex,
             onTap: _onTabTapped,
             icon: Icons.star,

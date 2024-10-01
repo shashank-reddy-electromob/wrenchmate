@@ -40,15 +40,17 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> initalCall() async {
     await cartController.fetchTotalCost();
-    print("cartController.totalAmount.value :: ${cartController.totalAmount.value}");
+    print(
+        "cartController.totalAmount.value :: ${cartController.totalAmount.value}");
     if (cartController.totalAmount.value > 0.0) {
-      print("cartController.totalAmount.value :: ${cartController.totalAmount.value}");
+      print(
+          "cartController.totalAmount.value :: ${cartController.totalAmount.value}");
     }
   }
 
   Future<void> fetchUserData() async {
     userData = await controller?.fetchUserData() as Map<String, dynamic>?;
-   addressIndex=userData?['current_address'];
+    addressIndex = userData?['current_address'];
     setState(() {});
   }
 
@@ -171,8 +173,16 @@ class _HomePageState extends State<HomePage> {
                                         GestureDetector(
                                           onTap: () {
                                             print("address");
-                                            Get.toNamed(AppRoutes.MAPSCREEN,
-                                                arguments: {'isnew': false, 'address': userData?['User_address'][addressIndex]},);},
+                                            Get.toNamed(
+                                              AppRoutes.MAPSCREEN,
+                                              arguments: {
+                                                'isnew': false,
+                                                'address':
+                                                    userData?['User_address']
+                                                        [addressIndex]
+                                              },
+                                            );
+                                          },
                                           child: Row(
                                             children: [
                                               Icon(
@@ -184,8 +194,8 @@ class _HomePageState extends State<HomePage> {
                                                 child: Text(
                                                   userData?['User_address'] !=
                                                           null
-                                                      ? userData![
-                                                              'User_address'][addressIndex]
+                                                      ? userData!['User_address']
+                                                              [addressIndex]
                                                           .split(',')
                                                           .take(3)
                                                           .join(', ')
@@ -244,10 +254,13 @@ class _HomePageState extends State<HomePage> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: PersistentNotification(
-              totalAmount: cartController.totalAmount,
-              discountAmount: cartController.discountAmount,
-            ),
+            child: isDrawerOpen
+                ? SizedBox
+                    .shrink() 
+                : PersistentNotification(
+                    totalAmount: cartController.totalAmount,
+                    discountAmount: cartController.discountAmount,
+                  ),
           ),
         ],
       ),
