@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart'; // Import Firestore
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class BookingController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -17,12 +17,13 @@ class BookingController extends GetxController {
     String outForServiceNote,
     String completedNote,
     String currentCar,
-    DateTime? selectedDate, // New parameter
-    SfRangeValues? selectedTimeRange, // New parameter
+    String address,
+    DateTime? selectedDate,
+    SfRangeValues? selectedTimeRange, // Nullable time range
   ) async {
     try {
       await _firestore.collection('Booking').add({
-        'user_id':userId,
+        'user_id': userId,
         'service_list': serviceIds,
         'status': status,
         'confirmation_date': confirmationDate,
@@ -32,11 +33,14 @@ class BookingController extends GetxController {
         'outForService_note': outForServiceNote,
         'completed_note': completedNote,
         'car_details': currentCar,
-        'selected_date': selectedDate != null ? selectedDate.toIso8601String() : null, // Add selected date
-        'selected_time_range': selectedTimeRange != null ? {
-          'start': selectedTimeRange.start,
-          'end': selectedTimeRange.end,
-        } : null, 
+        'address': address,
+        'selected_date': selectedDate?.toIso8601String(),
+        'selected_time_range': selectedTimeRange != null
+            ? {
+                'start': selectedTimeRange.start,
+                'end': selectedTimeRange.end,
+              }
+            : null,
       });
     } catch (e) {
       throw Exception("Failed to add booking: $e");
@@ -53,6 +57,17 @@ class BookingController extends GetxController {
       List<Map<String, dynamic>> bookings = snapshot.docs
           .map((doc) => doc.data() as Map<String, dynamic>)
           .toList();
+
+      // Convert selected_time_range back to SfRangeValues
+      for (var booking in bookings) {
+        if (booking['selected_time_range'] != null) {
+          booking['selected_time_range'] = SfRangeValues(
+            booking['selected_time_range']['start'],
+            booking['selected_time_range']['end'],
+          );
+        }
+      }
+
       print(bookings);
       return bookings;
     } catch (e) {

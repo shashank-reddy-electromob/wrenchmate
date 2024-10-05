@@ -4,8 +4,10 @@ import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/controllers/auth_controller.dart';
+import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 
 import '../../controllers/cart_controller.dart';
@@ -18,11 +20,13 @@ class BookSlot extends StatefulWidget {
 }
 
 class _BookSlotState extends State<BookSlot> {
-  double _iconPosition=0;
+  double _iconPosition = 0;
   int selectedAddressIndex = 0;
   int selectedDateIndex = 0;
-  String _values='';
+  String _values = '';
   DateTime selectedDate = DateTime.now();
+  SfRangeValues _rangeValues = SfRangeValues(12.0, 13.0);
+  List<String> addresses = []; // ensure it's a List<String>
 
   final CartController cartController = Get.put(CartController());
   final AuthController authcontroller = Get.put(AuthController());
@@ -48,6 +52,12 @@ class _BookSlotState extends State<BookSlot> {
     int hours = index ~/ 2; // 2 segments per hour
     int minutes = (index % 2 == 0) ? 0 : 30; // Alternates between :00 and :30
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+  }
+
+  String _formatTime(double value) {
+    int hours = value.toInt();
+    String formattedTime = '${hours.toString().padLeft(2, '0')}:00';
+    return formattedTime;
   }
 
   @override
@@ -307,138 +317,61 @@ class _BookSlotState extends State<BookSlot> {
                   ),
                 ),
                 SizedBox(height: 12),
-                //time picker
-                Container(
-                  padding: EdgeInsets.only(left: 16,right: 16, bottom: 32,top:8),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      ShaderMask(
-                        shaderCallback: (bounds) {
-                          return LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: _getGradientColors(),
-                            stops: [0.0, 0.1, 0.9, 1.0],
-                          ).createShader(bounds);
+                Row(
+                  children: [
+                    Expanded(
+                      child: SfRangeSlider(
+                        min: 12.0,
+                        max: 24.0,
+                        values: _rangeValues,
+                        interval: 1.0,
+                        showTicks: true,
+                        showLabels: true,
+                        minorTicksPerInterval: 1,
+                        activeColor: Colors.blue,
+                        inactiveColor: Colors.grey,
+                        onChanged: (SfRangeValues newValues) {
+                          setState(() {
+                            if (newValues.end > newValues.start) {
+                              _rangeValues = newValues;
+                            } else {
+                              _rangeValues = SfRangeValues(
+                                  newValues.start, newValues.start + 1.0);
+                            }
+                          });
                         },
-                        blendMode: BlendMode.dstIn, // Applies the gradient as a mask
-                        child: Stack(
-                          children: [
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              controller: _scrollController,
-                              child: Column(
-                                children: [
-                                  SizedBox(height: 40,),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: List.generate(segmentCount, (index) {
-                                      return Column(
-                                        children: [
-                                          Container(
-                                            width: 30,
-                                            height: 5,
-                                            color: getColor(index), // Use dynamic color
-                                          ),
-                                          SizedBox(height: 5),
-                                          Container(
-                                            width: 1.5,
-                                            height: index % 2 == 0 ? 20 : 10,
-                                            color: Colors.black,
-                                          ),
-                                        ],
-                                      );
-                                    }),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Row(
-                                    children: List.generate(segmentCount, (index) {
-                                      return Container(
-                                        width: 30,
-                                        child: index % 2 == 0
-                                            ? Text(
-                                          getTimeLabel(index),
-                                          style: TextStyle(fontSize: 10),
-                                          textAlign: TextAlign.center,
-                                        )
-                                            : SizedBox(), // Empty for half-hours
-                                      );
-                                    }),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Sliding icon
-                            Positioned(
-                              left: _iconPosition,
-                              top: 10,
-                              child: GestureDetector(
-                                onHorizontalDragUpdate: (DragUpdateDetails details) {
-                                  setState(() {
-                                    // Update the position of the icon
-                                    _iconPosition += details.delta.dx;
-
-                                    // Restrict the icon movement within the scrollable width
-                                    if (_iconPosition < 0) {
-                                      _iconPosition = 0;
-                                    } else if (_iconPosition > MediaQuery.of(context).size.width - 30) {
-                                      _iconPosition = MediaQuery.of(context).size.width - 30;
-                                    }
-                                  });
-                                },
-                                onHorizontalDragEnd: (DragEndDetails details) {
-                                  // Calculate the closest time index based on icon position
-                                  double segmentWidth = 30.0; // Each segment width in pixels
-                                  int closestIndex = (_iconPosition / segmentWidth).round();
-                                  _values=getTimeLabel(closestIndex);
-                                  print('Selected Time: ${getTimeLabel(closestIndex)}');
-
-                                },
-                                child: Icon(Icons.settings_rounded, size: 24, color: Color(0xff3A3A3A)),
-                              ),
-                            ),
-                          ],
-                        ),
+                        // labelFormatterCallback: (dynamic actualValue, String formattedText) {
+                        //   return _formatTime(actualValue); // Formatting time as shown on the ticks
+                        // },
+                        tooltipTextFormatterCallback:
+                            (dynamic actualValue, String formattedText) {
+                          return _formatTime(
+                              actualValue); // Formatting time in the tooltip
+                        },
                       ),
-                      SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Container(
-                            height: 8,
-                            width: 8,
-                            color: Color(0xffBABABA),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text("Unavailable"),
-                          ),
-                          Container(
-                            height: 8,
-                            width: 8,
-                            margin: const EdgeInsets.only(left: 16.0),
-                            color: Color(0xff59A1E5),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Text("Available"),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.settings),
+                      onPressed: () {},
+                    ),
+                  ],
                 ),
+
+                SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    LegendItem(color: Colors.grey, label: 'Unavailable'),
+                    SizedBox(width: 10),
+                    LegendItem(color: Colors.blue, label: 'Available'),
+                  ],
+                ),
+                SizedBox(height: 16.0),
+                Text(
+                  'Selected Time: ${_formatTime(_rangeValues.start)} - ${_formatTime(_rangeValues.end)} hours',
+                  style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
+                ),
+
                 SizedBox(height: 24),
                 //reservation
                 blueButton(
@@ -447,14 +380,22 @@ class _BookSlotState extends State<BookSlot> {
                     selectedAddressIndex =
                         cartController.currentAddressIndex.value;
                     _updateCurrentAddress(selectedAddressIndex);
-                    print('Selected Address Index: $selectedAddressIndex');
-                    print('Selected Address Index: $selectedDate');
-                    print('Selected Address Index: $_values');
 
-                    // Get.back(result: {
-                    //   'selectedDate': selectedDate,
-                    //   'selectedTimeRange': _values,
-                    // });
+                    String selectedAddress =
+                        cartController.addresses[selectedAddressIndex];
+
+                    print('Selected Address: $selectedAddress');
+                    print('Selected Date: $selectedDate');
+                    print('Selected Time Range: $_rangeValues');
+
+                    // _makeReservation();
+
+                    Get.back(result: {
+                      'selectedDate': selectedDate,
+                      'selectedTimeRange': _rangeValues,
+                      'selectAddress':
+                          selectedAddress // Send the actual address
+                    });
                   },
                 ),
               ],
@@ -468,29 +409,47 @@ class _BookSlotState extends State<BookSlot> {
   List<Color> _getGradientColors() {
     if (_isAtStart) {
       return [
-        Colors.white, // Start fully opaque
-        Colors.white.withOpacity(0.8), // Transition to semi-transparent
-        Colors.transparent
-            .withOpacity(0.6), // Fully transparent towards the end
+        Colors.white,
+        Colors.white.withOpacity(0.8),
+        Colors.transparent.withOpacity(0.6),
         Colors.transparent
       ];
     } else if (_isAtEnd) {
       return [
-        Colors.transparent, // Fully transparent at the start
-        Colors.transparent.withOpacity(0.6), // Gradual transition to opaque
-        Colors.white.withOpacity(0.8), // Semi-transparent towards the middle
-        Colors.white // Fully opaque at the end
+        Colors.transparent,
+        Colors.transparent.withOpacity(0.6),
+        Colors.white.withOpacity(0.8),
+        Colors.white
       ];
     } else {
       return [
-        Colors.transparent.withOpacity(0.0), // Transparent on the left edge
-        Colors.transparent
-            .withOpacity(0.8), // Semi-transparent towards the center
-        Colors.transparent
-            .withOpacity(0.8), // Semi-transparent again on the other side
-        Colors.transparent
-            .withOpacity(0.0) // Fully transparent on the right edge
+        Colors.transparent.withOpacity(0.0),
+        Colors.transparent.withOpacity(0.8),
+        Colors.transparent.withOpacity(0.8),
+        Colors.transparent.withOpacity(0.0)
       ];
     }
+  }
+}
+
+class LegendItem extends StatelessWidget {
+  final Color color;
+  final String label;
+
+  LegendItem({required this.color, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          color: color,
+        ),
+        SizedBox(width: 5),
+        Text(label),
+      ],
+    );
   }
 }

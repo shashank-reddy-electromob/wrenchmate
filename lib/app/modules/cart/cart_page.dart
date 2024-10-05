@@ -34,6 +34,7 @@ class _CartPageState extends State<CartPage> {
   double? finalAmount;
   List<String> deletedServiceIds = [];
   String? currentCar;
+  String? selectedAddress;
   DateTime? selectedDate;
   SfRangeValues? selectedTimeRange;
 
@@ -59,7 +60,7 @@ class _CartPageState extends State<CartPage> {
   Future<void> fetchUserCurrentCar() async {
     try {
       var result = await homeController.fetchUserCurrentCar();
-      print("cart page pe hu"+result.toString());
+      print("cart page pe hu" + result.toString());
       currentCar = result.toString();
       setState(() {});
     } catch (e) {
@@ -67,28 +68,27 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-void calculateTotal() {
+  void calculateTotal() {
     try {
-        setState(() {
-            totalAmount = 0.0; // Initialize totalAmount
-            for (var item in cartController.cartItems) {
-                double price = item['price'] ?? 0.0;
-                int unitsQuantity = item['unitsquantity'] ?? 0;
+      setState(() {
+        totalAmount = 0.0; // Initialize totalAmount
+        for (var item in cartController.cartItems) {
+          double price = item['price'] ?? 0.0;
+          int unitsQuantity = item['unitsquantity'] ?? 0;
 
-                // Ensure we only add valid items
-                if (price > 0 && unitsQuantity > 0) {
-                    totalAmount += price * unitsQuantity;
-                }
-            }
+          // Ensure we only add valid items
+          if (price > 0 && unitsQuantity > 0) {
+            totalAmount += price * unitsQuantity;
+          }
+        }
 
-            tax = totalAmount! * 0.1;
-            finalAmount = (totalAmount! + tax!);
-        });
+        tax = totalAmount! * 0.1;
+        finalAmount = (totalAmount! + tax!);
+      });
     } catch (e) {
-        print("Error calculating total: $e");
+      print("Error calculating total: $e");
     }
-}
-
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +161,8 @@ void calculateTotal() {
                             Widget itemWidget;
 
                             if (cartItem['productId'] != "NA") {
-                              var product = productController.products.firstWhere(
+                              var product =
+                                  productController.products.firstWhere(
                                 (p) => p.id == cartItem['productId'],
                                 orElse: () => Product(
                                   id: cartItem['productId'],
@@ -177,59 +178,61 @@ void calculateTotal() {
                                 ),
                               );
 
-                            itemWidget = Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: ExtendedImage.network(
-                                    product.image,
-                                    fit: BoxFit.cover,
-                                    cache: true,
-                                    width: 80,
-                                    height: 60,
+                              itemWidget = Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: ExtendedImage.network(
+                                      product.image,
+                                      fit: BoxFit.cover,
+                                      cache: true,
+                                      width: 80,
+                                      height: 60,
+                                    ),
                                   ),
+                                  SizedBox(width: 16),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(product.productName,
+                                          style: AppTextStyle.mediumRaleway12),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        cartItem['unitsquantity'] > 1
+                                            ? '₹ ${cartItem['price']} x ${cartItem['unitsquantity']}'
+                                            : '₹ ${cartItem['price']}',
+                                        style: AppTextStyle.semiboldpurple12
+                                            .copyWith(color: blackColor),
+                                      ),
+                                      Text(
+                                        '${cartItem['productQuantity']}',
+                                        style: AppTextStyle.mediumdmsans11
+                                            .copyWith(color: blackColor),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            } else if (cartItem['serviceId'] != "NA") {
+                              var service =
+                                  serviceController.services.firstWhere(
+                                (s) => s.id == cartItem['serviceId'],
+                                orElse: () => Servicefirebase(
+                                  id: cartItem['serviceId'],
+                                  category: '',
+                                  description: '',
+                                  discount: 0,
+                                  name: '',
+                                  image: 'https://via.placeholder.com/150',
+                                  price: 0.0,
+                                  time: '',
+                                  warranty: '',
+                                  averageReview: 0.0,
+                                  numberOfReviews: 0,
+                                  carmodel: [],
                                 ),
-                                SizedBox(width: 16),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(product.productName,
-                                        style: AppTextStyle.mediumRaleway12),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      cartItem['unitsquantity'] > 1
-                                          ? '₹ ${cartItem['price']} x ${cartItem['unitsquantity']}'
-                                          : '₹ ${cartItem['price']}',
-                                      style: AppTextStyle.semiboldpurple12
-                                          .copyWith(color: blackColor),
-                                    ),
-                                    Text(
-                                      '${cartItem['productQuantity']}',
-                                      style: AppTextStyle.mediumdmsans11
-                                          .copyWith(color: blackColor),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          } else if (cartItem['serviceId'] != "NA") {
-                            var service = serviceController.services.firstWhere(
-                              (s) => s.id == cartItem['serviceId'],
-                              orElse: () => Servicefirebase(
-                                id: cartItem['serviceId'],
-                                category: '',
-                                description: '',
-                                discount: 0,
-                                name: '',
-                                image: 'https://via.placeholder.com/150',
-                                price: 0.0,
-                                time: '',
-                                warranty: '',
-                                averageReview: 0.0,
-                                numberOfReviews: 0,
-                                carmodel: [],
-                              ),
-                            );
+                              );
 
                               itemWidget = Row(
                                 children: [
@@ -245,7 +248,8 @@ void calculateTotal() {
                                   ),
                                   SizedBox(width: 16),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(service.name,
                                           style: AppTextStyle.mediumRaleway12),
@@ -263,38 +267,39 @@ void calculateTotal() {
                               itemWidget = SizedBox.shrink();
                             }
 
-                          return Column(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    itemWidget,
-                                    IconButton(
-                                      icon: Icon(Icons.delete_rounded,
-                                          color: Colors.red),
-                                      onPressed: () async {
-                                        if (cartItem['productId'] != "NA") {
-                                          await cartController
-                                              .deleteProductsFromCart(
-                                            cartItem['productId'],
-                                            cartItem['unitsquantity'],
-                                          );
-                                        } else if (cartItem['serviceId'] !=
-                                            "NA") {
-                                          await cartController
-                                              .deleteServicesFromCart(
-                                                  cartItem['serviceId']);
-                                        }
+                            return Column(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      itemWidget,
+                                      IconButton(
+                                        icon: Icon(Icons.delete_rounded,
+                                            color: Colors.red),
+                                        onPressed: () async {
+                                          if (cartItem['productId'] != "NA") {
+                                            await cartController
+                                                .deleteProductsFromCart(
+                                              cartItem['productId'],
+                                              cartItem['unitsquantity'],
+                                            );
+                                          } else if (cartItem['serviceId'] !=
+                                              "NA") {
+                                            await cartController
+                                                .deleteServicesFromCart(
+                                                    cartItem['serviceId']);
+                                          }
 
-                                          if (cartController.cartItems.isEmpty) {
+                                          if (cartController
+                                              .cartItems.isEmpty) {
                                             Get.toNamed(AppRoutes.BOTTOMNAV);
                                           } else {
                                             calculateTotal();
@@ -325,7 +330,8 @@ void calculateTotal() {
                     Container(
                       width: MediaQuery.of(context).size.width,
                       padding: EdgeInsets.all(16),
-                      margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                      margin:
+                          EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
@@ -369,18 +375,19 @@ void calculateTotal() {
                       ),
                     ),
                     containerButton(
-            text: "Booking Detail",
-            onPressed: () async {
-              var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
-              if (result != null) {
-                setState(() {
-                  selectedDate = result['selectedDate'];
-                  selectedTimeRange = result['selectedTimeRange'];
-                });
-              }
-            },
-            icon: Icons.file_copy_outlined,
-          ),
+                      text: "Booking Detail",
+                      onPressed: () async {
+                        var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+                        if (result != null) {
+                          setState(() {
+                            selectedDate = result['selectedDate']??'';
+                            selectedTimeRange = result['selectedTimeRange']??'';
+                            selectedAddress = result['selectAddress']??'';
+                          });
+                        }
+                      },
+                      icon: Icons.file_copy_outlined,
+                    ),
                   ],
                 ),
               );
@@ -442,17 +449,17 @@ void calculateTotal() {
                           '', // outForService_note
                           '', // completed_note
                           currentCar!, // Ensure currentCar is passed as a String
+                          selectedAddress!,
                           selectedDate, // Pass the selected date
-                    selectedTimeRange, // Pass the selected time range
-                  );
+                          selectedTimeRange, // Pass the selected time range
+                        );
 
                         // Optionally show a success message
                         Get.snackbar(
                             "Success", "Booking confirmed successfully!");
                       } catch (e) {
                         // Handle the error
-                        Get.snackbar(
-                            "Error", "Failed to confirm booking: $e");
+                        Get.snackbar("Error", "Failed to confirm booking: $e");
                       }
                     },
                     child: Text(
