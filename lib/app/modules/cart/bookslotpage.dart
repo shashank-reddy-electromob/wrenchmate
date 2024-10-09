@@ -24,6 +24,8 @@ class _BookSlotState extends State<BookSlot> {
   int selectedAddressIndex = 0;
   int selectedDateIndex = 0;
   String _values = '';
+  final BookingController bookingController = Get.put(BookingController());
+
   DateTime selectedDate = DateTime.now();
   SfRangeValues _rangeValues = SfRangeValues(12.0, 13.0);
   List<String> addresses = []; // ensure it's a List<String>
@@ -389,6 +391,7 @@ class _BookSlotState extends State<BookSlot> {
                     print('Selected Time Range: $_rangeValues');
 
                     // _makeReservation();
+                    bookingController.bookingStatus.value = 'confirmed';
 
                     Get.back(result: {
                       'selectedDate': selectedDate,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/coupon.dart';
+import 'package:wrenchmate_user_app/app/modules/cart/dummypayment.dart';
 import 'package:wrenchmate_user_app/app/modules/payment/payment.dart';
 import 'package:wrenchmate_user_app/app/modules/product/productscreen.dart';
 import 'package:wrenchmate_user_app/app/modules/tracking/chatscreen.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      // home: ApplyCouponScreen(),
+      // home: PhonePePayment(),
       initialRoute: FirebaseAuth.instance.currentUser == null
           ? AppPages.INITIAL
           : AppPages.BOTTOMNAV,

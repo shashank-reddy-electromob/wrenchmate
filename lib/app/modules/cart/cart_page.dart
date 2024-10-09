@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
 import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
 import 'package:wrenchmate_user_app/app/data/models/product_model.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
+import 'package:wrenchmate_user_app/app/modules/cart/widgets/api/paymemtapi.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/containerButton.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/pricing.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
@@ -16,6 +20,7 @@ import '../../controllers/booking_controller.dart';
 import '../../controllers/home_controller.dart';
 import '../../widgets/custombackbutton.dart';
 import '../../routes/app_routes.dart'; // Import AppRoutes
+import 'package:crypto/crypto.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -37,6 +42,7 @@ class _CartPageState extends State<CartPage> {
   String? selectedAddress;
   DateTime? selectedDate;
   SfRangeValues? selectedTimeRange;
+  PaymentService paymentService = PaymentService();
 
   @override
   void initState() {
@@ -380,9 +386,10 @@ class _CartPageState extends State<CartPage> {
                         var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
                         if (result != null) {
                           setState(() {
-                            selectedDate = result['selectedDate']??'';
-                            selectedTimeRange = result['selectedTimeRange']??'';
-                            selectedAddress = result['selectAddress']??'';
+                            selectedDate = result['selectedDate'] ?? '';
+                            selectedTimeRange =
+                                result['selectedTimeRange'] ?? '';
+                            selectedAddress = result['selectAddress'] ?? '';
                           });
                         }
                       },
@@ -439,35 +446,47 @@ class _CartPageState extends State<CartPage> {
                           cartController.cartItems
                               .map((item) => item['serviceId']),
                         );
+
+                        // Call to add booking
                         await bookingController.addBooking(
                           serviceIds,
-                          'confirmed', // status
-                          DateTime.now(), // confirmation_date
-                          null, // outForService_date
-                          null, // completed_date
-                          '', // confirmation_note
-                          '', // outForService_note
-                          '', // completed_note
-                          currentCar!, // Ensure currentCar is passed as a String
+                          'confirmed',
+                          DateTime.now(),
+                          null,
+                          null,
+                          '',
+                          '',
+                          '',
+                          currentCar!,
                           selectedAddress!,
-                          selectedDate, // Pass the selected date
-                          selectedTimeRange, // Pass the selected time range
+                          selectedDate,
+                          selectedTimeRange,
                         );
 
-                        // Optionally show a success message
-                        Get.snackbar(
-                            "Success", "Booking confirmed successfully!");
+                        if (bookingController.bookingStatus.value ==
+                            'confirmed') {
+                          print("Proceed to pay");
+                          _proceedToPayment(context);
+                          // await paymentService.makeTestPayment(
+                          //     "MT7850590068188104",
+                          //     "MUID123",
+                          //     10000,
+                          //     "https://webhook.site/callback-url");
+                        } else {
+                          Get.snackbar(
+                              "Error", "Please confirm your booking first.");
+                        }
                       } catch (e) {
-                        // Handle the error
                         Get.snackbar("Error", "Failed to confirm booking: $e");
                       }
                     },
                     child: Text(
                       "Proceed to Pay",
                       style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500),
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 )
@@ -477,5 +496,70 @@ class _CartPageState extends State<CartPage> {
         ],
       ),
     );
+  }
+
+  void _proceedToPayment(BuildContext context) async {
+    // Initialize the PhonePe SDK
+    String environmentValue = 'SANDBOX'; // or 'PRODUCTION'
+    String merchantId = 'PGTESTPAYUAT';
+    String appId = ''; // Optional
+    bool enableLogging = true;
+
+    await PhonePePaymentSdk.init(
+            environmentValue, appId, merchantId, enableLogging)
+        .then((val) async {
+      String merchantTransactionId =
+          DateTime.now().millisecondsSinceEpoch.toString();
+      String body = json.encode({
+        "merchantId": merchantId,
+        "merchantTransactionId": merchantTransactionId,
+        "merchantUserId": "MUID123", 
+        "amount": (finalAmount ?? 0 * 100).toString(),
+        "callbackUrl": "https://webhook.site/callback-url",
+        "mobileNumber": "9999999999", 
+        "paymentInstrument": {"type": "PAY_PAGE"}
+      });
+
+      String base64Body = base64Encode(utf8.encode(body));
+
+      String checksum = await getChecksum(
+          base64Body,
+          "/pg/v1/pay",
+          '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399',
+          1);
+
+      PhonePePaymentSdk.startTransaction(
+              base64Body, '', checksum, null)
+          .then((response) {
+        if (response != null) {
+          String status = response['status'].toString();
+          String error = response['error'].toString();
+          if (status == 'SUCCESS') {
+            Get.snackbar('Payment Successful', 'Your payment was successful!');
+          } else {
+            // Handle other statuses
+            Get.snackbar('Payment Status', 'Status: $status, Error: $error');
+          }
+        } else {
+          Get.snackbar('Payment Status', 'Flow Incomplete');
+        }
+      }).catchError((error) {
+        Get.snackbar('Error', 'An error occurred: $error');
+      });
+    }).catchError((error) {
+      Get.snackbar('Error', 'SDK Initialization failed: $error');
+    });
+  }
+
+  Future<String> getChecksum(
+      String base64Body, String apiEndPoint, String salt, int saltIndex) async {
+    String checksumString = base64Body + apiEndPoint + salt;
+
+    var bytes = utf8.encode(checksumString);
+    var digest = sha256.convert(bytes);
+
+    String checksum = "${digest.toString()}###$saltIndex";
+
+    return checksum;
   }
 }

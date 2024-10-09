@@ -6,6 +6,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 class BookingController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+  RxString bookingStatus = 'pending'.obs; 
 
   Future<void> addBooking(
     List<String> serviceIds,

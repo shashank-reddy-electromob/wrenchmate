@@ -71,6 +71,9 @@ dependencies:
   url_launcher: ^6.3.0
   date_picker_timeline: ^1.2.6
   path_provider: ^2.1.4
+  uni_links: ^0.5.1
+  phonepe_payment_sdk: ^2.0.3
+  fluttertoast: ^8.2.8
   
   # geolocator: ^12.0.0
   # geocoding: ^3.0.0
@@ -109,6 +112,7 @@ flutter:
     - assets/services/repair/
     - assets/services/accessories/
     - assets/tracking/
+    - assets/json/M22JKU8ER0YL4_1.json
   fonts:
     - family: Poppins
       fonts:
