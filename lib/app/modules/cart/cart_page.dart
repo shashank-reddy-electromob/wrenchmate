@@ -499,10 +499,9 @@ class _CartPageState extends State<CartPage> {
   }
 
   void _proceedToPayment(BuildContext context) async {
-    // Initialize the PhonePe SDK
-    String environmentValue = 'SANDBOX'; // or 'PRODUCTION'
+    String environmentValue = 'UAT';
     String merchantId = 'PGTESTPAYUAT';
-    String appId = ''; // Optional
+    String appId = ''; // Optional M22JKU8ER0YL4
     bool enableLogging = true;
 
     await PhonePePaymentSdk.init(
@@ -513,23 +512,19 @@ class _CartPageState extends State<CartPage> {
       String body = json.encode({
         "merchantId": merchantId,
         "merchantTransactionId": merchantTransactionId,
-        "merchantUserId": "MUID123", 
+        "merchantUserId": "PGUAT",
         "amount": (finalAmount ?? 0 * 100).toString(),
-        "callbackUrl": "https://webhook.site/callback-url",
-        "mobileNumber": "9999999999", 
+        "callbackUrl": null,
+        "mobileNumber": "9999999999",
         "paymentInstrument": {"type": "PAY_PAGE"}
       });
 
       String base64Body = base64Encode(utf8.encode(body));
 
       String checksum = await getChecksum(
-          base64Body,
-          "/pg/v1/pay",
-          '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399',
-          1);
+          base64Body, "/pg/v1/pay", '5957309a-b9fb-4e39-a452-aad027a8c77a', 1);
 
-      PhonePePaymentSdk.startTransaction(
-              base64Body, '', checksum, null)
+      PhonePePaymentSdk.startTransaction(base64Body, '', checksum, null)
           .then((response) {
         if (response != null) {
           String status = response['status'].toString();

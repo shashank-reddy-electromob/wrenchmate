@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      // home: PhonePePayment(),
+      home: PhonePePayment(),
       initialRoute: FirebaseAuth.instance.currentUser == null
           ? AppPages.INITIAL
           : AppPages.BOTTOMNAV,

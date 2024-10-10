@@ -20,10 +20,10 @@ class _PhonePePaymentState extends State<PhonePePayment> {
   String appId = "";
   String transactionId = DateTime.now().millisecondsSinceEpoch.toString();
 
-  String merchantId = "PGTESTPAYUAT";
+  String merchantId = "PGUAT";
   bool enableLogging = true;
   String checksum = "";
-  String saltKey = "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
+  String saltKey = "5957309a-b9fb-4e39-a452-aad027a8c77a";
 
   String saltIndex = "1";
 
