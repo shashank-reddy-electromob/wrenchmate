@@ -29,10 +29,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
       home: PhonePePayment(),
-      initialRoute: FirebaseAuth.instance.currentUser == null
-          ? AppPages.INITIAL
-          : AppPages.BOTTOMNAV,
-      getPages: AppPages.routes,
+      // initialRoute: FirebaseAuth.instance.currentUser == null
+      //     ? AppPages.INITIAL
+      //     : AppPages.BOTTOMNAV,
+      // getPages: AppPages.routes,
     );
   }
 }

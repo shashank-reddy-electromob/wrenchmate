@@ -501,7 +501,7 @@ class _CartPageState extends State<CartPage> {
   void _proceedToPayment(BuildContext context) async {
     String environmentValue = 'UAT';
     String merchantId = 'PGTESTPAYUAT';
-    String appId = ''; // Optional M22JKU8ER0YL4
+    String appId = ''; 
     bool enableLogging = true;
 
     await PhonePePaymentSdk.init(

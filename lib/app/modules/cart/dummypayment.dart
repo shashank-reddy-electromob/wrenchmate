@@ -16,14 +16,18 @@ class PhonePePayment extends StatefulWidget {
 }
 
 class _PhonePePaymentState extends State<PhonePePayment> {
-  String environment = "UAT_SIM";
+  String environment = "SANDBOX";
   String appId = "";
   String transactionId = DateTime.now().millisecondsSinceEpoch.toString();
-
-  String merchantId = "PGUAT";
+/**
+ MID: DEMOUAT
+SaltKey: 2a248f9d-db24-4f2d-8512-61449a31292f
+SaltIndex: 1
+ */
+  String merchantId = "DEMOUAT";
   bool enableLogging = true;
   String checksum = "";
-  String saltKey = "5957309a-b9fb-4e39-a452-aad027a8c77a";
+  String saltKey = "2a248f9d-db24-4f2d-8512-61449a31292f";
 
   String saltIndex = "1";
 
@@ -41,7 +45,7 @@ class _PhonePePaymentState extends State<PhonePePayment> {
       "merchantTransactionId": transactionId,
       "merchantUserId": "90223250",
       "amount": 1000,
-      "mobileNumber": "9999999999",
+      "mobileNumber": "8058965210",
       "callbackUrl": callbackUrl,
       "paymentInstrument": {"type": "PAY_PAGE"}
     };
@@ -50,7 +54,7 @@ class _PhonePePaymentState extends State<PhonePePayment> {
 
     checksum =
         '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
-
+    print("checksum :: $checksum");
     return base64Body;
   }
 
@@ -59,8 +63,14 @@ class _PhonePePaymentState extends State<PhonePePayment> {
     super.initState();
 
     phonepeInit();
-
+//environment, appId, merchantId, enableLogging
+    print("environment :: $environment");
+    print("appId :: $appId");
+    print("merchantId :: $merchantId");
+    print("enableLogging :: $enableLogging");
+    print("transactionId :: $transactionId");
     body = getChecksum().toString();
+    print("body :: $body");
   }
 
   @override
@@ -103,9 +113,12 @@ class _PhonePePaymentState extends State<PhonePePayment> {
 
   void startPgTransaction() async {
     try {
-      var response =
-          PhonePePaymentSdk.startTransaction(body, '', checksum, null);
+      String base64Body = base64.encode(utf8.encode(json.encode(body)));
+      print("base64Body :: $base64Body");
+      var response = PhonePePaymentSdk.startTransaction(
+          base64Body, callbackUrl, checksum, 'com.phonepe');
       response.then((val) async {
+        print("startPgTransaction success!");
         if (val != null) {
           String status = val['status'].toString();
           String error = val['error'].toString();
