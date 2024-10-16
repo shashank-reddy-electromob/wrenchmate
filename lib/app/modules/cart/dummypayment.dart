@@ -24,10 +24,10 @@ class _PhonePePaymentState extends State<PhonePePayment> {
 SaltKey: 2a248f9d-db24-4f2d-8512-61449a31292f
 SaltIndex: 1
  */
-  String merchantId = "DEMOUAT";
+  String merchantId = "M22JKU8ER0YL4UAT";
   bool enableLogging = true;
   String checksum = "";
-  String saltKey = "2a248f9d-db24-4f2d-8512-61449a31292f";
+  String saltKey = "e4b1f2d1-c0d9-4283-947c-13c6f15e12e5";
 
   String saltIndex = "1";
 
@@ -111,9 +111,11 @@ SaltIndex: 1
     });
   }
 
+
   void startPgTransaction() async {
     try {
-      String base64Body = base64.encode(utf8.encode(json.encode(body)));
+     // String base64Body = base64.encode(utf8.encode(json.encode(body)));
+      String base64Body = body;
       print("base64Body :: $base64Body");
       var response = PhonePePaymentSdk.startTransaction(
           base64Body, callbackUrl, checksum, 'com.phonepe');
