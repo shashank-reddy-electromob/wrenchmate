@@ -560,8 +560,8 @@ class _CartPageState extends State<CartPage> {
       "merchantId": merchantId,
       "merchantTransactionId": transactionId,
       "merchantUserId": "90223250",
-      // "amount": (cartController.totalPayableAmount.value.round()) * 100,
-      "amount": 100,
+      "amount": (cartController.totalPayableAmount.value.round()) * 100,
+      // "amount": 100,
 
       "mobileNumber": "8058965210",
       "callbackUrl": callbackUrl,
