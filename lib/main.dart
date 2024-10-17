@@ -28,11 +28,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
-      home: PhonePePayment(),
-      // initialRoute: FirebaseAuth.instance.currentUser == null
-      //     ? AppPages.INITIAL
-      //     : AppPages.BOTTOMNAV,
-      // getPages: AppPages.routes,
+      //home: PhonePePayment(),
+       initialRoute: FirebaseAuth.instance.currentUser == null
+           ? AppPages.INITIAL
+           : AppPages.BOTTOMNAV,
+       getPages: AppPages.routes,
     );
   }
 }

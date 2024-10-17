@@ -134,8 +134,8 @@ class _BottomSheetState extends State<BottomSheet> {
   List<String> selectedServices = [];
   String selectedDiscount = '';
   String selectedRating = '';
-  double minPrice = 120;
-  double maxPrice = 5000;
+  double minPrice = 0;
+  double maxPrice = 100000;
 
   List<String> services = [
     "Car Wash",
@@ -428,8 +428,8 @@ class RangeSliderWidget extends StatefulWidget {
 
 
 class _RangeSliderWidgetState extends State<RangeSliderWidget> {
-  double _lowerValue = 1299;
-  double _upperValue = 3999;
+  double _lowerValue = 500;
+  double _upperValue = 20000;
   List<int> itemCounts = [
     70,
     100,
@@ -465,8 +465,11 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
           FlutterSlider(
             values: [_lowerValue, _upperValue],
             rangeSlider: true,
-            max: 5000,
-            min: 120,
+            step: FlutterSliderStep(
+              step: 500,
+            ),
+            max: 100000,
+            min: 500,
             onDragging: (handlerIndex, lowerValue, upperValue) {
               setState(() {
                 _lowerValue = lowerValue;

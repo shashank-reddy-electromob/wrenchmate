@@ -238,12 +238,22 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(height: 12),
                       searchbar(readonly: true),
-                      OffersSliders(),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.26,
+                        child: OffersSliders(),
+                      ),
                       serviceswidgit(),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: toprecommendedservices(),
                       ),
+                      isDrawerOpen
+                          ? SizedBox(
+                              height: 2,
+                            )
+                          : SizedBox(
+                              height: MediaQuery.of(context).size.height / 10,
+                            ),
                     ],
                   ),
                 ),
@@ -251,12 +261,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
+            bottom: 20,
+            left: 15,
+            right: 15,
             child: isDrawerOpen
-                ? SizedBox
-                    .shrink() 
+                ? SizedBox.shrink()
                 : PersistentNotification(
                     totalAmount: cartController.totalAmount,
                     discountAmount: cartController.discountAmount,

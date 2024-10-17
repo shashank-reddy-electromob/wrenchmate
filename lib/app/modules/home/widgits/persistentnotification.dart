@@ -18,8 +18,11 @@ class PersistentNotification extends StatelessWidget {
     return Obx(() {
       if (totalAmount.value > 0.0) {
         return Container(
-          color: primaryColor,
-          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+          decoration: BoxDecoration(
+            color: primaryColor.withOpacity(0.65),
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -40,7 +43,8 @@ class PersistentNotification extends StatelessWidget {
                 child: Text(
                   'Checkout',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                     color: primaryColor,
                     fontFamily: 'Raleway',
                   ),
