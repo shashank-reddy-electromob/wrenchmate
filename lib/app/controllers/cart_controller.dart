@@ -16,17 +16,30 @@ class CartController extends GetxController {
   var isLoading = true.obs;
   var cartItems = <Map<String, dynamic>>[].obs;
   RxDouble totalAmount = 0.0.obs;
+  RxDouble totalPayableAmount = 0.0.obs;
 
   var addresses = <String>[].obs;
   var currentAddressIndex = 0.obs;
+  @override
+  void onInit() {
+    super.onInit();
+    fetchCartItems();
+    fetchUserAddresses();
+    fetchUserCurrentAddressIndex();
+    everAll([totalAmount, discountAmount], (_) {
+      totalPayableAmount.value = (totalAmount.value - discountAmount.value);
+    });
+  }
 
   Future<void> fetchUserAddresses() async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
 
       if (userDoc.exists) {
-        List<String> userAddresses = (userDoc['User_address'] as List<dynamic>).cast<String>();
+        List<String> userAddresses =
+            (userDoc['User_address'] as List<dynamic>).cast<String>();
         addresses.value = userAddresses;
         print("User addresses fetched successfully: ${addresses.value}");
       }
@@ -39,28 +52,29 @@ class CartController extends GetxController {
   Future<void> fetchUserCurrentAddressIndex() async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
 
       if (userDoc.exists) {
         int? currentAddressIndex = userDoc['current_address'] as int?;
         if (currentAddressIndex != null) {
           this.currentAddressIndex.value = currentAddressIndex;
-          print("Current address index fetched successfully: ${this.currentAddressIndex.value}");
+          print(
+              "Current address index fetched successfully: ${this.currentAddressIndex.value}");
         }
       }
     } catch (e) {
       print("Failed to fetch current address index: $e");
-      Get.snackbar("Error", "Failed to fetch current address index: ${e.toString()}");
+      Get.snackbar(
+          "Error", "Failed to fetch current address index: ${e.toString()}");
     }
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    fetchCartItems();
-     fetchUserAddresses();
-    fetchUserCurrentAddressIndex();
-  }
+  // @override
+  // void onInit() {
+  //   super.onInit();
+
+  // }
 
   Future<void> fetchTotalCost() async {
     try {
@@ -143,70 +157,71 @@ class CartController extends GetxController {
     }
   }
 
-Future<void> addToCart({
-  required String serviceId,
-  required String productId,
-  required String quantity,
-  required double price,
-}) async {
-  try {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
+  Future<void> addToCart({
+    required String serviceId,
+    required String productId,
+    required String quantity,
+    required double price,
+  }) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
 
-    if (productId != "NA") {
-      // Check if the same productId with the same quantity already exists
-      QuerySnapshot existingItems = await _firestore
-          .collection('Cart')
-          .where('userId', isEqualTo: userId)
-          .where('productId', isEqualTo: productId)
-          .where('productQuantity', isEqualTo: quantity) // Check for quantity as well
-          .limit(1)
-          .get();
+      if (productId != "NA") {
+        // Check if the same productId with the same quantity already exists
+        QuerySnapshot existingItems = await _firestore
+            .collection('Cart')
+            .where('userId', isEqualTo: userId)
+            .where('productId', isEqualTo: productId)
+            .where('productQuantity',
+                isEqualTo: quantity) // Check for quantity as well
+            .limit(1)
+            .get();
 
-      if (existingItems.docs.isNotEmpty) {
-        // If the same product with the same quantity exists, update it
-        DocumentSnapshot item = existingItems.docs.first;
-        int currentUnitsQuantity = item.get('unitsquantity') ?? 1;
-        await _firestore.collection('Cart').doc(item.id).update({
-          'unitsquantity': currentUnitsQuantity + 1,
-        });
+        if (existingItems.docs.isNotEmpty) {
+          // If the same product with the same quantity exists, update it
+          DocumentSnapshot item = existingItems.docs.first;
+          int currentUnitsQuantity = item.get('unitsquantity') ?? 1;
+          await _firestore.collection('Cart').doc(item.id).update({
+            'unitsquantity': currentUnitsQuantity + 1,
+          });
+        } else {
+          // Add as a new entry if the product and quantity combination is unique
+          await _firestore.collection('Cart').add({
+            'serviceId': serviceId,
+            'productId': productId,
+            'userId': userId,
+            'productQuantity': quantity,
+            'price': price, // Correctly pass the price
+            'unitsquantity': 1, // Default quantity
+          });
+        }
       } else {
-        // Add as a new entry if the product and quantity combination is unique
-        await _firestore.collection('Cart').add({
-          'serviceId': serviceId,
-          'productId': productId,
-          'userId': userId,
-          'productQuantity': quantity,
-          'price': price, // Correctly pass the price
-          'unitsquantity': 1, // Default quantity
-        });
-      }
-    } else {
-      // Logic for adding services to the cart
-      QuerySnapshot existingItems = await _firestore
-          .collection('Cart')
-          .where('userId', isEqualTo: userId)
-          .where('serviceId', isEqualTo: serviceId)
-          .where('productId', isEqualTo: "NA")
-          .limit(1)
-          .get();
+        // Logic for adding services to the cart
+        QuerySnapshot existingItems = await _firestore
+            .collection('Cart')
+            .where('userId', isEqualTo: userId)
+            .where('serviceId', isEqualTo: serviceId)
+            .where('productId', isEqualTo: "NA")
+            .limit(1)
+            .get();
 
-      if (existingItems.docs.isEmpty) {
-        await _firestore.collection('Cart').add({
-          'serviceId': serviceId,
-          'productId': "NA",
-          'userId': userId,
-          'productQuantity': quantity,
-          'price': price,
-        });
+        if (existingItems.docs.isEmpty) {
+          await _firestore.collection('Cart').add({
+            'serviceId': serviceId,
+            'productId': "NA",
+            'userId': userId,
+            'productQuantity': quantity,
+            'price': price,
+          });
+        }
       }
+
+      await fetchCartItems();
+      await updateTotalCost();
+    } catch (e) {
+      print("Error adding to cart: $e");
     }
-
-    await fetchCartItems();
-    await updateTotalCost();
-  } catch (e) {
-    print("Error adding to cart: $e");
   }
-}
 
   Future<void> deleteServicesFromCart(String serviceId) async {
     try {
@@ -227,36 +242,62 @@ Future<void> addToCart({
     }
   }
 
-Future<void> deleteProductsFromCart(
-    String productId, String productQuantity) async {
-  try {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    
-    QuerySnapshot snapshot = await _firestore
-        .collection('Cart')
-        .where('userId', isEqualTo: userId)
-        .where('productId', isEqualTo: productId)
-        .where('productQuantity', isEqualTo: productQuantity)
-        .get();
+  Future<void> deleteProductsFromCart(
+      String productId, String productQuantity) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      print("${productId} is being deleted ");
 
-    for (var doc in snapshot.docs) {
-      int currentUnitsQuantity = doc['unitsquantity'];
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
+          .where('userId', isEqualTo: userId)
+          .where('productId', isEqualTo: productId)
+          .where('productQuantity', isEqualTo: productQuantity)
+          .get();
 
-      if (currentUnitsQuantity > 1) {
-        await doc.reference.update({
-          'unitsquantity': currentUnitsQuantity - 1,
-        });
-      } else {
+      for (var doc in snapshot.docs) {
+        int currentUnitsQuantity = doc['unitsquantity'];
+        print("currentUnitsQuantity :: $currentUnitsQuantity");
+        if (currentUnitsQuantity > 1) {
+          print("currentUnitsQuantity > 1:: $currentUnitsQuantity");
+
+          await doc.reference.update({
+            'unitsquantity': currentUnitsQuantity - 1,
+          });
+        } else {
+          print("currentUnitsQuantity deleted:: $currentUnitsQuantity");
+
+          await doc.reference.delete();
+        }
+      }
+
+      await fetchCartItems();
+    } catch (e) {
+      print("Error deleting product from cart: $e");
+    }
+  }
+
+  Future<void> clearCart() async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      for (var doc in snapshot.docs) {
         await doc.reference.delete();
       }
-    }
+      await updateTotalCost();
 
-    // Fetch the updated cart items after deletion
-    await fetchCartItems();
-  } catch (e) {
-    print("Error deleting product from cart: $e");
+      cartItems.clear();
+
+      print("Cart cleared for user: $userId");
+    } catch (e) {
+      print("Error clearing cart: $e");
+    }
   }
-}
 
   void addToCartSnackbar(
     BuildContext context,

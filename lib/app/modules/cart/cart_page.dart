@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +49,8 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
+    phonepeInit();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       fetchUserCurrentCar();
@@ -77,19 +81,22 @@ class _CartPageState extends State<CartPage> {
   void calculateTotal() {
     try {
       setState(() {
-        totalAmount = 0.0; // Initialize totalAmount
+        totalAmount = 0.0; // Initialize totalAmount to 0.0
         for (var item in cartController.cartItems) {
-          double price = item['price'] ?? 0.0;
-          int unitsQuantity = item['unitsquantity'] ?? 0;
+          double price = item['price'] != null
+              ? double.parse(item['price'].toString())
+              : 0.0;
+          int unitsQuantity =
+              item['unitsquantity'] ?? 1; // Default to 1 if null
 
-          // Ensure we only add valid items
-          if (price > 0 && unitsQuantity > 0) {
-            totalAmount += price * unitsQuantity;
-          }
+          // Update totalAmount based on price and quantity
+          totalAmount += price * unitsQuantity;
         }
 
-        tax = totalAmount! * 0.1;
-        finalAmount = (totalAmount! + tax!);
+        // Calculate tax as 10% of totalAmount
+        tax = totalAmount * 0.1;
+        // Final amount is totalAmount + tax
+        finalAmount = totalAmount + tax!;
       });
     } catch (e) {
       print("Error calculating total: $e");
@@ -292,13 +299,19 @@ class _CartPageState extends State<CartPage> {
                                             color: Colors.red),
                                         onPressed: () async {
                                           if (cartItem['productId'] != "NA") {
+                                            print(
+                                                "${cartItem['productId']} is being deleted ");
+                                            // print("cartItem['unitsquantity']");
                                             await cartController
                                                 .deleteProductsFromCart(
                                               cartItem['productId'],
-                                              cartItem['unitsquantity'],
+                                              cartItem['productQuantity'],
                                             );
                                           } else if (cartItem['serviceId'] !=
                                               "NA") {
+                                            print(
+                                                "${cartItem['serviceId']} is being deleted ");
+
                                             await cartController
                                                 .deleteServicesFromCart(
                                                     cartItem['serviceId']);
@@ -352,13 +365,15 @@ class _CartPageState extends State<CartPage> {
                       child: Column(
                         children: [
                           Pricing(
-                              text: "Subtotal", price: totalAmount.toString()),
-                          Pricing(text: "Tax", price: tax.toString()),
+                              text: "Subtotal",
+                              price: totalAmount.toStringAsFixed(2)),
+                          Pricing(text: "Tax", price: tax!.toStringAsFixed(2)),
                           if (cartController.discountAmount.value > 0)
                             Pricing(
-                                text: "Discount Applied:",
-                                price:
-                                    '-${cartController.discountAmount.value.toStringAsFixed(2)}'),
+                              text: "Discount Applied:",
+                              price:
+                                  '-${cartController.discountAmount.value.toStringAsFixed(2)}',
+                            ),
                           Divider(
                             color: Color(0xFFF0F0F0),
                             thickness: 1,
@@ -370,7 +385,7 @@ class _CartPageState extends State<CartPage> {
                                   style: TextStyle(
                                       fontSize: 16, fontFamily: 'Raleway')),
                               Text(
-                                  '₹ ${(cartController.totalAmount.value - cartController.discountAmount.value).toStringAsFixed(2)}',
+                                  '₹ ${cartController.totalPayableAmount.value}',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
@@ -408,8 +423,7 @@ class _CartPageState extends State<CartPage> {
               children: [
                 Column(
                   children: [
-                    Text(
-                        '₹${(cartController.totalAmount.value - cartController.discountAmount.value).toStringAsFixed(2)}',
+                    Text('₹ ${cartController.totalPayableAmount.value}',
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -446,27 +460,53 @@ class _CartPageState extends State<CartPage> {
                           cartController.cartItems
                               .map((item) => item['serviceId']),
                         );
+                        bool hasServices = cartController.cartItems
+                            .any((item) => item['serviceId'] != "NA");
+                        print("hasServices :: $hasServices");
 
-                        // Call to add booking
-                        await bookingController.addBooking(
-                          serviceIds,
-                          'confirmed',
-                          DateTime.now(),
-                          null,
-                          null,
-                          '',
-                          '',
-                          '',
-                          currentCar!,
-                          selectedAddress!,
-                          selectedDate,
-                          selectedTimeRange,
-                        );
-
-                        if (bookingController.bookingStatus.value ==
-                            'confirmed') {
+                        // bool hasServices = cartController.cartItems
+                        //     .any((item) => item['serviceId'] != "NA");
+                        // print("hasServices :: $hasServices");
+                        if (hasServices &&
+                            bookingController.bookingStatus.value !=
+                                'confirmed') {
+                          var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+                          if (result != null) {
+                            setState(() {
+                              selectedDate = result['selectedDate'] ?? '';
+                              selectedTimeRange =
+                                  result['selectedTimeRange'] ?? '';
+                              selectedAddress = result['selectAddress'] ?? '';
+                            });
+                          }
+                          await bookingController.addBooking(
+                            serviceIds,
+                            'confirmed',
+                            DateTime.now(),
+                            null,
+                            null,
+                            '',
+                            '',
+                            '',
+                            currentCar!,
+                            selectedAddress!,
+                            selectedDate,
+                            selectedTimeRange,
+                          );
+                        } else if (!hasServices ||
+                            bookingController.bookingStatus.value ==
+                                'confirmed') {
                           print("Proceed to pay");
-                          _proceedToPayment(context);
+                          print("environment :: $environment");
+                          print("appId :: $appId");
+                          print("merchantId :: $merchantId");
+                          print("enableLogging :: $enableLogging");
+                          print("transactionId :: $transactionId");
+                          body = getChecksum().toString();
+                          print("body :: $body");
+                          startPgTransaction();
+
+                          // _proceedToPayment(context);
                           // await paymentService.makeTestPayment(
                           //     "MT7850590068188104",
                           //     "MUID123",
@@ -498,63 +538,92 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  void _proceedToPayment(BuildContext context) async {
-    String environmentValue = 'UAT';
-    String merchantId = 'PGTESTPAYUAT';
-    String appId = ''; 
-    bool enableLogging = true;
+  String environment = "PRODUCTION";
+  String appId = "";
+  String transactionId = DateTime.now().millisecondsSinceEpoch.toString();
+  String merchantId = "M22JKU8ER0YL4";
+  bool enableLogging = true;
+  String checksum = "";
+  String saltKey = "c4682fa3-53ab-4edc-b433-cd4c4c63c0a1";
 
-    await PhonePePaymentSdk.init(
-            environmentValue, appId, merchantId, enableLogging)
-        .then((val) async {
-      String merchantTransactionId =
-          DateTime.now().millisecondsSinceEpoch.toString();
-      String body = json.encode({
-        "merchantId": merchantId,
-        "merchantTransactionId": merchantTransactionId,
-        "merchantUserId": "PGUAT",
-        "amount": (finalAmount ?? 0 * 100).toString(),
-        "callbackUrl": null,
-        "mobileNumber": "9999999999",
-        "paymentInstrument": {"type": "PAY_PAGE"}
-      });
+  String saltIndex = "1";
 
-      String base64Body = base64Encode(utf8.encode(body));
+  String callbackUrl = "https://wrenchmate.in/";
 
-      String checksum = await getChecksum(
-          base64Body, "/pg/v1/pay", '5957309a-b9fb-4e39-a452-aad027a8c77a', 1);
+  String body = "";
+  String apiEndPoint = "/pg/v1/pay";
 
-      PhonePePaymentSdk.startTransaction(base64Body, '', checksum, null)
-          .then((response) {
-        if (response != null) {
-          String status = response['status'].toString();
-          String error = response['error'].toString();
-          if (status == 'SUCCESS') {
-            Get.snackbar('Payment Successful', 'Your payment was successful!');
-          } else {
-            // Handle other statuses
-            Get.snackbar('Payment Status', 'Status: $status, Error: $error');
-          }
-        } else {
-          Get.snackbar('Payment Status', 'Flow Incomplete');
-        }
-      }).catchError((error) {
-        Get.snackbar('Error', 'An error occurred: $error');
-      });
-    }).catchError((error) {
-      Get.snackbar('Error', 'SDK Initialization failed: $error');
+  Object? result;
+
+  getChecksum() {
+    final requestData = {
+      "merchantId": merchantId,
+      "merchantTransactionId": transactionId,
+      "merchantUserId": "90223250",
+      // "amount": (cartController.totalPayableAmount.value.round()) * 100,
+      "amount": 100,
+
+      "mobileNumber": "8058965210",
+      "callbackUrl": callbackUrl,
+      "paymentInstrument": {"type": "PAY_PAGE"}
+    };
+
+    String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
+
+    checksum =
+        '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
+    print("checksum :: $checksum");
+    return base64Body;
+  }
+
+  void phonepeInit() {
+    PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
+        .then((val) => {
+              setState(() {
+                result = 'PhonePe SDK Initialized - $val';
+              })
+            })
+        .catchError((error) {
+      handleError(error);
+      return <dynamic>{};
     });
   }
 
-  Future<String> getChecksum(
-      String base64Body, String apiEndPoint, String salt, int saltIndex) async {
-    String checksumString = base64Body + apiEndPoint + salt;
+  void startPgTransaction() async {
+    try {
+      // String base64Body = base64.encode(utf8.encode(json.encode(body)));
+      String base64Body = body;
+      print("base64Body :: $base64Body");
+      var response = PhonePePaymentSdk.startTransaction(
+          base64Body, callbackUrl, checksum, 'com.phonepe');
+      response.then((val) async {
+        print("startPgTransaction success!");
+        if (val != null) {
+          String status = val['status'].toString();
+          String error = val['error'].toString();
 
-    var bytes = utf8.encode(checksumString);
-    var digest = sha256.convert(bytes);
+          if (status == 'SUCCESS') {
+            result = "Flow complete - status : SUCCESS";
+            await cartController.clearCart();
+            await Get.toNamed(AppRoutes.BOTTOMNAV);
+          } else {
+            result = "Flow complete - status : $status and error $error";
+          }
+        } else {
+          result = "Flow Incomplete";
+        }
+      }).catchError((error) {
+        handleError(error);
+        return <dynamic>{};
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  }
 
-    String checksum = "${digest.toString()}###$saltIndex";
-
-    return checksum;
+  void handleError(error) {
+    setState(() {
+      result = {"error": error};
+    });
   }
 }
