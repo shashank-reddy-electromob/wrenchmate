@@ -6,7 +6,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 class BookingController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-  RxString bookingStatus = 'pending'.obs; 
+  RxString bookingStatus = 'pending'.obs;
 
   Future<void> addBooking(
     List<String> serviceIds,
@@ -73,6 +73,20 @@ class BookingController extends GetxController {
       return bookings;
     } catch (e) {
       throw Exception("Failed to fetch bookings: $e");
+    }
+  }
+
+  Future<void> createTrackingRecord(
+      String userId, Map<String, dynamic> bookingDetails) async {
+    try {
+      await _firestore
+          .collection('User')
+          .doc(userId)
+          .collection('Tracking')
+          .add(bookingDetails);
+      print("Tracking record created successfully.");
+    } catch (e) {
+      print("Error creating tracking record: $e");
     }
   }
 }

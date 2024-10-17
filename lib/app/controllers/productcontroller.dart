@@ -16,26 +16,28 @@ class ProductController extends GetxController {
     fetchProducts();
   }
 
-  Future<void> fetchProducts() async {
-    try {
-      isLoading(true);
-      final snapshot =
-          await FirebaseFirestore.instance.collection('Product').get();
+Future<void> fetchProducts() async {
+  try {
+    isLoading(true);
+    final snapshot = await FirebaseFirestore.instance.collection('Product').get();
 
-      final productList = snapshot.docs
-          .map((doc) => Product.fromDocument(doc.data(), doc.id))
-          .toList();
+    final productList = snapshot.docs
+        .map((doc) {
+          print('Fetched Document: ${doc.data()}'); 
+          return Product.fromDocument(doc.data(), doc.id);
+        })
+        .toList();
 
-      products.assignAll(productList);
-    } catch (e) {
-      errorMessage.value = 'Failed to fetch products: $e';
-      print("errorMessage.value :: ${errorMessage.value}");
-    } finally {
-      isLoading(false);
-    }
+    products.assignAll(productList);
+  } catch (e) {
+    errorMessage.value = 'Failed to fetch products: $e';
+    print("errorMessage.value :: ${errorMessage.value}");
+  } finally {
+    isLoading(false);
   }
+}
 
-  var selectedProduct = Rxn<Product>(); // To store the selected service
+  var selectedProduct = Rxn<Product>(); 
 
   Future<void> fetchProductById(String productId) async {
     try {
