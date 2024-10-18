@@ -4,7 +4,7 @@ import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/controllers/auth_controller.dart';
 import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
@@ -13,6 +13,7 @@ import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import '../../controllers/cart_controller.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/custombackbutton.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 class BookSlot extends StatefulWidget {
   @override
@@ -98,7 +99,7 @@ class _BookSlotState extends State<BookSlot> {
         scrolledUnderElevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
-          "Booking Details",
+          "`Booking Details",
           style: TextStyle(fontWeight: FontWeight.w500, fontFamily: 'Raleway'),
         ),
         leading: Padding(
@@ -291,7 +292,7 @@ class _BookSlotState extends State<BookSlot> {
                       child: DatePicker(
                         DateTime.now(),
                         initialSelectedDate: DateTime.now(),
-                        daysCount: 7,
+                        daysCount: 30,
                         onDateChange: (newDate) {
                           setState(() {
                             selectedDate = newDate;
@@ -322,39 +323,52 @@ class _BookSlotState extends State<BookSlot> {
                 Row(
                   children: [
                     Expanded(
-                      child: SfRangeSlider(
-                        min: 12.0,
-                        max: 24.0,
-                        values: _rangeValues,
-                        interval: 1.0,
-                        showTicks: true,
-                        showLabels: true,
-                        minorTicksPerInterval: 1,
-                        activeColor: Colors.blue,
-                        inactiveColor: Colors.grey,
-                        onChanged: (SfRangeValues newValues) {
-                          setState(() {
-                            if (newValues.end > newValues.start) {
-                              _rangeValues = newValues;
-                            } else {
-                              _rangeValues = SfRangeValues(
-                                  newValues.start, newValues.start + 1.0);
-                            }
-                          });
-                        },
-                        // labelFormatterCallback: (dynamic actualValue, String formattedText) {
-                        //   return _formatTime(actualValue); // Formatting time as shown on the ticks
-                        // },
-                        tooltipTextFormatterCallback:
-                            (dynamic actualValue, String formattedText) {
-                          return _formatTime(
-                              actualValue); // Formatting time in the tooltip
-                        },
+                      child: SfRangeSliderTheme(
+                        data: SfRangeSliderThemeData(
+                          tooltipBackgroundColor: Colors.blue,
+                        ),
+                        child: SfRangeSlider(
+                          min: 10.0,
+                          max: 19.0,
+                          values: _rangeValues,
+                          interval: 1.0,
+                          showTicks: true,
+                          showLabels: true,
+                          minorTicksPerInterval: 0,
+                          activeColor: Colors.blue,
+                          enableTooltip: true,
+                          tooltipShape: SfPaddleTooltipShape(),
+                          startThumbIcon: Icon(
+                            Icons.settings,
+                            color: Colors.white,
+                            size: 17,
+                          ),
+                          endThumbIcon: Icon(
+                            Icons.settings,
+                            color: Colors.white,
+                            size: 17,
+                          ),
+                          inactiveColor: Colors.grey,
+                          onChanged: (SfRangeValues newValues) {
+                            setState(() {
+                              if (newValues.end > newValues.start) {
+                                _rangeValues = newValues;
+                              } else {
+                                _rangeValues = SfRangeValues(
+                                    newValues.start, newValues.start + 1.0);
+                              }
+                            });
+                          },
+                          // labelFormatterCallback: (dynamic actualValue, String formattedText) {
+                          //   return _formatTime(actualValue); // Formatting time as shown on the ticks
+                          // },
+                          tooltipTextFormatterCallback:
+                              (dynamic actualValue, String formattedText) {
+                            return _formatTime(
+                                actualValue); // Formatting time in the tooltip
+                          },
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.settings),
-                      onPressed: () {},
                     ),
                   ],
                 ),
@@ -363,15 +377,19 @@ class _BookSlotState extends State<BookSlot> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    LegendItem(color: Colors.grey, label: 'Unavailable'),
-                    SizedBox(width: 10),
-                    LegendItem(color: Colors.blue, label: 'Available'),
+                    LegendItem(color: Colors.grey, label: 'Working Hours'),
+                    SizedBox(width: 20),
+                    LegendItem(color: Colors.blue, label: 'Selected'),
                   ],
                 ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 20.0),
                 Text(
-                  'Selected Time: ${_formatTime(_rangeValues.start)} - ${_formatTime(_rangeValues.end)} hours',
-                  style: TextStyle(fontSize: 14, fontFamily: 'Poppins'),
+                  'Selected Time:  ${_formatTime(_rangeValues.start)} - ${_formatTime(_rangeValues.end)} hours',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
 
                 SizedBox(height: 24),

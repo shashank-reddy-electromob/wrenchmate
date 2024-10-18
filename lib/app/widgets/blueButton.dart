@@ -28,7 +28,7 @@ class blueButton extends StatelessWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: buttonHeight),
+          padding: EdgeInsets.symmetric(vertical: 10),
           backgroundColor: Color(0XFF1671D8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(

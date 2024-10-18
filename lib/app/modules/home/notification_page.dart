@@ -45,19 +45,64 @@ class NotificationPage extends StatelessWidget {
             //left
             background: Container(
               color: Color(0xff039855),
-              child: Column(
-                children: [Icon(Icons.home), Text("home")],
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.mark_chat_read,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          "Read",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             //right
-            secondaryBackground: Container(color: Color(0xff1671D8)),
+            secondaryBackground: Container(
+              color: Color(0xff1671D8),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 35, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.archive_outlined,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          "Archive",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
             onDismissed: (direction) {
               if (direction == DismissDirection.startToEnd) {
-                readList
-                    .add(dummyNotifications[index]);
+                readList.add(dummyNotifications[index]);
               } else if (direction == DismissDirection.endToStart) {
-                archiveList.add(
-                    dummyNotifications[index]);
+                archiveList.add(dummyNotifications[index]);
               }
             },
             child: Container(
