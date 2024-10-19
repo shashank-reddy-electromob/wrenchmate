@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.8.0'
+    ext.kotlin_version = '2.0.21'
     repositories {
         google()
         mavenCentral()
@@ -25,15 +25,40 @@ allprojects {
 
     }
 }
+ext {
+    compileSdkVersion   = 34
+    targetSdkVersion    = 34
+    appCompatVersion    = "1.0.0"
+}
 
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+
+subprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin("com.android.application") ||
+                project.plugins.hasPlugin("com.android.library")) {
+            project.android {
+                compileSdkVersion 34
+                buildToolsVersion "34.0.0"
+            }
+        }
+    }
+}
+
 subprojects {
     project.evaluationDependsOn(':app')
 }
 
+
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core-ktx:1.6.0'
+    }
 }

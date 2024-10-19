@@ -26,8 +26,9 @@ if (flutterVersionName == null) {
 }
 
 android {
+    def buildConfig = rootProject.extensions.getByName("ext")
     namespace "in.wrenchmate.wrenchmate_user_app"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk buildConfig.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -41,7 +42,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion buildConfig.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
