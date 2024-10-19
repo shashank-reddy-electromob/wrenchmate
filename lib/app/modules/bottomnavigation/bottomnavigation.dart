@@ -56,7 +56,6 @@ class _bottomnavigationState extends State<bottomnavigation> {
             _widgetOptions.elementAt(_selectedIndex),
           ],
         ),
-        // floatingActionButtonAnimator:   ,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: ClipOval(
           child: Container(

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:draggable_fab/draggable_fab.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -47,7 +48,6 @@ class _HomePageState extends State<HomePage> {
           "cartController.totalAmount.value :: ${cartController.totalAmount.value}");
     }
   }
-
 
   Future<void> fetchUserData() async {
     userData = await controller?.fetchUserData() as Map<String, dynamic>?;
@@ -274,6 +274,29 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      floatingActionButton: DraggableFab(
+          child: ClipOval(
+        child: Container(
+          width: 80,
+          height: 80,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              splashColor: Colors.blueAccent,
+              onTap: () {
+                Get.toNamed(AppRoutes.TRACKING);
+              },
+              child: SizedBox(
+                width: 80,
+                height: 80,
+                child: Image(
+                  image: AssetImage("assets/images/track_icon.png"),
+                ),
+              ),
+            ),
+          ),
+        ),
+      )),
     );
   }
 }

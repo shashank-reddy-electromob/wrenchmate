@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
@@ -46,25 +48,65 @@ class _TrackingPageState extends State<TrackingPage> {
                   children: [
                     Stack(
                       children: [
-                        Image.asset(
-                          'assets/tracking/blur_bg.jpg',
-                          fit: BoxFit.cover,
+                        Container(
+                          height: MediaQuery.of(context).size.height / 2.5,
+                          decoration: new BoxDecoration(
+                            image: new DecorationImage(
+                              image: new ExactAssetImage(
+                                  'assets/car/hatchback.png'),
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
+                          child: new BackdropFilter(
+                            filter: new ImageFilter.blur(
+                                sigmaX: 10.0, sigmaY: 10.0),
+                            child: new Container(
+                              decoration: new BoxDecoration(
+                                  color: Colors.white.withOpacity(0.0)),
+                            ),
+                          ),
                         ),
                         Center(
                           child: Column(
                             children: [
+                              Container(
+                                height: MediaQuery.of(context).size.height / 7,
+                                child: Image(
+                                  image: AssetImage(
+                                      "assets/tracking/location_marker.png"),
+                                ),
+                              ),
                               SizedBox(
                                 height: 30,
                               ),
                               Text(
                                 '$distance Km away',
                                 style: AppTextStyle.bold20
-                                    .copyWith(color: primaryColor),
+                                    .copyWith(color: Colors.white),
                               ),
-                              Text(
-                                'Deliver in $deliveryTime min',
-                                style: AppTextStyle.semibold16
-                                    .copyWith(color: primaryColor),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Deliver in ',
+                                    style: AppTextStyle.semibold16
+                                        .copyWith(color: Colors.black),
+                                  ),
+                                  Text(
+                                    '$deliveryTime min',
+                                    style: AppTextStyle.semibold16
+                                        .copyWith(color: primaryColor),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 30,
+                              ),
+                              Container(
+                                height: MediaQuery.of(context).size.height / 9,
+                                child: Image(
+                                  image: AssetImage("assets/car/hatchback.png"),
+                                ),
                               ),
                             ],
                           ),
@@ -135,7 +177,13 @@ class _TrackingPageState extends State<TrackingPage> {
                                 thickness: 4,
                               ),
                             ),
-                            SvgPicture.asset('assets/tracking/small_car.svg'),
+                            Container(
+                              height: MediaQuery.of(context).size.height / 16,
+                              child: Image(
+                                image:
+                                    AssetImage("assets/tracking/small_car.png"),
+                              ),
+                            ),
                             // Container(
                             //   width: 40,
                             //   height: 40,
@@ -191,6 +239,11 @@ class _TrackingPageState extends State<TrackingPage> {
                       radius: 40,
                       // backgroundImage: AssetImage(''),
                       backgroundColor: Colors.blue,
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: 65,
+                      ),
                     ),
                   ),
                 ],
@@ -204,9 +257,13 @@ class _TrackingPageState extends State<TrackingPage> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Image.asset(
-                  'assets/tracking/bottom_bg.jpg',
-                  fit: BoxFit.cover,
+                Container(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height / 9,
+                  child: Image.asset(
+                    'assets/tracking/bottom_bg.jpg',
+                    fit: BoxFit.fitWidth,
+                  ),
                 ),
                 Container(
                   height: 70,
