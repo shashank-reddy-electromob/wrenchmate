@@ -85,6 +85,9 @@ class AppPages {
         binding: HomeBinding()),
     GetPage(
         name: AppRoutes.BOTTOMNAV,
+        arguments: {
+          'tracking_button': false,
+        },
         page: () => bottomnavigation(),
         binding: bottomnavigationBindings()),
     GetPage(

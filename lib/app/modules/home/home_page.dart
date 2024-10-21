@@ -11,6 +11,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:google_api_availability/google_api_availability.dart';
+import 'package:wrenchmate_user_app/globalVariables.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/home_controller.dart';
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   HomeController? controller;
   Map<String, dynamic>? userData;
   late int addressIndex;
+
 
   @override
   void initState() {
@@ -274,29 +276,29 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: DraggableFab(
-          child: ClipOval(
-        child: Container(
-          width: 80,
-          height: 80,
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              splashColor: Colors.blueAccent,
-              onTap: () {
-                Get.toNamed(AppRoutes.TRACKING);
-              },
-              child: SizedBox(
-                width: 80,
-                height: 80,
-                child: Image(
-                  image: AssetImage("assets/images/track_icon.png"),
-                ),
-              ),
-            ),
-          ),
-        ),
-      )),
+     // floatingActionButton: tracking_button ? DraggableFab(
+     //     child: ClipOval(
+     //   child: Container(
+     //     width: 80,
+     //     height: 80,
+     //     child: Material(
+     //       color: Colors.transparent,
+     //       child: InkWell(
+     //         splashColor: Colors.blueAccent,
+     //         onTap: () {
+     //           Get.toNamed(AppRoutes.TRACKING);
+     //         },
+     //         child: SizedBox(
+     //           width: 80,
+     //           height: 80,
+     //           child: Image(
+     //             image: AssetImage("assets/images/track_icon.png"),
+     //           ),
+     //         ),
+     //       ),
+     //     ),
+     //   ),
+     // )) : Container(),
     );
   }
 }

@@ -18,6 +18,7 @@ class bottomnavigation extends StatefulWidget {
 
 class _bottomnavigationState extends State<bottomnavigation> {
   int _selectedIndex = 0;
+  bool tracking_button = false;
 
   static List<Widget> _widgetOptions = [
     HomePage(),
@@ -47,6 +48,15 @@ class _bottomnavigationState extends State<bottomnavigation> {
 
   @override
   Widget build(BuildContext context) {
+    try{
+      final tracking_button_ = Get.arguments['tracking_button'];
+      setState(() {
+        tracking_button = tracking_button_;
+      });
+    }
+    catch (exception) {
+      print("Error!!!");
+    }
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -54,6 +64,29 @@ class _bottomnavigationState extends State<bottomnavigation> {
         body: Stack(
           children: [
             _widgetOptions.elementAt(_selectedIndex),
+            tracking_button ? DraggableFab(
+                child: ClipOval(
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        splashColor: Colors.blueAccent,
+                        onTap: () {
+                          Get.toNamed(AppRoutes.TRACKING);
+                        },
+                        child: SizedBox(
+                          width: 80,
+                          height: 80,
+                          child: Image(
+                            image: AssetImage("assets/images/track_icon.png"),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )) : Container(),
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

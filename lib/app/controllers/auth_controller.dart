@@ -44,7 +44,9 @@ class AuthController extends GetxController {
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: "");
       } else {
-        Get.toNamed(AppRoutes.BOTTOMNAV);
+        Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
+          'tracking_button': false,
+        });
       }
     } catch (e) {
       print("Auto sign-in failed: $e");
@@ -166,7 +168,9 @@ class AuthController extends GetxController {
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
       } else {
-        Get.toNamed(AppRoutes.BOTTOMNAV);
+        Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
+          'tracking_button': false,
+        });
       }
     } catch (e) {
       print("OTP verification failed: $e");

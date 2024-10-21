@@ -52,7 +52,7 @@ class _serviceswidgitState extends State<serviceswidgit> {
                 text: "Repairs",
                 borderSides: [BorderSideEnum.bottom],
                 imagePath: 'assets/services/repair.png',
-                onTap: () => navigateToServicePage("Repairing"),
+                onTap: () => navigateToServicePage("Repairs"),
               ),
             ],
           ),
@@ -127,10 +127,10 @@ class ServicesType extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           // mainAxisAlignment: MainAxisAlignment.start,
-          //mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: Image.asset(
                 width: 35,
                 imagePath,
@@ -138,14 +138,14 @@ class ServicesType extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(4, 4, 2, 0),
+              padding: const EdgeInsets.fromLTRB(4, 6, 2, 0),
               child: Text(
                 text,
                 textAlign: TextAlign.center,
                 style: AppTextStyle.mediumRaleway12.copyWith(
                   fontWeight: FontWeight.w600,
                   overflow: TextOverflow.fade,
-                  fontSize: 12,
+                  fontSize: MediaQuery.of(context).size.width/35,
                 ),
               ),
             ),

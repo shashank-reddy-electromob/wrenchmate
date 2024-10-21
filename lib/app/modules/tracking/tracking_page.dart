@@ -49,7 +49,7 @@ class _TrackingPageState extends State<TrackingPage> {
                     Stack(
                       children: [
                         Container(
-                          height: MediaQuery.of(context).size.height / 2.5,
+                          height: MediaQuery.of(context).size.height / 3,
                           decoration: new BoxDecoration(
                             image: new DecorationImage(
                               image: new ExactAssetImage(
@@ -119,6 +119,7 @@ class _TrackingPageState extends State<TrackingPage> {
               Stack(
                 children: [
                   Container(
+                    height: MediaQuery.of(context).size.height/2.4,
                     margin: EdgeInsets.only(top: 40),
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                     decoration: BoxDecoration(

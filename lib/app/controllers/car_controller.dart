@@ -69,7 +69,15 @@ class CarController extends GetxController {
       });
 
       print("Car added successfully.");
-      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: userId);
+    /**
+     *Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
+        'tracking_button': true,
+        });
+     */
+
+      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+        'tracking_button': false,
+      });
     } catch (e) {
       print("Error adding car: $e");
     }

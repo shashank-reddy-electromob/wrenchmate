@@ -14,6 +14,7 @@ import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/api/paymemtapi.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/containerButton.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/pricing.dart';
+import 'package:wrenchmate_user_app/globalVariables.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
@@ -23,6 +24,8 @@ import '../../controllers/home_controller.dart';
 import '../../widgets/custombackbutton.dart';
 import '../../routes/app_routes.dart'; // Import AppRoutes
 import 'package:crypto/crypto.dart';
+
+import '../home/home_page.dart';
 
 class CartPage extends StatefulWidget {
   @override
@@ -45,6 +48,8 @@ class _CartPageState extends State<CartPage> {
   DateTime? selectedDate;
   SfRangeValues? selectedTimeRange;
   PaymentService paymentService = PaymentService();
+
+  HomePage tracking = new HomePage();
 
   @override
   void initState() {
@@ -319,7 +324,9 @@ class _CartPageState extends State<CartPage> {
 
                                           if (cartController
                                               .cartItems.isEmpty) {
-                                            Get.toNamed(AppRoutes.BOTTOMNAV);
+                                            Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
+                                              'tracking_button': false,
+                                            });
                                           } else {
                                             calculateTotal();
                                           }
@@ -605,7 +612,10 @@ class _CartPageState extends State<CartPage> {
           if (status == 'SUCCESS') {
             result = "Flow complete - status : SUCCESS";
             await cartController.clearCart();
-            await Get.toNamed(AppRoutes.BOTTOMNAV);
+            await Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
+              'tracking_button': true,
+            });
+
           } else {
             result = "Flow complete - status : $status and error $error";
           }
