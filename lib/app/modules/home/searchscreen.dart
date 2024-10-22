@@ -370,25 +370,7 @@ class _SearchPageState extends State<SearchPage> {
                               fontSize: 12,
                               fontFamily: 'Poppins')),
                       SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ServiceCard(
-                            serviceName: "General Wash",
-                            price: "1,400",
-                            rating: 4.9,
-                            imagePath: 'assets/car/toprecommended1.png',
-                            colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
-                          ),
-                          ServiceCard(
-                            serviceName: "General Check-up",
-                            price: "1,400",
-                            rating: 4.9,
-                            imagePath: 'assets/car/toprecommended2.png',
-                            colors: [Color(0xffFEA563), Color(0xffFF5F81)],
-                          ),
-                        ],
-                      ),
+                      toprecommendedservices(),
                       Text('Top Categories',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,

@@ -30,7 +30,6 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic>? userData;
   late int addressIndex;
 
-
   @override
   void initState() {
     super.initState();
@@ -170,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'hello ${userData?['User_name'] ?? 'User'}',
+                                          'Hello, ${userData?['User_name'] ?? 'User'}',
                                           style: AppTextStyle.boldRaleway15,
                                         ),
                                         GestureDetector(
@@ -245,7 +244,35 @@ class _HomePageState extends State<HomePage> {
                         height: MediaQuery.of(context).size.height * 0.26,
                         child: OffersSliders(),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Services",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       serviceswidgit(),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 5),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Top Recommended Services",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: toprecommendedservices(),
@@ -276,29 +303,29 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-     // floatingActionButton: tracking_button ? DraggableFab(
-     //     child: ClipOval(
-     //   child: Container(
-     //     width: 80,
-     //     height: 80,
-     //     child: Material(
-     //       color: Colors.transparent,
-     //       child: InkWell(
-     //         splashColor: Colors.blueAccent,
-     //         onTap: () {
-     //           Get.toNamed(AppRoutes.TRACKING);
-     //         },
-     //         child: SizedBox(
-     //           width: 80,
-     //           height: 80,
-     //           child: Image(
-     //             image: AssetImage("assets/images/track_icon.png"),
-     //           ),
-     //         ),
-     //       ),
-     //     ),
-     //   ),
-     // )) : Container(),
+      // floatingActionButton: tracking_button ? DraggableFab(
+      //     child: ClipOval(
+      //   child: Container(
+      //     width: 80,
+      //     height: 80,
+      //     child: Material(
+      //       color: Colors.transparent,
+      //       child: InkWell(
+      //         splashColor: Colors.blueAccent,
+      //         onTap: () {
+      //           Get.toNamed(AppRoutes.TRACKING);
+      //         },
+      //         child: SizedBox(
+      //           width: 80,
+      //           height: 80,
+      //           child: Image(
+      //             image: AssetImage("assets/images/track_icon.png"),
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // )) : Container(),
     );
   }
 }

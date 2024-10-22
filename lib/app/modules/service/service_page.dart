@@ -218,6 +218,20 @@ class _ServicePageState extends State<ServicePage> {
                                         horizontal: 16.0),
                                     child: GestureDetector(
                                       onTap: () {
+                                        print("");
+                                        print("");
+                                        print("");
+                                        print("");
+                                        print("");
+                                        print("***************************************************");
+                                        print(serviceController.services[0].id);
+                                        print("***************************************************");
+                                        print("");
+                                        print("");
+                                        print("");
+                                        print("");
+                                        print("");
+
                                         Get.toNamed(AppRoutes.SERVICE_DETAIL,
                                             arguments: service);
                                         ScaffoldMessenger.of(context)
