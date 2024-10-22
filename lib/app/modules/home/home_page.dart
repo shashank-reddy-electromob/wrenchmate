@@ -264,9 +264,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            bottom: 20,
-            left: 15,
-            right: 15,
+            bottom: 0,
+            left: 0,
+            right: 0,
             child: isDrawerOpen
                 ? SizedBox.shrink()
                 : PersistentNotification(

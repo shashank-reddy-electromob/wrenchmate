@@ -79,7 +79,6 @@ class _ProductScreenState extends State<ProductScreen> {
                       Get.toNamed(AppRoutes.PRODUCT_DETAILS,
                           arguments: product);
                                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
                     },
                     child: Stack(
                       children: [
@@ -153,7 +152,6 @@ class _ProductScreenState extends State<ProductScreen> {
                                                   ScaffoldMessenger.of(context)
                                                       .hideCurrentSnackBar();
                                                 },
-                                                
                                                 text: 'Go to cart',
                                               ),
                                       ),

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
+import 'package:wrenchmate_user_app/globalVariables.dart';
 import '../../routes/app_routes.dart';
 import '../../controllers/car_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
@@ -30,6 +31,7 @@ class _CarPageState extends State<CarPage> {
       Get.put(CarController());
 
   late PageController _pageController;
+
 
   @override
   void initState() {
@@ -90,6 +92,13 @@ class _CarPageState extends State<CarPage> {
       print("Displaying car at index $index: $car");
     }
   }
+
+  /*
+  Sedan
+  Hatchback
+  Compact SUV
+  SUV
+   */
 
   void navigateCarDetails(int direction) {
     int newIndex = userCurrentCarIndex + direction;

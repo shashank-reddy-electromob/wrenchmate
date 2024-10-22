@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,6 +15,7 @@ import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import 'package:wrenchmate_user_app/globalVariables.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
+import '../../controllers/car_controller.dart';
 import '../../controllers/cart_controller.dart';
 import '../../data/models/Service_firebase.dart';
 import '../../routes/app_routes.dart';
@@ -30,12 +35,52 @@ class _ServicePageState extends State<ServicePage> {
   final AuthController authController = Get.put(AuthController());
   List<bool> addToCartStates = [];
 
+  int userCurrentCarIndex = 0;
+  List<Map<String, dynamic>> userCars = [];
+  String carType = '';
+  String carTypeImage = ''; // Add this line
+
+  late TextEditingController regYearController;
+  late TextEditingController regNoController;
+  late TextEditingController insuranceExpController;
+  late TextEditingController pucExpController;
+
+  final CarController carController = Get.put(CarController());
+
+  void fetchUserCurrentCarIndex() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc =
+    await FirebaseFirestore.instance.collection('User').doc(userId).get();
+    if (userDoc.exists) {
+      setState(() {
+        userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
+      });
+      fetchCarDetails();
+    }
+  }
+
+  void fetchCarDetails() async {
+    userCars = await carController.fetchUserCarDetails();
+    carType = userCars[userCurrentCarIndex]['car_type'];
+    if (carType == "Sedan") {
+      carTypeImage = "sedan";
+    } else if (carType == "Hatchback") {
+      carTypeImage = "hatchback";
+    } else if (carType == "Compact SUV") {
+      carTypeImage = "compact_suv";
+    } else if (carType == "SUV") {
+      carTypeImage = "suv";
+    }
+    setState(() {});
+  }
+
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
     super.initState();
+    fetchUserCurrentCarIndex();
     cartController = Get.put(CartController());
     service = Get.arguments;
     print(service);
@@ -44,8 +89,12 @@ class _ServicePageState extends State<ServicePage> {
         List<bool>.filled(serviceController.services.length, false);
 
     authController.getUserCarDetails().then((userCarDetails) {
+      String userCar = userCarDetails[userCurrentCarIndex];
+      print(userCar);
+      List<String> list = (userCar.split(",")).cast<String>().toList();
+
       serviceController
-          .fetchServicesForUser(service, userCarDetails.cast<String>())
+          .fetchServicesForUser(service, list)
           .then((_) {
         setState(() {
           addToCartStates =
@@ -80,7 +129,7 @@ class _ServicePageState extends State<ServicePage> {
         key: scaffoldMessengerKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: service == "Repairing" || service == "Body Parts"
+          backgroundColor: service == "Repairs" || service == "Body Parts"
               ? Color(0xffE4F7FF)
               : Colors.transparent,
           title: Text(
@@ -90,13 +139,13 @@ class _ServicePageState extends State<ServicePage> {
           leading: Padding(
               padding: const EdgeInsets.all(6.0), child: Custombackbutton()),
         ),
-        body: service != "Repairing" && service != "Body Parts"
+        body: service != "Repairs" && service != "Body Parts"
             ? Column(
                 children: [
                   SizedBox(
                     height: 8,
                   ),
-                  service != "Repairing"
+                  service != "Repairs"
                       ? Container(
                           padding: EdgeInsets.symmetric(
                               horizontal:

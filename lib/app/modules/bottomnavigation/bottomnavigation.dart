@@ -133,7 +133,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
                 AssetImage('assets/icons/product.png'),
                 size: 25,
               ),
-              label: 'Product',
+              label: 'Products',
             ),
             BottomNavigationBarItem(
               icon: SizedBox(width: 10),
@@ -142,7 +142,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/support.png'),
-                size: 25,
+                size: 30,
               ),
               label: 'Help',
             ),

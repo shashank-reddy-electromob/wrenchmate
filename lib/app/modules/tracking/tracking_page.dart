@@ -1,13 +1,17 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
+import 'package:wrenchmate_user_app/globalVariables.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
+import '../../controllers/car_controller.dart';
 import '../../controllers/tracking_controller.dart';
 
 class TrackingPage extends StatefulWidget {
@@ -23,7 +27,67 @@ class _TrackingPageState extends State<TrackingPage> {
   double driverRating = 5.0;
   String carModel = 'Audi TT';
   String carPlate = 'YH1S44T';
-  int currentStep = 1;
+  int currentStep = 2;
+
+  int userCurrentCarIndex = 0;
+  List<Map<String, dynamic>> userCars = [];
+  String carType = '';
+  String carTypeImage = ''; // Add this line
+
+  late TextEditingController regYearController;
+  late TextEditingController regNoController;
+  late TextEditingController insuranceExpController;
+  late TextEditingController pucExpController;
+
+  final CarController carController = Get.put(CarController());
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserCurrentCarIndex();
+  }
+
+  void fetchUserCurrentCarIndex() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('User').doc(userId).get();
+    if (userDoc.exists) {
+      setState(() {
+        userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
+      });
+      fetchCarDetails();
+    }
+  }
+
+  void fetchCarDetails() async {
+    userCars = await carController.fetchUserCarDetails();
+    carType = userCars[userCurrentCarIndex]['car_type'];
+    if (carType == "Sedan") {
+      carTypeImage = "sedan";
+      carModel = userCars[userCurrentCarIndex]['car_model'];
+      carPlate = userCars[userCurrentCarIndex]['registration_number'];
+    } else if (carType == "Hatchback") {
+      carTypeImage = "hatchback";
+      carModel = userCars[userCurrentCarIndex]['car_model'];
+      carPlate = userCars[userCurrentCarIndex]['registration_number'];
+    } else if (carType == "Compact SUV") {
+      carTypeImage = "compact_suv";
+      carModel = userCars[userCurrentCarIndex]['car_model'];
+      carPlate = userCars[userCurrentCarIndex]['registration_number'];
+    } else if (carType == "SUV") {
+      carTypeImage = "suv";
+      carModel = userCars[userCurrentCarIndex]['car_model'];
+      carPlate = userCars[userCurrentCarIndex]['registration_number'];
+    }
+    setState(() {});
+  }
+
+  /*
+  Sedan
+  Hatchback
+  Compact SUV
+  SUV
+   */
 
   @override
   Widget build(BuildContext context) {
@@ -102,11 +166,18 @@ class _TrackingPageState extends State<TrackingPage> {
                               SizedBox(
                                 height: 30,
                               ),
-                              Container(
-                                height: MediaQuery.of(context).size.height / 9,
-                                child: Image(
-                                  image: AssetImage("assets/car/hatchback.png"),
+                              FutureBuilder(
+                                future: Future.delayed(
+                                  Duration(seconds: 1),
                                 ),
+                                builder: (c, s) =>
+                                    s.connectionState == ConnectionState.done
+                                        ? Container(
+                                      height: MediaQuery.of(context).size.height/9,
+                                          child: Image.asset(
+                                              "assets/car/$carTypeImage.png"),
+                                        )
+                                        : CircularProgressIndicator(),
                               ),
                             ],
                           ),
@@ -119,7 +190,7 @@ class _TrackingPageState extends State<TrackingPage> {
               Stack(
                 children: [
                   Container(
-                    height: MediaQuery.of(context).size.height/2.4,
+                    height: MediaQuery.of(context).size.height / 2.4,
                     margin: EdgeInsets.only(top: 40),
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
                     decoration: BoxDecoration(

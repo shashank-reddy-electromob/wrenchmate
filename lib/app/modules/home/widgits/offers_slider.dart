@@ -78,7 +78,12 @@ class _OffersSlidersState extends State<OffersSliders> {
             ),
           )
         else
-          Text('No offers available'),
+          Container(
+            height: MediaQuery.of(context).size.height * 0.24,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
         buildIndicator(),
       ],
     );
@@ -128,15 +133,13 @@ class OfferCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: ExtendedImage.network(
-          imagePath,
-          fit: BoxFit.cover,
-        ),
-      )
-
-    );
+        padding: const EdgeInsets.all(8.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: ExtendedImage.network(
+            imagePath,
+            fit: BoxFit.cover,
+          ),
+        ));
   }
 }

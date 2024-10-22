@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
+import '../../controllers/car_controller.dart';
 import '../../routes/app_routes.dart';
 
 class SubscriptionPage extends StatefulWidget {
@@ -10,6 +13,51 @@ class SubscriptionPage extends StatefulWidget {
 
 class _SubscriptionPageState extends State<SubscriptionPage> {
   bool isMonthly = true;
+
+  int userCurrentCarIndex = 0;
+  List<Map<String, dynamic>> userCars = [];
+  String carType = '';
+  String carTypeImage = ''; // Add this line
+
+  late TextEditingController regYearController;
+  late TextEditingController regNoController;
+  late TextEditingController insuranceExpController;
+  late TextEditingController pucExpController;
+
+  final CarController carController = Get.put(CarController());
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserCurrentCarIndex();
+  }
+
+  void fetchUserCurrentCarIndex() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('User').doc(userId).get();
+    if (userDoc.exists) {
+      setState(() {
+        userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
+      });
+      fetchCarDetails();
+    }
+  }
+
+  void fetchCarDetails() async {
+    userCars = await carController.fetchUserCarDetails();
+    carType = userCars[userCurrentCarIndex]['car_type'];
+    if (carType == "Sedan") {
+      carTypeImage = "sedan";
+    } else if (carType == "Hatchback") {
+      carTypeImage = "hatchback";
+    } else if (carType == "Compact SUV") {
+      carTypeImage = "compact_suv";
+    } else if (carType == "SUV") {
+      carTypeImage = "suv";
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +71,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: MediaQuery.of(context).size.height / 8,
+              height: MediaQuery.of(context).size.height / 12,
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -41,20 +89,27 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               ),
               child: Row(
                 children: [
-                  // Image.asset(
-                  //   'assets/car/car_img.png',
-                  //   width: 100,
-                  //   height: 100,
-                  // ),
-                  // SizedBox(width: 16),
+                  FutureBuilder(
+                    future: Future.delayed(
+                      Duration(seconds: 1),
+                    ),
+                    builder: (c, s) => s.connectionState == ConnectionState.done
+                        ? Container(
+                            width: MediaQuery.of(context).size.height / 8,
+                            child: Image.asset("assets/car/$carTypeImage.png"),
+                          )
+                        : Container(
+                            child: CircularProgressIndicator(),
+                          ),
+                  ),
+                  SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      "Convenient doorstep car service subscription offering regular maintenance, repairs, and cleaning at your location. Enjoy hassle-free car care with flexible plans, expert technicians, and zero trips to the workshop",
+                      "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
                       style: TextStyle(
-                        fontSize: 14,
-                        fontFamily: 'Raleway',
-                        fontWeight: FontWeight.w600
-                      ),
+                          fontSize: 14,
+                          fontFamily: 'Raleway',
+                          fontWeight: FontWeight.w600),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 5,
                     ),
@@ -97,12 +152,36 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     children: isMonthly
                         ? [
                             Text(
-                              "1. Standard Wash Package*\n  3 or 4 washes - Basic exterior cleaning to remove dust and dirt. \n\n2. Premium Care Package \n   2 washes  Comprehensive exterior wash for a clean finish.- *1 hydrophobic* – Water-repellent coating to protect your car.- *1 wax* – Adds shine and shields the paint from damage.",
+                              "Essential Need Pack",
                               style: TextStyle(
                                   fontFamily: 'Raleway',
-                                  fontSize: 14,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold),
                             ),
+                      SizedBox(height: 8),
+                      Text(
+                        "-> 4 washes",
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        " - Basic exterior cleaning to remove dust and dirt.",
+                        style: TextStyle(
+                            fontFamily: 'Raleway',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                     // SizedBox(height: 8),
+                     // Text(
+                     //   "Premium Care Package \n   2 washes  Comprehensive exterior wash for a clean finish.- *1 hydrophobic* – Water-repellent coating to protect your car.- *1 wax* – Adds shine and shields the paint from damage.",
+                     //   style: TextStyle(
+                     //       fontFamily: 'Raleway',
+                     //       fontSize: 14,
+                     //       fontWeight: FontWeight.bold),
+                     // ),
                             SizedBox(height: 8),
                           ]
                         : [
@@ -254,15 +333,15 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 ),
               ),
             ),
-            Center(
-              child: TextButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.refresh, color: Colors.grey),
-                label: Text('Restore Purchase',
-                    style:
-                        TextStyle(color: Colors.grey, fontFamily: 'Poppins')),
-              ),
-            ),
+            //Center(
+            //  child: TextButton.icon(
+            //    onPressed: () {},
+            //    icon: Icon(Icons.refresh, color: Colors.grey),
+            //    label: Text('Restore Purchase',
+            //        style:
+            //            TextStyle(color: Colors.grey, fontFamily: 'Poppins')),
+            //  ),
+            //),
             SizedBox(
               height: 32,
             )
