@@ -27,8 +27,7 @@ class _CarPageState extends State<CarPage> {
   late TextEditingController insuranceExpController;
   late TextEditingController pucExpController;
 
-  final CarController carController =
-      Get.put(CarController());
+  final CarController carController = Get.put(CarController());
 
   late PageController _pageController;
 
@@ -250,12 +249,11 @@ class _CarPageState extends State<CarPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/icons/edit_icon.svg'),
-                          SizedBox(width: 10),
-                          SvgPicture.asset('assets/icons/delete_icon.svg'),
-                        ],
+                      GestureDetector(
+                        onTap: (){
+                          //Delete car here
+                        },
+                        child: SvgPicture.asset('assets/icons/delete_icon.svg'),
                       ),
                     ],
                   ),

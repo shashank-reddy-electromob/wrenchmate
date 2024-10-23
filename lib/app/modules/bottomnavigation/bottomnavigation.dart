@@ -120,8 +120,15 @@ class _bottomnavigationState extends State<bottomnavigation> {
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
+          unselectedFontSize: 10,
+          unselectedLabelStyle: TextStyle(
+            fontSize: 10,
+           // overflow: TextOverflow.visible,
+          ),
+          selectedFontSize: 12,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
+
               icon: ImageIcon(
                 AssetImage('assets/icons/home.png'),
                 size: 25,
@@ -142,7 +149,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/support.png'),
-                size: 30,
+                size: 25,
               ),
               label: 'Help',
             ),

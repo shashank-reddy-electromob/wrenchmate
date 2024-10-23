@@ -15,6 +15,7 @@ class SubscriptionPage extends StatefulWidget {
 
 class _SubscriptionPageState extends State<SubscriptionPage> {
   bool isMonthly = true;
+  bool premium = true;
 
   int userCurrentCarIndex = 0;
   List<Map<String, dynamic>> userCars = [];
@@ -26,12 +27,23 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   late TextEditingController insuranceExpController;
   late TextEditingController pucExpController;
 
+  var monthly_basic = 0;
+  var quaterely_basic = 0;
+  var monthly_premium = 0;
+  var quaterley_premium = 0;
+
+  int price = 0;
+
   final CarController carController = Get.put(CarController());
+
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
+
     fetchUserCurrentCarIndex();
+    firebasePriceFetch();
   }
 
   void fetchUserCurrentCarIndex() async {
@@ -44,6 +56,35 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       });
       fetchCarDetails();
     }
+  }
+
+  void firebasePriceFetch() {
+    final docRef = db.collection("Subscriptions").doc("sub-2024");
+    docRef.get().then(
+      (DocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        monthly_basic = data["monthly basic"];
+        monthly_premium = data["monthly premium"];
+        quaterely_basic = data["quarterly basic"];
+        quaterley_premium = data["quarterly premium"];
+        setState(() {
+          if (isMonthly) {
+            if (!premium) {
+              price = monthly_premium;
+            } else {
+              price = monthly_basic;
+            }
+          } else {
+            if (!premium) {
+              price = quaterley_premium;
+            } else {
+              price = quaterely_basic;
+            }
+          }
+        });
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
   }
 
   void fetchCarDetails() async {
@@ -82,7 +123,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   decoration: BoxDecoration(
                     color: Colors.white, // Background color
-                    borderRadius: BorderRadius.circular(12.0), // Rounded corners
+                    borderRadius:
+                        BorderRadius.circular(12.0), // Rounded corners
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
@@ -98,10 +140,12 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         future: Future.delayed(
                           Duration(seconds: 1),
                         ),
-                        builder: (c, s) => s.connectionState == ConnectionState.done
+                        builder: (c, s) => s.connectionState ==
+                                ConnectionState.done
                             ? Container(
                                 width: MediaQuery.of(context).size.height / 8,
-                                child: Image.asset("assets/car/$carTypeImage.png"),
+                                child:
+                                    Image.asset("assets/car/$carTypeImage.png"),
                               )
                             : Container(
                                 child: CircularProgressIndicator(),
@@ -112,7 +156,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         child: Text(
                           "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
                           style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               fontFamily: 'Raleway',
                               fontWeight: FontWeight.w600),
                           overflow: TextOverflow.ellipsis,
@@ -124,178 +168,86 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                child: Text(
-                  'Upgrade to',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff01417E),
-                  ),
-                ),
-              ),
-              
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                child: Column(
+                padding: const EdgeInsets.fromLTRB(0, 15, 10, 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Color(0xffC6DFFE),
-                        borderRadius: isMonthly
-                            ? BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
-                                bottomRight: Radius.circular(16),
-                              )
-                            : BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                topRight: Radius.circular(16),
-                                bottomLeft: Radius.circular(16),
-                              ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: isMonthly
-                            ? [
-                                Text(
-                                  "Essential Need Pack",
-                                  style: TextStyle(
-                                      fontFamily: 'Raleway',
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                          SizedBox(height: 8),
-                          Text(
-                            "-> 4 washes",
-                            style: TextStyle(
-                                fontFamily: 'Raleway',
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            " - Basic exterior cleaning to remove dust and dirt.",
-                            style: TextStyle(
-                                fontFamily: 'Raleway',
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold),
-                          ),
-                         // SizedBox(height: 8),
-                         // Text(
-                         //   "Premium Care Package \n   2 washes  Comprehensive exterior wash for a clean finish.- *1 hydrophobic* – Water-repellent coating to protect your car.- *1 wax* – Adds shine and shields the paint from damage.",
-                         //   style: TextStyle(
-                         //       fontFamily: 'Raleway',
-                         //       fontSize: 14,
-                         //       fontWeight: FontWeight.bold),
-                         // ),
-                                SizedBox(height: 8),
-                              ]
-                            : [
-                                Text(
-                                  'Lorem ipsum dolor sit amet.',
-                                  style: TextStyle(
-                                      fontFamily: 'Raleway',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Consectetur adipiscing elit.',
-                                  style: TextStyle(
-                                      fontFamily: 'Raleway',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Sed do eiusmod tempor.',
-                                  style: TextStyle(
-                                      fontFamily: 'Raleway',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Lorem ipsum dolor sit amet.',
-                                  style: TextStyle(
-                                      fontFamily: 'Raleway',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
+                    Text(
+                      'Upgrade to',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff01417E),
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         GestureDetector(
                           onTap: () {
+                            if (premium) {
+                              setState(() {
+                                premium = false;
+                              });
+                            } else if (!premium) {
+                              setState(() {
+                                premium = true;
+                              });
+                            }
                             setState(() {
-                              isMonthly = true;
+                              if (isMonthly) {
+                                if (!premium) {
+                                  price = monthly_premium;
+                                } else {
+                                  price = monthly_basic;
+                                }
+                              } else {
+                                if (!premium) {
+                                  price = quaterley_premium;
+                                } else {
+                                  price = quaterely_basic;
+                                }
+                              }
                             });
                           },
-                          child: Container(
-                            color:
-                                isMonthly ? Colors.transparent : Color(0xffC6DFFE),
-                            child: Container(
-                              width: (MediaQuery.of(context).size.width * 0.5) - 16,
-                              height: 52,
-                              decoration: BoxDecoration(
-                                color: isMonthly ? Color(0xffC6DFFE) : Colors.white,
-                                borderRadius: isMonthly
-                                    ? BorderRadius.only(
-                                        bottomRight: Radius.circular(16),
-                                        bottomLeft: Radius.circular(16),
-                                      )
-                                    : BorderRadius.only(
-                                        topRight: Radius.circular(16),
-                                      ),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Monthly',
-                                style: AppTextStyle.medium14,
-                              ),
-                              // Add onTap functionality
-                            ),
+                          child: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 20,
                           ),
+                        ),
+                        SizedBox(
+                          width: 20,
                         ),
                         GestureDetector(
                           onTap: () {
+                            if (premium) {
+                              setState(() {
+                                premium = false;
+                              });
+                            } else if (!premium) {
+                              setState(() {
+                                premium = true;
+                              });
+                            }
                             setState(() {
-                              isMonthly = false;
+                              if (isMonthly) {
+                                if (!premium) {
+                                  price = monthly_premium;
+                                } else {
+                                  price = monthly_basic;
+                                }
+                              } else {
+                                if (!premium) {
+                                  price = quaterley_premium;
+                                } else {
+                                  price = quaterely_basic;
+                                }
+                              }
                             });
                           },
-                          child: Container(
-                            color:
-                                !isMonthly ? Colors.transparent : Color(0xffC6DFFE),
-                            child: Container(
-                              width: (MediaQuery.of(context).size.width * 0.5) -
-                                  16, // Half the width of the upper container
-                              height: 52, // Adjust height as needed
-                              decoration: BoxDecoration(
-                                color:
-                                    !isMonthly ? Color(0xffC6DFFE) : Colors.white,
-                                borderRadius: !isMonthly
-                                    ? BorderRadius.only(
-                                        bottomRight: Radius.circular(16),
-                                        bottomLeft: Radius.circular(16),
-                                      )
-                                    : BorderRadius.only(
-                                        topLeft: Radius.circular(16),
-                                      ),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Quarterly',
-                                style: AppTextStyle.medium14,
-                              ),
-                              // Add onTap functionality
-                            ),
+                          child: Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 20,
                           ),
                         ),
                       ],
@@ -305,20 +257,470 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                child: Container(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(56),
+                child: premium
+                    ? Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Color(0xffC6DFFE),
+                              borderRadius: isMonthly
+                                  ? BorderRadius.only(
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(16),
+                                      bottomRight: Radius.circular(16),
+                                    )
+                                  : BorderRadius.only(
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(16),
+                                      bottomLeft: Radius.circular(16),
+                                    ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: isMonthly
+                                  ? [
+                                      Text(
+                                        "Essential Need Pack",
+                                        style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        "-> 4 washes",
+                                        style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        " - Basic exterior cleaning to remove dust and dirt.",
+                                        style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      // SizedBox(height: 8),
+                                      // Text(
+                                      //   "Premium Care Package \n   2 washes  Comprehensive exterior wash for a clean finish.- *1 hydrophobic* – Water-repellent coating to protect your car.- *1 wax* – Adds shine and shields the paint from damage.",
+                                      //   style: TextStyle(
+                                      //       fontFamily: 'Raleway',
+                                      //       fontSize: 14,
+                                      //       fontWeight: FontWeight.bold),
+                                      // ),
+                                      SizedBox(height: 8),
+                                    ]
+                                  : [
+                                      Text(
+                                        "Ultimate Wash Package",
+                                        style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        "-> 12 washes",
+                                        style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        " - Regular washes to maintain your car's cleanliness.",
+                                        style: TextStyle(
+                                            fontFamily: 'Raleway',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 8),
+                                    ],
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isMonthly = true;
+                                  });
+                                  setState(() {
+                                    if (isMonthly) {
+                                      if (!premium) {
+                                        price = monthly_premium;
+                                      } else {
+                                        price = monthly_basic;
+                                      }
+                                    } else {
+                                      if (!premium) {
+                                        price = quaterley_premium;
+                                      } else {
+                                        price = quaterely_basic;
+                                      }
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  color: isMonthly
+                                      ? Colors.transparent
+                                      : Color(0xffC6DFFE),
+                                  child: Container(
+                                    width: (MediaQuery.of(context).size.width *
+                                            0.5) -
+                                        16,
+                                    height: 52,
+                                    decoration: BoxDecoration(
+                                      color: isMonthly
+                                          ? Color(0xffC6DFFE)
+                                          : Colors.white,
+                                      borderRadius: isMonthly
+                                          ? BorderRadius.only(
+                                              bottomRight: Radius.circular(16),
+                                              bottomLeft: Radius.circular(16),
+                                            )
+                                          : BorderRadius.only(
+                                              topRight: Radius.circular(16),
+                                            ),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Monthly',
+                                      style: AppTextStyle.medium14,
+                                    ),
+                                    // Add onTap functionality
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isMonthly = false;
+                                  });
+                                  setState(() {
+                                    if (isMonthly) {
+                                      if (!premium) {
+                                        price = monthly_premium;
+                                      } else {
+                                        price = monthly_basic;
+                                      }
+                                    } else {
+                                      if (!premium) {
+                                        price = quaterley_premium;
+                                      } else {
+                                        price = quaterely_basic;
+                                      }
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  color: !isMonthly
+                                      ? Colors.transparent
+                                      : Color(0xffC6DFFE),
+                                  child: Container(
+                                    width: (MediaQuery.of(context).size.width *
+                                            0.5) -
+                                        16, // Half the width of the upper container
+                                    height: 52, // Adjust height as needed
+                                    decoration: BoxDecoration(
+                                      color: !isMonthly
+                                          ? Color(0xffC6DFFE)
+                                          : Colors.white,
+                                      borderRadius: !isMonthly
+                                          ? BorderRadius.only(
+                                              bottomRight: Radius.circular(16),
+                                              bottomLeft: Radius.circular(16),
+                                            )
+                                          : BorderRadius.only(
+                                              topLeft: Radius.circular(16),
+                                            ),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Quarterly',
+                                      style: AppTextStyle.medium14,
+                                    ),
+                                    // Add onTap functionality
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Color(0xffC6DFFE),
+                              borderRadius: isMonthly
+                                  ? BorderRadius.only(
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(16),
+                                      bottomRight: Radius.circular(16),
+                                    )
+                                  : BorderRadius.only(
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(16),
+                                      bottomLeft: Radius.circular(16),
+                                    ),
+                            ),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: isMonthly
+                                    ? [
+                                        Text(
+                                          "Premium Need Pack",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "-> 2 washes",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          " - Comprehensive exterior wash for a clean finish.",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "-> 1 hydrophobic",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          " - Water-repellent coating to protect your car.",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "-> 1 wax",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          " - Adds shine and shields the paint from damage.",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        // SizedBox(height: 8),
+                                        // Text(
+                                        //   "Premium Care Package \n   2 washes  Comprehensive exterior wash for a clean finish.- *1 hydrophobic* – Water-repellent coating to protect your car.- *1 wax* – Adds shine and shields the paint from damage.",
+                                        //   style: TextStyle(
+                                        //       fontFamily: 'Raleway',
+                                        //       fontSize: 14,
+                                        //       fontWeight: FontWeight.bold),
+                                        // ),
+                                        SizedBox(height: 8),
+                                      ]
+                                    : [
+                                        Text(
+                                          "Deluxe Maintenance Pack",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "-> 6 washes",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          " - Regular cleaning to keep your car looking fresh.",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "-> 1 scrubbing",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          " - Detailed scrubbing for deep cleaning and spot removal.",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "-> 1 Wheel alignement",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          " - Ensure proper alignement for a smooth ride.",
+                                          style: TextStyle(
+                                              fontFamily: 'Raleway',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 8),
+                                      ]),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isMonthly = true;
+                                  });
+                                  setState(() {
+                                    if (isMonthly) {
+                                      if (!premium) {
+                                        price = monthly_premium;
+                                      } else {
+                                        price = monthly_basic;
+                                      }
+                                    } else {
+                                      if (!premium) {
+                                        price = quaterley_premium;
+                                      } else {
+                                        price = quaterely_basic;
+                                      }
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  color: isMonthly
+                                      ? Colors.transparent
+                                      : Color(0xffC6DFFE),
+                                  child: Container(
+                                    width: (MediaQuery.of(context).size.width *
+                                            0.5) -
+                                        16,
+                                    height: 52,
+                                    decoration: BoxDecoration(
+                                      color: isMonthly
+                                          ? Color(0xffC6DFFE)
+                                          : Colors.white,
+                                      borderRadius: isMonthly
+                                          ? BorderRadius.only(
+                                              bottomRight: Radius.circular(16),
+                                              bottomLeft: Radius.circular(16),
+                                            )
+                                          : BorderRadius.only(
+                                              topRight: Radius.circular(16),
+                                            ),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Monthly',
+                                      style: AppTextStyle.medium14,
+                                    ),
+                                    // Add onTap functionality
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isMonthly = false;
+                                  });
+                                  setState(() {
+                                    if (isMonthly) {
+                                      if (!premium) {
+                                        price = monthly_premium;
+                                      } else {
+                                        price = monthly_basic;
+                                      }
+                                    } else {
+                                      if (!premium) {
+                                        price = quaterley_premium;
+                                      } else {
+                                        price = quaterely_basic;
+                                      }
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  color: !isMonthly
+                                      ? Colors.transparent
+                                      : Color(0xffC6DFFE),
+                                  child: Container(
+                                    width: (MediaQuery.of(context).size.width *
+                                            0.5) -
+                                        16, // Half the width of the upper container
+                                    height: 52, // Adjust height as needed
+                                    decoration: BoxDecoration(
+                                      color: !isMonthly
+                                          ? Color(0xffC6DFFE)
+                                          : Colors.white,
+                                      borderRadius: !isMonthly
+                                          ? BorderRadius.only(
+                                              bottomRight: Radius.circular(16),
+                                              bottomLeft: Radius.circular(16),
+                                            )
+                                          : BorderRadius.only(
+                                              topLeft: Radius.circular(16),
+                                            ),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Quarterly',
+                                      style: AppTextStyle.medium14,
+                                    ),
+                                    // Add onTap functionality
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      padding: EdgeInsets.zero,
-                    ),
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.PAYMENT);
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    },
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                child: GestureDetector(
+                  onTap: (){
+                    //
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
                     child: Ink(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -333,13 +735,30 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       ),
                       child: Container(
                         alignment: Alignment.center,
-                        child: Text(
-                          'From ₹ 1,200/month',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '₹ $price',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              Text(
+                                "Add to Cart",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),

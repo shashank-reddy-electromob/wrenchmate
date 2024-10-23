@@ -328,13 +328,13 @@ class _BookSlotState extends State<BookSlot> {
                           tooltipBackgroundColor: Colors.blue,
                         ),
                         child: SfRangeSlider(
-                          min: 10.0,
-                          max: 19.0,
+                          min: 9.0,
+                          max: 21.0,
                           values: _rangeValues,
                           interval: 1.0,
                           showTicks: true,
                           showLabels: true,
-                          minorTicksPerInterval: 0,
+                          minorTicksPerInterval: 1,
                           activeColor: Colors.blue,
                           enableTooltip: true,
                           tooltipShape: SfPaddleTooltipShape(),
@@ -355,7 +355,7 @@ class _BookSlotState extends State<BookSlot> {
                                 _rangeValues = newValues;
                               } else {
                                 _rangeValues = SfRangeValues(
-                                    newValues.start, newValues.start + 1.0);
+                                    newValues.start, newValues.start + 1);
                               }
                             });
                           },

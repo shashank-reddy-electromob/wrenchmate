@@ -42,49 +42,11 @@ class _CarRegisterState extends State<CarRegister> {
           height: MediaQuery.of(context).size.height-100,
           child: Column(
             children: [
-              //search
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal:  16.0,vertical: 8),
                 child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("What your Car name?",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,color: Color(0xff969696)),)),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                    color: Color(0xffF7F7F7),
-                    borderRadius: BorderRadius.circular(8)
-                ),
-                child: Center(
-                  child: TextField(
-                    cursorColor: Colors.grey,
-                    decoration: InputDecoration(
-                      hintText: "Search your Car",
-                      hintStyle: TextStyle(
-                        color: Color(0xff858585),
-                        fontSize: 20,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Color(0xff838383),
-                      ),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                    ),
-                    style: TextStyle(
-                      fontSize:
-                      20, // Increase the font size for the entered text
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal:  16.0,vertical: 8),
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("Your car comes under",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500,color: Color(0xff969696)),)),
+                    child: Text("Your car comes under?",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: Color(0xff969696)),)),
               ),
               //cards
               Container(
@@ -171,7 +133,7 @@ class CarCard extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               name, // Use the provided name
-              style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
+              style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
             ),
           ],
         ),

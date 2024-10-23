@@ -43,7 +43,7 @@ class _ProductScreenState extends State<ProductScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
-              "Product",
+              "Products",
               style: AppTextStyle.semiboldRaleway19,
             ),
           ),
@@ -51,7 +51,7 @@ class _ProductScreenState extends State<ProductScreen> {
       ),
       body: Column(
         children: [
-          searchbar(),
+          //searchbar(),
           SizedBox(height: 16.0),
           Expanded(
             child: Obx(() {

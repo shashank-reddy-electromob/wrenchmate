@@ -108,6 +108,17 @@ class _MapScreenState extends State<MapScreen> {
         address =
             "${place?.street}, ${place?.locality}, ${place?.postalCode}, ${place?.country}";
       });
+      print("");
+      print("");
+      print("");
+      print("");
+      print("");
+      print(address);
+      print("");
+      print("");
+      print("");
+      print("");
+      print("");
     } catch (e) {
       print('Error getting address: $e');
       setState(() {

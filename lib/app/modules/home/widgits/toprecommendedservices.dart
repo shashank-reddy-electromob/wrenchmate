@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ class toprecommendedservices extends StatefulWidget {
 }
 
 class _toprecommendedservicesState extends State<toprecommendedservices> {
+
   Servicefirebase wash_service = new Servicefirebase(
       id: "DVa006J2yZgibIM3Vyr4",
       category: "Car Wash",
@@ -41,6 +43,13 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
       averageReview: 4.5,
       numberOfReviews: 3,
       carmodel: ['SUV', 'Compact SUV']);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //servicefetchWash();
+  }
 
   @override
   Widget build(BuildContext context) {
