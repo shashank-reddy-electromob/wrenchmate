@@ -67,24 +67,28 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         monthly_premium = data["monthly premium"];
         quaterely_basic = data["quarterly basic"];
         quaterley_premium = data["quarterly premium"];
-        setState(() {
-          if (isMonthly) {
-            if (!premium) {
-              price = monthly_premium;
-            } else {
-              price = monthly_basic;
-            }
-          } else {
-            if (!premium) {
-              price = quaterley_premium;
-            } else {
-              price = quaterely_basic;
-            }
-          }
-        });
+        pricesetMethod();
       },
       onError: (e) => print("Error getting document: $e"),
     );
+  }
+
+  void pricesetMethod() {
+    setState(() {
+      if (isMonthly) {
+        if (!premium) {
+          price = monthly_premium;
+        } else {
+          price = monthly_basic;
+        }
+      } else {
+        if (!premium) {
+          price = quaterley_premium;
+        } else {
+          price = quaterely_basic;
+        }
+      }
+    });
   }
 
   void fetchCarDetails() async {
@@ -194,21 +198,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 premium = true;
                               });
                             }
-                            setState(() {
-                              if (isMonthly) {
-                                if (!premium) {
-                                  price = monthly_premium;
-                                } else {
-                                  price = monthly_basic;
-                                }
-                              } else {
-                                if (!premium) {
-                                  price = quaterley_premium;
-                                } else {
-                                  price = quaterely_basic;
-                                }
-                              }
-                            });
+                            pricesetMethod();
                           },
                           child: Icon(
                             Icons.arrow_back_ios_new_rounded,
@@ -229,21 +219,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 premium = true;
                               });
                             }
-                            setState(() {
-                              if (isMonthly) {
-                                if (!premium) {
-                                  price = monthly_premium;
-                                } else {
-                                  price = monthly_basic;
-                                }
-                              } else {
-                                if (!premium) {
-                                  price = quaterley_premium;
-                                } else {
-                                  price = quaterely_basic;
-                                }
-                              }
-                            });
+                            pricesetMethod();
                           },
                           child: Icon(
                             Icons.arrow_forward_ios_rounded,
@@ -350,21 +326,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                   setState(() {
                                     isMonthly = true;
                                   });
-                                  setState(() {
-                                    if (isMonthly) {
-                                      if (!premium) {
-                                        price = monthly_premium;
-                                      } else {
-                                        price = monthly_basic;
-                                      }
-                                    } else {
-                                      if (!premium) {
-                                        price = quaterley_premium;
-                                      } else {
-                                        price = quaterely_basic;
-                                      }
-                                    }
-                                  });
+                                  pricesetMethod();
                                 },
                                 child: Container(
                                   color: isMonthly
@@ -402,21 +364,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                   setState(() {
                                     isMonthly = false;
                                   });
-                                  setState(() {
-                                    if (isMonthly) {
-                                      if (!premium) {
-                                        price = monthly_premium;
-                                      } else {
-                                        price = monthly_basic;
-                                      }
-                                    } else {
-                                      if (!premium) {
-                                        price = quaterley_premium;
-                                      } else {
-                                        price = quaterely_basic;
-                                      }
-                                    }
-                                  });
+                                  pricesetMethod();
                                 },
                                 child: Container(
                                   color: !isMonthly
@@ -608,21 +556,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                   setState(() {
                                     isMonthly = true;
                                   });
-                                  setState(() {
-                                    if (isMonthly) {
-                                      if (!premium) {
-                                        price = monthly_premium;
-                                      } else {
-                                        price = monthly_basic;
-                                      }
-                                    } else {
-                                      if (!premium) {
-                                        price = quaterley_premium;
-                                      } else {
-                                        price = quaterely_basic;
-                                      }
-                                    }
-                                  });
+                                  pricesetMethod();
                                 },
                                 child: Container(
                                   color: isMonthly
@@ -660,21 +594,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                   setState(() {
                                     isMonthly = false;
                                   });
-                                  setState(() {
-                                    if (isMonthly) {
-                                      if (!premium) {
-                                        price = monthly_premium;
-                                      } else {
-                                        price = monthly_basic;
-                                      }
-                                    } else {
-                                      if (!premium) {
-                                        price = quaterley_premium;
-                                      } else {
-                                        price = quaterely_basic;
-                                      }
-                                    }
-                                  });
+                                  pricesetMethod();
                                 },
                                 child: Container(
                                   color: !isMonthly
