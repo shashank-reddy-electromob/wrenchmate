@@ -147,11 +147,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         builder: (c, s) => s.connectionState ==
                                 ConnectionState.done
                             ? Container(
+
                                 width: MediaQuery.of(context).size.height / 8,
                                 child:
                                     Image.asset("assets/car/$carTypeImage.png"),
                               )
                             : Container(
+
                                 child: CircularProgressIndicator(),
                               ),
                       ),
