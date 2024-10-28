@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/SplashScreen.dart';
 import 'package:wrenchmate_user_app/app/bindings/product_bidings.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_register.dart';
 import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
+import 'package:wrenchmate_user_app/app/modules/car/car_edit.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/coupon.dart';
 // import 'package:wrenchmate_user_app/app/modules/home/filterdatascreen.dart';
@@ -45,8 +47,10 @@ import 'app_routes.dart';
 class AppPages {
   static const INITIAL = AppRoutes.LOGIN;
   static const BOTTOMNAV = AppRoutes.BOTTOMNAV;
+  static const SPLASH = AppRoutes.SPLASH;
 
   static final routes = [
+    GetPage(name: AppRoutes.SPLASH, page: () => const SplashScreen()),
     GetPage(
         name: AppRoutes.LOGIN, page: () => LoginPage(), binding: AuthBinding()),
     GetPage(
@@ -62,7 +66,6 @@ class AppPages {
         name: AppRoutes.MAPSCREEN,
         page: () => MapScreen(),
         binding: AuthBinding()),
-
     GetPage(
         name: AppRoutes.EDITPROFILE,
         page: () => EditProfile(),
@@ -75,11 +78,11 @@ class AppPages {
         name: AppRoutes.TERMSANDCONDITIONS,
         page: () => termsAndConditions(),
         binding: HomeBinding()),
-        GetPage(
+    GetPage(
         name: AppRoutes.PRIVACYPOLICY,
         page: () => privacyPolicy(),
         binding: HomeBinding()),
-        GetPage(
+    GetPage(
         name: AppRoutes.REFUNDPOLICY,
         page: () => refundPolicy(),
         binding: HomeBinding()),
@@ -126,6 +129,10 @@ class AppPages {
         binding: BookingBinding()),
     GetPage(name: AppRoutes.CAR, page: () => CarPage(), binding: CarBinding()),
     GetPage(
+        name: AppRoutes.CAR_EDIT,
+        page: () => CarEdit(),
+        binding: CarBinding()),
+      GetPage(
         name: AppRoutes.CAR_REGISTER,
         page: () => CarRegister(),
         binding: CarBinding()),
@@ -156,10 +163,10 @@ class AppPages {
     GetPage(
         name: AppRoutes.BOOK_SLOT,
         page: () => BookSlot(),
-        binding: CartBinding()), 
+        binding: CartBinding()),
     GetPage(
         name: AppRoutes.COUPOUNS,
         page: () => ApplyCouponScreen(),
-        binding: CartBinding()),        
+        binding: CartBinding()),
   ];
 }

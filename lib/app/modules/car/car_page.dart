@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:wrenchmate_user_app/app/data/models/car_detail_model.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/globalVariables.dart';
 import '../../routes/app_routes.dart';
@@ -17,6 +20,7 @@ class CarPage extends StatefulWidget {
 
 class _CarPageState extends State<CarPage> {
   int userCurrentCarIndex = 0;
+  String userCurrentCarId = '';
   List<Map<String, dynamic>> userCars = [];
   String carModel = '';
   String petrolOrDiesel = '';
@@ -30,7 +34,6 @@ class _CarPageState extends State<CarPage> {
   final CarController carController = Get.put(CarController());
 
   late PageController _pageController;
-
 
   @override
   void initState() {
@@ -56,6 +59,10 @@ class _CarPageState extends State<CarPage> {
     if (userDoc.exists) {
       setState(() {
         userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
+        String carDetails = userDoc['User_carDetails'][userCurrentCarIndex];
+        List<String> carDetailsParts = carDetails.split(';');
+        userCurrentCarId = carDetailsParts.last;
+        log('user curr car index is: ${userCurrentCarIndex.toString()}');
       });
       fetchCarDetails();
     }
@@ -67,7 +74,7 @@ class _CarPageState extends State<CarPage> {
     if (userCars.isNotEmpty) {
       setState(() {
         updateCarDetails(userCurrentCarIndex);
-        _pageController.jumpToPage(userCurrentCarIndex); // Add this line
+        _pageController.jumpToPage(userCurrentCarIndex);
       });
     }
   }
@@ -249,9 +256,30 @@ class _CarPageState extends State<CarPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      Spacer(),
                       GestureDetector(
-                        onTap: (){
-                          //Delete car here
+                        onTap: () {
+                          Get.toNamed(
+                            AppRoutes.CAR_EDIT,
+                            arguments: {
+                              'carDetails': userCars[userCurrentCarIndex],
+                              'carId':
+                                  userCurrentCarId, // The ID we extracted earlier
+                            },
+                          );
+                        },
+                        child: SvgPicture.asset('assets/icons/edit_icon.svg'),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          carController.deleteCar(
+                              carId: userCurrentCarId,
+                              carType: carType,
+                              carModel: carModel);
+                          Get.offAllNamed('/bottomnav');
                         },
                         child: SvgPicture.asset('assets/icons/delete_icon.svg'),
                       ),

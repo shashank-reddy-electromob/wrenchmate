@@ -28,9 +28,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
       //home: PhonePePayment(),
-       initialRoute: FirebaseAuth.instance.currentUser == null
-           ? AppPages.INITIAL
-           : AppPages.BOTTOMNAV,
+      //  initialRoute: FirebaseAuth.instance.currentUser == null
+      //      ? AppPages.INITIAL
+      //      : AppPages.BOTTOMNAV,
+      initialRoute: AppPages.SPLASH,
        getPages: AppPages.routes,
     );
   }

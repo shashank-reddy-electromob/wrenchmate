@@ -181,7 +181,7 @@ class _reviewPageState extends State<reviewPage> {
               SizedBox(
                 height: 32,
               ),
-              blueButton(
+              BlueButton(
                 text: 'SUBMIT REVIEW',
                 onTap: () {
                   _printServiceReview(_controller.text,_rating.toDouble()); // Print the review text
@@ -242,7 +242,7 @@ class _reviewPageState extends State<reviewPage> {
           SizedBox(
             height: 16,
           ),
-          blueButton(
+          BlueButton(
               text: "DONE",
               onTap: () {
                 Navigator.pop(context);

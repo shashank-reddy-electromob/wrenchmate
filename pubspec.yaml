@@ -47,7 +47,8 @@ dependencies:
   geocoding: ^3.0.0
   google_maps_flutter: ^2.5.3
   modal_progress_hud_nsn: ^0.5.1
-  carousel_slider: ^4.2.1
+  # carousel_slider: ^4.2.1
+  carousel_slider_plus: ^6.0.0
   customizable_counter: ^1.0.4
   flutter_svg: ^2.0.10+1
   get: ^4.6.6

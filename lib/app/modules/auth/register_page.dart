@@ -212,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(height: 20),
               _isLoading
                   ? CircularProgressIndicator(color: Color(0xff1671D8))
-                  : blueButton(
+                  : BlueButton(
                       text: "CONTINUE",
                       onTap: () async {
                         await register();

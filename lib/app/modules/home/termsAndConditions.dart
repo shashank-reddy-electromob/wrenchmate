@@ -516,7 +516,7 @@ Wrench Mate Pvt. Ltd.''',
                 //accept
                 Align(
                     alignment: Alignment.center,
-                    child: blueButton(
+                    child: BlueButton(
                       text: 'ACCEPT',
                       fontSize: 16,
                       onTap: () {},

@@ -1,7 +1,8 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart' hide CarouselController;
+// import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OffersSlidersSub extends StatefulWidget {
@@ -12,10 +13,14 @@ class OffersSlidersSub extends StatefulWidget {
 }
 
 class _OffersSlidersSubState extends State<OffersSlidersSub> {
-  final CarouselController _offersSliderController = CarouselController();
+  // final CarouselController _offersSliderController = CarouselController();
+  final CarouselControllerPlus _offersSliderController = CarouselControllerPlus();
+
   int _activeIndexOffer = 0;
   List<String> _imageUrls = [];
   bool _isLoading = true;
+
+  
 
   @override
   void initState() {
@@ -63,7 +68,7 @@ class _OffersSlidersSubState extends State<OffersSlidersSub> {
             itemBuilder: (context, index, realIndex) {
               return buildOffers(index);
             },
-            carouselController: _offersSliderController,
+            controller: _offersSliderController,
             options: CarouselOptions(
               height: MediaQuery.of(context).size.height * 0.24,
               autoPlay: true,

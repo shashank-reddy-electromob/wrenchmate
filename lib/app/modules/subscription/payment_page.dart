@@ -281,7 +281,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     ),
                   ),
                   Expanded(
-                    child: blueButton(
+                    child: BlueButton(
                       buttonHeight: 8,
                       text: "Proceed",
                       onTap: () {},

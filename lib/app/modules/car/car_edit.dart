@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
@@ -6,15 +7,16 @@ import 'package:get/get.dart';
 import '../../controllers/car_controller.dart';
 import '../../widgets/custombackbutton.dart';
 
-class CarDetails extends StatefulWidget {
-  const CarDetails({super.key});
+class CarEdit extends StatefulWidget {
+  const CarEdit({super.key});
 
   @override
-  State<CarDetails> createState() => _CarDetailsState();
+  State<CarEdit> createState() => _CarDetailsState();
 }
 
-class _CarDetailsState extends State<CarDetails> {
- 
+class _CarDetailsState extends State<CarEdit> {
+  late Map<String, dynamic>? existingCar;
+  late String carId;
   String? selectedFuelType;
   String? selectedTransmissionType;
   String? selectedCarModel;
@@ -22,16 +24,36 @@ class _CarDetailsState extends State<CarDetails> {
   TextEditingController regYearController = TextEditingController();
   TextEditingController insuranceExpController = TextEditingController();
   TextEditingController pucExpDateController = TextEditingController();
-  CarController? carController = Get.put(CarController());
+  CarController? carController = Get.find<CarController>();
   int? selectedIndex = 0;
-
   @override
   void initState() {
     super.initState();
-    carController = Get.put(CarController());
-    selectedIndex = Get.arguments as int?;
-    if (selectedIndex == null) {
-      selectedIndex = 0; 
+    existingCar = Get.arguments['carDetails'];
+    carId = Get.arguments['carId'];
+    if (existingCar != null) {
+      selectedFuelType = existingCar!['fuel_type'];
+      regNoController.text = existingCar!['registration_number'];
+      insuranceExpController.text = existingCar!['insurance_expiration'] != null
+          ? DateFormat('dd/MM/yyyy').format(
+              (existingCar!['insurance_expiration'] as Timestamp).toDate())
+          : '';
+      selectedTransmissionType = existingCar!['transmission'];
+      selectedCarModel = existingCar!['car_model'];
+
+      regYearController.text = existingCar!['registration_year'] != null
+          ? DateFormat('dd/MM/yyyy')
+              .format((existingCar!['registration_year'] as Timestamp).toDate())
+          : '';
+
+      pucExpDateController.text = existingCar!['puc_expiration'] != null
+          ? DateFormat('dd/MM/yyyy')
+              .format((existingCar!['puc_expiration'] as Timestamp).toDate())
+          : '';
+
+      selectedIndex = carNames.indexOf(existingCar!['car_type']);
+    } else {
+      selectedIndex = Get.arguments as int? ?? 0;
     }
   }
 
@@ -57,24 +79,26 @@ class _CarDetailsState extends State<CarDetails> {
       });
   }
 
-  void addCar() async {
+  void saveCar() async {
     if (selectedCarModel == null ||
         selectedTransmissionType == null ||
         selectedFuelType == null ||
         regNoController.text.isEmpty) {
-      Get.snackbar('Error', 'Please fill all required fields');
+      Get.snackbar('Error', 'Please fill all required fields',
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
-    await carController?.addCar(
-      fuelType: selectedFuelType ?? '',
+    await carController?.updateCar(
+      carId: carId,
+      fuelType: selectedFuelType!,
       registrationNumber: regNoController.text,
-  insuranceExpiration: insuranceExpController.text.isNotEmpty
-      ? DateFormat('dd/MM/yyyy').parse(insuranceExpController.text)
-      : null,
-      transmission: selectedTransmissionType ?? '',
+      insuranceExpiration: insuranceExpController.text.isNotEmpty
+          ? DateFormat('dd/MM/yyyy').parse(insuranceExpController.text)
+          : null,
+      transmission: selectedTransmissionType!,
       carType: carNames[selectedIndex ?? 0],
-      carModel: selectedCarModel ?? '',
+      carModel: selectedCarModel!,
       registrationYear: regYearController.text.isNotEmpty
           ? DateFormat('dd/MM/yyyy').parse(regYearController.text)
           : null,
@@ -83,7 +107,6 @@ class _CarDetailsState extends State<CarDetails> {
           : null,
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -141,18 +164,12 @@ class _CarDetailsState extends State<CarDetails> {
                       ),
                       child: Row(
                         children: [
-                          // SizedBox(
-                          //   width: 16,
-                          // ),
                           Expanded(
                             child: Image.asset(
                               selectedCarImage,
                               height: 90,
                             ),
                           ),
-                          // SizedBox(
-                          //   width: 16,
-                          // ),
                           Expanded(
                             child: CustomDropdown(
                               label: "Car Model",
@@ -236,7 +253,7 @@ class _CarDetailsState extends State<CarDetails> {
                     Spacer(),
                     BlueButton(
                       text: 'SAVE',
-                      onTap: addCar, // Call the new addCar function
+                      onTap: saveCar,
                     ),
                     SizedBox(
                       width: 16,

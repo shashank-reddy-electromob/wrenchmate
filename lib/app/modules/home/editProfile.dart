@@ -224,7 +224,7 @@ class _EditProfileState extends State<EditProfile> {
                               child: CircularProgressIndicator(
                                   color: Color(0xff1671D8)),
                             )
-                          : blueButton(
+                          : BlueButton(
                               text: "EDIT",
                               buttonHeight: 12,
                               onTap: () async {

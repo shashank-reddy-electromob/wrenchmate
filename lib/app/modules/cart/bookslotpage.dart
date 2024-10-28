@@ -394,7 +394,7 @@ class _BookSlotState extends State<BookSlot> {
 
                 SizedBox(height: 24),
                 //reservation
-                blueButton(
+                BlueButton(
                   text: 'Reservation',
                   onTap: () {
                     selectedAddressIndex =
