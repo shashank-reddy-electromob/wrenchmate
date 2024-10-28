@@ -131,6 +131,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         BorderRadius.circular(12.0), // Rounded corners
                     boxShadow: [
                       BoxShadow(
+
                         color: Colors.black.withOpacity(0.2),
                         spreadRadius: 0,
                         blurRadius: 2,
