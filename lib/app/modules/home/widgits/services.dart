@@ -142,7 +142,9 @@ class ServicesType extends StatelessWidget {
                 style: AppTextStyle.mediumRaleway12.copyWith(
                   fontWeight: FontWeight.w600,
                   overflow: TextOverflow.fade,
-                  fontSize: MediaQuery.of(context).size.width/35,
+                  fontSize: MediaQuery.of(context).size.width < 360
+                      ? MediaQuery.of(context).size.width / 42
+                      : MediaQuery.of(context).size.width / 35,
                 ),
               ),
             ),

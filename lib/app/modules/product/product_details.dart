@@ -60,20 +60,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: addtocart == true
-          ? FloatingActionButton(
-              onPressed: () {
-                Get.toNamed(AppRoutes.CART);
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              backgroundColor: primaryColor, // Adjust the background color
-              child: Icon(
-                Icons.shopping_cart, // Cart icon
-                color: Colors.white, // Icon color
-              ),
-              shape: CircleBorder(), // Ensures the button remains circular
-            )
-          : null,
+      floatingActionButton: Obx(
+        () => Visibility(
+          visible: !cartController.cartItems.isEmpty,
+          child: FloatingActionButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.CART);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+            backgroundColor: primaryColor,
+            child: Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            shape: CircleBorder(),
+          ),
+        ),
+      ),
       key: scaffoldMessengerKey,
       backgroundColor: Colors.white,
       appBar: AppBar(

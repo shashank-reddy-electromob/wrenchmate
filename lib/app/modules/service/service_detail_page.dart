@@ -84,6 +84,23 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           ),
         ],
       ),
+       floatingActionButton: Obx(
+        () => Visibility(
+          visible: !cartController.cartItems.isEmpty,
+          child: FloatingActionButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.CART);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+            backgroundColor: primaryColor,
+            child: Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            shape: CircleBorder(),
+          ),
+        ),
+      ),
       body: Obx(() {
         if (controller.loading.value) {
           return Center(child: CircularProgressIndicator());

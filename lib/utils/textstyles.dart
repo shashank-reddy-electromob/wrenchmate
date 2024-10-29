@@ -5,7 +5,7 @@ class AppTextStyle {
   AppTextStyle._();
   static const TextStyle bold20 = TextStyle(
     fontFamily: 'Poppins',
-    fontSize: 20,
+    fontSize: 16,
     color: blackColor,
     // letterSpacing: 1.5,
     fontWeight: FontWeight.w700,

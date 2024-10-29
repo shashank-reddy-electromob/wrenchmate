@@ -48,13 +48,12 @@ class _bottomnavigationState extends State<bottomnavigation> {
 
   @override
   Widget build(BuildContext context) {
-    try{
+    try {
       final tracking_button_ = Get.arguments['tracking_button'];
       setState(() {
         tracking_button = tracking_button_;
       });
-    }
-    catch (exception) {
+    } catch (exception) {
       print("Error!!!");
     }
     return WillPopScope(
@@ -64,29 +63,31 @@ class _bottomnavigationState extends State<bottomnavigation> {
         body: Stack(
           children: [
             _widgetOptions.elementAt(_selectedIndex),
-            tracking_button ? DraggableFab(
-                child: ClipOval(
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        splashColor: Colors.blueAccent,
-                        onTap: () {
-                          Get.toNamed(AppRoutes.TRACKING);
-                        },
-                        child: SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: Image(
-                            image: AssetImage("assets/images/track_icon.png"),
+            tracking_button
+                ? DraggableFab(
+                    child: ClipOval(
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          splashColor: Colors.blueAccent,
+                          onTap: () {
+                            Get.toNamed(AppRoutes.TRACKING);
+                          },
+                          child: SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: Image(
+                              image: AssetImage("assets/images/track_icon.png"),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                )) : Container(),
+                  ))
+                : Container(),
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -122,41 +123,40 @@ class _bottomnavigationState extends State<bottomnavigation> {
         bottomNavigationBar: BottomNavigationBar(
           unselectedFontSize: 10,
           unselectedLabelStyle: TextStyle(
-            fontSize: 10,
-           // overflow: TextOverflow.visible,
+            fontSize: Get.width < 360 ? 8 : 10,
+            overflow: TextOverflow.visible,
           ),
           selectedFontSize: 12,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-
               icon: ImageIcon(
                 AssetImage('assets/icons/home.png'),
-                size: 25,
+                size: Get.width < 360 ? 18 : 25,
               ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/product.png'),
-                size: 25,
+                size: Get.width < 360 ? 18 : 25,
               ),
               label: 'Products',
             ),
             BottomNavigationBarItem(
-              icon: SizedBox(width: 10),
+              icon: SizedBox(width: 0),
               label: '',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/support.png'),
-                size: 25,
+                size: Get.width < 360 ? 18 : 25,
               ),
               label: 'Help',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(
                 AssetImage('assets/icons/subscription.png'),
-                size: 25,
+                size: Get.width < 360 ? 18 : 25,
               ),
               label: 'Subscription',
             ),

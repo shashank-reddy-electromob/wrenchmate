@@ -50,7 +50,7 @@ class _ServicePageState extends State<ServicePage> {
   void fetchUserCurrentCarIndex() async {
     String userId = FirebaseAuth.instance.currentUser!.uid;
     DocumentSnapshot userDoc =
-    await FirebaseFirestore.instance.collection('User').doc(userId).get();
+        await FirebaseFirestore.instance.collection('User').doc(userId).get();
     if (userDoc.exists) {
       setState(() {
         userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
@@ -93,9 +93,7 @@ class _ServicePageState extends State<ServicePage> {
       print(userCar);
       List<String> list = (userCar.split(",")).cast<String>().toList();
 
-      serviceController
-          .fetchServicesForUser(service, list)
-          .then((_) {
+      serviceController.fetchServicesForUser(service, list).then((_) {
         setState(() {
           addToCartStates =
               List<bool>.filled(serviceController.services.length, false);
@@ -139,6 +137,23 @@ class _ServicePageState extends State<ServicePage> {
           leading: Padding(
               padding: const EdgeInsets.all(6.0), child: Custombackbutton()),
         ),
+          floatingActionButton: Obx(
+        () => Visibility(
+          visible: !cartController.cartItems.isEmpty,
+          child: FloatingActionButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.CART);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+            backgroundColor: primaryColor,
+            child: Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            shape: CircleBorder(),
+          ),
+        ),
+      ),
         body: service != "Repairs" && service != "Body Parts"
             ? Column(
                 children: [
@@ -398,8 +413,8 @@ class _ServicePageState extends State<ServicePage> {
                                                             scaffoldMessengerKey,
                                                           );
                                                           // setState(() {
-                                                            addToCartStates[
-                                                                index] = true;
+                                                          addToCartStates[
+                                                              index] = true;
                                                           // });
                                                         }
                                                       },
