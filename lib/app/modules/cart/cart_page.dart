@@ -349,6 +349,47 @@ class _CartPageState extends State<CartPage> {
                           }),
                     ),
                     Obx(() {
+                      return cartController.cartSubsItems.isEmpty
+                          ? SizedBox()
+                          : Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.all(16),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    blurRadius: 8,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Subscription',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Pricing(
+                                    text: cartController.cartSubsItems[0]
+                                            ['packDesc']
+                                        .toString(),
+                                    price:
+                                        '${cartController.cartSubsItems[0]['price'].toString()}',
+                                  ),
+                                ],
+                              ),
+                            );
+                    }),
+                    Obx(() {
                       return cartController.appliedCoupon.value.isNotEmpty
                           ? ContainerButton(
                               text:

@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
-                      Container(height: 40),
+                      Container(height: 10),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 16),
                         child: Row(

@@ -153,7 +153,6 @@ class _CarPageState extends State<CarPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 36),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/car_controller.dart';
 import '../../routes/app_routes.dart';
@@ -35,6 +38,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   int price = 0;
 
   final CarController carController = Get.put(CarController());
+  final CartController cartController = Get.put(CartController());
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -118,9 +124,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 20,
-              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: Container(
@@ -635,8 +638,30 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                 child: GestureDetector(
-                  onTap: (){
-                    //
+                  onTap: () async{
+                   await cartController.addSubscriptionToCartSnackbar(
+                      context,
+                      cartController,
+                      double.parse(price.toString()),
+                      "1",
+                      isMonthly && premium
+                          ? 'essential-need-pack'
+                          : isMonthly && !premium
+                              ? 'premium-need-pack'
+                              : !isMonthly && premium
+                                  ? 'ultimate-wash-package'
+                                  : "deluxe-maintenance-pack",
+                      isMonthly && premium
+                          ? 'Essential Need Pack'
+                          : isMonthly && !premium
+                              ? 'Premium Need Pack'
+                              : !isMonthly && premium
+                                  ? 'Ultimate Wash Package'
+                                  : "Deluxe Maintenance Pack",
+                      scaffoldMessengerKey,
+                    );
+
+                    Get.toNamed(AppRoutes.CART);
                   },
                   child: Container(
                     width: double.infinity,
@@ -674,8 +699,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                     fontSize: 16,
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white
-                                ),
+                                    color: Colors.white),
                               )
                             ],
                           ),
