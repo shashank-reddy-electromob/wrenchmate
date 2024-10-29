@@ -1,16 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class containerButton extends StatelessWidget {
-  String text;
-  final VoidCallback onPressed; // Added function parameter
-  final IconData icon; // Added icon parameter
+class ContainerButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final IconData icon;
+  final Widget? trailingWidget; // Make trailingWidget optional
 
-  containerButton(
-      {super.key,
-      required this.text,
-      required this.onPressed,
-      required this.icon}); // Updated constructor
+  ContainerButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    required this.icon,
+    this.trailingWidget, // Optional parameter
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,32 +37,32 @@ class containerButton extends StatelessWidget {
         children: [
           Row(
             children: [
-              SizedBox(
-                width: 8,
-              ),
+              SizedBox(width: 8),
               Icon(
                 icon,
                 color: Colors.blue,
                 size: 24,
-              ), // Updated to use the icon parameter
-              SizedBox(
-                width: 18,
               ),
+              SizedBox(width: 18),
               Text(
                 text,
                 style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400),
-              )
+                  fontSize: 15,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
             ],
           ),
-          IconButton(
-              onPressed: onPressed,
-              icon: Icon(
-                Icons.navigate_next_rounded,
-                color: CupertinoColors.black,
-              )) // Updated onPressed
+          GestureDetector(
+              onTap: onPressed,
+              child: trailingWidget ??
+                  IconButton(
+                      onPressed: onPressed,
+                      icon: Icon(
+                        Icons.navigate_next_rounded,
+                        color: CupertinoColors.black,
+                      ))),
         ],
       ),
     );

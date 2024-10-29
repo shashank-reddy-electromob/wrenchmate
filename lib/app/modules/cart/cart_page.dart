@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
@@ -138,9 +140,9 @@ class _CartPageState extends State<CartPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8),
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                       child: Text(
                         'Order Summary',
                         style: TextStyle(
@@ -324,9 +326,10 @@ class _CartPageState extends State<CartPage> {
 
                                           if (cartController
                                               .cartItems.isEmpty) {
-                                            Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
-                                              'tracking_button': false,
-                                            });
+                                            Get.toNamed(AppRoutes.BOTTOMNAV,
+                                                arguments: {
+                                                  'tracking_button': false,
+                                                });
                                           } else {
                                             calculateTotal();
                                           }
@@ -345,13 +348,47 @@ class _CartPageState extends State<CartPage> {
                             );
                           }),
                     ),
-                    containerButton(
-                      text: "Apply Coupon",
-                      onPressed: () {
-                        Get.toNamed(AppRoutes.COUPOUNS);
-                      },
-                      icon: Icons.add_card,
-                    ),
+                    Obx(() {
+                      return cartController.appliedCoupon.value.isNotEmpty
+                          ? ContainerButton(
+                              text:
+                                  '"${cartController.appliedCoupon.value}" Applied',
+                              onPressed: () {
+                                cartController.deleteCoupon();
+                              },
+                              icon: Icons.add_card,
+                              trailingWidget: Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: Text(
+                                  'Remove',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            )
+                          : ContainerButton(
+                              text: "Apply Coupon",
+                              onPressed: () {
+                                Get.toNamed(AppRoutes.COUPOUNS);
+                              },
+                              icon: Icons.add_card,
+                            );
+                    }),
+                    // containerButton(
+                    //   text: "Apply Coupon",
+                    //   onPressed: () {
+                    //     Get.toNamed(AppRoutes.COUPOUNS);
+                    //   },
+                    //   icon: Icons.add_card,
+                    // ),
+                    // cartController.appliedCoupon.value.isNotEmpty
+                    //     ? containerButton(
+                    //         text: cartController.appliedCoupon.value,
+                    //         onPressed: () {
+                    //           Get.toNamed(AppRoutes.COUPOUNS);
+                    //         },
+                    //         icon: Icons.add_card,
+                    //       )
+                    //     : SizedBox(),
                     //pricings
                     Container(
                       width: MediaQuery.of(context).size.width,
@@ -402,9 +439,8 @@ class _CartPageState extends State<CartPage> {
                         ],
                       ),
                     ),
-                    containerButton(
-                      text: "Booking Detail",
-                      onPressed: () async {
+                    GestureDetector(
+                      onTap: () async {
                         var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
                         if (result != null) {
                           setState(() {
@@ -415,8 +451,58 @@ class _CartPageState extends State<CartPage> {
                           });
                         }
                       },
-                      icon: Icons.file_copy_outlined,
+                      child: ContainerButton(
+                        text: "Booking Detail",
+                        onPressed: () async {
+                          var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+                          log(result);
+                          if (result != null) {
+                            setState(() {
+                              selectedDate = result['selectedDate'] ?? '';
+                              selectedTimeRange =
+                                  result['selectedTimeRange'] ?? '';
+                              selectedAddress = result['selectAddress'] ?? '';
+                            });
+                          }
+                        },
+                        icon: Icons.file_copy_outlined,
+                      ),
                     ),
+                    if (selectedDate != null && selectedTimeRange != null) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Selected Date: ${DateFormat('MMMM d, yyyy, h:mm a').format(selectedDate!)}",
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                "Selected Time Range: ${'${cartController.formatTime(selectedTimeRange!.start)}-${cartController.formatTime(selectedTimeRange!.end)}'}",
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ]
                   ],
                 ),
               );
@@ -430,11 +516,14 @@ class _CartPageState extends State<CartPage> {
               children: [
                 Column(
                   children: [
-                    Text('₹ ${cartController.totalPayableAmount.value}',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: 'Poppins')),
+                    Obx(() {
+                      return Text(
+                          '₹ ${cartController.totalPayableAmount.value.toStringAsFixed(2)}',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Poppins'));
+                    }),
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
@@ -612,10 +701,9 @@ class _CartPageState extends State<CartPage> {
           if (status == 'SUCCESS') {
             result = "Flow complete - status : SUCCESS";
             await cartController.clearCart();
-            await Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
+            await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
               'tracking_button': true,
             });
-
           } else {
             result = "Flow complete - status : $status and error $error";
           }

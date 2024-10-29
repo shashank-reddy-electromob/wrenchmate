@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -574,6 +576,14 @@ class CartController extends GetxController {
     updateTotalWithDiscount();
   }
 
+  void deleteCoupon() {
+    if (appliedCoupon.value.isNotEmpty) {
+      totalPayableAmount.value += discountAmount.value;
+      discountAmount.value = 0;
+      appliedCoupon.value = '';
+    }
+  }
+
   void updateTotalWithDiscount() {
     totalAmount.value -= discountAmount.value;
     String userId = FirebaseAuth.instance.currentUser!.uid;
@@ -583,5 +593,14 @@ class CartController extends GetxController {
     });
 
     Get.toNamed(AppRoutes.CART);
+  }
+
+   String formatTime(double timeValue) {
+    int hours = timeValue.toInt();
+    int minutes = ((timeValue - hours) * 60).round();
+    String period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12; 
+    hours = hours == 0 ? 12 : hours;
+    return '$hours:${minutes.toString().padLeft(2, '0')} $period';
   }
 }

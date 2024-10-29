@@ -69,7 +69,7 @@ class BookingController extends GetxController {
         }
       }
 
-      print(bookings);
+      print(' booking is: ${bookings}');
       return bookings;
     } catch (e) {
       throw Exception("Failed to fetch bookings: $e");

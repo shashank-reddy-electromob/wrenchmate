@@ -279,7 +279,27 @@ class _CarPageState extends State<CarPage> {
                               carId: userCurrentCarId,
                               carType: carType,
                               carModel: carModel);
-                          Get.offAllNamed('/bottomnav');
+                          setState(() {
+                            userCars.removeAt(userCurrentCarIndex);
+
+                            if (userCurrentCarIndex >= userCars.length) {
+                              userCurrentCarIndex =
+                                  userCars.isEmpty ? 0 : userCars.length - 1;
+                            }
+
+                            if (userCars.isNotEmpty) {
+                              updateCarDetails(userCurrentCarIndex);
+                            } else {
+                              carModel = '';
+                              petrolOrDiesel = '';
+                              carType = '';
+                              regYearController.clear();
+                              regNoController.clear();
+                              insuranceExpController.clear();
+                              pucExpController.clear();
+                            }
+                          });
+                          Get.toNamed('/bottomnav');
                         },
                         child: SvgPicture.asset('assets/icons/delete_icon.svg'),
                       ),
