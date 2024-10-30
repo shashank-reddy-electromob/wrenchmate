@@ -1,10 +1,13 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/data/models/car_detail_model.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
@@ -99,6 +102,65 @@ class _CarPageState extends State<CarPage> {
     }
   }
 
+  File? _regCardImage;
+  File? _drivingLicImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickAndUploadImage(String type) async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    File file = File(image.path);
+    setState(() {
+      if (type == 'regCard') {
+        _regCardImage = file;
+      } else {
+        _drivingLicImage = file;
+      }
+    });
+    String? regCardImagePath;
+    String? drivLicImagePath;
+
+    if (type == 'drivingLic') {
+      drivLicImagePath =
+          await uploadImageToStorage(_drivingLicImage!, 'drivingLic');
+    } else {
+      regCardImagePath = await uploadImageToStorage(_regCardImage!, 'regCard');
+    }
+
+    carController.addImageUrlsToCar(carId: userCurrentCarId,carType: carType,carModel: carModel,drivLicUrl: drivLicImagePath,regCardUrl: regCardImagePath);
+
+    log(regCardImagePath ?? '');
+    log(drivLicImagePath ?? '');
+  }
+
+  Future<String?> uploadImageToStorage(File image, String type) async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        throw Exception('User not logged in');
+      }
+      String userId = currentUser.uid;
+      final storageReference = FirebaseStorage.instance.ref('/Users');
+      final fileName = image.path.split('/').last;
+      final dateStamp = DateTime.now().microsecondsSinceEpoch;
+      final uploadReference = type == 'drivingLic'
+          ? storageReference
+              .child('$userId/drivingLicence/$dateStamp-$fileName')
+          : storageReference
+              .child('$userId/registrationCard/$dateStamp-$fileName');
+      final metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+      );
+      TaskSnapshot taskSnapshot =
+          await uploadReference.putFile(image, metadata);
+      return await taskSnapshot.ref.getDownloadURL();
+    } catch (e) {
+      print("Failed to upload image: $e");
+      return null;
+    }
+  }
+
   /*
   Sedan
   Hatchback
@@ -148,312 +210,462 @@ class _CarPageState extends State<CarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      carModel,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue[800],
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      petrolOrDiesel,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.chevron_left,
-                          color: userCurrentCarIndex == 0
-                              ? Colors.grey
-                              : Colors.black),
-                      onPressed: userCurrentCarIndex == 0
-                          ? null
-                          : () => navigateCarDetails(-1),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.chevron_right,
-                          color: userCurrentCarIndex == userCars.length - 1
-                              ? Colors.grey
-                              : Colors.black),
-                      onPressed: userCurrentCarIndex == userCars.length - 1
-                          ? null
-                          : () => navigateCarDetails(1),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: SizedBox(
-                height: 150,
-                child: PageView.builder(
-                  itemCount: userCars.length,
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() {
-                      userCurrentCarIndex = index;
-                      updateCarDetails(index);
-                      updateUserCurrentCarIndexInFirebase(index);
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    var car = userCars[index];
-                    return Image.asset(
-                      car['car_type'] == 'Sedan'
-                          ? 'assets/car/sedan.png'
-                          : car['car_type'] == 'SUV'
-                              ? 'assets/car/suv.png'
-                              : car['car_type'] == 'Compact SUV'
-                                  ? 'assets/car/compact_suv.png'
-                                  : car['car_type'] == 'Hatchback'
-                                      ? 'assets/car/hatchback.png'
-                                      : "",
-                      height: 150,
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace? stackTrace) {
-                        return CircularProgressIndicator();
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Car Detail',
+                        carModel,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
                         ),
                       ),
-                      Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          Get.toNamed(
-                            AppRoutes.CAR_EDIT,
-                            arguments: {
-                              'carDetails': userCars[userCurrentCarIndex],
-                              'carId':
-                                  userCurrentCarId, // The ID we extracted earlier
-                            },
-                          );
-                        },
-                        child: SvgPicture.asset('assets/icons/edit_icon.svg'),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          carController.deleteCar(
-                              carId: userCurrentCarId,
-                              carType: carType,
-                              carModel: carModel);
-                          setState(() {
-                            userCars.removeAt(userCurrentCarIndex);
-
-                            if (userCurrentCarIndex >= userCars.length) {
-                              userCurrentCarIndex =
-                                  userCars.isEmpty ? 0 : userCars.length - 1;
-                            }
-
-                            if (userCars.isNotEmpty) {
-                              updateCarDetails(userCurrentCarIndex);
-                            } else {
-                              carModel = '';
-                              petrolOrDiesel = '';
-                              carType = '';
-                              regYearController.clear();
-                              regNoController.clear();
-                              insuranceExpController.clear();
-                              pucExpController.clear();
-                            }
-                          });
-                          Get.toNamed('/bottomnav');
-                        },
-                        child: SvgPicture.asset('assets/icons/delete_icon.svg'),
+                      SizedBox(height: 4),
+                      Text(
+                        petrolOrDiesel,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ],
                   ),
-                  Divider(),
-                  SizedBox(height: 10),
-                  SizedBox(height: 20),
+                  Spacer(),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      //regi year and insurance
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //reg year
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Reg Year :',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(regYearController.text),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          //insurance
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Insurance Exp. :',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(insuranceExpController.text),
-                            ],
-                          ),
-                        ],
+                      IconButton(
+                        icon: Icon(Icons.chevron_left,
+                            color: userCurrentCarIndex == 0
+                                ? Colors.grey
+                                : Colors.black),
+                        onPressed: userCurrentCarIndex == 0
+                            ? null
+                            : () => navigateCarDetails(-1),
                       ),
-                      //reg and puc
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //reg
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Reg No:',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(regNoController.text),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          //puc
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'PUC Exp Date :',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(pucExpController.text),
-                            ],
-                          ),
-                        ],
+                      IconButton(
+                        icon: Icon(Icons.chevron_right,
+                            color: userCurrentCarIndex == userCars.length - 1
+                                ? Colors.grey
+                                : Colors.black),
+                        onPressed: userCurrentCarIndex == userCars.length - 1
+                            ? null
+                            : () => navigateCarDetails(1),
                       ),
                     ],
                   ),
                 ],
               ),
-            ),
-            Spacer(),
-            //add new car service history
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.toNamed(AppRoutes.CAR_REGISTER);
+              SizedBox(height: 20),
+              Center(
+                child: SizedBox(
+                  height: 150,
+                  child: PageView.builder(
+                    itemCount: userCars.length,
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        userCurrentCarIndex = index;
+                        updateCarDetails(index);
+                        updateUserCurrentCarIndexInFirebase(index);
+                      });
                     },
-                    child: GradientContainer(
-                      height: 120,
-                      colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
-                      width: MediaQuery.of(context).size.width / 2 - 36,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18.0, vertical: 8),
-                        child: Column(
+                    itemBuilder: (context, index) {
+                      var car = userCars[index];
+                      return Image.asset(
+                        car['car_type'] == 'Sedan'
+                            ? 'assets/car/sedan.png'
+                            : car['car_type'] == 'SUV'
+                                ? 'assets/car/suv.png'
+                                : car['car_type'] == 'Compact SUV'
+                                    ? 'assets/car/compact_suv.png'
+                                    : car['car_type'] == 'Hatchback'
+                                        ? 'assets/car/hatchback.png'
+                                        : "",
+                        height: 150,
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace? stackTrace) {
+                          return CircularProgressIndicator();
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Car Detail',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(
+                              AppRoutes.CAR_EDIT,
+                              arguments: {
+                                'carDetails': userCars[userCurrentCarIndex],
+                                'carId':
+                                    userCurrentCarId, // The ID we extracted earlier
+                              },
+                            );
+                          },
+                          child: SvgPicture.asset('assets/icons/edit_icon.svg'),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            carController.deleteCar(
+                                carId: userCurrentCarId,
+                                carType: carType,
+                                carModel: carModel);
+                            setState(() {
+                              userCars.removeAt(userCurrentCarIndex);
+
+                              if (userCurrentCarIndex >= userCars.length) {
+                                userCurrentCarIndex =
+                                    userCars.isEmpty ? 0 : userCars.length - 1;
+                              }
+
+                              if (userCars.isNotEmpty) {
+                                updateCarDetails(userCurrentCarIndex);
+                              } else {
+                                carModel = '';
+                                petrolOrDiesel = '';
+                                carType = '';
+                                regYearController.clear();
+                                regNoController.clear();
+                                insuranceExpController.clear();
+                                pucExpController.clear();
+                              }
+                            });
+                            Get.toNamed('/bottomnav');
+                          },
+                          child:
+                              SvgPicture.asset('assets/icons/delete_icon.svg'),
+                        ),
+                      ],
+                    ),
+                    Divider(),
+                    SizedBox(height: 10),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        //regi year and insurance
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Image.asset(
-                              'assets/car/sedan.png',
-                              width: 100,
+                            //reg year
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Reg Year :',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(regYearController.text),
+                              ],
                             ),
                             SizedBox(height: 10),
-                            Text(
-                              'Add New Car',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14),
-                            )
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Insurance Exp. :',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(insuranceExpController.text),
+                              ],
+                            ),
                           ],
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      Get.toNamed(AppRoutes.BOOKING);
-                    },
-                    child: GradientContainer(
-                      height: 120,
-                      colors: [Color(0xffFEA563), Color(0xffFF5F81)],
-                      width: MediaQuery.of(context).size.width / 2 - 36,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18.0, vertical: 8),
-                        child: Column(
+                        //reg and puc
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Image.asset(
-                              'assets/images/servicehistory.png',
-                              height: 70,
+                            //reg
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Reg No:',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(regNoController.text),
+                              ],
                             ),
-                            Text(
-                              'Service History',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14),
-                            )
+                            SizedBox(height: 10),
+                            //puc
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'PUC Exp Date :',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(pucExpController.text),
+                              ],
+                            ),
                           ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Reg Card :',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: () => _pickAndUploadImage('regCard'),
+                      child: Container(
+                        height: 40,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8),
+                          // image: _regCardImage != null
+                          //     ? DecorationImage(
+                          //         image: FileImage(_regCardImage!),
+                          //         fit: BoxFit.cover,
+                          //       )
+                          //     : null,
+                        ),
+                        child: _regCardImage == null
+                            ? Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 20),
+                                        child: Text(
+                                          'Upload',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                      Icon(Icons.add_a_photo,
+                                          color: Colors.grey[700]),
+                                    ],
+                                  ),
+                                ))
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _regCardImage!.path
+                                            .split('/')
+                                            .last, // Display file name
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      Text(
+                                        'View',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      'Driving Licen. :',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: () => _pickAndUploadImage('drivingLic'),
+                      child: Container(
+                        height: 40,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8),
+                          // image: _drivingLicImage != null
+                          //     ? DecorationImage(
+                          //         image: FileImage(_drivingLicImage!),
+                          //         fit: BoxFit.cover,
+                          //       )
+                          //     : null,
+                        ),
+                        child: _drivingLicImage == null
+                            ? Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 20),
+                                        child: Text(
+                                          'Upload',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                      Icon(Icons.add_a_photo,
+                                          color: Colors.grey[700]),
+                                    ],
+                                  ),
+                                ))
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _drivingLicImage!.path
+                                            .split('/')
+                                            .last, // Display file name
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      Text(
+                                        'View',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Spacer(),
+              //add new car service history
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.toNamed(AppRoutes.CAR_REGISTER);
+                      },
+                      child: GradientContainer(
+                        height: 120,
+                        colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
+                        width: MediaQuery.of(context).size.width / 2 - 36,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 18.0, vertical: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                'assets/car/sedan.png',
+                                width: 100,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Add New Car',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.toNamed(AppRoutes.BOOKING);
+                      },
+                      child: GradientContainer(
+                        height: 120,
+                        colors: [Color(0xffFEA563), Color(0xffFF5F81)],
+                        width: MediaQuery.of(context).size.width / 2 - 36,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 18.0, vertical: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image.asset(
+                                'assets/images/servicehistory.png',
+                                height: 70,
+                              ),
+                              Text(
+                                'Service History',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

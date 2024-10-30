@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:get/get.dart';
@@ -140,9 +142,10 @@ class _BottomSheetState extends State<BottomSheet> {
   List<String> services = [
     "Car Wash",
     "Detailing",
-    "Wheel Service",
-    "Accessories",
-    "Denting and Painting",
+    "Repair",
+    "Wheel",
+    "Painting",
+    "Denting",
   ];
   List<String> discounts = [
     '0-15%',
@@ -151,15 +154,15 @@ class _BottomSheetState extends State<BottomSheet> {
   ];
   List<String> ratings = [
     '>⭐4.0',
-    '>⭐3.0',
-    '>⭐2.0',
-    '>⭐1.0',
+    '⭐3.0',
+    '⭐2.0',
+    '⭐1.0',
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.85,
+      // height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -179,9 +182,9 @@ class _BottomSheetState extends State<BottomSheet> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            SizedBox(height: 16),
-            Column(          crossAxisAlignment: CrossAxisAlignment.start,
-
+            // SizedBox(height: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RangeSliderWidget(
                   onRangeChanged: (min, max) {
@@ -190,7 +193,7 @@ class _BottomSheetState extends State<BottomSheet> {
                       maxPrice = max;
                     });
                   },
-                    ),
+                ),
                 _buildServiceTypes(),
                 SizedBox(height: 8),
                 _buildDiscountTypes(),
@@ -214,7 +217,7 @@ class _BottomSheetState extends State<BottomSheet> {
         children: [
           Text(
             "Service Type",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
           Wrap(
@@ -233,7 +236,7 @@ class _BottomSheetState extends State<BottomSheet> {
                   });
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                   decoration: BoxDecoration(
                     color: isSelected ? primaryColorLight : Colors.grey[200],
                     borderRadius: BorderRadius.circular(12),
@@ -242,8 +245,8 @@ class _BottomSheetState extends State<BottomSheet> {
                     service,
                     style: TextStyle(
                         color: isSelected ? primaryColor : greyColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
               );
@@ -262,7 +265,7 @@ class _BottomSheetState extends State<BottomSheet> {
         children: [
           Text(
             "Discount",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
           Wrap(
@@ -276,7 +279,7 @@ class _BottomSheetState extends State<BottomSheet> {
                   });
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                   decoration: BoxDecoration(
                     color: selectedDiscount == discount
                         ? primaryColorLight
@@ -289,8 +292,8 @@ class _BottomSheetState extends State<BottomSheet> {
                         color: selectedDiscount == discount
                             ? primaryColor
                             : greyColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
               );
@@ -309,7 +312,7 @@ class _BottomSheetState extends State<BottomSheet> {
         children: [
           Text(
             "Rating",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
           Wrap(
@@ -323,7 +326,7 @@ class _BottomSheetState extends State<BottomSheet> {
                   });
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                   decoration: BoxDecoration(
                     color: selectedRating == rating
                         ? primaryColorLight
@@ -335,8 +338,8 @@ class _BottomSheetState extends State<BottomSheet> {
                     style: TextStyle(
                         color:
                             selectedRating == rating ? primaryColor : greyColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
               );
@@ -359,9 +362,9 @@ class _BottomSheetState extends State<BottomSheet> {
                 foregroundColor: Colors.blue,
                 side: BorderSide(color: Colors.blue),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
-                minimumSize: Size(double.infinity, 60),
+                minimumSize: Size(double.infinity, 50),
               ),
               onPressed: () {
                 setState(() {
@@ -388,9 +391,9 @@ class _BottomSheetState extends State<BottomSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
-                minimumSize: Size(double.infinity, 60),
+                minimumSize: Size(double.infinity, 50),
               ),
               onPressed: () {
                 onApplyFilters(
@@ -418,36 +421,37 @@ class _BottomSheetState extends State<BottomSheet> {
 }
 
 class RangeSliderWidget extends StatefulWidget {
-  final Function(double, double) onRangeChanged; // Add this
+  final Function(double, double) onRangeChanged;
 
-  RangeSliderWidget({required this.onRangeChanged}); // Add this
+  RangeSliderWidget({required this.onRangeChanged});
 
   @override
   _RangeSliderWidgetState createState() => _RangeSliderWidgetState();
 }
 
-
 class _RangeSliderWidgetState extends State<RangeSliderWidget> {
-  double _lowerValue = 500;
-  double _upperValue = 20000;
-  List<int> itemCounts = [
-    70,
-    100,
-    30,
-    30,
-    80,
-    10,
-    100,
-    40,
-    90,
-    90,
-    20,
-    60,
-    40,
-    50,
-    70,
-    50,
-  ];
+  double _lowerValue = 20000;
+  double _upperValue = 80000;
+  List<double> barHeights = [];
+  final double totalMin = 500;
+  final double totalMax = 100000;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateBars();
+  }
+
+  void _generateBars() {
+    final range = _upperValue - _lowerValue;
+    int numberOfBars = (range / 2500).round().clamp(3, 15);
+
+    barHeights = List.generate(numberOfBars, (index) {
+      return 0.2 + (Random().nextDouble() * 0.8);
+    });
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -456,146 +460,183 @@ class _RangeSliderWidgetState extends State<RangeSliderWidget> {
       child: Column(
         children: [
           Container(
-            height: 100,
-            width: 300,
-            child: CustomPaint(
-              painter: BarChartPainter(itemCounts),
-            ),
-          ),
-          FlutterSlider(
-            values: [_lowerValue, _upperValue],
-            rangeSlider: true,
-            step: FlutterSliderStep(
-              step: 500,
-            ),
-            max: 100000,
-            min: 500,
-            onDragging: (handlerIndex, lowerValue, upperValue) {
-              setState(() {
-                _lowerValue = lowerValue;
-                _upperValue = upperValue;
-              });
-              widget.onRangeChanged(lowerValue, upperValue);
-            },
-            handler: FlutterSliderHandler(
-              decoration: BoxDecoration(),
-              child: Material(
-                type: MaterialType.circle,
-                color: primaryColor,
-                elevation: 0,
-                child: Container(
-                  width: 20,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              ),
-            ),
-            rightHandler: FlutterSliderHandler(
-              decoration: BoxDecoration(),
-              child: Material(
-                type: MaterialType.circle,
-                color: primaryColor,
-                elevation: 3,
-                child: Container(
-                  width: 20,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              ),
-            ),
-            trackBar: FlutterSliderTrackBar(
-              activeTrackBar: BoxDecoration(
-                color: primaryColor.withOpacity(0.5),
-              ),
-            ),
-            tooltip: FlutterSliderTooltip(
-              positionOffset: FlutterSliderTooltipPositionOffset(
-                top: 50,
-              ),
-              leftPrefix: Container(
-                child: Text(
-                  '₹ ',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              rightPrefix: Container(
-                child: Text(
-                  '₹ ',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              alwaysShowTooltip: true,
-              custom: (value) {
-                return Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: primaryColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '₹ ${value.toInt()}',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+            height: 80,
+            width: double.infinity,
+            padding: EdgeInsets.only(left: 10, right: 10),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return CustomPaint(
+                  size: Size(constraints.maxWidth, constraints.maxHeight),
+                  painter: RangeBarChartPainter(
+                    barHeights: barHeights,
+                    lowerValue: _lowerValue,
+                    upperValue: _upperValue,
+                    totalMin: totalMin,
+                    totalMax: totalMax,
+                    primaryColor: primaryColor,
                   ),
                 );
               },
             ),
           ),
-          SizedBox(height: 20),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Text(
-          //       '₹ ${_lowerValue.toInt()}',
-          //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          //     ),
-          //     Text(
-          //       '₹ ${_upperValue.toInt()}',
-          //       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          //     ),
-          //   ],
-          // ),
+          Container(
+            height: 20,
+            child: FlutterSlider(
+              values: [_lowerValue, _upperValue],
+              rangeSlider: true,
+              step: FlutterSliderStep(
+                step: 500,
+              ),
+              max: totalMax,
+              min: totalMin,
+              onDragging: (handlerIndex, lowerValue, upperValue) {
+                setState(() {
+                  _lowerValue = lowerValue;
+                  _upperValue = upperValue;
+                  _generateBars();
+                });
+                widget.onRangeChanged(lowerValue, upperValue);
+              },
+              handler: FlutterSliderHandler(
+                decoration: BoxDecoration(),
+                child: Material(
+                  type: MaterialType.circle,
+                  color: primaryColor,
+                  elevation: 0,
+                  child: Container(
+                    width: 20,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              ),
+              rightHandler: FlutterSliderHandler(
+                decoration: BoxDecoration(),
+                child: Material(
+                  type: MaterialType.circle,
+                  color: primaryColor,
+                  elevation: 3,
+                  child: Container(
+                    width: 20,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              ),
+              trackBar: FlutterSliderTrackBar(
+                activeTrackBar: BoxDecoration(
+                  color: primaryColor.withOpacity(0.5),
+                ),
+              ),
+              tooltip: FlutterSliderTooltip(
+                positionOffset: FlutterSliderTooltipPositionOffset(
+                  top: 40,
+                ),
+                leftPrefix: Container(
+                  child: Text(
+                    '₹ ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                rightPrefix: Container(
+                  child: Text(
+                    '₹ ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                alwaysShowTooltip: true,
+                custom: (value) {
+                  return Container(
+                    height: 40,
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '₹ ${value.toInt()}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          )
         ],
       ),
     );
   }
 }
 
-class BarChartPainter extends CustomPainter {
-  final List<int> itemCounts;
+class RangeBarChartPainter extends CustomPainter {
+  final List<double> barHeights;
+  final double lowerValue;
+  final double upperValue;
+  final double totalMin;
+  final double totalMax;
+  final Color primaryColor;
 
-  BarChartPainter(this.itemCounts);
+  RangeBarChartPainter({
+    required this.barHeights,
+    required this.lowerValue,
+    required this.upperValue,
+    required this.totalMin,
+    required this.totalMax,
+    required this.primaryColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = primaryColor.withOpacity(0.1)
       ..style = PaintingStyle.fill;
+    double totalWidth = size.width;
+    double startX =
+        (lowerValue - totalMin) / (totalMax - totalMin) * totalWidth;
+    double endX = (upperValue - totalMin) / (totalMax - totalMin) * totalWidth;
+    double availableWidth = endX - startX;
+    print(availableWidth);
+    double barWidth = (availableWidth / barHeights.length) * 1;
+    double barSpacing = (availableWidth / barHeights.length) * 0;
 
-    double barWidth = 300 / itemCounts.length;
-    for (int i = 0; i < itemCounts.length; i++) {
-      double barHeight = (itemCounts[i] / 100) * size.height;
+    for (int i = 0; i < barHeights.length; i++) {
+      double barHeight = barHeights[i] * size.height;
+      double barX = startX + (i * (barWidth + barSpacing));
+
       canvas.drawRect(
         Rect.fromLTWH(
-            i * barWidth, size.height - barHeight, barWidth, barHeight),
+          barX,
+          size.height - barHeight,
+          barWidth,
+          barHeight,
+        ),
         paint,
       );
     }
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(RangeBarChartPainter oldDelegate) {
+    return oldDelegate.barHeights != barHeights ||
+        oldDelegate.lowerValue != lowerValue ||
+        oldDelegate.upperValue != upperValue;
+  }
 }

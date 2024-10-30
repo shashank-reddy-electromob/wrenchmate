@@ -149,11 +149,18 @@ class _ProductScreenState extends State<ProductScreen> {
                                               )
                                             : CustomElevatedButton(
                                                 onPressed: () {
-                                                  Get.toNamed(AppRoutes.CART);
-                                                  ScaffoldMessenger.of(context)
-                                                      .hideCurrentSnackBar();
+                                                  cartController
+                                                      .deleteProductsFromCart(
+                                                          product.id,
+                                                          product.quantity);
+                                                  setState(() {
+                                                    setState(() {
+                                                      addToCartStates[index] =
+                                                          false;
+                                                    });
+                                                  });
                                                 },
-                                                text: 'Go to cart',
+                                                text: 'Remove',
                                               ),
                                       ),
                                     ],

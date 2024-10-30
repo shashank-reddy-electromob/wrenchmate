@@ -137,23 +137,23 @@ class _ServicePageState extends State<ServicePage> {
           leading: Padding(
               padding: const EdgeInsets.all(6.0), child: Custombackbutton()),
         ),
-          floatingActionButton: Obx(
-        () => Visibility(
-          visible: !cartController.cartItems.isEmpty,
-          child: FloatingActionButton(
-            onPressed: () {
-              Get.toNamed(AppRoutes.CART);
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            },
-            backgroundColor: primaryColor,
-            child: Icon(
-              Icons.shopping_cart,
-              color: Colors.white,
+        floatingActionButton: Obx(
+          () => Visibility(
+            visible: !cartController.cartItems.isEmpty,
+            child: FloatingActionButton(
+              onPressed: () {
+                Get.toNamed(AppRoutes.CART);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+              backgroundColor: primaryColor,
+              child: Icon(
+                Icons.shopping_cart,
+                color: Colors.white,
+              ),
+              shape: CircleBorder(),
             ),
-            shape: CircleBorder(),
           ),
         ),
-      ),
         body: service != "Repairs" && service != "Body Parts"
             ? Column(
                 children: [
@@ -422,13 +422,18 @@ class _ServicePageState extends State<ServicePage> {
                                                     )
                                                   : CustomElevatedButton(
                                                       onPressed: () {
-                                                        Get.toNamed(
-                                                            AppRoutes.CART);
                                                         ScaffoldMessenger.of(
                                                                 context)
                                                             .hideCurrentSnackBar();
+                                                        cartController
+                                                            .deleteServicesFromCart(
+                                                                service.id);
+                                                        setState(() {
+                                                          addToCartStates[
+                                                              index] = false;
+                                                        });
                                                       },
-                                                      text: 'Go to cart',
+                                                      text: 'Remove',
                                                     ),
                                             )
                                           ],

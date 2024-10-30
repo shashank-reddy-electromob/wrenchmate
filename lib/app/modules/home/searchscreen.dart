@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,15 +23,14 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final ServiceController serviceController = Get.put(ServiceController());
   final TextEditingController _searchController = TextEditingController();
-  List<Servicefirebase> topServices =
-      [];
-  List<String> topServiceIds =
-      [];
+  List<Servicefirebase> topServices = [];
+  List<String> topServiceIds = [];
   List<Servicefirebase> services = <Servicefirebase>[];
   List<Servicefirebase> _resultList = [];
   List<String> topCategories = [];
   List<String> searchHistory = [];
   bool _isSearching = false;
+  
 
   final Map<String, String> categoryImageMap = {
     'Car Wash': 'assets/services/car wash.png',
@@ -60,15 +61,13 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {});
   }
 
-
   @override
   void initState() {
     super.initState();
 
-    // Fetch all the services initially
     getClientData().then((_) {
-      // Check if there are any filtering arguments
       final filterArgs = Get.arguments;
+      log('the arguments we get are: ${filterArgs}');
       if (filterArgs != null) {
         _applyFilters(
           filterArgs['selectedServices'],
@@ -91,36 +90,32 @@ class _SearchPageState extends State<SearchPage> {
     _searchController.addListener(_onSearchChange);
   }
 
-  void _applyFilters(
-      List<String>? selectedServices,
-      String? selectedDiscount,
-      String? selectedRating,
-      double? minPrice,
-      double? maxPrice) {
-
+  void _applyFilters(List<String>? selectedServices, String? selectedDiscount,
+      String? selectedRating, double? minPrice, double? maxPrice) {
     print("Before filtering:");
     services.forEach((service) {
       print(
           "Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
     });
-
-    _resultList = services.where((service) {
+    serviceController.isFiltering.value=true;
+    List<Servicefirebase> temp=[];
+    // Wrap filtering logic within setState
+    temp = services.where((service) {
       // Printing each service's attributes before filtering
       print("\nEvaluating Service: ${service.name}");
       print(
           "Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
 
       // Applying filters
-      bool matchesCategory = selectedServices == null || selectedServices.isEmpty
-          ? true
-          : selectedServices.contains(service.category);
+      bool matchesCategory =
+          selectedServices == null || selectedServices.isEmpty
+              ? true
+              : selectedServices.contains(service.category);
 
       double discountValue = 0;
       if (selectedDiscount != null) {
-        // Remove the '%' sign and parse the discount range
         selectedDiscount = selectedDiscount?.replaceAll('%', '');
         List<String>? discountRange = selectedDiscount?.split('-');
-        // If the range is defined, take the lower end as the minimum discount
         if (discountRange?.length == 2) {
           discountValue = double.tryParse(discountRange![0]) ?? 0;
         } else {
@@ -130,33 +125,40 @@ class _SearchPageState extends State<SearchPage> {
 
       double ratingValue = 0;
       if (selectedRating != null) {
-        // Remove '>' and the emoji from the rating
-        selectedRating = selectedRating?.replaceAll('>', '').replaceAll('⭐', '').trim();
+        selectedRating =
+            selectedRating?.replaceAll('>', '').replaceAll('⭐', '').trim();
         ratingValue = double.tryParse(selectedRating!) ?? 0;
       }
 
-      bool matchesDiscount = selectedDiscount == null || service.discount >= discountValue;
-      bool matchesRating = selectedRating == null || service.averageReview > ratingValue;
-      bool matchesPriceRange = (minPrice == null || service.price >= minPrice) && (maxPrice == null || service.price <= maxPrice);
+      bool matchesDiscount =
+          selectedDiscount == null || service.discount >= discountValue;
+      bool matchesRating =
+          selectedRating == null || service.averageReview > ratingValue;
+      bool matchesPriceRange =
+          (minPrice == null || service.price >= minPrice) &&
+              (maxPrice == null || service.price <= maxPrice);
 
-      // Printing evaluation result for each condition
       print("Matches Category: $matchesCategory");
       print("Matches Discount: $matchesDiscount");
       print("Matches Rating: $matchesRating");
       print("Matches Price Range: $matchesPriceRange");
 
-      return matchesCategory && matchesDiscount && matchesRating && matchesPriceRange;
+      return matchesCategory &&
+          matchesDiscount &&
+          matchesRating &&
+          matchesPriceRange;
     }).toList();
 
-    _isSearching=true;
-
+    setState(() {
+    _isSearching = true;
+      _resultList.assignAll(temp);
+    });
     print("\nAfter filtering:");
     _resultList.forEach((service) {
       print(
           "Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
     });
   }
-
 
   Future<void> saveSearchHistory(String searchTerm) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -174,14 +176,18 @@ class _SearchPageState extends State<SearchPage> {
     });
     searchResultList();
   }
+
   getClientData() async {
     String userId = FirebaseAuth.instance.currentUser!.uid;
-    var userDoc = await FirebaseFirestore.instance.collection("User").doc(userId).get();
+    var userDoc =
+        await FirebaseFirestore.instance.collection("User").doc(userId).get();
 
     if (userDoc.exists) {
-      List<String> userCarDetails = List<String>.from(userDoc.data()?['User_carDetails'] ?? []);
+      List<String> userCarDetails =
+          List<String>.from(userDoc.data()?['User_carDetails'] ?? []);
 
-      List<String> userCarModels = userCarDetails.map((detail) => detail.split(';')[0]).toList();
+      List<String> userCarModels =
+          userCarDetails.map((detail) => detail.split(';')[0]).toList();
 
       var data = await FirebaseFirestore.instance
           .collection("Service")
@@ -209,13 +215,12 @@ class _SearchPageState extends State<SearchPage> {
       }).toList();
 
       topServices = services.where((service) {
-              return topServiceIds.contains(service.id);
-            }).toList();
-            setState(() {
-              _resultList = services;
-            });
+        return topServiceIds.contains(service.id);
+      }).toList();
+      setState(() {
+        _resultList = services;
+      });
     }
-
   }
 
   // Dynamic searching as you type
@@ -253,6 +258,7 @@ class _SearchPageState extends State<SearchPage> {
   void dispose() {
     _searchController.removeListener(_onSearchChange);
     _searchController.dispose();
+    _resultList.clear();
     super.dispose();
   }
 
@@ -460,53 +466,56 @@ class _SearchPageState extends State<SearchPage> {
                     ],
                     if (_isSearching) ...[
                       _resultList.isEmpty
-                          ? Center(child: Text("No services match your requirements :("))
+                          ? Center(
+                              child: Text(
+                                  "No services match your requirements :("))
                           : ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: _resultList.length,
-                        itemBuilder: (context, index) {
-                          var service = _resultList[index];
-                          return InkWell(
-                            onTap: () {
-                              Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                                  arguments: service);
-                            },
-                            splashColor: Colors.grey.withOpacity(0.3),
-                            child: Container(
-                              height: 90,
-                              width: double.infinity,
-                              margin: EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: ExtendedImage.network(
-                                      service.image,
-                                      fit: BoxFit.cover,
-                                      cache: true,
-                                      height: 80,
-                                      width: 80,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: _resultList.length,
+                              itemBuilder: (context, index) {
+                                var service = _resultList[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Get.toNamed(AppRoutes.SERVICE_DETAIL,
+                                        arguments: service);
+                                  },
+                                  splashColor: Colors.grey.withOpacity(0.3),
+                                  child: Container(
+                                    height: 90,
+                                    width: double.infinity,
+                                    margin: EdgeInsets.symmetric(vertical: 4),
+                                    child: Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          child: ExtendedImage.network(
+                                            service.image,
+                                            fit: BoxFit.cover,
+                                            cache: true,
+                                            height: 80,
+                                            width: 80,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            '${service.name} in ${service.category}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      '${service.name} in ${service.category}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ]
                   ],
                 ),

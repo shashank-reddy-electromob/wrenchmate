@@ -253,35 +253,37 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   style: TextStyle(color: Colors.black54)),
               Spacer(),
               Positioned(
-                  top: MediaQuery.of(context).size.height * 0.055,
-                  right: MediaQuery.of(context).size.width * 0.04,
-                  child:
-                      //  addtocart == false
-                      //     ?
-                      CustomElevatedButton(
-                    onPressed: () {
-                      cartController.addProductToCartSnackbar(
-                        context,
-                        cartController,
-                        product,
-                        selectedQuantity ?? product.quantity,
-                        scaffoldMessengerKey,
-                      );
-                      setState(() {
-                        addtocart = true;
-                      });
-                    },
-                    text: '+Add',
-                  )
-                  // : CustomElevatedButton(
-                  //     onPressed: () {
-                  //       Get.toNamed(AppRoutes.CART);
-                  //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  //     },
-                  //     textSize: 12,
-                  //     text: 'Go to cart',
-                  //   ),
-                  ),
+                top: MediaQuery.of(context).size.height * 0.055,
+                right: MediaQuery.of(context).size.width * 0.04,
+                child: addtocart == false
+                    ? CustomElevatedButton(
+                        onPressed: () {
+                          cartController.addProductToCartSnackbar(
+                            context,
+                            cartController,
+                            product,
+                            selectedQuantity ?? product.quantity,
+                            scaffoldMessengerKey,
+                          );
+                          setState(() {
+                            addtocart = true;
+                          });
+                        },
+                        text: '+Add',
+                      )
+                    : CustomElevatedButton(
+                        onPressed: () {
+                          cartController.deleteProductsFromCart(
+                              product.id, product.quantity);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          setState(() {
+                            addtocart = false;
+                          });
+                        },
+                        textSize: 12,
+                        text: 'Remove',
+                      ),
+              ),
             ],
           ),
           SizedBox(height: 8),

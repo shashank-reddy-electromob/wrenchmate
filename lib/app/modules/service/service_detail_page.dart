@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   void initState() {
     super.initState();
     service = Get.arguments;
+    log(service.category);
     cartController = Get.put(CartController());
     fetchData(service);
     _isVisibleList = List<bool>.filled(controller.faqs.length, false);
@@ -84,7 +87,7 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           ),
         ],
       ),
-       floatingActionButton: Obx(
+      floatingActionButton: Obx(
         () => Visibility(
           visible: !cartController.cartItems.isEmpty,
           child: FloatingActionButton(
@@ -195,6 +198,111 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
     );
   }
 
+  void showCustomBottomSheet(double price) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: 4,
+                  width: 60,
+                  decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Choose Service Type',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Showroom Quality',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w500)),
+                        Text('₹ ${price}',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                    CustomElevatedButton(
+                      onPressed: () {
+                        cartController.addToCartSnackbar(
+                          context,
+                          cartController,
+                          service,
+                          scaffoldMessengerKey,
+                        );
+                        Navigator.pop(context);
+                        setState(() => addtocart = true);
+                      },
+                      text: '+Add',
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: MySeparator(),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Normal Quality',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w500)),
+                        Text('₹ ${price}',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                    CustomElevatedButton(
+                      onPressed: () {
+                        cartController.addToCartSnackbar(
+                          context,
+                          cartController,
+                          service,
+                          scaffoldMessengerKey,
+                        );
+                        Navigator.pop(context);
+                        setState(() => addtocart = true);
+                      },
+                      text: '+Add',
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget serviceCard() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.86,
@@ -277,24 +385,30 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           child: (addtocart == false)
               ? CustomElevatedButton(
                   onPressed: () {
-                    cartController.addToCartSnackbar(
-                      context,
-                      cartController,
-                      service,
-                      scaffoldMessengerKey,
-                    );
-                    setState(() {
-                      addtocart = true;
-                    });
+                    if (service.category == 'Denting and Painting' ||
+                        service.category == 'Detailing') {
+                      showCustomBottomSheet(service.price);
+                    } else {
+                      cartController.addToCartSnackbar(
+                        context,
+                        cartController,
+                        service,
+                        scaffoldMessengerKey,
+                      );
+                      setState(() => addtocart = true);
+                    }
                   },
                   text: '+Add',
                 )
               : CustomElevatedButton(
                   onPressed: () {
-                    Get.toNamed(AppRoutes.CART);
                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    cartController.deleteServicesFromCart(service.id);
+                    setState(() {
+                      addtocart = false;
+                    });
                   },
-                  text: 'Go to cart',
+                  text: 'Remove',
                 ),
           // child: CustomElevatedButton(
           //   onPressed: () {

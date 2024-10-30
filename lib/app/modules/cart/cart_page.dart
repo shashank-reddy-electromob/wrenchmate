@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -67,8 +68,9 @@ class _CartPageState extends State<CartPage> {
 
   Future<void> fetchCartData() async {
     await cartController.fetchCartItems();
-    if (cartController.cartItems.isEmpty) {
-      Navigator.pop(context);
+    if (cartController.cartItems.isEmpty &&
+        cartController.cartSubsItems.isEmpty) {
+      // Navigator.pop(context);
     } else {
       calculateTotal();
     }
@@ -133,7 +135,8 @@ class _CartPageState extends State<CartPage> {
                 return Center(child: CircularProgressIndicator());
               }
 
-              if (cartController.cartItems.isEmpty) {
+              if (cartController.cartItems.isEmpty &&
+                  cartController.cartSubsItems.isEmpty) {
                 return Center(child: Text("Your cart is empty"));
               }
               return SingleChildScrollView(
@@ -370,10 +373,29 @@ class _CartPageState extends State<CartPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Subscription',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w500),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Subscription',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          cartController
+                                              .deleteSubscriptionFromCart(
+                                                  cartController
+                                                          .cartSubsItems[0]
+                                                      ['subscriptionId']);
+                                        },
+                                        child: Icon(
+                                          Icons.delete_rounded,
+                                          color: Colors.red,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                   SizedBox(
                                     height: 5,
@@ -481,69 +503,246 @@ class _CartPageState extends State<CartPage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () async {
-                        var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
-                        if (result != null) {
-                          setState(() {
-                            selectedDate = result['selectedDate'] ?? '';
-                            selectedTimeRange =
-                                result['selectedTimeRange'] ?? '';
-                            selectedAddress = result['selectAddress'] ?? '';
-                          });
-                        }
-                      },
-                      child: ContainerButton(
-                        text: "Booking Detail",
-                        onPressed: () async {
-                          var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
-                          log(result);
-                          if (result != null) {
-                            setState(() {
-                              selectedDate = result['selectedDate'] ?? '';
-                              selectedTimeRange =
-                                  result['selectedTimeRange'] ?? '';
-                              selectedAddress = result['selectAddress'] ?? '';
-                            });
+                        onTap: () async {
+                          if (selectedDate == null) {
+                            var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+                            if (result != null) {
+                              setState(() {
+                                selectedDate = result['selectedDate'] ?? '';
+                                selectedTimeRange =
+                                    result['selectedTimeRange'] ?? '';
+                                selectedAddress = result['selectAddress'] ?? '';
+                              });
+                            }
+                          } else {
+                            Get.snackbar(
+                              'Date Selected',
+                              'You can change the date and time.',
+                              snackPosition: SnackPosition.BOTTOM,
+                              duration:
+                                  Duration(seconds: 3), // Duration of the toast
+                              backgroundColor: Colors.black87,
+                              colorText: Colors.white,
+                              borderRadius: 10,
+                              margin: EdgeInsets.all(10),
+                              icon: Icon(Icons.info,
+                                  color: Colors.white), // Optional icon
+                            );
                           }
                         },
-                        icon: Icons.file_copy_outlined,
-                      ),
-                    ),
-                    if (selectedDate != null && selectedTimeRange != null) ...[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Selected Date: ${DateFormat('MMMM d, yyyy, h:mm a').format(selectedDate!)}",
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.grey,
+                              Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
+                                // height: 70,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      blurRadius: 8,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                "Selected Time Range: ${'${cartController.formatTime(selectedTimeRange!.start)}-${cartController.formatTime(selectedTimeRange!.end)}'}",
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.grey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 8),
+                                            Icon(
+                                              Icons.file_copy_outlined,
+                                              color: Colors.blue,
+                                              size: 24,
+                                            ),
+                                            SizedBox(width: 18),
+                                            Text(
+                                              "Booking Detail",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Icon(
+                                            Icons.navigate_next_rounded,
+                                            color: CupertinoColors.black,
+                                          ),
+                                        )
+                                        // IconButton(
+                                        //     onPressed: () async {
+                                        //       var result = await Get.toNamed(
+                                        //           AppRoutes.BOOK_SLOT);
+                                        //       log(result);
+                                        //       if (result != null) {
+                                        //         setState(() {
+                                        //           selectedDate =
+                                        //               result['selectedDate'] ??
+                                        //                   '';
+                                        //           selectedTimeRange = result[
+                                        //                   'selectedTimeRange'] ??
+                                        //               '';
+                                        //           selectedAddress =
+                                        //               result['selectAddress'] ??
+                                        //                   '';
+                                        //         });
+                                        //       }
+                                        //     },
+                                        //     icon: Icon(
+                                        //       Icons.navigate_next_rounded,
+                                        //       color: CupertinoColors.black,
+                                        //     )),
+                                      ],
+                                    ),
+                                    if (selectedDate != null &&
+                                        selectedTimeRange != null) ...[
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Colors
+                                                          .grey.shade300)),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "Date",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Text(
+                                                      "${DateFormat('d MMMM, yyyy').format(selectedDate!)}",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Colors
+                                                          .grey.shade300)),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "Time",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Text(
+                                                      "${'${cartController.formatTime(selectedTimeRange!.start)} - ${cartController.formatTime(selectedTimeRange!.end)}'}",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ]
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                    ]
+                        )),
+                    // if (selectedDate != null && selectedTimeRange != null) ...[
+                    //   Padding(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //     child: Container(
+                    //       width: double.infinity,
+                    //       padding: EdgeInsets.all(16),
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.grey.shade100,
+                    //         borderRadius: BorderRadius.circular(8),
+                    //       ),
+                    //       child: Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: [
+                    //           Text(
+                    //             "Selected Date: ${DateFormat('MMMM d, yyyy, h:mm a').format(selectedDate!)}",
+                    //             style: const TextStyle(
+                    //               fontSize: 13,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: Colors.grey,
+                    //             ),
+                    //           ),
+                    //           SizedBox(height: 2),
+                    //           Text(
+                    //             "Selected Time Range: ${'${cartController.formatTime(selectedTimeRange!.start)}-${cartController.formatTime(selectedTimeRange!.end)}'}",
+                    //             style: const TextStyle(
+                    //               fontSize: 13,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: Colors.grey,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ]
                   ],
                 ),
               );

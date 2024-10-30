@@ -314,6 +314,27 @@ class CartController extends GetxController {
     }
   }
 
+  Future<void> deleteSubscriptionFromCart(String subscriptionId) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      print("${subscriptionId} is being deleted ");
+
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
+          .where('userId', isEqualTo: userId)
+          .where('subscriptionId', isEqualTo: subscriptionId)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      await fetchCartItems();
+    } catch (e) {
+      print("Error deleting product from cart: $e");
+    }
+  }
+
   Future<void> clearCart() async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
@@ -458,7 +479,7 @@ class CartController extends GetxController {
     CartController cartController,
     double price,
     String productQuantity,
-    String subscriptionId,
+    String subscriptionName,
     String packDesc,
     GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
   ) async {
@@ -472,7 +493,6 @@ class CartController extends GetxController {
         .get();
 
     if (existingSubscription.docs.isNotEmpty) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -490,17 +510,21 @@ class CartController extends GetxController {
 
     DateTime endDate;
 
-    if (subscriptionId.startsWith('monthly')) {
+    if (subscriptionName.startsWith('monthly')) {
       endDate = startDate.add(Duration(days: 30));
-    } else if (subscriptionId.startsWith('quarterly')) {
+    } else if (subscriptionName.startsWith('quarterly')) {
       endDate = startDate.add(Duration(days: 90));
     } else {
       endDate = startDate;
     }
 
+    DocumentReference newDocRef =
+        FirebaseFirestore.instance.collection('Cart').doc();
+
     await _firestore.collection('Cart').add({
+      'subscriptionId': newDocRef.id,
       'price': price,
-      'subscriptionId': subscriptionId,
+      'subscriptionName': subscriptionName,
       'haveSub': true,
       'startDate': startDate,
       'packDesc': packDesc,

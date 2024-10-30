@@ -12,6 +12,7 @@ class ServiceController extends GetxController {
   var faqs = <FAQ>[].obs; // Use FAQ model
   var loading = true.obs; // Loading state
   var selectedService = Rxn<Servicefirebase>(); // To store the selected service
+  var isFiltering=false.obs;
 
   Future<void> fetchServices(String category) async {
     try {

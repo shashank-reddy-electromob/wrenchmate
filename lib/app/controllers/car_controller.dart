@@ -160,6 +160,49 @@ class CarController extends GetxController {
     }
   }
 
+Future<void> addImageUrlsToCar({
+  required String carId,
+  required String carType,
+  required String carModel,
+  String? drivLicUrl,
+  String? regCardUrl,
+}) async {
+  try {
+    if (drivLicUrl == null && regCardUrl == null) {
+      print("No URLs provided for updating.");
+      return;
+    }
+
+    Map<String, dynamic> imageUrlsData = {};
+    if (drivLicUrl != null) {
+      imageUrlsData['drivLic'] = drivLicUrl;
+    }
+    if (regCardUrl != null) {
+      imageUrlsData['regCard'] = regCardUrl;
+    }
+
+    String carTypeId = carTypeToIdMap[carType]!;
+    
+    await _firestore
+        .collection('car')
+        .doc('PeVE6MdvLwzcePpmZfp0')
+        .collection(carType)
+        .doc(carTypeId)
+        .collection(carModel)
+        .doc(carId)
+        .update(imageUrlsData);
+
+    print("Image URLs added successfully.");
+
+    Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+      'tracking_button': false,
+    });
+  } catch (e) {
+    print("Error adding image URLs: $e");
+  }
+}
+
+
   Future<void> updateCar({
     required String carId,
     required String fuelType,
