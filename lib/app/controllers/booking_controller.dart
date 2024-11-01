@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,9 +23,10 @@ class BookingController extends GetxController {
     String currentCar,
     String address,
     DateTime? selectedDate,
-    SfRangeValues? selectedTimeRange, // Nullable time range
+    SfRangeValues? selectedTimeRange,
   ) async {
     try {
+      log('message');
       await _firestore.collection('Booking').add({
         'user_id': userId,
         'service_list': serviceIds,
@@ -45,6 +49,53 @@ class BookingController extends GetxController {
       });
     } catch (e) {
       throw Exception("Failed to add booking: $e");
+    }
+  }
+
+  Future<void> addSubscription(
+    String packName,
+    double price,
+    Timestamp? startDate,
+    Timestamp? endDate,
+    DateTime confirmationDate,
+    DateTime? outForServiceDate,
+    String status,
+    DateTime? completedDate,
+    String currentCar,
+    String address,
+    DateTime? selectedDate,
+    SfRangeValues? selectedTimeRange,
+    String subscriptionId,
+    String subscriptionName,
+  ) async {
+    try {
+      log('testing adding to subscription');
+
+      await _firestore.collection('UserSubscriptions').add({
+        'user_id': userId,
+        'packDesc': packName,
+        'price': price,
+        'startDate': startDate,
+        'endDate': endDate,
+        'confirmation_date': confirmationDate,
+        'outForService_date': outForServiceDate,
+        'status': status,
+        'completed_date': completedDate,
+        'current_cart': currentCar,
+        'address': address,
+        'selected_date': selectedDate,
+        'selected_time_range': selectedTimeRange != null
+            ? {
+                'start': selectedTimeRange.start,
+                'end': selectedTimeRange.end,
+              }
+            : null,
+        'subscriptionId': subscriptionId,
+        'subscriptionName': subscriptionName,
+        'unitQuantity': 1
+      });
+    } catch (e) {
+      throw Exception("Failed to add subscription: $e");
     }
   }
 

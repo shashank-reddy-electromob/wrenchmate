@@ -160,14 +160,19 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       ),
                       SizedBox(width: 16),
                       Expanded(
-                        child: Text(
-                          "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'Raleway',
-                              fontWeight: FontWeight.w600),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 5,
+                        child: GestureDetector(
+                          onTap: () {
+                            Get.toNamed(AppRoutes.BOOKING_DETAILS);
+                          },
+                          child: Text(
+                            "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'Raleway',
+                                fontWeight: FontWeight.w600),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                          ),
                         ),
                       ),
                     ],
@@ -638,8 +643,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                 child: GestureDetector(
-                  onTap: () async{
-                   await cartController.addSubscriptionToCartSnackbar(
+                  onTap: () async {
+                    await cartController.addSubscriptionToCartSnackbar(
                       context,
                       cartController,
                       double.parse(price.toString()),
@@ -668,15 +673,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     height: 50,
                     child: Ink(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF51B6FF),
-                            Color(0xFF2A5EE3),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(56),
+                        color: Color(0xff3778F2),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Container(
                         alignment: Alignment.center,

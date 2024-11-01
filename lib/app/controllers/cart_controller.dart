@@ -474,6 +474,12 @@ class CartController extends GetxController {
     });
   }
 
+
+  String formatAddress(String address) {
+  final segments = address.split(',').map((e) => e.trim()).toList();
+  return '${segments[0]}, ${segments[segments.length - 3]}';
+}
+
   Future<void> addSubscriptionToCartSnackbar(
     BuildContext context,
     CartController cartController,

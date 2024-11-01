@@ -82,6 +82,16 @@ class CarController extends GetxController {
     }
   }
 
+String getFileNameFromUrl(String url) {
+  final decodedUrl = Uri.decodeFull(url);
+  final segments = decodedUrl.split('/');
+  final fileNameWithParams = segments.last;
+  final fullFileName = fileNameWithParams.split('?').first;
+  final match = RegExp(r'(\d+\.\w+)$').firstMatch(fullFileName);
+  return match?.group(0) ?? fullFileName;
+}
+
+
   Future<void> deleteCar({
     required String carId,
     required String carType,

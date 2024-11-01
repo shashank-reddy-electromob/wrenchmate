@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/payment_details.dart';
+import 'package:wrenchmate_user_app/app/modules/booking/widgets/subscriptionCard.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/timelineTile.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 
@@ -22,17 +23,38 @@ class BookingDetailPage extends StatefulWidget {
 
 class _BookingDetailPageState extends State<BookingDetailPage> {
   late Servicefirebase service;
-  late Booking booking;
+  // late Booking booking;
 
   @override
   void initState() {
     super.initState();
-    final args = Get.arguments; // Get all arguments
-    service = args['service']; // Retrieve service
-    booking = args['booking']; // Retrieve booking
+    // final args = Get.arguments; // Get all arguments
+    // service = args['service']; // Retrieve service
+    // booking = args['booking']; // Retrieve booking
 
-    print("Current status: ${booking.status ?? "unknown"}"); // Debugging line
+    // print("Current status: ${booking.status ?? "unknown"}"); // Debugging line
   }
+
+  final List<SubscriptionData> subscriptions = [
+    SubscriptionData(
+      title: "Wash's",
+      startDate: DateTime.now(),
+      totalSlots: 8,
+      selectedSlotIndex: 0,
+    ),
+    SubscriptionData(
+      title: "Premium Wash",
+      startDate: DateTime.now(),
+      totalSlots: 1,
+      selectedSlotIndex: 0,
+    ),
+    SubscriptionData(
+      title: "Basic Clean",
+      startDate: DateTime.now(),
+      totalSlots: 3,
+      selectedSlotIndex: 1,
+    ),
+  ];
 
   String _getCarImage(String carType) {
     switch (carType) {
@@ -52,13 +74,11 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   @override
   Widget build(BuildContext context) {
     // Use the booking and service details
-    final String serviceName = service.name; // Use service name
-    final String statusName = booking.status ?? "unknown";
-    final String carType = booking.car_details ?? "unknown";
-    final double servicePrice = service.price; // Use service price
-    final String bookingDate = booking.confirmationDate != null 
-        ? formatDateTime(booking.confirmationDate!) 
-        : "No Date"; // Use booking confirmation date
+    final String serviceName = "Car Wash"; // Use service name
+    final String statusName = "completed";
+    final String carType = 'Compact SUV';
+    final double servicePrice = 22; // Use service price
+    final String bookingDate = "No Date"; // Use booking confirmation date
     final double itemTotal = 100.0;
     final double discount = 10.0;
     final double tax = 5.0;
@@ -72,9 +92,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         title: Text(
           "Booking Details",
           style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-              color: Colors.black),
+              fontSize: 24, fontWeight: FontWeight.w500, color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(
@@ -102,11 +120,13 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                         Text(
                           serviceName,
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Text('Rs. $servicePrice',
                             style: TextStyle(
-                                fontSize: 18, color: Color(0xff6E6E6E))),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff6E6E6E))),
                       ],
                     ),
                   ],
@@ -117,17 +137,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                   ? Column(
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blue.withOpacity(0.1),
-                                spreadRadius: 5,
-                                blurRadius: 15,
-                              ),
-                            ],
-                          ),
+                          height: 45,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -137,18 +147,22 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                   margin: EdgeInsets.symmetric(horizontal: 8.0),
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      Get.toNamed(AppRoutes.REVIEW, arguments: service);
+                                      Get.toNamed(AppRoutes.REVIEW,
+                                          arguments: service);
                                     },
                                     child: Text(
                                       'WRITE A REVIEW',
-                                      style: TextStyle(color: Color(0xff1671D8)),
+                                      style: TextStyle(
+                                          color: Color(0xff1671D8),
+                                          fontWeight: FontWeight.w400),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
                                       side: BorderSide(
                                           color: Color(0xff1671D8), width: 1),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
                                       ),
                                     ),
                                   ),
@@ -162,14 +176,17 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                     onPressed: () {},
                                     child: Text(
                                       'BOOK AGAIN',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Color(0xff1671D8),
                                       side: BorderSide(
                                           color: Colors.white, width: 1),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
                                       ),
                                     ),
                                   ),
@@ -182,6 +199,10 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                       ],
                     )
                   : Container(),
+              SubscriptionsList(subscriptions: subscriptions),
+              SizedBox(
+                height: 20,
+              ),
               // Booking status
               Text(
                 "Booking Status",
@@ -199,8 +220,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
               TimeLineTile(
                 isFirst: false,
                 isLast: false,
-                isPast: statusName == "ongoing" ||
-                    statusName == "completed",
+                isPast: statusName == "ongoing" || statusName == "completed",
                 timeLineText: "Out For Service",
                 date: bookingDate,
               ),
@@ -214,7 +234,10 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
               SizedBox(height: 32),
               Text(
                 "Payment Summary",
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+              ),
+              SizedBox(
+                height: 10,
               ),
               PaymentDetails(
                 text: 'Item Total',
@@ -228,6 +251,17 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                 text: 'Tax',
                 amount: tax.toString(),
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: 1,
+                color: Colors.grey.shade200,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

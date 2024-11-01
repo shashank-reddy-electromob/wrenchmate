@@ -504,30 +504,14 @@ class _CartPageState extends State<CartPage> {
                     ),
                     GestureDetector(
                         onTap: () async {
-                          if (selectedDate == null) {
-                            var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
-                            if (result != null) {
-                              setState(() {
-                                selectedDate = result['selectedDate'] ?? '';
-                                selectedTimeRange =
-                                    result['selectedTimeRange'] ?? '';
-                                selectedAddress = result['selectAddress'] ?? '';
-                              });
-                            }
-                          } else {
-                            Get.snackbar(
-                              'Date Selected',
-                              'You can change the date and time.',
-                              snackPosition: SnackPosition.BOTTOM,
-                              duration:
-                                  Duration(seconds: 3), // Duration of the toast
-                              backgroundColor: Colors.black87,
-                              colorText: Colors.white,
-                              borderRadius: 10,
-                              margin: EdgeInsets.all(10),
-                              icon: Icon(Icons.info,
-                                  color: Colors.white), // Optional icon
-                            );
+                          var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+                          if (result != null) {
+                            setState(() {
+                              selectedDate = result['selectedDate'] ?? '';
+                              selectedTimeRange =
+                                  result['selectedTimeRange'] ?? '';
+                              selectedAddress = result['selectAddress'] ?? '';
+                            });
                           }
                         },
                         child: Container(
@@ -632,6 +616,47 @@ class _CartPageState extends State<CartPage> {
                                                 child: Row(
                                                   children: [
                                                     Text(
+                                                      "Address",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Text(
+                                                      "${'${cartController.formatAddress(selectedAddress ?? '')}'}",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Colors
+                                                          .grey.shade300)),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
                                                       "Date",
                                                       style: const TextStyle(
                                                         fontSize: 13,
@@ -697,7 +722,7 @@ class _CartPageState extends State<CartPage> {
                                             ),
                                             SizedBox(
                                               height: 15,
-                                            )
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -796,16 +821,40 @@ class _CartPageState extends State<CartPage> {
                           cartController.cartItems
                               .map((item) => item['serviceId']),
                         );
+
                         bool hasServices = cartController.cartItems
                             .any((item) => item['serviceId'] != "NA");
                         print("hasServices :: $hasServices");
 
                         // bool hasServices = cartController.cartItems
                         //     .any((item) => item['serviceId'] != "NA");
-                        // print("hasServices :: $hasServices");
+
+                        // if (cartController.cartSubsItems.isNotEmpty) {
+                        //   await bookingController.addSubscription(
+                        //     cartController.cartSubsItems[0]['packDesc']
+                        //         .toString(),
+                        //     cartController.cartSubsItems[0]['price'],
+                        //     cartController.cartSubsItems[0]['startDate'],
+                        //     cartController.cartSubsItems[0]['endDate'],
+                        //     DateTime.now(),
+                        //     null,
+                        //     "confirmed",
+                        //     null,
+                        //     currentCar!,
+                        //     selectedAddress!,
+                        //     selectedDate,
+                        //     selectedTimeRange,
+                        //     cartController.cartSubsItems[0]['subscriptionId'],
+                        //     cartController.cartSubsItems[0]
+                        //         ['subscriptionName'],
+                        //   );
+                        // }
+
                         if (hasServices &&
                             bookingController.bookingStatus.value !=
                                 'confirmed') {
+                          print("hasServices :: $hasServices");
+
                           var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
                           if (result != null) {
                             setState(() {
@@ -840,6 +889,30 @@ class _CartPageState extends State<CartPage> {
                           print("transactionId :: $transactionId");
                           body = getChecksum().toString();
                           print("body :: $body");
+
+                          if (cartController.cartSubsItems.isNotEmpty) {
+                            await bookingController.addSubscription(
+                              
+                              cartController.cartSubsItems[0]['packDesc']
+                                  .toString(),
+                              cartController.cartSubsItems[0]['price'],
+                              cartController.cartSubsItems[0]['startDate'],
+                              cartController.cartSubsItems[0]['endDate'],
+                              DateTime.now(),
+                              null,
+                              "confirmed",
+                              null,
+                              currentCar!,
+                              selectedAddress!,
+                              selectedDate,
+                              selectedTimeRange,
+                              cartController.cartSubsItems[0]['subscriptionId'],
+                              cartController.cartSubsItems[0]
+                                  ['subscriptionName'],
+                            );
+                            
+                          }
+
                           startPgTransaction();
 
                           // _proceedToPayment(context);

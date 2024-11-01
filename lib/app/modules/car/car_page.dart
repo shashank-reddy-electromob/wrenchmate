@@ -10,6 +10,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/data/models/car_detail_model.dart';
+import 'package:wrenchmate_user_app/app/modules/car/widget/imagePopup.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/globalVariables.dart';
 import '../../routes/app_routes.dart';
@@ -27,12 +28,15 @@ class _CarPageState extends State<CarPage> {
   List<Map<String, dynamic>> userCars = [];
   String carModel = '';
   String petrolOrDiesel = '';
-  String carType = ''; // Add this line
+  String carType = '';
 
   late TextEditingController regYearController;
   late TextEditingController regNoController;
   late TextEditingController insuranceExpController;
   late TextEditingController pucExpController;
+
+  String? _regCardImageUrl;
+  String? _drivingLicImageUrl;
 
   final CarController carController = Get.put(CarController());
 
@@ -80,6 +84,7 @@ class _CarPageState extends State<CarPage> {
         _pageController.jumpToPage(userCurrentCarIndex);
       });
     }
+    log('car is: ${userCars}');
   }
 
   void updateCarDetails(int index) {
@@ -98,6 +103,8 @@ class _CarPageState extends State<CarPage> {
       pucExpController.text = car['puc_expiration'] != null
           ? _formatDateTime((car['puc_expiration']).toDate())
           : '--';
+      _regCardImageUrl = car['regCard'];
+      _drivingLicImageUrl = car['drivLic'];
       print("Displaying car at index $index: $car");
     }
   }
@@ -128,7 +135,12 @@ class _CarPageState extends State<CarPage> {
       regCardImagePath = await uploadImageToStorage(_regCardImage!, 'regCard');
     }
 
-    carController.addImageUrlsToCar(carId: userCurrentCarId,carType: carType,carModel: carModel,drivLicUrl: drivLicImagePath,regCardUrl: regCardImagePath);
+    carController.addImageUrlsToCar(
+        carId: userCurrentCarId,
+        carType: carType,
+        carModel: carModel,
+        drivLicUrl: drivLicImagePath,
+        regCardUrl: regCardImagePath);
 
     log(regCardImagePath ?? '');
     log(drivLicImagePath ?? '');
@@ -470,7 +482,8 @@ class _CarPageState extends State<CarPage> {
                           //       )
                           //     : null,
                         ),
-                        child: _regCardImage == null
+                        child: (_regCardImage == null &&
+                                _regCardImageUrl == null)
                             ? Align(
                                 alignment: Alignment.centerRight,
                                 child: Padding(
@@ -503,15 +516,32 @@ class _CarPageState extends State<CarPage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        _regCardImage!.path
-                                            .split('/')
-                                            .last, // Display file name
+                                        _regCardImageUrl != null
+                                            ? carController.getFileNameFromUrl(
+                                                _regCardImageUrl!)
+                                            : _regCardImage?.path
+                                                    .split('/')
+                                                    .last ??
+                                                '',
                                         style: TextStyle(color: Colors.black),
                                       ),
-                                      Text(
-                                        'View',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500),
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (_regCardImageUrl != null) {
+                                            // Show image from Firebase URL
+                                            showImagePopup(
+                                                _regCardImageUrl!, context);
+                                          } else if (_regCardImage != null) {
+                                            // Show local image
+                                            showImagePopup(
+                                                _regCardImage!, context);
+                                          }
+                                        },
+                                        child: Text(
+                                          'View',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
                                       )
                                     ],
                                   ),
@@ -519,16 +549,16 @@ class _CarPageState extends State<CarPage> {
                               ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
-                    Text(
+                    const Text(
                       'Driving Licen. :',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     GestureDetector(
                       onTap: () => _pickAndUploadImage('drivingLic'),
                       child: Container(
@@ -544,7 +574,8 @@ class _CarPageState extends State<CarPage> {
                           //       )
                           //     : null,
                         ),
-                        child: _drivingLicImage == null
+                        child: (_drivingLicImage == null &&
+                                _drivingLicImageUrl == null)
                             ? Align(
                                 alignment: Alignment.centerRight,
                                 child: Padding(
@@ -553,7 +584,7 @@ class _CarPageState extends State<CarPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Padding(
+                                      const Padding(
                                         padding:
                                             const EdgeInsets.only(left: 20),
                                         child: Text(
@@ -577,15 +608,30 @@ class _CarPageState extends State<CarPage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        _drivingLicImage!.path
-                                            .split('/')
-                                            .last, // Display file name
+                                        _drivingLicImageUrl != null
+                                            ? carController.getFileNameFromUrl(
+                                                _drivingLicImageUrl!)
+                                            : _drivingLicImage?.path
+                                                    .split('/')
+                                                    .last ??
+                                                '',
                                         style: TextStyle(color: Colors.black),
                                       ),
-                                      Text(
-                                        'View',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500),
+                                      GestureDetector(
+                                        onTap: () {
+                                          if (_drivingLicImageUrl != null) {
+                                            showImagePopup(
+                                                _drivingLicImageUrl!, context);
+                                          } else if (_drivingLicImage != null) {
+                                            showImagePopup(
+                                                _drivingLicImage!, context);
+                                          }
+                                        },
+                                        child: const Text(
+                                          'View',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
                                       )
                                     ],
                                   ),
