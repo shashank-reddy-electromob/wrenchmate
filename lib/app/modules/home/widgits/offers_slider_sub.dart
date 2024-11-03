@@ -2,6 +2,7 @@ import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:flutter/material.dart';
+
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
