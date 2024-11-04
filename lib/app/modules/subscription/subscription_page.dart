@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
 import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/car_controller.dart';
@@ -39,6 +41,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   final CarController carController = Get.put(CarController());
   final CartController cartController = Get.put(CartController());
+  final BookingController bookingController = Get.put(BookingController());
+
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
@@ -47,7 +51,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   @override
   void initState() {
     super.initState();
-
+    bookingController.fetchBookingsWithSubscriptionDetails();
     fetchUserCurrentCarIndex();
     firebasePriceFetch();
   }
@@ -159,22 +163,70 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                               ),
                       ),
                       SizedBox(width: 16),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Get.toNamed(AppRoutes.BOOKING_DETAILS);
-                          },
-                          child: Text(
-                            "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: 'Raleway',
-                                fontWeight: FontWeight.w600),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 5,
-                          ),
-                        ),
-                      ),
+                      Obx(() {
+                        return bookingController.subsBookingList.isEmpty
+                            ? Expanded(
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: Text(
+                                    "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: 'Raleway',
+                                        fontWeight: FontWeight.w600),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 5,
+                                  ),
+                                ),
+                              )
+                            : Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed(AppRoutes.BOOKING_DETAILS);
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Current Subscription',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w500),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        bookingController.subsBookingList[0]
+                                            ['subscriptionDetails']['packDesc'],
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w800),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        'Expiring on: ${bookingController.formatTimestamp(bookingController.subsBookingList[0]['subscriptionDetails']['endDate'])}',
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w300),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                      })
                     ],
                   ),
                 ),
@@ -650,12 +702,12 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       double.parse(price.toString()),
                       "1",
                       isMonthly && premium
-                          ? 'essential-need-pack'
+                          ? 'monthly-essential-need-pack'
                           : isMonthly && !premium
-                              ? 'premium-need-pack'
+                              ? 'monthly-premium-need-pack'
                               : !isMonthly && premium
-                                  ? 'ultimate-wash-package'
-                                  : "deluxe-maintenance-pack",
+                                  ? 'quarterly-ultimate-wash-package'
+                                  : "quarterly-deluxe-maintenance-pack",
                       isMonthly && premium
                           ? 'Essential Need Pack'
                           : isMonthly && !premium

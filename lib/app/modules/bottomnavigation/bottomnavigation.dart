@@ -91,35 +91,36 @@ class _bottomnavigationState extends State<bottomnavigation> {
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: ClipOval(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              shape: BoxShape.circle,
-            ),
-            padding: EdgeInsets.all(12),
-            child: InkWell(
-              splashColor: Colors.blueAccent,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 2;
-                });
-              },
-              child: SizedBox(
-                width: 36,
-                height: 36,
-                child: ImageIcon(
-                  AssetImage('assets/icons/car.png'),
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
+        // floatingActionButton: ClipOval(
+        //   child: Container(
+        //     decoration: BoxDecoration(
+        //       gradient: LinearGradient(
+        //         colors: [Color(0xff3B7FFF), Color(0xff2666DE)],
+        //         begin: Alignment.topCenter,
+        //         end: Alignment.bottomCenter,
+        //       ),
+        //       shape: BoxShape.circle,
+        //     ),
+        //     padding: EdgeInsets.all(12),
+        //     child: InkWell(
+        //       splashColor: Colors.blueAccent,
+        //       onTap: () {
+        //         setState(() {
+        //           _selectedIndex = 2;
+        //         });
+        //       },
+        //       child: SizedBox(
+        //         width: 36,
+        //         height: 36,
+        //         child: ImageIcon(
+        //           AssetImage('assets/icons/car.png'),
+        //           color: Colors.white,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
+
         bottomNavigationBar: BottomNavigationBar(
           unselectedFontSize: 10,
           unselectedLabelStyle: TextStyle(
@@ -143,8 +144,11 @@ class _bottomnavigationState extends State<bottomnavigation> {
               label: 'Products',
             ),
             BottomNavigationBarItem(
-              icon: SizedBox(width: 0),
-              label: '',
+              icon: ImageIcon(
+                AssetImage('assets/icons/car.png'),
+                size: Get.width < 360 ? 18 : 25,
+              ),
+              label: 'Car',
             ),
             BottomNavigationBarItem(
               icon: ImageIcon(

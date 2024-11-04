@@ -474,11 +474,10 @@ class CartController extends GetxController {
     });
   }
 
-
   String formatAddress(String address) {
-  final segments = address.split(',').map((e) => e.trim()).toList();
-  return '${segments[0]}, ${segments[segments.length - 3]}';
-}
+    final segments = address.split(',').map((e) => e.trim()).toList();
+    return '${segments[0]}, ${segments[segments.length - 3]}';
+  }
 
   Future<void> addSubscriptionToCartSnackbar(
     BuildContext context,
@@ -515,10 +514,9 @@ class CartController extends GetxController {
     DateTime startDate = DateTime.now();
 
     DateTime endDate;
-
-    if (subscriptionName.startsWith('monthly')) {
+    if (subscriptionName.toLowerCase().startsWith('monthly')) {
       endDate = startDate.add(Duration(days: 30));
-    } else if (subscriptionName.startsWith('quarterly')) {
+    } else if (subscriptionName.toLowerCase().startsWith('quarterly')) {
       endDate = startDate.add(Duration(days: 90));
     } else {
       endDate = startDate;

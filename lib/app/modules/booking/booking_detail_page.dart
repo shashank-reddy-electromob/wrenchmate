@@ -1,7 +1,12 @@
+import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
+import 'package:wrenchmate_user_app/app/modules/booking/widgets/bottomSheet.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/payment_details.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/subscriptionCard.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/timelineTile.dart';
@@ -23,8 +28,7 @@ class BookingDetailPage extends StatefulWidget {
 
 class _BookingDetailPageState extends State<BookingDetailPage> {
   late Servicefirebase service;
-  // late Booking booking;
-
+  BookingController bookingController = Get.find<BookingController>();
   @override
   void initState() {
     super.initState();
@@ -34,27 +38,6 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
 
     // print("Current status: ${booking.status ?? "unknown"}"); // Debugging line
   }
-
-  final List<SubscriptionData> subscriptions = [
-    SubscriptionData(
-      title: "Wash's",
-      startDate: DateTime.now(),
-      totalSlots: 8,
-      selectedSlotIndex: 0,
-    ),
-    SubscriptionData(
-      title: "Premium Wash",
-      startDate: DateTime.now(),
-      totalSlots: 1,
-      selectedSlotIndex: 0,
-    ),
-    SubscriptionData(
-      title: "Basic Clean",
-      startDate: DateTime.now(),
-      totalSlots: 3,
-      selectedSlotIndex: 1,
-    ),
-  ];
 
   String _getCarImage(String carType) {
     switch (carType) {
@@ -71,14 +54,20 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     }
   }
 
+  String _formatTime(double value) {
+    int hours = value.toInt();
+    String formattedTime = '${hours.toString().padLeft(2, '0')}:00';
+    return formattedTime;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Use the booking and service details
-    final String serviceName = "Car Wash"; // Use service name
-    final String statusName = "completed";
-    final String carType = 'Compact SUV';
-    final double servicePrice = 22; // Use service price
-    final String bookingDate = "No Date"; // Use booking confirmation date
+    final String serviceName = bookingController.benefitsList[0]['name'];
+    final String statusName = bookingController.subsBookingList[0]['status'];
+    final String carType = bookingController.subsBookingList[0]['car_details'];
+    final double servicePrice = 22;
+    final String bookingDate = bookingController.formatTimestamp(
+        bookingController.subsBookingList[0]['confirmation_date']);
     final double itemTotal = 100.0;
     final double discount = 10.0;
     final double tax = 5.0;
@@ -102,18 +91,16 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Service details
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
                   children: [
-                    // Car image
                     Image.asset(
-                      _getCarImage(carType), // Get car image
+                      _getCarImage(carType),
                       height: 60,
                       width: 100,
                     ),
-                    SizedBox(width: 16), // Space between image and text
+                    SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -199,7 +186,51 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                       ],
                     )
                   : Container(),
-              SubscriptionsList(subscriptions: subscriptions),
+              Obx(() {
+                return Container(
+                  height: 140,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: bookingController.benefitsList.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      final benefit = bookingController.benefitsList[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            _showBottomSheet(
+                                context,
+                                benefit['name'],
+                                DateFormat("d MMMM, yyyy").parse(
+                                    bookingController.formatTimestamp(
+                                        bookingController.subsBookingList[0]
+                                            ['confirmation_date'])),
+                                bookingController.subsBookingList[0]
+                                    ['selected_time_range']['start'],
+                                bookingController.subsBookingList[0]
+                                    ['selected_time_range']['end'],
+                                int.parse(benefit['num']));
+                          },
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            child: SubscriptionCard(
+                                title: benefit['name'],
+                                startDate: DateFormat("d MMMM, yyyy").parse(
+                                    bookingController.formatTimestamp(
+                                        bookingController.subsBookingList[0]
+                                            ['confirmation_date'])),
+                                totalSlots: int.parse(benefit['num']),
+                                selectedSlotIndex: 0),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }),
+
               SizedBox(
                 height: 20,
               ),
@@ -280,6 +311,22 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showBottomSheet(BuildContext context, String title, DateTime startDate,
+      double startTime, double endTime, int slots) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return BottomSheetContent(
+            title: title,
+            startDate: startDate,
+            startTime: startTime,
+            endTime: endTime,
+            slots: slots);
+      },
     );
   }
 }

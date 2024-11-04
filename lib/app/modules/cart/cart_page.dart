@@ -826,30 +826,6 @@ class _CartPageState extends State<CartPage> {
                             .any((item) => item['serviceId'] != "NA");
                         print("hasServices :: $hasServices");
 
-                        // bool hasServices = cartController.cartItems
-                        //     .any((item) => item['serviceId'] != "NA");
-
-                        // if (cartController.cartSubsItems.isNotEmpty) {
-                        //   await bookingController.addSubscription(
-                        //     cartController.cartSubsItems[0]['packDesc']
-                        //         .toString(),
-                        //     cartController.cartSubsItems[0]['price'],
-                        //     cartController.cartSubsItems[0]['startDate'],
-                        //     cartController.cartSubsItems[0]['endDate'],
-                        //     DateTime.now(),
-                        //     null,
-                        //     "confirmed",
-                        //     null,
-                        //     currentCar!,
-                        //     selectedAddress!,
-                        //     selectedDate,
-                        //     selectedTimeRange,
-                        //     cartController.cartSubsItems[0]['subscriptionId'],
-                        //     cartController.cartSubsItems[0]
-                        //         ['subscriptionName'],
-                        //   );
-                        // }
-
                         if (hasServices &&
                             bookingController.bookingStatus.value !=
                                 'confirmed') {
@@ -891,26 +867,25 @@ class _CartPageState extends State<CartPage> {
                           print("body :: $body");
 
                           if (cartController.cartSubsItems.isNotEmpty) {
-                            await bookingController.addSubscription(
-                              
-                              cartController.cartSubsItems[0]['packDesc']
-                                  .toString(),
-                              cartController.cartSubsItems[0]['price'],
-                              cartController.cartSubsItems[0]['startDate'],
-                              cartController.cartSubsItems[0]['endDate'],
-                              DateTime.now(),
-                              null,
-                              "confirmed",
-                              null,
-                              currentCar!,
-                              selectedAddress!,
-                              selectedDate,
-                              selectedTimeRange,
-                              cartController.cartSubsItems[0]['subscriptionId'],
-                              cartController.cartSubsItems[0]
-                                  ['subscriptionName'],
-                            );
-                            
+                            await bookingController.addSubscriptionBooking(
+                                cartController.cartSubsItems[0]['packDesc']
+                                    .toString(),
+                                cartController.cartSubsItems[0]['price'],
+                                cartController.cartSubsItems[0]['startDate'],
+                                cartController.cartSubsItems[0]['endDate'],
+                                "confirmed",
+                                DateTime.now(),
+                                null,
+                                null,
+                                currentCar!,
+                                selectedAddress!,
+                                selectedDate,
+                                selectedTimeRange,
+                                cartController.cartSubsItems[0]
+                                    ['subscriptionId'],
+                                cartController.cartSubsItems[0]
+                                    ['subscriptionName'],
+                                context);
                           }
 
                           startPgTransaction();

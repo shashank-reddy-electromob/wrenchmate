@@ -67,47 +67,44 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                       children: List.generate(widget.totalSlots, (index) {
                         return Flexible(
                           flex: index == widget.selectedSlotIndex ? 2 : 1,
-                          child: InkWell(
-                            onTap: () {},
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: widget.selectedSlotIndex == index
-                                    ? Color(0xff1671D8)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: index == 0
-                                      ? const Radius.circular(10)
-                                      : Radius.zero,
-                                  bottomLeft: index == 0
-                                      ? const Radius.circular(10)
-                                      : Radius.zero,
-                                  topRight: index == widget.totalSlots - 1
-                                      ? const Radius.circular(10)
-                                      : Radius.zero,
-                                  bottomRight: index == widget.totalSlots - 1
-                                      ? const Radius.circular(10)
-                                      : Radius.zero,
-                                ),
-                                border: Border(
-                                  right: index < widget.totalSlots - 1
-                                      ? BorderSide(color: Colors.blue)
-                                      : BorderSide.none,
-                                ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: widget.selectedSlotIndex == index
+                                  ? Color(0xff1671D8)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.only(
+                                topLeft: index == 0
+                                    ? const Radius.circular(10)
+                                    : Radius.zero,
+                                bottomLeft: index == 0
+                                    ? const Radius.circular(10)
+                                    : Radius.zero,
+                                topRight: index == widget.totalSlots - 1
+                                    ? const Radius.circular(10)
+                                    : Radius.zero,
+                                bottomRight: index == widget.totalSlots - 1
+                                    ? const Radius.circular(10)
+                                    : Radius.zero,
                               ),
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 5, right: 5),
-                                  child: Text(
-                                    index == widget.selectedSlotIndex
-                                        ? DateFormat('dd MMM yyyy')
-                                            .format(widget.startDate)
-                                        : '',
-                                    style: TextStyle(
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
+                              border: Border(
+                                right: index < widget.totalSlots - 1
+                                    ? BorderSide(color: Colors.blue)
+                                    : BorderSide.none,
+                              ),
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 5, right: 5),
+                                child: Text(
+                                  index == widget.selectedSlotIndex
+                                      ? DateFormat('dd MMM yyyy')
+                                          .format(widget.startDate)
+                                      : '',
+                                  style: TextStyle(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
@@ -128,49 +125,49 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
 }
 
 // Horizontal scrollable list of subscription cards
-class SubscriptionsList extends StatelessWidget {
-  final List<SubscriptionData> subscriptions;
+// class SubscriptionsList extends StatelessWidget {
+//   final List<SubscriptionData> subscriptions;
 
-  const SubscriptionsList({
-    Key? key,
-    required this.subscriptions,
-  }) : super(key: key);
+//   const SubscriptionsList({
+//     Key? key,
+//     required this.subscriptions,
+//   }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: subscriptions.map((subscription) {
-          return Container(
-            width: Get.width * 0.86,
-            margin: const EdgeInsets.only(right: 15),
-            child: SubscriptionCard(
-              title: subscription.title,
-              startDate: subscription.startDate,
-              totalSlots: subscription.totalSlots,
-              selectedSlotIndex: subscription.selectedSlotIndex,
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       scrollDirection: Axis.horizontal,
+//       child: Row(
+//         children: subscriptions.map((subscription) {
+//           return Container(
+//             width: Get.width * 0.86,
+//             margin: const EdgeInsets.only(right: 15),
+//             child: SubscriptionCard(
+//               title: subscription.title,
+//               startDate: subscription.startDate,
+//               totalSlots: subscription.totalSlots,
+//               selectedSlotIndex: subscription.selectedSlotIndex,
+//             ),
+//           );
+//         }).toList(),
+//       ),
+//     );
+//   }
+// }
 
-// Data model for subscription
-class SubscriptionData {
-  final String title;
-  final DateTime startDate;
-  final int totalSlots;
-  final int selectedSlotIndex;
-  final double progress;
+// // Data model for subscription
+// class SubscriptionData {
+//   final String title;
+//   final DateTime startDate;
+//   final int totalSlots;
+//   final int selectedSlotIndex;
+//   final double progress;
 
-  SubscriptionData({
-    required this.title,
-    required this.startDate,
-    required this.totalSlots,
-    this.selectedSlotIndex = 0,
-    this.progress = 0,
-  });
-}
+//   SubscriptionData({
+//     required this.title,
+//     required this.startDate,
+//     required this.totalSlots,
+//     this.selectedSlotIndex = 0,
+//     this.progress = 0,
+//   });
+// }

@@ -21,8 +21,10 @@ class BookingPage extends StatefulWidget {
 class _BookingPageState extends State<BookingPage> {
   String selectedTab = 'currBooking';
   List<Map<String, dynamic>> bookings = []; // Store fetched bookings
-  List<Servicefirebase> currentServices = []; // Store services for current bookings
-  List<Servicefirebase> historyServices = []; // Store services for history bookings
+  List<Servicefirebase> currentServices =
+      []; // Store services for current bookings
+  List<Servicefirebase> historyServices =
+      []; // Store services for history bookings
 
   @override
   void initState() {
@@ -37,8 +39,10 @@ class _BookingPageState extends State<BookingPage> {
     final ServiceController serviceController = Get.put(ServiceController());
     for (var booking in bookings) {
       for (var serviceId in booking['service_list']) {
-        Servicefirebase service = await _fetchServiceDetails(serviceController, serviceId);
-        if (booking['status'] == 'confirmed' || booking['status'] == 'ongoing') {
+        Servicefirebase service =
+            await _fetchServiceDetails(serviceController, serviceId);
+        if (booking['status'] == 'confirmed' ||
+            booking['status'] == 'ongoing') {
           currentServices.add(service); // Add to current bookings
         } else if (booking['status'] == 'completed') {
           historyServices.add(service); // Add to history bookings
@@ -51,9 +55,11 @@ class _BookingPageState extends State<BookingPage> {
     setState(() {});
   }
 
-  Future<Servicefirebase> _fetchServiceDetails(ServiceController serviceController, String serviceId) async {
+  Future<Servicefirebase> _fetchServiceDetails(
+      ServiceController serviceController, String serviceId) async {
     await serviceController.fetchServiceDataById(serviceId);
-    return serviceController.services.firstWhere((service) => service.id == serviceId); // Return the service
+    return serviceController.services
+        .firstWhere((service) => service.id == serviceId); // Return the service
   }
 
   @override
@@ -118,18 +124,30 @@ class _BookingPageState extends State<BookingPage> {
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: selectedTab == 'currBooking' ? currentServices.length : historyServices.length,
+              itemCount: selectedTab == 'currBooking'
+                  ? currentServices.length
+                  : historyServices.length,
               itemBuilder: (context, index) {
-                final service = selectedTab == 'currBooking' ? currentServices[index] : historyServices[index];
-                
+                final service = selectedTab == 'currBooking'
+                    ? currentServices[index]
+                    : historyServices[index];
+
                 // Ensure bookingIndex is calculated correctly
-                final bookingIndex = selectedTab == 'currBooking' ? index : index; // Adjusted for history
-                
+                final bookingIndex = selectedTab == 'currBooking'
+                    ? index
+                    : index; // Adjusted for history
+
                 // Check if bookingIndex is valid
                 if (bookingIndex < bookings.length) {
-                  final bookingMap = bookings[bookingIndex]; // Access the booking
-                  final booking = Booking.fromMap(bookingMap); // Convert to Booking object
-                  return BookingTile(service: service, booking: booking, selectedTab: selectedTab,); // Pass the Booking object
+                  final bookingMap =
+                      bookings[bookingIndex]; // Access the booking
+                  final booking =
+                      Booking.fromMap(bookingMap); // Convert to Booking object
+                  return BookingTile(
+                    service: service,
+                    booking: booking,
+                    selectedTab: selectedTab,
+                  ); // Pass the Booking object
                 } else {
                   return SizedBox.shrink(); // Handle out of bounds
                 }
@@ -147,7 +165,12 @@ class BookingTile extends StatelessWidget {
   final Booking booking; // Change to accept Booking
   final String selectedTab; // Change to accept Booking
 
-  const BookingTile({Key? key, required this.service, required this.booking, required this.selectedTab}) : super(key: key);
+  const BookingTile(
+      {Key? key,
+      required this.service,
+      required this.booking,
+      required this.selectedTab})
+      : super(key: key);
 
   String _getCarImage(String carType) {
     switch (carType) {
@@ -180,9 +203,9 @@ class BookingTile extends StatelessWidget {
       padding: const EdgeInsets.only(left: 18.0, top: 8.0),
       child: GestureDetector(
         onTap: () {
-          Get.toNamed(AppRoutes.BOOKING_DETAIL, arguments: {'service': service, 'booking': booking});
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
+          Get.toNamed(AppRoutes.BOOKING_DETAIL,
+              arguments: {'service': service, 'booking': booking});
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
         },
         child: Container(
           decoration: BoxDecoration(
@@ -201,7 +224,9 @@ class BookingTile extends StatelessWidget {
                 height: 150,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: selectedTab == 'currBooking' ? Color(0xff4CD964) : Color(0xff3778F2), // Conditional color
+                  color: selectedTab == 'currBooking'
+                      ? Color(0xff4CD964)
+                      : Color(0xff3778F2), // Conditional color
                 ),
               ),
               Positioned(
@@ -209,7 +234,8 @@ class BookingTile extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 150,
-                  padding: EdgeInsets.only(left: 16,top: 24,bottom: 16,right: 48),
+                  padding:
+                      EdgeInsets.only(left: 16, top: 24, bottom: 16, right: 48),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.white,
@@ -217,28 +243,37 @@ class BookingTile extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
                               Image.asset(carImage, height: 60),
-                              SizedBox(width: 8,),
+                              SizedBox(
+                                width: 8,
+                              ),
                               Text('Service name: \n${service.name}'),
                             ],
                           ),
-                          Container(height: 40,width: 100,decoration: BoxDecoration(
-                            color: Color(0xffE9FFED),
-                            borderRadius: BorderRadius.circular(7),
-                          ),child: Text("something"),alignment: Alignment.center,)
+                          Container(
+                            height: 40,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              color: Color(0xffE9FFED),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Text("something"),
+                            alignment: Alignment.center,
+                          )
                         ],
                       ), // Display service name
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(formattedDate),
                           Text('₹ ${service.price}'),
                         ],
                       ),
-
                     ],
                   ),
                 ),
