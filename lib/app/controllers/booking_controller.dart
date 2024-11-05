@@ -14,6 +14,7 @@ class BookingController extends GetxController {
   RxString bookingStatus = 'pending'.obs;
   var subId = ''.obs;
   var subsBookingList = <Map<String, dynamic>>[].obs;
+  var BookingList = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> subscriptionDetailsList =
       <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> benefitsList = <Map<String, dynamic>>[].obs;
@@ -269,8 +270,12 @@ class BookingController extends GetxController {
           .collection('Booking')
           .where('user_id', isEqualTo: userId)
           .get();
-
+      BookingList.clear();
       List<Map<String, dynamic>> bookings = snapshot.docs
+          .where((doc) {
+            var data = doc.data() as Map<String, dynamic>?;
+            return data != null && !data.containsKey('subscription_id');
+          })
           .map((doc) => doc.data() as Map<String, dynamic>)
           .toList();
 
@@ -285,6 +290,7 @@ class BookingController extends GetxController {
       }
 
       print(' booking is: ${bookings}');
+      BookingList.assignAll(bookings);
       return bookings;
     } catch (e) {
       throw Exception("Failed to fetch bookings: $e");

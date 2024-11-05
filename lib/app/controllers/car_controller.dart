@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -211,6 +212,73 @@ Future<void> addImageUrlsToCar({
     print("Error adding image URLs: $e");
   }
 }
+
+Future deleteCardImageUrl({
+  required String carId,
+  required String carType,
+  required String carModel,
+  required String imageType, 
+}) async {
+  try {
+    if (imageType != 'drivLic' && imageType != 'regCard') {
+      print("Invalid image type. Must be 'drivLic' or 'regCard'");
+      return;
+    }
+
+    String carTypeId = carTypeToIdMap[carType]!;
+    
+    DocumentSnapshot docSnapshot = await _firestore
+        .collection('car')
+        .doc('PeVE6MdvLwzcePpmZfp0')
+        .collection(carType)
+        .doc(carTypeId)
+        .collection(carModel)
+        .doc(carId)
+        .get();
+
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+      String? imageUrl = data[imageType] as String?;
+
+      if (imageUrl != null) {
+        try {
+          Uri uri = Uri.parse(imageUrl);
+          String path = Uri.decodeFull(uri.path.split('/o/')[1]);
+          
+          final storageRef = FirebaseStorage.instance.ref().child(path);
+          await storageRef.delete();
+          print("File deleted from storage successfully");
+        } catch (storageError) {
+          print("Error deleting file from storage: $storageError");
+        }
+      }
+
+      Map<String, dynamic> updateData = {
+        imageType: FieldValue.delete()
+      };
+
+      await _firestore
+          .collection('car')
+          .doc('PeVE6MdvLwzcePpmZfp0')
+          .collection(carType)
+          .doc(carTypeId)
+          .collection(carModel)
+          .doc(carId)
+          .update(updateData);
+
+      print("Image URL deleted successfully from Firestore");
+      
+      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+        'tracking_button': false,
+      });
+    } else {
+      print("Document does not exist");
+    }
+  } catch (e) {
+    print("Error in deletion process: $e");
+  }
+}
+
 
 
   Future<void> updateCar({

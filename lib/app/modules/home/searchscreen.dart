@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,7 +10,6 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservi
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
-
 import '../../controllers/service_controller.dart';
 import '../../data/models/Service_firebase.dart';
 
@@ -23,14 +21,15 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final ServiceController serviceController = Get.put(ServiceController());
   final TextEditingController _searchController = TextEditingController();
-  List<Servicefirebase> topServices = [];
-  List<String> topServiceIds = [];
+  
   List<Servicefirebase> services = <Servicefirebase>[];
   List<Servicefirebase> _resultList = [];
+  List<Servicefirebase> topServices = [];
+  List<String> topServiceIds = [];
   List<String> topCategories = [];
   List<String> searchHistory = [];
   bool _isSearching = false;
-  
+  bool _isLoading = true;
 
   final Map<String, String> categoryImageMap = {
     'Car Wash': 'assets/services/car wash.png',
@@ -43,33 +42,25 @@ class _SearchPageState extends State<SearchPage> {
     'General Service': 'assets/services/general service.png',
   };
 
-  Future<void> getTopCategories() async {
-    var data = await FirebaseFirestore.instance.collection("topCategory").get();
-    topCategories = data.docs.map((doc) => doc['category'] as String).toList();
-    setState(() {});
-  }
-
-  Future<void> getTopServiceIds() async {
-    var data = await FirebaseFirestore.instance.collection("topServices").get();
-    topServiceIds = data.docs.map((doc) => doc['serviceId'] as String).toList();
-    setState(() {});
-  }
-
-  Future<void> getSearchHistory() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    searchHistory = prefs.getStringList('searchHistory') ?? [];
-    setState(() {});
-  }
-
   @override
   void initState() {
     super.initState();
+    _initialize();
+    _searchController.addListener(_onSearchChange);
+  }
 
-    getClientData().then((_) {
+  Future<void> _initialize() async {
+    try {
+      await Future.wait([
+        getClientData(),
+        getTopCategories(),
+        getSearchHistory(),
+        getTopServiceIds(),
+      ]);
+      
       final filterArgs = Get.arguments;
-      log('the arguments we get are: ${filterArgs}');
       if (filterArgs != null) {
-        _applyFilters(
+        await _applyFilters(
           filterArgs['selectedServices'],
           filterArgs['selectedDiscount'],
           filterArgs['selectedRating'],
@@ -77,125 +68,154 @@ class _SearchPageState extends State<SearchPage> {
           filterArgs['maxPrice'],
         );
       } else {
-        // If no arguments are passed, display all services
         setState(() {
-          _resultList = services;
+          _resultList = List.from(services);
+          _isLoading = false;
         });
       }
-    });
-
-    getTopCategories();
-    getSearchHistory();
-    getTopServiceIds();
-    _searchController.addListener(_onSearchChange);
-  }
-
-  void _applyFilters(List<String>? selectedServices, String? selectedDiscount,
-      String? selectedRating, double? minPrice, double? maxPrice) {
-    print("Before filtering:");
-    services.forEach((service) {
-      print(
-          "Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
-    });
-    serviceController.isFiltering.value=true;
-    List<Servicefirebase> temp=[];
-    // Wrap filtering logic within setState
-    temp = services.where((service) {
-      // Printing each service's attributes before filtering
-      print("\nEvaluating Service: ${service.name}");
-      print(
-          "Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
-
-      // Applying filters
-      bool matchesCategory =
-          selectedServices == null || selectedServices.isEmpty
-              ? true
-              : selectedServices.contains(service.category);
-
-      double discountValue = 0;
-      if (selectedDiscount != null) {
-        selectedDiscount = selectedDiscount?.replaceAll('%', '');
-        List<String>? discountRange = selectedDiscount?.split('-');
-        if (discountRange?.length == 2) {
-          discountValue = double.tryParse(discountRange![0]) ?? 0;
-        } else {
-          discountValue = double.tryParse(selectedDiscount!) ?? 0;
-        }
-      }
-
-      double ratingValue = 0;
-      if (selectedRating != null) {
-        selectedRating =
-            selectedRating?.replaceAll('>', '').replaceAll('⭐', '').trim();
-        ratingValue = double.tryParse(selectedRating!) ?? 0;
-      }
-
-      bool matchesDiscount =
-          selectedDiscount == null || service.discount >= discountValue;
-      bool matchesRating =
-          selectedRating == null || service.averageReview > ratingValue;
-      bool matchesPriceRange =
-          (minPrice == null || service.price >= minPrice) &&
-              (maxPrice == null || service.price <= maxPrice);
-
-      print("Matches Category: $matchesCategory");
-      print("Matches Discount: $matchesDiscount");
-      print("Matches Rating: $matchesRating");
-      print("Matches Price Range: $matchesPriceRange");
-
-      return matchesCategory &&
-          matchesDiscount &&
-          matchesRating &&
-          matchesPriceRange;
-    }).toList();
-
-    setState(() {
-    _isSearching = true;
-      _resultList.assignAll(temp);
-    });
-    print("\nAfter filtering:");
-    _resultList.forEach((service) {
-      print(
-          "Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
-    });
-  }
-
-  Future<void> saveSearchHistory(String searchTerm) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (!searchHistory.contains(searchTerm)) {
-      searchHistory.add(searchTerm);
-      await prefs.setStringList('searchHistory', searchHistory);
-      setState(() {}); // Update the UI to show the new search term
+    } catch (e) {
+      print('Initialization error: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
-  // Listener for search field changes
-  _onSearchChange() {
-    setState(() {
-      _isSearching = _searchController.text.isNotEmpty;
-    });
-    searchResultList();
+  Future<void> getTopCategories() async {
+    try {
+      var data = await FirebaseFirestore.instance.collection("topCategory").get();
+      topCategories = data.docs.map((doc) => doc['category'] as String).toList();
+      setState(() {});
+    } catch (e) {
+      print('Error fetching top categories: $e');
+    }
   }
 
-  getClientData() async {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    var userDoc =
-        await FirebaseFirestore.instance.collection("User").doc(userId).get();
+  Future<void> getTopServiceIds() async {
+    try {
+      var data = await FirebaseFirestore.instance.collection("topServices").get();
+      topServiceIds = data.docs.map((doc) => doc['serviceId'] as String).toList();
+      setState(() {});
+    } catch (e) {
+      print('Error fetching top service IDs: $e');
+    }
+  }
 
-    if (userDoc.exists) {
-      List<String> userCarDetails =
-          List<String>.from(userDoc.data()?['User_carDetails'] ?? []);
+  Future<void> getSearchHistory() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      searchHistory = prefs.getStringList('searchHistory') ?? [];
+      setState(() {});
+    } catch (e) {
+      print('Error fetching search history: $e');
+    }
+  }
 
-      List<String> userCarModels =
-          userCarDetails.map((detail) => detail.split(';')[0]).toList();
+  Future<void> _applyFilters(
+    List<String>? selectedServices,
+    String? selectedDiscount,
+    String? selectedRating,
+    double? minPrice,
+    double? maxPrice,
+  ) async {
+    if (services.isEmpty) {
+      print('Services list is empty when applying filters');
+      return;
+    }
 
-      var data = await FirebaseFirestore.instance
+    print("Before filtering: ${services.length} services");
+    services.forEach((service) {
+      print("Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
+    });
+
+    // Parse discount value
+    double? discountValue;
+    if (selectedDiscount != null) {
+      final cleanDiscount = selectedDiscount.replaceAll('%', '');
+      final discountRange = cleanDiscount.split('-');
+      discountValue = double.tryParse(
+        discountRange.length == 2 ? discountRange[0] : cleanDiscount
+      );
+    }
+
+    // Parse rating value
+    double? ratingValue;
+    if (selectedRating != null) {
+      final cleanRating = selectedRating
+          .replaceAll('>', '')
+          .replaceAll('⭐', '')
+          .trim();
+      ratingValue = double.tryParse(cleanRating);
+    }
+
+    // Apply filters
+    final filteredList = services.where((service) {
+      print("\nEvaluating Service: ${service.name}");
+      
+      // Category filter
+      final categoryMatch = selectedServices?.isEmpty ?? true
+          ? true
+          : selectedServices?.contains(service.category) ?? false;
+
+      // Discount filter
+      final discountMatch = discountValue == null
+          ? true
+          : service.discount >= discountValue;
+
+      // Rating filter
+      final ratingMatch = ratingValue == null
+          ? true
+          : service.averageReview > ratingValue;
+
+      // Price range filter
+      final priceMatch = (minPrice == null || service.price >= minPrice) &&
+          (maxPrice == null || service.price <= maxPrice);
+
+      print("Category Match: $categoryMatch");
+      print("Discount Match: $discountMatch");
+      print("Rating Match: $ratingMatch");
+      print("Price Match: $priceMatch");
+
+      return categoryMatch && discountMatch && ratingMatch && priceMatch;
+    }).toList();
+
+    setState(() {
+      _isSearching = true;
+      _resultList = filteredList;
+      _isLoading = false;
+    });
+
+    print("\nAfter filtering: ${_resultList.length} results");
+    _resultList.forEach((service) {
+      print("Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
+    });
+  }
+
+  Future<void> getClientData() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) throw Exception('User not authenticated');
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection("User")
+          .doc(userId)
+          .get();
+
+      if (!userDoc.exists) throw Exception('User document not found');
+
+      final userCarDetails = List<String>.from(
+          userDoc.data()?['User_carDetails'] ?? []);
+      final userCarModels = userCarDetails
+          .map((detail) => detail.split(';')[0])
+          .toList();
+
+      final querySnapshot = await FirebaseFirestore.instance
           .collection("Service")
           .where('carmodel', arrayContainsAny: userCarModels)
           .get();
 
-      services = data.docs.map((doc) {
-        var data = doc.data() as Map<String, dynamic>;
+      services = querySnapshot.docs.map((doc) {
+        final data = doc.data();
         return Servicefirebase(
           id: doc.id,
           category: data['category'] ?? '',
@@ -214,16 +234,25 @@ class _SearchPageState extends State<SearchPage> {
         );
       }).toList();
 
-      topServices = services.where((service) {
-        return topServiceIds.contains(service.id);
-      }).toList();
+      topServices = services.where((service) => 
+        topServiceIds.contains(service.id)
+      ).toList();
+
       setState(() {
-        _resultList = services;
+        _resultList = List.from(services);
       });
+    } catch (e) {
+      print('Error fetching client data: $e');
     }
   }
 
-  // Dynamic searching as you type
+  void _onSearchChange() {
+    setState(() {
+      _isSearching = _searchController.text.isNotEmpty;
+    });
+    searchResultList();
+  }
+
   void searchResultList() {
     String query = _searchController.text.trim().toLowerCase();
     if (query.isNotEmpty) {
@@ -239,28 +268,37 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    getClientData();
-    super.didChangeDependencies();
+  Future<void> saveSearchHistory(String searchTerm) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (!searchHistory.contains(searchTerm)) {
+        searchHistory.add(searchTerm);
+        await prefs.setStringList('searchHistory', searchHistory);
+        setState(() {});
+      }
+    } catch (e) {
+      print('Error saving search history: $e');
+    }
   }
 
-  // Function to remove a search history item
   void removeSearchItem(int index) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    searchHistory.removeAt(index); // Remove from local list
-    await prefs.setStringList(
-        'searchHistory', searchHistory); // Update SharedPreferences
-    setState(() {}); // Update UI
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      searchHistory.removeAt(index);
+      await prefs.setStringList('searchHistory', searchHistory);
+      setState(() {});
+    } catch (e) {
+      print('Error removing search item: $e');
+    }
   }
 
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChange);
     _searchController.dispose();
-    _resultList.clear();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {

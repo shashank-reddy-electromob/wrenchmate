@@ -1,8 +1,14 @@
+import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
+import 'package:wrenchmate_user_app/app/modules/booking/widgets/bottomSheet.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/payment_details.dart';
+import 'package:wrenchmate_user_app/app/modules/booking/widgets/subscriptionCard.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/timelineTile.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 
@@ -15,23 +21,17 @@ String formatDateTime(DateTime dateTime) {
   return formatter.format(dateTime);
 }
 
-class BookingDetailPage extends StatefulWidget {
+class SubscriptionBookingDetailPage extends StatefulWidget {
   @override
-  State<BookingDetailPage> createState() => _BookingDetailPageState();
+  State<SubscriptionBookingDetailPage> createState() => _SubscriptionBookingDetailPageState();
 }
 
-class _BookingDetailPageState extends State<BookingDetailPage> {
+class _SubscriptionBookingDetailPageState extends State<SubscriptionBookingDetailPage> {
   late Servicefirebase service;
-  late Booking booking;
-
+  BookingController bookingController = Get.find<BookingController>();
   @override
   void initState() {
     super.initState();
-    final args = Get.arguments; 
-    service = args['service']; 
-    booking = args['booking']; 
-
-    print("Current status: ${booking.status ?? "unknown"}");
   }
 
   String _getCarImage(String carType) {
@@ -49,16 +49,20 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     }
   }
 
+  String _formatTime(double value) {
+    int hours = value.toInt();
+    String formattedTime = '${hours.toString().padLeft(2, '0')}:00';
+    return formattedTime;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Use the booking and service details
-    final String serviceName = service.name; // Use service name
-    final String statusName = booking.status ?? "unknown";
-    final String carType = booking.car_details ?? "unknown";
-    final double servicePrice = service.price; // Use service price
-    final String bookingDate = booking.confirmationDate != null 
-        ? formatDateTime(booking.confirmationDate!) 
-        : "No Date"; // Use booking confirmation date
+    final String serviceName = bookingController.benefitsList[0]['name'];
+    final String statusName = bookingController.subsBookingList[0]['status'];
+    final String carType = bookingController.subsBookingList[0]['car_details'];
+    final double servicePrice = 22;
+    final String bookingDate = bookingController.formatTimestamp(
+        bookingController.subsBookingList[0]['confirmation_date']);
     final double itemTotal = 100.0;
     final double discount = 10.0;
     final double tax = 5.0;
@@ -72,9 +76,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         title: Text(
           "Booking Details",
           style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-              color: Colors.black),
+              fontSize: 24, fontWeight: FontWeight.w500, color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(
@@ -84,29 +86,29 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Service details
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
                   children: [
-                    // Car image
                     Image.asset(
-                      _getCarImage(carType), // Get car image
+                      _getCarImage(carType),
                       height: 60,
                       width: 100,
                     ),
-                    SizedBox(width: 16), // Space between image and text
+                    SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           serviceName,
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         Text('Rs. $servicePrice',
                             style: TextStyle(
-                                fontSize: 18, color: Color(0xff6E6E6E))),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff6E6E6E))),
                       ],
                     ),
                   ],
@@ -117,17 +119,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                   ? Column(
                       children: [
                         Container(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blue.withOpacity(0.1),
-                                spreadRadius: 5,
-                                blurRadius: 15,
-                              ),
-                            ],
-                          ),
+                          height: 45,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -137,18 +129,22 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                   margin: EdgeInsets.symmetric(horizontal: 8.0),
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      Get.toNamed(AppRoutes.REVIEW, arguments: service);
+                                      Get.toNamed(AppRoutes.REVIEW,
+                                          arguments: service);
                                     },
                                     child: Text(
                                       'WRITE A REVIEW',
-                                      style: TextStyle(color: Color(0xff1671D8)),
+                                      style: TextStyle(
+                                          color: Color(0xff1671D8),
+                                          fontWeight: FontWeight.w400),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
                                       side: BorderSide(
                                           color: Color(0xff1671D8), width: 1),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
                                       ),
                                     ),
                                   ),
@@ -162,14 +158,17 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                     onPressed: () {},
                                     child: Text(
                                       'BOOK AGAIN',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Color(0xff1671D8),
                                       side: BorderSide(
                                           color: Colors.white, width: 1),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
                                       ),
                                     ),
                                   ),
@@ -182,6 +181,54 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                       ],
                     )
                   : Container(),
+              Obx(() {
+                return Container(
+                  height: 140,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: bookingController.benefitsList.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      final benefit = bookingController.benefitsList[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            _showBottomSheet(
+                                context,
+                                benefit['name'],
+                                DateFormat("d MMMM, yyyy").parse(
+                                    bookingController.formatTimestamp(
+                                        bookingController.subsBookingList[0]
+                                            ['confirmation_date'])),
+                                bookingController.subsBookingList[0]
+                                    ['selected_time_range']['start'],
+                                bookingController.subsBookingList[0]
+                                    ['selected_time_range']['end'],
+                                int.parse(benefit['num']));
+                          },
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            child: SubscriptionCard(
+                                title: benefit['name'],
+                                startDate: DateFormat("d MMMM, yyyy").parse(
+                                    bookingController.formatTimestamp(
+                                        bookingController.subsBookingList[0]
+                                            ['confirmation_date'])),
+                                totalSlots: int.parse(benefit['num']),
+                                selectedSlotIndex: 0),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }),
+
+              SizedBox(
+                height: 20,
+              ),
               // Booking status
               Text(
                 "Booking Status",
@@ -199,8 +246,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
               TimeLineTile(
                 isFirst: false,
                 isLast: false,
-                isPast: statusName == "ongoing" ||
-                    statusName == "completed",
+                isPast: statusName == "ongoing" || statusName == "completed",
                 timeLineText: "Out For Service",
                 date: bookingDate,
               ),
@@ -214,7 +260,10 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
               SizedBox(height: 32),
               Text(
                 "Payment Summary",
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+              ),
+              SizedBox(
+                height: 10,
               ),
               PaymentDetails(
                 text: 'Item Total',
@@ -228,6 +277,17 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                 text: 'Tax',
                 amount: tax.toString(),
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: 1,
+                color: Colors.grey.shade200,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -246,6 +306,22 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showBottomSheet(BuildContext context, String title, DateTime startDate,
+      double startTime, double endTime, int slots) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return BottomSheetContent(
+            title: title,
+            startDate: startDate,
+            startTime: startTime,
+            endTime: endTime,
+            slots: slots);
+      },
     );
   }
 }

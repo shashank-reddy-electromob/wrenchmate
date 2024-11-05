@@ -840,6 +840,7 @@ class _CartPageState extends State<CartPage> {
                               selectedAddress = result['selectAddress'] ?? '';
                             });
                           }
+                          log('testing add booking');
                           await bookingController.addBooking(
                             serviceIds,
                             'confirmed',

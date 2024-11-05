@@ -141,9 +141,6 @@ class _CarPageState extends State<CarPage> {
         carModel: carModel,
         drivLicUrl: drivLicImagePath,
         regCardUrl: regCardImagePath);
-
-    log(regCardImagePath ?? '');
-    log(drivLicImagePath ?? '');
   }
 
   Future<String?> uploadImageToStorage(File image, String type) async {
@@ -314,7 +311,6 @@ class _CarPageState extends State<CarPage> {
                 ),
               ),
               SizedBox(height: 20),
-
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -525,23 +521,85 @@ class _CarPageState extends State<CarPage> {
                                                 '',
                                         style: TextStyle(color: Colors.black),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          if (_regCardImageUrl != null) {
-                                            // Show image from Firebase URL
-                                            showImagePopup(
-                                                _regCardImageUrl!, context);
-                                          } else if (_regCardImage != null) {
-                                            // Show local image
-                                            showImagePopup(
-                                                _regCardImage!, context);
-                                          }
-                                        },
-                                        child: Text(
-                                          'View',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500),
-                                        ),
+                                      Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (_regCardImageUrl != null) {
+                                                // Show image from Firebase URL
+                                                showImagePopup(
+                                                    _regCardImageUrl!, context);
+                                              } else if (_regCardImage !=
+                                                  null) {
+                                                // Show local image
+                                                showImagePopup(
+                                                    _regCardImage!, context);
+                                              }
+                                            },
+                                            child: Text(
+                                              'View',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              Get.dialog(
+                                                AlertDialog(
+                                                  title: const Text(
+                                                      "Confirm Delete"),
+                                                  content: const Text(
+                                                      "Do you want to delete the image?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        carController
+                                                            .deleteCardImageUrl(
+                                                          carId:
+                                                              userCurrentCarId,
+                                                          carType: carType,
+                                                          carModel: carModel,
+                                                          imageType: "regCard",
+                                                        );
+                                                        setState(() {
+                                                          _regCardImageUrl =
+                                                              null;
+                                                        });
+                                                        Get.back();
+                                                      },
+                                                      child: const Text(
+                                                        "Yes",
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .blueAccent),
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Get.back();
+                                                      },
+                                                      child: const Text(
+                                                        "No",
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .blueAccent),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            child: Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                  color: Colors.blueAccent,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ],
                                       )
                                     ],
                                   ),
@@ -567,12 +625,6 @@ class _CarPageState extends State<CarPage> {
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(8),
-                          // image: _drivingLicImage != null
-                          //     ? DecorationImage(
-                          //         image: FileImage(_drivingLicImage!),
-                          //         fit: BoxFit.cover,
-                          //       )
-                          //     : null,
                         ),
                         child: (_drivingLicImage == null &&
                                 _drivingLicImageUrl == null)
@@ -617,21 +669,84 @@ class _CarPageState extends State<CarPage> {
                                                 '',
                                         style: TextStyle(color: Colors.black),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          if (_drivingLicImageUrl != null) {
-                                            showImagePopup(
-                                                _drivingLicImageUrl!, context);
-                                          } else if (_drivingLicImage != null) {
-                                            showImagePopup(
-                                                _drivingLicImage!, context);
-                                          }
-                                        },
-                                        child: const Text(
-                                          'View',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500),
-                                        ),
+                                      Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (_drivingLicImageUrl != null) {
+                                                showImagePopup(
+                                                    _drivingLicImageUrl!,
+                                                    context);
+                                              } else if (_drivingLicImage !=
+                                                  null) {
+                                                showImagePopup(
+                                                    _drivingLicImage!, context);
+                                              }
+                                            },
+                                            child: const Text(
+                                              'View',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              Get.dialog(
+                                                AlertDialog(
+                                                  title: const Text(
+                                                      "Confirm Delete"),
+                                                  content: const Text(
+                                                      "Do you want to delete the image?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        carController
+                                                            .deleteCardImageUrl(
+                                                          carId:
+                                                              userCurrentCarId,
+                                                          carType: carType,
+                                                          carModel: carModel,
+                                                          imageType: "drivLic",
+                                                        );
+                                                        setState(() {
+                                                          _drivingLicImageUrl =
+                                                              null;
+                                                        });
+                                                        Get.back();
+                                                      },
+                                                      child: const Text(
+                                                        "Yes",
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .blueAccent),
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Get.back();
+                                                      },
+                                                      child: const Text(
+                                                        "No",
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .blueAccent),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            child: const Text(
+                                              'Delete',
+                                              style: TextStyle(
+                                                  color: Colors.blueAccent,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ],
                                       )
                                     ],
                                   ),
@@ -642,8 +757,6 @@ class _CarPageState extends State<CarPage> {
                   ],
                 ),
               ),
-              // Spacer(),
-              //add new car service history
               Row(
                 children: [
                   Expanded(

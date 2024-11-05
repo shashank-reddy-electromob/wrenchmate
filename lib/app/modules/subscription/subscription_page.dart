@@ -182,7 +182,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                             : Expanded(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Get.toNamed(AppRoutes.BOOKING_DETAILS);
+                                    Get.toNamed(AppRoutes.BOOKING_DETAILS_SUBS);
                                   },
                                   child: Column(
                                     crossAxisAlignment:

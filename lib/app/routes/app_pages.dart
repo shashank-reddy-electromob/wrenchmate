@@ -3,6 +3,7 @@ import 'package:wrenchmate_user_app/SplashScreen.dart';
 import 'package:wrenchmate_user_app/app/bindings/product_bidings.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_deetail.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/car_register.dart';
+import 'package:wrenchmate_user_app/app/modules/booking/booking_detail_page.dart';
 import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
 import 'package:wrenchmate_user_app/app/modules/car/car_edit.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
@@ -37,7 +38,7 @@ import '../modules/subscription/subscription_page.dart';
 import '../modules/subscription/payment_page.dart';
 import '../modules/cart/cart_page.dart';
 import '../modules/booking/booking_page.dart';
-import '../modules/booking/booking_detail_page.dart';
+import '../modules/booking/booking_detail_subs_page.dart';
 import '../modules/car/car_page.dart';
 import '../modules/support/support_page.dart';
 import '../modules/support/contact_us_page.dart';
@@ -112,12 +113,20 @@ class AppPages {
     GetPage(
         name: AppRoutes.CART, page: () => CartPage(), binding: CartBinding()),
     GetPage(
+        name: AppRoutes.BOOKING_DETAILS_SUBS,
+        page: () => SubscriptionBookingDetailPage(),
+        binding: CartBinding()),
+    GetPage(
         name: AppRoutes.BOOKING_DETAILS,
         page: () => BookingDetailPage(),
         binding: CartBinding()),
     GetPage(
         name: AppRoutes.BOOKING,
         page: () => BookingPage(),
+        binding: BookingBinding()),
+    GetPage(
+        name: AppRoutes.BOOKING_DETAIL_SUBS,
+        page: () => SubscriptionBookingDetailPage(),
         binding: BookingBinding()),
     GetPage(
         name: AppRoutes.BOOKING_DETAIL,
