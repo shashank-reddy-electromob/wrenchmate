@@ -15,11 +15,11 @@ class toprecommendedservices extends StatefulWidget {
 }
 
 class _toprecommendedservicesState extends State<toprecommendedservices> {
-
   Servicefirebase wash_service = new Servicefirebase(
       id: "DVa006J2yZgibIM3Vyr4",
       category: "Car Wash",
-      description: "Give your car a sparkling clean with our exterior foam wash and interior cleaning",
+      description:
+          "Give your car a sparkling clean with our exterior foam wash and interior cleaning",
       discount: 0,
       name: "Exterior Wash",
       image: "https://firebasestorage.googleapis.com/v0/b/user-app-6aaf1.appspot.com/o/Services%2Fexterior%20wash%201.png?alt=media&token=d5cf2401-327d-4c1d-ab01-403040109d79",
@@ -33,7 +33,8 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
   Servicefirebase ceramic_service = new Servicefirebase(
       id: "1Jnv4P0Klgx87esxlEbM",
       category: "Detailing",
-      description: "Enhance your vehicle’s shine and protection with our ceramic coating service. This high-tech coating creates a durable, hydrophobic layer that repels water and contaminants, making your car easier to clean and maintain.",
+      description:
+          "Enhance your vehicle’s shine and protection with our ceramic coating service. This high-tech coating creates a durable, hydrophobic layer that repels water and contaminants, making your car easier to clean and maintain.",
       discount: 0,
       name: "Ceramic Coat",
       image: "https://firebasestorage.googleapis.com/v0/b/user-app-6aaf1.appspot.com/o/Services%2Fceramic%20coat.png?alt=media&token=325ed269-5740-40aa-9aa1-cd5ce9b994b2",
@@ -62,10 +63,8 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
           children: [
             GestureDetector(
               onTap: () {
-                Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                    arguments: wash_service);
-                ScaffoldMessenger.of(context)
-                    .hideCurrentSnackBar();
+                Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: wash_service);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
               },
               child: ServiceCard(
                 serviceName: "General Wash",
@@ -85,11 +84,10 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
             //   child: Text(""),
             // ),
             GestureDetector(
-              onTap: (){
-                  Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                      arguments:  ceramic_service);
-                  ScaffoldMessenger.of(context)
-                      .hideCurrentSnackBar();
+              onTap: () {
+                Get.toNamed(AppRoutes.SERVICE_DETAIL,
+                    arguments: ceramic_service);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
               },
               child: ServiceCard(
                 serviceName: "Ceramic Coating",
@@ -174,7 +172,7 @@ class ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GradientContainer(
       width: MediaQuery.of(context).size.width / 2 - 36,
-      height: 120,
+      height: MediaQuery.of(context).size.width * 0.317,
       colors: colors,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -187,7 +185,7 @@ class ServiceCard extends StatelessWidget {
               children: [
                 Image.asset(
                   imagePath,
-                  height: 50,
+                  height: MediaQuery.of(context).size.width * 0.13,
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 2, horizontal: 6),
@@ -197,13 +195,17 @@ class ServiceCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.star, color: Colors.amber, size: 16),
+                      Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: MediaQuery.of(context).size.width * 0.041,
+                      ),
                       SizedBox(width: 4),
                       Text(
                         rating.toString(),
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 10,
+                          fontSize: MediaQuery.of(context).size.width * 0.028,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -217,18 +219,17 @@ class ServiceCard extends StatelessWidget {
             Text(
               serviceName,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: MediaQuery.of(context).size.width * 0.034,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-            // SizedBox(height: 8),
             Text(
               '₹ $price',
               style: TextStyle(
                   fontFamily: 'Raleway',
-                  fontSize: 10,
+                  fontSize: MediaQuery.of(context).size.width * 0.026,
                   color: Colors.white,
                   fontWeight: FontWeight.bold),
             ),

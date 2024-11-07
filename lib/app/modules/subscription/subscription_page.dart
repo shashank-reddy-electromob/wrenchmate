@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
 import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
+import 'package:wrenchmate_user_app/app/modules/subscription/widget/arrows.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/car_controller.dart';
 import '../../routes/app_routes.dart';
@@ -54,6 +55,12 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     bookingController.fetchBookingsWithSubscriptionDetails();
     fetchUserCurrentCarIndex();
     firebasePriceFetch();
+  }
+
+  void togglePremium(bool status) {
+    setState(() {
+      premium = status;
+    });
   }
 
   void fetchUserCurrentCarIndex() async {
@@ -245,49 +252,49 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         color: Color(0xff01417E),
                       ),
                     ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (premium) {
-                              setState(() {
-                                premium = false;
-                              });
-                            } else if (!premium) {
-                              setState(() {
-                                premium = true;
-                              });
-                            }
-                            pricesetMethod();
-                          },
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 20,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            if (premium) {
-                              setState(() {
-                                premium = false;
-                              });
-                            } else if (!premium) {
-                              setState(() {
-                                premium = true;
-                              });
-                            }
-                            pricesetMethod();
-                          },
-                          child: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         if (premium) {
+                    //           setState(() {
+                    //             premium = false;
+                    //           });
+                    //         } else if (!premium) {
+                    //           setState(() {
+                    //             premium = true;
+                    //           });
+                    //         }
+                    //         pricesetMethod();
+                    //       },
+                    //       child: Icon(
+                    //         Icons.arrow_back_ios_new_rounded,
+                    //         size: 20,
+                    //       ),
+                    //     ),
+                    //     SizedBox(
+                    //       width: 20,
+                    //     ),
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         if (premium) {
+                    //           setState(() {
+                    //             premium = false;
+                    //           });
+                    //         } else if (!premium) {
+                    //           setState(() {
+                    //             premium = true;
+                    //           });
+                    //         }
+                    //         pricesetMethod();
+                    //       },
+                    //       child: Icon(
+                    //         Icons.arrow_forward_ios_rounded,
+                    //         size: 20,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
@@ -317,13 +324,24 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: isMonthly
                                   ? [
-                                      Text(
-                                        "Essential Need Pack",
-                                        style: TextStyle(
-                                            fontFamily: 'Raleway',
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Essential Need Pack",
+                                            style: TextStyle(
+                                                fontFamily: 'Raleway',
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          PremiumToggle(
+                                              isPremium: premium,
+                                              onToggle: togglePremium,
+                                              pricesetMethod: pricesetMethod)
+                                        ],
                                       ),
+
                                       SizedBox(height: 8),
                                       Text(
                                         "-> 4 washes",
@@ -351,12 +369,22 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                       SizedBox(height: 8),
                                     ]
                                   : [
-                                      Text(
-                                        "Ultimate Wash Package",
-                                        style: TextStyle(
-                                            fontFamily: 'Raleway',
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Ultimate Wash Package",
+                                            style: TextStyle(
+                                                fontFamily: 'Raleway',
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          PremiumToggle(
+                                              isPremium: premium,
+                                              onToggle: togglePremium,
+                                              pricesetMethod: pricesetMethod)
+                                        ],
                                       ),
                                       SizedBox(height: 8),
                                       Text(
@@ -415,7 +443,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                       'Monthly',
                                       style: AppTextStyle.medium14,
                                     ),
-                                    // Add onTap functionality
                                   ),
                                 ),
                               ),
@@ -484,12 +511,22 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: isMonthly
                                     ? [
-                                        Text(
-                                          "Premium Need Pack",
-                                          style: TextStyle(
-                                              fontFamily: 'Raleway',
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Premium Need Pack",
+                                              style: TextStyle(
+                                                  fontFamily: 'Raleway',
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            PremiumToggle(
+                                                isPremium: premium,
+                                                onToggle: togglePremium,
+                                                pricesetMethod: pricesetMethod)
+                                          ],
                                         ),
                                         SizedBox(height: 8),
                                         Text(
@@ -550,12 +587,22 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                         SizedBox(height: 8),
                                       ]
                                     : [
-                                        Text(
-                                          "Deluxe Maintenance Pack",
-                                          style: TextStyle(
-                                              fontFamily: 'Raleway',
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Deluxe Maintenance Pack",
+                                              style: TextStyle(
+                                                  fontFamily: 'Raleway',
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            PremiumToggle(
+                                                isPremium: premium,
+                                                onToggle: togglePremium,
+                                                pricesetMethod: pricesetMethod)
+                                          ],
                                         ),
                                         SizedBox(height: 8),
                                         Text(

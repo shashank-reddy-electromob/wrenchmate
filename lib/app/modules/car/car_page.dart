@@ -769,24 +769,28 @@ class _CarPageState extends State<CarPage> {
                         colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
                         width: MediaQuery.of(context).size.width / 2 - 36,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18.0, vertical: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset(
-                                'assets/car/sedan.png',
-                                width: 100,
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                'Add New Car',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 14),
-                              )
-                            ],
-                          ),
-                        ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18.0, vertical: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  'assets/car/sedan.png',
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  'Add New Car',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.037,
+                                  ),
+                                ),
+                              ],
+                            )),
                       ),
                     ),
                   ),
@@ -808,12 +812,16 @@ class _CarPageState extends State<CarPage> {
                             children: [
                               Image.asset(
                                 'assets/images/servicehistory.png',
-                                height: 70,
+                                height:
+                                    MediaQuery.of(context).size.width * 0.18,
                               ),
                               Text(
                                 'Service History',
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 14),
+                                  color: Colors.white,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.037,
+                                ),
                               )
                             ],
                           ),

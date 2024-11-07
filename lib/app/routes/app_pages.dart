@@ -83,6 +83,7 @@ class AppPages {
         name: AppRoutes.PRIVACYPOLICY,
         page: () => privacyPolicy(),
         binding: HomeBinding()),
+    
     GetPage(
         name: AppRoutes.REFUNDPOLICY,
         page: () => refundPolicy(),
