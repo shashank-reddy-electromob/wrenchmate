@@ -144,8 +144,8 @@ class _BottomSheetState extends State<BottomSheet> {
     "Detailing",
     "Repair",
     "Wheel",
-    "Painting",
-    "Denting",
+    // "Painting",
+    "Denting and Painting",
   ];
   List<String> discounts = [
     '0-15%',

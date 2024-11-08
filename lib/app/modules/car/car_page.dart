@@ -345,31 +345,62 @@ class _CarPageState extends State<CarPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            carController.deleteCar(
-                                carId: userCurrentCarId,
-                                carType: carType,
-                                carModel: carModel);
-                            setState(() {
-                              userCars.removeAt(userCurrentCarIndex);
+                            Get.dialog(
+                              AlertDialog(
+                                title: const Text("Confirm Delete"),
+                                content: const Text(
+                                    "Do you want to delete your car details?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      carController.deleteCar(
+                                          carId: userCurrentCarId,
+                                          carType: carType,
+                                          carModel: carModel);
+                                      setState(() {
+                                        userCars.removeAt(userCurrentCarIndex);
 
-                              if (userCurrentCarIndex >= userCars.length) {
-                                userCurrentCarIndex =
-                                    userCars.isEmpty ? 0 : userCars.length - 1;
-                              }
+                                        if (userCurrentCarIndex >=
+                                            userCars.length) {
+                                          userCurrentCarIndex = userCars.isEmpty
+                                              ? 0
+                                              : userCars.length - 1;
+                                        }
 
-                              if (userCars.isNotEmpty) {
-                                updateCarDetails(userCurrentCarIndex);
-                              } else {
-                                carModel = '';
-                                petrolOrDiesel = '';
-                                carType = '';
-                                regYearController.clear();
-                                regNoController.clear();
-                                insuranceExpController.clear();
-                                pucExpController.clear();
-                              }
-                            });
-                            Get.toNamed('/bottomnav');
+                                        if (userCars.isNotEmpty) {
+                                          updateCarDetails(userCurrentCarIndex);
+                                        } else {
+                                          carModel = '';
+                                          petrolOrDiesel = '';
+                                          carType = '';
+                                          regYearController.clear();
+                                          regNoController.clear();
+                                          insuranceExpController.clear();
+                                          pucExpController.clear();
+                                        }
+                                      });
+                                      Navigator.of(context).pop();
+                                      Get.toNamed('/bottomnav');
+                                    },
+                                    child: const Text(
+                                      "Yes",
+                                      style:
+                                          TextStyle(color: Colors.blueAccent),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.back();
+                                    },
+                                    child: const Text(
+                                      "No",
+                                      style:
+                                          TextStyle(color: Colors.blueAccent),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
                           },
                           child:
                               SvgPicture.asset('assets/icons/delete_icon.svg'),
@@ -556,6 +587,8 @@ class _CarPageState extends State<CarPage> {
                                                   actions: [
                                                     TextButton(
                                                       onPressed: () {
+                                                        _regCardImage = null;
+
                                                         carController
                                                             .deleteCardImageUrl(
                                                           carId:
@@ -703,6 +736,7 @@ class _CarPageState extends State<CarPage> {
                                                   actions: [
                                                     TextButton(
                                                       onPressed: () {
+                                                        _drivingLicImage = null;
                                                         carController
                                                             .deleteCardImageUrl(
                                                           carId:
@@ -757,79 +791,80 @@ class _CarPageState extends State<CarPage> {
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.CAR_REGISTER);
-                      },
-                      child: GradientContainer(
-                        height: 120,
-                        colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
-                        width: MediaQuery.of(context).size.width / 2 - 36,
-                        child: Padding(
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.toNamed(AppRoutes.CAR_REGISTER);
+                        },
+                        child: GradientContainer(
+                          colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
+                          width: MediaQuery.of(context).size.width / 2 - 36,
+                          child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 18.0, vertical: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Image.asset(
+                                    'assets/car/sedan.png',
+                                    width: MediaQuery.of(context).size.width *
+                                        0.25,
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Add New Car',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.037,
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.toNamed(AppRoutes.BOOKING);
+                        },
+                        child: GradientContainer(
+                          colors: [Color(0xffFEA563), Color(0xffFF5F81)],
+                          width: MediaQuery.of(context).size.width / 2 - 36,
+                          child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 18.0, vertical: 8),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Image.asset(
-                                  'assets/car/sedan.png',
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.25,
+                                  'assets/images/servicehistory.png',
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.18,
                                 ),
-                                SizedBox(height: 10),
                                 Text(
-                                  'Add New Car',
+                                  'Service History',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             0.037,
                                   ),
-                                ),
+                                )
                               ],
-                            )),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.BOOKING);
-                      },
-                      child: GradientContainer(
-                        height: 120,
-                        colors: [Color(0xffFEA563), Color(0xffFF5F81)],
-                        width: MediaQuery.of(context).size.width / 2 - 36,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18.0, vertical: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset(
-                                'assets/images/servicehistory.png',
-                                height:
-                                    MediaQuery.of(context).size.width * 0.18,
-                              ),
-                              Text(
-                                'Service History',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.037,
-                                ),
-                              )
-                            ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

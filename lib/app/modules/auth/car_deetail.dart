@@ -14,7 +14,6 @@ class CarDetails extends StatefulWidget {
 }
 
 class _CarDetailsState extends State<CarDetails> {
- 
   String? selectedFuelType;
   String? selectedTransmissionType;
   String? selectedCarModel;
@@ -31,7 +30,7 @@ class _CarDetailsState extends State<CarDetails> {
     carController = Get.put(CarController());
     selectedIndex = Get.arguments as int?;
     if (selectedIndex == null) {
-      selectedIndex = 0; 
+      selectedIndex = 0;
     }
   }
 
@@ -69,14 +68,14 @@ class _CarDetailsState extends State<CarDetails> {
     await carController?.addCar(
       fuelType: selectedFuelType ?? '',
       registrationNumber: regNoController.text,
-  insuranceExpiration: insuranceExpController.text.isNotEmpty
-      ? DateFormat('dd/MM/yyyy').parse(insuranceExpController.text)
-      : null,
+      insuranceExpiration: insuranceExpController.text.isNotEmpty
+          ? DateFormat('dd/MM/yyyy').parse(insuranceExpController.text)
+          : null,
       transmission: selectedTransmissionType ?? '',
       carType: carNames[selectedIndex ?? 0],
       carModel: selectedCarModel ?? '',
       registrationYear: regYearController.text.isNotEmpty
-          ? DateFormat('dd/MM/yyyy').parse(regYearController.text)
+          ? DateFormat('yyyy').parse(regYearController.text)
           : null,
       pucExpiration: pucExpDateController.text.isNotEmpty
           ? DateFormat('dd/MM/yyyy').parse(pucExpDateController.text)
@@ -84,6 +83,48 @@ class _CarDetailsState extends State<CarDetails> {
     );
   }
 
+  Future<void> _selectYear(
+      BuildContext context, TextEditingController controller) async {
+    final int? selectedYear = await showModalBottomSheet<int>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        final currentYear = DateTime.now().year;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                "Select Year",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Divider(),
+            SizedBox(
+              height: 300, // Height for scrolling
+              child: ListView.builder(
+                itemCount: 101, // 2000 to 2100
+                itemBuilder: (BuildContext context, int index) {
+                  final year = 2000 + index;
+                  return ListTile(
+                    title: Text(year.toString()),
+                    onTap: () => Navigator.pop(context, year),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selectedYear != null) {
+      final selectedDate = DateTime(selectedYear, 1, 1);
+
+      controller.text = DateFormat('yyyy').format(selectedDate);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +241,7 @@ class _CarDetailsState extends State<CarDetails> {
                             controller: regYearController,
                             label: "Reg Year",
                             onTap: () =>
-                                _selectDate(context, regYearController),
+                                _selectYear(context, regYearController),
                           ),
                         ),
                         Padding(

@@ -204,19 +204,19 @@ class CurvedNavigationBarShape extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     Paint shadowPaint2 = Paint()
-      ..color = Colors.black.withOpacity(0.4)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 6)
+      ..color = Colors.black.withOpacity(0.7)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
     Path path = Path();
     path.moveTo(0, 0);
-    path.lineTo(size.width * 0.4, 0);
+    path.lineTo(size.width * 0.42, 0);
 
     path.quadraticBezierTo(
       size.width * 0.5,
-      -40,
-      size.width * 0.6,
+      -31,
+      size.width * 0.58,
       0,
     );
 
@@ -227,11 +227,11 @@ class CurvedNavigationBarShape extends CustomPainter {
 
     Path shadowPath = Path();
     shadowPath.moveTo(0, 0);
-    shadowPath.lineTo(size.width * 0.4, 0);
+    shadowPath.lineTo(size.width * 0.42, 0);
     shadowPath.quadraticBezierTo(
       size.width * 0.5,
-      -40,
-      size.width * 0.6,
+      -31,
+      size.width * 0.58,
       0,
     );
     shadowPath.lineTo(size.width, 0);

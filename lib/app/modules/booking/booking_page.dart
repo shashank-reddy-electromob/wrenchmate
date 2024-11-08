@@ -248,21 +248,39 @@ class BookingTile extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Image.asset(carImage, height: 60),
+                              Image.asset(carImage,
+                                  height: MediaQuery.of(context).size.width *
+                                      0.155),
                               SizedBox(
                                 width: 8,
                               ),
-                              Text('Service name: \n${service.name}'),
+                              Text(
+                                'Service name: \n${service.name}',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.037),
+                              ),
                             ],
                           ),
                           Container(
-                            height: 40,
-                            width: 100,
+                            // height: 40,
+                            // width: 100,
                             decoration: BoxDecoration(
                               color: Color(0xffE9FFED),
                               borderRadius: BorderRadius.circular(7),
                             ),
-                            child: Text("something"),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              child: Text(
+                                "something",
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.032),
+                              ),
+                            ),
                             alignment: Alignment.center,
                           )
                         ],

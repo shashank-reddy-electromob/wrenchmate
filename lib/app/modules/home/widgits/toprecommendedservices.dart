@@ -118,14 +118,12 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
 
 class GradientContainer extends StatelessWidget {
   final double width;
-  final double height;
   final List<Color> colors;
   final Widget child;
 
   const GradientContainer({
     Key? key,
     required this.width,
-    required this.height,
     required this.colors,
     required this.child,
   }) : super(key: key);
@@ -136,7 +134,6 @@ class GradientContainer extends StatelessWidget {
       padding: const EdgeInsets.only(right: 16.0, bottom: 20),
       child: Container(
         width: width,
-        height: height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: colors,
@@ -172,7 +169,7 @@ class ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GradientContainer(
       width: MediaQuery.of(context).size.width / 2 - 36,
-      height: MediaQuery.of(context).size.width * 0.317,
+      // height: MediaQuery.of(context).size.width * 0.327,
       colors: colors,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -205,7 +202,7 @@ class ServiceCard extends StatelessWidget {
                         rating.toString(),
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: MediaQuery.of(context).size.width * 0.028,
+                          fontSize: MediaQuery.of(context).size.width * 0.026,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -215,11 +212,11 @@ class ServiceCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            SizedBox(height: MediaQuery.of(context).size.width * 0.04),
             Text(
               serviceName,
               style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.034,
+                fontSize: MediaQuery.of(context).size.width * 0.031,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
