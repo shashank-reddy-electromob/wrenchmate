@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
+import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/service_controller.dart';
@@ -21,7 +22,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final ServiceController serviceController = Get.put(ServiceController());
   final TextEditingController _searchController = TextEditingController();
-  
+
   List<Servicefirebase> services = <Servicefirebase>[];
   List<Servicefirebase> _resultList = [];
   List<Servicefirebase> topServices = [];
@@ -57,7 +58,7 @@ class _SearchPageState extends State<SearchPage> {
         getSearchHistory(),
         getTopServiceIds(),
       ]);
-      
+
       final filterArgs = Get.arguments;
       if (filterArgs != null) {
         await _applyFilters(
@@ -83,8 +84,10 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> getTopCategories() async {
     try {
-      var data = await FirebaseFirestore.instance.collection("topCategory").get();
-      topCategories = data.docs.map((doc) => doc['category'] as String).toList();
+      var data =
+          await FirebaseFirestore.instance.collection("topCategory").get();
+      topCategories =
+          data.docs.map((doc) => doc['category'] as String).toList();
       setState(() {});
     } catch (e) {
       print('Error fetching top categories: $e');
@@ -93,8 +96,10 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> getTopServiceIds() async {
     try {
-      var data = await FirebaseFirestore.instance.collection("topServices").get();
-      topServiceIds = data.docs.map((doc) => doc['serviceId'] as String).toList();
+      var data =
+          await FirebaseFirestore.instance.collection("topServices").get();
+      topServiceIds =
+          data.docs.map((doc) => doc['serviceId'] as String).toList();
       setState(() {});
     } catch (e) {
       print('Error fetching top service IDs: $e');
@@ -125,7 +130,8 @@ class _SearchPageState extends State<SearchPage> {
 
     print("Before filtering: ${services.length} services");
     services.forEach((service) {
-      print("Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
+      print(
+          "Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
     });
 
     // Parse discount value
@@ -134,38 +140,33 @@ class _SearchPageState extends State<SearchPage> {
       final cleanDiscount = selectedDiscount.replaceAll('%', '');
       final discountRange = cleanDiscount.split('-');
       discountValue = double.tryParse(
-        discountRange.length == 2 ? discountRange[0] : cleanDiscount
-      );
+          discountRange.length == 2 ? discountRange[0] : cleanDiscount);
     }
 
     // Parse rating value
     double? ratingValue;
     if (selectedRating != null) {
-      final cleanRating = selectedRating
-          .replaceAll('>', '')
-          .replaceAll('⭐', '')
-          .trim();
+      final cleanRating =
+          selectedRating.replaceAll('>', '').replaceAll('⭐', '').trim();
       ratingValue = double.tryParse(cleanRating);
     }
 
     // Apply filters
     final filteredList = services.where((service) {
       print("\nEvaluating Service: ${service.name}");
-      
+
       // Category filter
       final categoryMatch = selectedServices?.isEmpty ?? true
           ? true
           : selectedServices?.contains(service.category) ?? false;
 
       // Discount filter
-      final discountMatch = discountValue == null
-          ? true
-          : service.discount >= discountValue;
+      final discountMatch =
+          discountValue == null ? true : service.discount >= discountValue;
 
       // Rating filter
-      final ratingMatch = ratingValue == null
-          ? true
-          : service.averageReview > ratingValue;
+      final ratingMatch =
+          ratingValue == null ? true : service.averageReview > ratingValue;
 
       // Price range filter
       final priceMatch = (minPrice == null || service.price >= minPrice) &&
@@ -187,7 +188,8 @@ class _SearchPageState extends State<SearchPage> {
 
     print("\nAfter filtering: ${_resultList.length} results");
     _resultList.forEach((service) {
-      print("Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
+      print(
+          "Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
     });
   }
 
@@ -196,18 +198,15 @@ class _SearchPageState extends State<SearchPage> {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId == null) throw Exception('User not authenticated');
 
-      final userDoc = await FirebaseFirestore.instance
-          .collection("User")
-          .doc(userId)
-          .get();
+      final userDoc =
+          await FirebaseFirestore.instance.collection("User").doc(userId).get();
 
       if (!userDoc.exists) throw Exception('User document not found');
 
-      final userCarDetails = List<String>.from(
-          userDoc.data()?['User_carDetails'] ?? []);
-      final userCarModels = userCarDetails
-          .map((detail) => detail.split(';')[0])
-          .toList();
+      final userCarDetails =
+          List<String>.from(userDoc.data()?['User_carDetails'] ?? []);
+      final userCarModels =
+          userCarDetails.map((detail) => detail.split(';')[0]).toList();
 
       final querySnapshot = await FirebaseFirestore.instance
           .collection("Service")
@@ -234,9 +233,9 @@ class _SearchPageState extends State<SearchPage> {
         );
       }).toList();
 
-      topServices = services.where((service) => 
-        topServiceIds.contains(service.id)
-      ).toList();
+      topServices = services
+          .where((service) => topServiceIds.contains(service.id))
+          .toList();
 
       setState(() {
         _resultList = List.from(services);
@@ -298,7 +297,6 @@ class _SearchPageState extends State<SearchPage> {
     _searchController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -505,8 +503,32 @@ class _SearchPageState extends State<SearchPage> {
                     if (_isSearching) ...[
                       _resultList.isEmpty
                           ? Center(
-                              child: Text(
-                                  "No services match your requirements :("))
+                              child: Column(
+                              children: [
+                                Text("Contact us if the service is not listed"),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Get.toNamed(AppRoutes.CHATSCREEN);
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Colors.blue),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15, vertical: 10),
+                                          child: Text(
+                                            "Contact us",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        )))
+                              ],
+                            ))
                           : ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
