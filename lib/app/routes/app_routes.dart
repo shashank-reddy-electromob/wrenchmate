@@ -1,4 +1,5 @@
 class AppRoutes {
+  static const SPLASH = '/splash';
   static const LOGIN = '/login';
   static const OTP = '/otp';
   static const REGISTER = '/register';
@@ -19,9 +20,12 @@ class AppRoutes {
   static const BOOKING_DETAILS = '/booking-details';
   static const BOOKING = '/booking';
   static const BOOKING_DETAIL = '/booking-detail';
+  static const BOOKING_DETAILS_SUBS = '/booking-details-subs';
+  static const BOOKING_DETAIL_SUBS = '/booking-detail-subs';
   static const BOOK_SLOT = '/book-slot';
   static const REVIEW = '/review';
   static const CAR = '/car';
+  static const CAR_EDIT='/car-edit';
   static const CAR_REGISTER = '/car-register';
   static const CAR_DETALS = '/car-details';
   static const SUPPORT = '/support';

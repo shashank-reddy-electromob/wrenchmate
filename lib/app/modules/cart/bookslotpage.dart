@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -394,7 +392,7 @@ class _BookSlotState extends State<BookSlot> {
 
                 SizedBox(height: 24),
                 //reservation
-                blueButton(
+                BlueButton(
                   text: 'Reservation',
                   onTap: () {
                     selectedAddressIndex =

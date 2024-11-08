@@ -1,7 +1,13 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
+import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
+import 'package:wrenchmate_user_app/app/modules/subscription/widget/arrows.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/car_controller.dart';
 import '../../routes/app_routes.dart';
@@ -35,15 +41,26 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   int price = 0;
 
   final CarController carController = Get.put(CarController());
+  final CartController cartController = Get.put(CartController());
+  final BookingController bookingController = Get.put(BookingController());
+
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   FirebaseFirestore db = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
-
+    bookingController.fetchBookingsWithSubscriptionDetails();
     fetchUserCurrentCarIndex();
     firebasePriceFetch();
+  }
+
+  void togglePremium(bool status) {
+    setState(() {
+      premium = status;
+    });
   }
 
   void fetchUserCurrentCarIndex() async {
@@ -118,9 +135,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 20,
-              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: Container(
@@ -159,17 +173,70 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                               ),
                       ),
                       SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'Raleway',
-                              fontWeight: FontWeight.w600),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 5,
-                        ),
-                      ),
+                      Obx(() {
+                        return bookingController.subsBookingList.isEmpty
+                            ? Expanded(
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: Text(
+                                    "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: 'Raleway',
+                                        fontWeight: FontWeight.w600),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 5,
+                                  ),
+                                ),
+                              )
+                            : Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed(AppRoutes.BOOKING_DETAILS_SUBS);
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Current Subscription',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w500),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        bookingController.subsBookingList[0]
+                                            ['subscriptionDetails']['packDesc'],
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w800),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        'Expiring on: ${bookingController.formatTimestamp(bookingController.subsBookingList[0]['subscriptionDetails']['endDate'])}',
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w300),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                      })
                     ],
                   ),
                 ),
@@ -188,49 +255,49 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         color: Color(0xff01417E),
                       ),
                     ),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (premium) {
-                              setState(() {
-                                premium = false;
-                              });
-                            } else if (!premium) {
-                              setState(() {
-                                premium = true;
-                              });
-                            }
-                            pricesetMethod();
-                          },
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 20,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            if (premium) {
-                              setState(() {
-                                premium = false;
-                              });
-                            } else if (!premium) {
-                              setState(() {
-                                premium = true;
-                              });
-                            }
-                            pricesetMethod();
-                          },
-                          child: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         if (premium) {
+                    //           setState(() {
+                    //             premium = false;
+                    //           });
+                    //         } else if (!premium) {
+                    //           setState(() {
+                    //             premium = true;
+                    //           });
+                    //         }
+                    //         pricesetMethod();
+                    //       },
+                    //       child: Icon(
+                    //         Icons.arrow_back_ios_new_rounded,
+                    //         size: 20,
+                    //       ),
+                    //     ),
+                    //     SizedBox(
+                    //       width: 20,
+                    //     ),
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         if (premium) {
+                    //           setState(() {
+                    //             premium = false;
+                    //           });
+                    //         } else if (!premium) {
+                    //           setState(() {
+                    //             premium = true;
+                    //           });
+                    //         }
+                    //         pricesetMethod();
+                    //       },
+                    //       child: Icon(
+                    //         Icons.arrow_forward_ios_rounded,
+                    //         size: 20,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
@@ -260,13 +327,24 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: isMonthly
                                   ? [
-                                      Text(
-                                        "Essential Need Pack",
-                                        style: TextStyle(
-                                            fontFamily: 'Raleway',
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Essential Need Pack",
+                                            style: TextStyle(
+                                                fontFamily: 'Raleway',
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          PremiumToggle(
+                                              isPremium: premium,
+                                              onToggle: togglePremium,
+                                              pricesetMethod: pricesetMethod)
+                                        ],
                                       ),
+
                                       SizedBox(height: 8),
                                       Text(
                                         "-> 4 washes",
@@ -294,12 +372,22 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                       SizedBox(height: 8),
                                     ]
                                   : [
-                                      Text(
-                                        "Ultimate Wash Package",
-                                        style: TextStyle(
-                                            fontFamily: 'Raleway',
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Ultimate Wash Package",
+                                            style: TextStyle(
+                                                fontFamily: 'Raleway',
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          PremiumToggle(
+                                              isPremium: premium,
+                                              onToggle: togglePremium,
+                                              pricesetMethod: pricesetMethod)
+                                        ],
                                       ),
                                       SizedBox(height: 8),
                                       Text(
@@ -358,7 +446,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                       'Monthly',
                                       style: AppTextStyle.medium14,
                                     ),
-                                    // Add onTap functionality
                                   ),
                                 ),
                               ),
@@ -427,12 +514,22 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: isMonthly
                                     ? [
-                                        Text(
-                                          "Premium Need Pack",
-                                          style: TextStyle(
-                                              fontFamily: 'Raleway',
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Premium Need Pack",
+                                              style: TextStyle(
+                                                  fontFamily: 'Raleway',
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            PremiumToggle(
+                                                isPremium: premium,
+                                                onToggle: togglePremium,
+                                                pricesetMethod: pricesetMethod)
+                                          ],
                                         ),
                                         SizedBox(height: 8),
                                         Text(
@@ -493,12 +590,22 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                         SizedBox(height: 8),
                                       ]
                                     : [
-                                        Text(
-                                          "Deluxe Maintenance Pack",
-                                          style: TextStyle(
-                                              fontFamily: 'Raleway',
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Deluxe Maintenance Pack",
+                                              style: TextStyle(
+                                                  fontFamily: 'Raleway',
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            PremiumToggle(
+                                                isPremium: premium,
+                                                onToggle: togglePremium,
+                                                pricesetMethod: pricesetMethod)
+                                          ],
                                         ),
                                         SizedBox(height: 8),
                                         Text(
@@ -638,23 +745,38 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                 child: GestureDetector(
-                  onTap: (){
-                    //
+                  onTap: () async {
+                    await cartController.addSubscriptionToCartSnackbar(
+                      context,
+                      cartController,
+                      double.parse(price.toString()),
+                      "1",
+                      isMonthly && premium
+                          ? 'monthly-essential-need-pack'
+                          : isMonthly && !premium
+                              ? 'monthly-premium-need-pack'
+                              : !isMonthly && premium
+                                  ? 'quarterly-ultimate-wash-package'
+                                  : "quarterly-deluxe-maintenance-pack",
+                      isMonthly && premium
+                          ? 'Essential Need Pack'
+                          : isMonthly && !premium
+                              ? 'Premium Need Pack'
+                              : !isMonthly && premium
+                                  ? 'Ultimate Wash Package'
+                                  : "Deluxe Maintenance Pack",
+                      scaffoldMessengerKey,
+                    );
+
+                    Get.toNamed(AppRoutes.CART);
                   },
                   child: Container(
                     width: double.infinity,
                     height: 50,
                     child: Ink(
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF51B6FF),
-                            Color(0xFF2A5EE3),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(56),
+                        color: Color(0xff3778F2),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Container(
                         alignment: Alignment.center,
@@ -677,8 +799,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                     fontSize: 16,
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.white
-                                ),
+                                    color: Colors.white),
                               )
                             ],
                           ),

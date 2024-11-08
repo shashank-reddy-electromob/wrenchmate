@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
@@ -65,8 +68,9 @@ class _CartPageState extends State<CartPage> {
 
   Future<void> fetchCartData() async {
     await cartController.fetchCartItems();
-    if (cartController.cartItems.isEmpty) {
-      Navigator.pop(context);
+    if (cartController.cartItems.isEmpty &&
+        cartController.cartSubsItems.isEmpty) {
+      // Navigator.pop(context);
     } else {
       calculateTotal();
     }
@@ -131,16 +135,17 @@ class _CartPageState extends State<CartPage> {
                 return Center(child: CircularProgressIndicator());
               }
 
-              if (cartController.cartItems.isEmpty) {
+              if (cartController.cartItems.isEmpty &&
+                  cartController.cartSubsItems.isEmpty) {
                 return Center(child: Text("Your cart is empty"));
               }
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8),
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                       child: Text(
                         'Order Summary',
                         style: TextStyle(
@@ -324,9 +329,10 @@ class _CartPageState extends State<CartPage> {
 
                                           if (cartController
                                               .cartItems.isEmpty) {
-                                            Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
-                                              'tracking_button': false,
-                                            });
+                                            Get.toNamed(AppRoutes.BOTTOMNAV,
+                                                arguments: {
+                                                  'tracking_button': false,
+                                                });
                                           } else {
                                             calculateTotal();
                                           }
@@ -345,13 +351,107 @@ class _CartPageState extends State<CartPage> {
                             );
                           }),
                     ),
-                    containerButton(
-                      text: "Apply Coupon",
-                      onPressed: () {
-                        Get.toNamed(AppRoutes.COUPOUNS);
-                      },
-                      icon: Icons.add_card,
-                    ),
+                    Obx(() {
+                      return cartController.cartSubsItems.isEmpty
+                          ? SizedBox()
+                          : Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.all(16),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    blurRadius: 8,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Subscription',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          cartController
+                                              .deleteSubscriptionFromCart(
+                                                  cartController
+                                                          .cartSubsItems[0]
+                                                      ['subscriptionId']);
+                                        },
+                                        child: Icon(
+                                          Icons.delete_rounded,
+                                          color: Colors.red,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Pricing(
+                                    text: cartController.cartSubsItems[0]
+                                            ['packDesc']
+                                        .toString(),
+                                    price:
+                                        '${cartController.cartSubsItems[0]['price'].toString()}',
+                                  ),
+                                ],
+                              ),
+                            );
+                    }),
+                    Obx(() {
+                      return cartController.appliedCoupon.value.isNotEmpty
+                          ? ContainerButton(
+                              text:
+                                  '"${cartController.appliedCoupon.value}" Applied',
+                              onPressed: () {
+                                cartController.deleteCoupon();
+                              },
+                              icon: Icons.add_card,
+                              trailingWidget: Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: Text(
+                                  'Remove',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            )
+                          : ContainerButton(
+                              text: "Apply Coupon",
+                              onPressed: () {
+                                Get.toNamed(AppRoutes.COUPOUNS);
+                              },
+                              icon: Icons.add_card,
+                            );
+                    }),
+                    // containerButton(
+                    //   text: "Apply Coupon",
+                    //   onPressed: () {
+                    //     Get.toNamed(AppRoutes.COUPOUNS);
+                    //   },
+                    //   icon: Icons.add_card,
+                    // ),
+                    // cartController.appliedCoupon.value.isNotEmpty
+                    //     ? containerButton(
+                    //         text: cartController.appliedCoupon.value,
+                    //         onPressed: () {
+                    //           Get.toNamed(AppRoutes.COUPOUNS);
+                    //         },
+                    //         icon: Icons.add_card,
+                    //       )
+                    //     : SizedBox(),
                     //pricings
                     Container(
                       width: MediaQuery.of(context).size.width,
@@ -402,21 +502,272 @@ class _CartPageState extends State<CartPage> {
                         ],
                       ),
                     ),
-                    containerButton(
-                      text: "Booking Detail",
-                      onPressed: () async {
-                        var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
-                        if (result != null) {
-                          setState(() {
-                            selectedDate = result['selectedDate'] ?? '';
-                            selectedTimeRange =
-                                result['selectedTimeRange'] ?? '';
-                            selectedAddress = result['selectAddress'] ?? '';
-                          });
-                        }
-                      },
-                      icon: Icons.file_copy_outlined,
-                    ),
+                    GestureDetector(
+                        onTap: () async {
+                          var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+                          if (result != null) {
+                            setState(() {
+                              selectedDate = result['selectedDate'] ?? '';
+                              selectedTimeRange =
+                                  result['selectedTimeRange'] ?? '';
+                              selectedAddress = result['selectAddress'] ?? '';
+                            });
+                          }
+                        },
+                        child: Container(
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
+                                // height: 70,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade300,
+                                      blurRadius: 8,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            SizedBox(width: 8),
+                                            Icon(
+                                              Icons.file_copy_outlined,
+                                              color: Colors.blue,
+                                              size: 24,
+                                            ),
+                                            SizedBox(width: 18),
+                                            Text(
+                                              "Booking Detail",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Icon(
+                                            Icons.navigate_next_rounded,
+                                            color: CupertinoColors.black,
+                                          ),
+                                        )
+                                        // IconButton(
+                                        //     onPressed: () async {
+                                        //       var result = await Get.toNamed(
+                                        //           AppRoutes.BOOK_SLOT);
+                                        //       log(result);
+                                        //       if (result != null) {
+                                        //         setState(() {
+                                        //           selectedDate =
+                                        //               result['selectedDate'] ??
+                                        //                   '';
+                                        //           selectedTimeRange = result[
+                                        //                   'selectedTimeRange'] ??
+                                        //               '';
+                                        //           selectedAddress =
+                                        //               result['selectAddress'] ??
+                                        //                   '';
+                                        //         });
+                                        //       }
+                                        //     },
+                                        //     icon: Icon(
+                                        //       Icons.navigate_next_rounded,
+                                        //       color: CupertinoColors.black,
+                                        //     )),
+                                      ],
+                                    ),
+                                    if (selectedDate != null &&
+                                        selectedTimeRange != null) ...[
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Colors
+                                                          .grey.shade300)),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "Address",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Text(
+                                                      "${'${cartController.formatAddress(selectedAddress ?? '')}'}",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Colors
+                                                          .grey.shade300)),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "Date",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Text(
+                                                      "${DateFormat('d MMMM, yyyy').format(selectedDate!)}",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 0.5,
+                                                      color: Colors
+                                                          .grey.shade300)),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "Time",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Text(
+                                                      "${'${cartController.formatTime(selectedTimeRange!.start)} - ${cartController.formatTime(selectedTimeRange!.end)}'}",
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                    // if (selectedDate != null && selectedTimeRange != null) ...[
+                    //   Padding(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //     child: Container(
+                    //       width: double.infinity,
+                    //       padding: EdgeInsets.all(16),
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.grey.shade100,
+                    //         borderRadius: BorderRadius.circular(8),
+                    //       ),
+                    //       child: Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: [
+                    //           Text(
+                    //             "Selected Date: ${DateFormat('MMMM d, yyyy, h:mm a').format(selectedDate!)}",
+                    //             style: const TextStyle(
+                    //               fontSize: 13,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: Colors.grey,
+                    //             ),
+                    //           ),
+                    //           SizedBox(height: 2),
+                    //           Text(
+                    //             "Selected Time Range: ${'${cartController.formatTime(selectedTimeRange!.start)}-${cartController.formatTime(selectedTimeRange!.end)}'}",
+                    //             style: const TextStyle(
+                    //               fontSize: 13,
+                    //               fontWeight: FontWeight.w400,
+                    //               color: Colors.grey,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ]
                   ],
                 ),
               );
@@ -430,11 +781,14 @@ class _CartPageState extends State<CartPage> {
               children: [
                 Column(
                   children: [
-                    Text('₹ ${cartController.totalPayableAmount.value}',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: 'Poppins')),
+                    Obx(() {
+                      return Text(
+                          '₹ ${cartController.totalPayableAmount.value.toStringAsFixed(2)}',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Poppins'));
+                    }),
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
@@ -467,16 +821,16 @@ class _CartPageState extends State<CartPage> {
                           cartController.cartItems
                               .map((item) => item['serviceId']),
                         );
+
                         bool hasServices = cartController.cartItems
                             .any((item) => item['serviceId'] != "NA");
                         print("hasServices :: $hasServices");
 
-                        // bool hasServices = cartController.cartItems
-                        //     .any((item) => item['serviceId'] != "NA");
-                        // print("hasServices :: $hasServices");
                         if (hasServices &&
                             bookingController.bookingStatus.value !=
                                 'confirmed') {
+                          print("hasServices :: $hasServices");
+
                           var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
                           if (result != null) {
                             setState(() {
@@ -486,6 +840,7 @@ class _CartPageState extends State<CartPage> {
                               selectedAddress = result['selectAddress'] ?? '';
                             });
                           }
+                          log('testing add booking');
                           await bookingController.addBooking(
                             serviceIds,
                             'confirmed',
@@ -511,6 +866,29 @@ class _CartPageState extends State<CartPage> {
                           print("transactionId :: $transactionId");
                           body = getChecksum().toString();
                           print("body :: $body");
+
+                          if (cartController.cartSubsItems.isNotEmpty) {
+                            await bookingController.addSubscriptionBooking(
+                                cartController.cartSubsItems[0]['packDesc']
+                                    .toString(),
+                                cartController.cartSubsItems[0]['price'],
+                                cartController.cartSubsItems[0]['startDate'],
+                                cartController.cartSubsItems[0]['endDate'],
+                                "confirmed",
+                                DateTime.now(),
+                                null,
+                                null,
+                                currentCar!,
+                                selectedAddress!,
+                                selectedDate,
+                                selectedTimeRange,
+                                cartController.cartSubsItems[0]
+                                    ['subscriptionId'],
+                                cartController.cartSubsItems[0]
+                                    ['subscriptionName'],
+                                context);
+                          }
+
                           startPgTransaction();
 
                           // _proceedToPayment(context);
@@ -612,10 +990,9 @@ class _CartPageState extends State<CartPage> {
           if (status == 'SUCCESS') {
             result = "Flow complete - status : SUCCESS";
             await cartController.clearCart();
-            await Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
+            await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
               'tracking_button': true,
             });
-
           } else {
             result = "Flow complete - status : $status and error $error";
           }

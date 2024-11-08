@@ -24,17 +24,17 @@ class TimeLineTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 140.0, // Adjust the height to increase line length
+      height: 140.0,
       child: TimelineTile(
         isFirst: isFirst,
         isLast: isLast,
         beforeLineStyle: LineStyle(
           color: isPast ? Color(0xff1671D8) : Colors.blue.shade100,
-          thickness: 4.0,
+          thickness: 2.0,
         ),
         afterLineStyle: LineStyle(
           color: isPast ? Color(0xff1671D8) : Colors.blue.shade100,
-          thickness: 4.0,
+          thickness: 2.0,
         ),
         indicatorStyle: IndicatorStyle(
           color: isPast ? Color(0xff1671D8) : Colors.blue.shade100,

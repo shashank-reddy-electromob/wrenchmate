@@ -1,12 +1,17 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../routes/app_routes.dart'; // Import GetX for reactive state management
 
 class CarController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String userId = FirebaseAuth.instance.currentUser!.uid;
+  var userCurrentCarId = ''.obs;
 
   final Map<String, String> carTypeToIdMap = {
     "Compact SUV": "WAW1MUSfq8nCJezAVWcc",
@@ -22,7 +27,7 @@ class CarController extends GetxController {
     required String registrationNumber,
     DateTime? registrationYear, // Optional
     DateTime? pucExpiration, // Optional
-    required DateTime insuranceExpiration,
+    DateTime? insuranceExpiration,
     required String transmission,
     required String carType,
     required String carModel,
@@ -69,11 +74,6 @@ class CarController extends GetxController {
       });
 
       print("Car added successfully.");
-    /**
-     *Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
-        'tracking_button': true,
-        });
-     */
 
       Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
         'tracking_button': false,
@@ -83,9 +83,59 @@ class CarController extends GetxController {
     }
   }
 
+String getFileNameFromUrl(String url) {
+  final decodedUrl = Uri.decodeFull(url);
+  final segments = decodedUrl.split('/');
+  final fileNameWithParams = segments.last;
+  final fullFileName = fileNameWithParams.split('?').first;
+  final match = RegExp(r'(\d+\.\w+)$').firstMatch(fullFileName);
+  return match?.group(0) ?? fullFileName;
+}
+
+
+  Future<void> deleteCar({
+    required String carId,
+    required String carType,
+    required String carModel,
+  }) async {
+    try {
+      String carTypeId = carTypeToIdMap[carType]!;
+
+      await _firestore
+          .collection('car')
+          .doc('PeVE6MdvLwzcePpmZfp0')
+          .collection(carType)
+          .doc(carTypeId)
+          .collection(carModel)
+          .doc(carId)
+          .delete();
+
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
+
+      List<dynamic> currentCarDetails = userDoc.get('User_carDetails') ?? [];
+
+      String carDetailToRemove = "$carType;$carModel;$carId";
+      currentCarDetails.remove(carDetailToRemove);
+
+      await _firestore.collection('User').doc(userId).update({
+        'User_carDetails': currentCarDetails,
+        if (userCurrentCarId.value == carId) 'User_currentCar': 0,
+      });
+
+      print("Car deleted successfully.");
+
+     
+    } catch (e) {
+      print("Error deleting car: $e");
+      throw e;
+    }
+  }
+
   Future<List<Map<String, dynamic>>> fetchUserCarDetails() async {
     try {
-      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
       List<dynamic> userCarDetails = userDoc.get('User_carDetails') ?? [];
 
       List<Map<String, dynamic>> carDetailsList = [];
@@ -118,6 +168,164 @@ class CarController extends GetxController {
     } catch (e) {
       print("Error fetching car details: $e");
       return [];
+    }
+  }
+
+Future<void> addImageUrlsToCar({
+  required String carId,
+  required String carType,
+  required String carModel,
+  String? drivLicUrl,
+  String? regCardUrl,
+}) async {
+  try {
+    if (drivLicUrl == null && regCardUrl == null) {
+      print("No URLs provided for updating.");
+      return;
+    }
+
+    Map<String, dynamic> imageUrlsData = {};
+    if (drivLicUrl != null) {
+      imageUrlsData['drivLic'] = drivLicUrl;
+    }
+    if (regCardUrl != null) {
+      imageUrlsData['regCard'] = regCardUrl;
+    }
+
+    String carTypeId = carTypeToIdMap[carType]!;
+    
+    await _firestore
+        .collection('car')
+        .doc('PeVE6MdvLwzcePpmZfp0')
+        .collection(carType)
+        .doc(carTypeId)
+        .collection(carModel)
+        .doc(carId)
+        .update(imageUrlsData);
+
+    print("Image URLs added successfully.");
+
+    Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+      'tracking_button': false,
+    });
+  } catch (e) {
+    print("Error adding image URLs: $e");
+  }
+}
+
+Future deleteCardImageUrl({
+  required String carId,
+  required String carType,
+  required String carModel,
+  required String imageType, 
+}) async {
+  try {
+    if (imageType != 'drivLic' && imageType != 'regCard') {
+      print("Invalid image type. Must be 'drivLic' or 'regCard'");
+      return;
+    }
+
+    String carTypeId = carTypeToIdMap[carType]!;
+    
+    DocumentSnapshot docSnapshot = await _firestore
+        .collection('car')
+        .doc('PeVE6MdvLwzcePpmZfp0')
+        .collection(carType)
+        .doc(carTypeId)
+        .collection(carModel)
+        .doc(carId)
+        .get();
+
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+      String? imageUrl = data[imageType] as String?;
+
+      if (imageUrl != null) {
+        try {
+          Uri uri = Uri.parse(imageUrl);
+          String path = Uri.decodeFull(uri.path.split('/o/')[1]);
+          
+          final storageRef = FirebaseStorage.instance.ref().child(path);
+          await storageRef.delete();
+          print("File deleted from storage successfully");
+        } catch (storageError) {
+          print("Error deleting file from storage: $storageError");
+        }
+      }
+
+      Map<String, dynamic> updateData = {
+        imageType: FieldValue.delete()
+      };
+
+      await _firestore
+          .collection('car')
+          .doc('PeVE6MdvLwzcePpmZfp0')
+          .collection(carType)
+          .doc(carTypeId)
+          .collection(carModel)
+          .doc(carId)
+          .update(updateData);
+
+      print("Image URL deleted successfully from Firestore");
+      
+      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+        'tracking_button': false,
+      });
+    } else {
+      print("Document does not exist");
+    }
+  } catch (e) {
+    print("Error in deletion process: $e");
+  }
+}
+
+
+
+  Future<void> updateCar({
+    required String carId,
+    required String fuelType,
+    required String registrationNumber,
+    DateTime? registrationYear,
+    DateTime? pucExpiration,
+    DateTime? insuranceExpiration,
+    required String transmission,
+    required String carType,
+    required String carModel,
+  }) async {
+    try {
+      String carTypeId = carTypeToIdMap[carType]!;
+      log(carId);
+      Map<String, dynamic> carData = {
+        'fuel_type': fuelType,
+        'registration_number': registrationNumber,
+        'insurance_expiration': insuranceExpiration,
+        'transmission': transmission,
+      };
+
+      if (registrationYear != null) {
+        carData['registration_year'] = registrationYear;
+      }
+
+      if (pucExpiration != null) {
+        carData['puc_expiration'] = pucExpiration;
+      }
+      log(userCurrentCarId.value);
+      await _firestore
+          .collection('car')
+          .doc('PeVE6MdvLwzcePpmZfp0')
+          .collection(carType)
+          .doc(carTypeId)
+          .collection(carModel)
+          .doc(carId)
+          .update(carData);
+
+      print("Car updated successfully.");
+
+      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+        'tracking_button': false,
+      });
+    } catch (e) {
+      print("Error updating car: $e");
     }
   }
 

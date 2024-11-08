@@ -22,6 +22,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
         title: 'Payment',
         onBackButtonPressed: () {
@@ -281,7 +282,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     ),
                   ),
                   Expanded(
-                    child: blueButton(
+                    child: BlueButton(
                       buttonHeight: 8,
                       text: "Proceed",
                       onTap: () {},

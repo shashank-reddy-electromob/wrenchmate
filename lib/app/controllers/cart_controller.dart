@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +17,8 @@ class CartController extends GetxController {
   final ProductController productController = Get.put(ProductController());
   var isLoading = true.obs;
   var cartItems = <Map<String, dynamic>>[].obs;
+  var cartSubsItems = <Map<String, dynamic>>[].obs;
+
   RxDouble totalAmount = 0.0.obs;
   RxDouble totalPayableAmount = 0.0.obs;
 
@@ -98,10 +102,25 @@ class CartController extends GetxController {
           .collection('Cart')
           .where('userId', isEqualTo: userId)
           .get();
+      cartItems.clear();
+      cartSubsItems.clear();
 
-      cartItems.value = snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
+      // cartItems.value = snapshot.docs
+      //     .map((doc) => doc.data() as Map<String, dynamic>)
+      //     .toList();
+
+      for (var doc in snapshot.docs) {
+        var item = doc.data() as Map<String, dynamic>;
+        log(doc.toString());
+        if (item.containsKey('haveSub')) {
+          cartSubsItems.add(item);
+        } else {
+          cartItems.add(item);
+        }
+      }
+
+      log(cartItems.toString());
+      log(cartSubsItems.toString());
 
       Set<String> uniqueServiceIds = {};
       Set<String> uniqueProductIds = {};
@@ -136,15 +155,33 @@ class CartController extends GetxController {
       double subtotal = 0.0;
 
       for (var item in cartItems) {
-        double price = (item['price'] ?? 0).toDouble(); // Handle null
-        int quantity = (item['unitsquantity'] ?? 1); // Handle null
+        double price = (item['price'] ?? 0).toDouble();
+        int quantity = (item['unitsquantity'] ?? 1);
 
         subtotal += price * quantity;
       }
 
-      double tax = subtotal * 0.10;
+      log('Subtotal from cart items: $subtotal');
 
+      double subscriptionTotal = 0.0;
+      log(cartSubsItems.length.toString());
+      for (var subItem in cartSubsItems) {
+        double subPrice = (subItem['price'] ?? 0).toDouble();
+        int subQuantity = (subItem['unitsquantity'] ?? 1);
+
+        subscriptionTotal += subPrice * subQuantity;
+      }
+
+      log('Subtotal from subscription items: $subscriptionTotal');
+
+      subtotal += subscriptionTotal;
+
+      log('Total after adding subscriptions: $subtotal');
+
+      double tax = subtotal * 0.10;
       double totalWithTax = subtotal + tax;
+
+      log('Total with tax: $totalWithTax');
 
       totalAmount.value = totalWithTax;
 
@@ -269,6 +306,27 @@ class CartController extends GetxController {
 
           await doc.reference.delete();
         }
+      }
+
+      await fetchCartItems();
+    } catch (e) {
+      print("Error deleting product from cart: $e");
+    }
+  }
+
+  Future<void> deleteSubscriptionFromCart(String subscriptionId) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      print("${subscriptionId} is being deleted ");
+
+      QuerySnapshot snapshot = await _firestore
+          .collection('Cart')
+          .where('userId', isEqualTo: userId)
+          .where('subscriptionId', isEqualTo: subscriptionId)
+          .get();
+
+      for (var doc in snapshot.docs) {
+        await doc.reference.delete();
       }
 
       await fetchCartItems();
@@ -416,6 +474,171 @@ class CartController extends GetxController {
     });
   }
 
+  String formatAddress(String address) {
+    final segments = address.split(',').map((e) => e.trim()).toList();
+    return '${segments[0]}, ${segments[segments.length - 3]}';
+  }
+
+  Future<void> addSubscriptionToCartSnackbar(
+    BuildContext context,
+    CartController cartController,
+    double price,
+    String productQuantity,
+    String subscriptionName,
+    String packDesc,
+    GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey,
+  ) async {
+    print("Subscription adding to cart");
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    QuerySnapshot existingSubscription = await _firestore
+        .collection('Cart')
+        .where('userId', isEqualTo: userId)
+        .where('haveSub', isEqualTo: true)
+        .get();
+
+    if (existingSubscription.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Subscription already added to cart!',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+
+      return;
+    }
+
+    DateTime startDate = DateTime.now();
+
+    DateTime endDate;
+    if (subscriptionName.toLowerCase().startsWith('monthly')) {
+      endDate = startDate.add(Duration(days: 30));
+    } else if (subscriptionName.toLowerCase().startsWith('quarterly')) {
+      endDate = startDate.add(Duration(days: 90));
+    } else {
+      endDate = startDate;
+    }
+
+    DocumentReference newDocRef =
+        FirebaseFirestore.instance.collection('Cart').doc();
+
+    await _firestore.collection('Cart').add({
+      'subscriptionId': newDocRef.id,
+      'price': price,
+      'subscriptionName': subscriptionName,
+      'haveSub': true,
+      'startDate': startDate,
+      'packDesc': packDesc,
+      'endDate': endDate,
+      'unitsquantity': 1,
+      'userId': userId,
+    });
+
+    await fetchCartItems();
+    await updateTotalCost();
+
+    double updatedAmount = cartController.totalAmount.value;
+
+    if (!context.mounted) return;
+
+    final snackBarContent = Obx(() => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Total Amount: ₹${updatedAmount.toStringAsFixed(2)}',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Get.toNamed(AppRoutes.CART);
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+                child: Text(
+                  'Checkout',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: primaryColor,
+                    fontFamily: 'Raleway',
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ));
+
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        key: ValueKey('cartSnackBar'),
+        backgroundColor: primaryColor,
+        content: snackBarContent,
+        duration: Duration(days: 1),
+      ),
+    );
+
+    cartController.totalAmount.listen((newTotal) {
+      if (!context.mounted) return;
+
+      scaffoldMessengerKey.currentState?.removeCurrentSnackBar();
+      scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          key: ValueKey('cartSnackBar'),
+          backgroundColor: primaryColor,
+          content: Obx(() => Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Total Amount: ₹${newTotal.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Get.toNamed(AppRoutes.CART);
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      },
+                      child: Text(
+                        'Checkout',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: primaryColor,
+                          fontFamily: 'Raleway',
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          duration: Duration(days: 1),
+        ),
+      );
+    });
+  }
+
   void addProductToCartSnackbar(
     BuildContext context,
     CartController cartController,
@@ -534,6 +757,7 @@ class CartController extends GetxController {
       );
     });
   }
+
 // bool isServiceInCart(Servicefirebase service) {
 //   return cartItems.any((item) => item.id == service.id);
 // }
@@ -574,6 +798,14 @@ class CartController extends GetxController {
     updateTotalWithDiscount();
   }
 
+  void deleteCoupon() {
+    if (appliedCoupon.value.isNotEmpty) {
+      totalPayableAmount.value += discountAmount.value;
+      discountAmount.value = 0;
+      appliedCoupon.value = '';
+    }
+  }
+
   void updateTotalWithDiscount() {
     totalAmount.value -= discountAmount.value;
     String userId = FirebaseAuth.instance.currentUser!.uid;
@@ -583,5 +815,14 @@ class CartController extends GetxController {
     });
 
     Get.toNamed(AppRoutes.CART);
+  }
+
+  String formatTime(double timeValue) {
+    int hours = timeValue.toInt();
+    int minutes = ((timeValue - hours) * 60).round();
+    String period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours == 0 ? 12 : hours;
+    return '$hours:${minutes.toString().padLeft(2, '0')} $period';
   }
 }

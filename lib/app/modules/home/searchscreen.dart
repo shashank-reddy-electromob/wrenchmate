@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,9 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/services.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
+import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
-
 import '../../controllers/service_controller.dart';
 import '../../data/models/Service_firebase.dart';
 
@@ -21,15 +22,15 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final ServiceController serviceController = Get.put(ServiceController());
   final TextEditingController _searchController = TextEditingController();
-  List<Servicefirebase> topServices =
-      [];
-  List<String> topServiceIds =
-      [];
+
   List<Servicefirebase> services = <Servicefirebase>[];
   List<Servicefirebase> _resultList = [];
+  List<Servicefirebase> topServices = [];
+  List<String> topServiceIds = [];
   List<String> topCategories = [];
   List<String> searchHistory = [];
   bool _isSearching = false;
+  bool _isLoading = true;
 
   final Map<String, String> categoryImageMap = {
     'Car Wash': 'assets/services/car wash.png',
@@ -42,35 +43,25 @@ class _SearchPageState extends State<SearchPage> {
     'General Service': 'assets/services/general service.png',
   };
 
-  Future<void> getTopCategories() async {
-    var data = await FirebaseFirestore.instance.collection("topCategory").get();
-    topCategories = data.docs.map((doc) => doc['category'] as String).toList();
-    setState(() {});
-  }
-
-  Future<void> getTopServiceIds() async {
-    var data = await FirebaseFirestore.instance.collection("topServices").get();
-    topServiceIds = data.docs.map((doc) => doc['serviceId'] as String).toList();
-    setState(() {});
-  }
-
-  Future<void> getSearchHistory() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    searchHistory = prefs.getStringList('searchHistory') ?? [];
-    setState(() {});
-  }
-
-
   @override
   void initState() {
     super.initState();
+    _initialize();
+    _searchController.addListener(_onSearchChange);
+  }
 
-    // Fetch all the services initially
-    getClientData().then((_) {
-      // Check if there are any filtering arguments
+  Future<void> _initialize() async {
+    try {
+      await Future.wait([
+        getClientData(),
+        getTopCategories(),
+        getSearchHistory(),
+        getTopServiceIds(),
+      ]);
+
       final filterArgs = Get.arguments;
       if (filterArgs != null) {
-        _applyFilters(
+        await _applyFilters(
           filterArgs['selectedServices'],
           filterArgs['selectedDiscount'],
           filterArgs['selectedRating'],
@@ -78,118 +69,152 @@ class _SearchPageState extends State<SearchPage> {
           filterArgs['maxPrice'],
         );
       } else {
-        // If no arguments are passed, display all services
         setState(() {
-          _resultList = services;
+          _resultList = List.from(services);
+          _isLoading = false;
         });
       }
-    });
-
-    getTopCategories();
-    getSearchHistory();
-    getTopServiceIds();
-    _searchController.addListener(_onSearchChange);
+    } catch (e) {
+      print('Initialization error: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
-  void _applyFilters(
-      List<String>? selectedServices,
-      String? selectedDiscount,
-      String? selectedRating,
-      double? minPrice,
-      double? maxPrice) {
+  Future<void> getTopCategories() async {
+    try {
+      var data =
+          await FirebaseFirestore.instance.collection("topCategory").get();
+      topCategories =
+          data.docs.map((doc) => doc['category'] as String).toList();
+      setState(() {});
+    } catch (e) {
+      print('Error fetching top categories: $e');
+    }
+  }
 
-    print("Before filtering:");
+  Future<void> getTopServiceIds() async {
+    try {
+      var data =
+          await FirebaseFirestore.instance.collection("topServices").get();
+      topServiceIds =
+          data.docs.map((doc) => doc['serviceId'] as String).toList();
+      setState(() {});
+    } catch (e) {
+      print('Error fetching top service IDs: $e');
+    }
+  }
+
+  Future<void> getSearchHistory() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      searchHistory = prefs.getStringList('searchHistory') ?? [];
+      setState(() {});
+    } catch (e) {
+      print('Error fetching search history: $e');
+    }
+  }
+
+  Future<void> _applyFilters(
+    List<String>? selectedServices,
+    String? selectedDiscount,
+    String? selectedRating,
+    double? minPrice,
+    double? maxPrice,
+  ) async {
+    if (services.isEmpty) {
+      print('Services list is empty when applying filters');
+      return;
+    }
+
+    print("Before filtering: ${services.length} services");
     services.forEach((service) {
       print(
           "Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
     });
 
-    _resultList = services.where((service) {
-      // Printing each service's attributes before filtering
+    // Parse discount value
+    double? discountValue;
+    if (selectedDiscount != null) {
+      final cleanDiscount = selectedDiscount.replaceAll('%', '');
+      final discountRange = cleanDiscount.split('-');
+      discountValue = double.tryParse(
+          discountRange.length == 2 ? discountRange[0] : cleanDiscount);
+    }
+
+    // Parse rating value
+    double? ratingValue;
+    if (selectedRating != null) {
+      final cleanRating =
+          selectedRating.replaceAll('>', '').replaceAll('⭐', '').trim();
+      ratingValue = double.tryParse(cleanRating);
+    }
+
+    // Apply filters
+    final filteredList = services.where((service) {
       print("\nEvaluating Service: ${service.name}");
-      print(
-          "Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
 
-      // Applying filters
-      bool matchesCategory = selectedServices == null || selectedServices.isEmpty
+      // Category filter
+      final categoryMatch = selectedServices?.isEmpty ?? true
           ? true
-          : selectedServices.contains(service.category);
+          : selectedServices?.contains(service.category) ?? false;
 
-      double discountValue = 0;
-      if (selectedDiscount != null) {
-        // Remove the '%' sign and parse the discount range
-        selectedDiscount = selectedDiscount?.replaceAll('%', '');
-        List<String>? discountRange = selectedDiscount?.split('-');
-        // If the range is defined, take the lower end as the minimum discount
-        if (discountRange?.length == 2) {
-          discountValue = double.tryParse(discountRange![0]) ?? 0;
-        } else {
-          discountValue = double.tryParse(selectedDiscount!) ?? 0;
-        }
-      }
+      // Discount filter
+      final discountMatch =
+          discountValue == null ? true : service.discount >= discountValue;
 
-      double ratingValue = 0;
-      if (selectedRating != null) {
-        // Remove '>' and the emoji from the rating
-        selectedRating = selectedRating?.replaceAll('>', '').replaceAll('⭐', '').trim();
-        ratingValue = double.tryParse(selectedRating!) ?? 0;
-      }
+      // Rating filter
+      final ratingMatch =
+          ratingValue == null ? true : service.averageReview > ratingValue;
 
-      bool matchesDiscount = selectedDiscount == null || service.discount >= discountValue;
-      bool matchesRating = selectedRating == null || service.averageReview > ratingValue;
-      bool matchesPriceRange = (minPrice == null || service.price >= minPrice) && (maxPrice == null || service.price <= maxPrice);
+      // Price range filter
+      final priceMatch = (minPrice == null || service.price >= minPrice) &&
+          (maxPrice == null || service.price <= maxPrice);
 
-      // Printing evaluation result for each condition
-      print("Matches Category: $matchesCategory");
-      print("Matches Discount: $matchesDiscount");
-      print("Matches Rating: $matchesRating");
-      print("Matches Price Range: $matchesPriceRange");
+      print("Category Match: $categoryMatch");
+      print("Discount Match: $discountMatch");
+      print("Rating Match: $ratingMatch");
+      print("Price Match: $priceMatch");
 
-      return matchesCategory && matchesDiscount && matchesRating && matchesPriceRange;
+      return categoryMatch && discountMatch && ratingMatch && priceMatch;
     }).toList();
 
-    _isSearching=true;
+    setState(() {
+      _isSearching = true;
+      _resultList = filteredList;
+      _isLoading = false;
+    });
 
-    print("\nAfter filtering:");
+    print("\nAfter filtering: ${_resultList.length} results");
     _resultList.forEach((service) {
       print(
           "Service: ${service.name}, Category: ${service.category}, Discount: ${service.discount}, Rating: ${service.averageReview}, Price: ${service.price}");
     });
   }
 
+  Future<void> getClientData() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) throw Exception('User not authenticated');
 
-  Future<void> saveSearchHistory(String searchTerm) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (!searchHistory.contains(searchTerm)) {
-      searchHistory.add(searchTerm);
-      await prefs.setStringList('searchHistory', searchHistory);
-      setState(() {}); // Update the UI to show the new search term
-    }
-  }
+      final userDoc =
+          await FirebaseFirestore.instance.collection("User").doc(userId).get();
 
-  // Listener for search field changes
-  _onSearchChange() {
-    setState(() {
-      _isSearching = _searchController.text.isNotEmpty;
-    });
-    searchResultList();
-  }
-  getClientData() async {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    var userDoc = await FirebaseFirestore.instance.collection("User").doc(userId).get();
+      if (!userDoc.exists) throw Exception('User document not found');
 
-    if (userDoc.exists) {
-      List<String> userCarDetails = List<String>.from(userDoc.data()?['User_carDetails'] ?? []);
+      final userCarDetails =
+          List<String>.from(userDoc.data()?['User_carDetails'] ?? []);
+      final userCarModels =
+          userCarDetails.map((detail) => detail.split(';')[0]).toList();
 
-      List<String> userCarModels = userCarDetails.map((detail) => detail.split(';')[0]).toList();
-
-      var data = await FirebaseFirestore.instance
+      final querySnapshot = await FirebaseFirestore.instance
           .collection("Service")
           .where('carmodel', arrayContainsAny: userCarModels)
           .get();
 
-      services = data.docs.map((doc) {
-        var data = doc.data() as Map<String, dynamic>;
+      services = querySnapshot.docs.map((doc) {
+        final data = doc.data();
         return Servicefirebase(
           id: doc.id,
           category: data['category'] ?? '',
@@ -208,17 +233,25 @@ class _SearchPageState extends State<SearchPage> {
         );
       }).toList();
 
-      topServices = services.where((service) {
-              return topServiceIds.contains(service.id);
-            }).toList();
-            setState(() {
-              _resultList = services;
-            });
-    }
+      topServices = services
+          .where((service) => topServiceIds.contains(service.id))
+          .toList();
 
+      setState(() {
+        _resultList = List.from(services);
+      });
+    } catch (e) {
+      print('Error fetching client data: $e');
+    }
   }
 
-  // Dynamic searching as you type
+  void _onSearchChange() {
+    setState(() {
+      _isSearching = _searchController.text.isNotEmpty;
+    });
+    searchResultList();
+  }
+
   void searchResultList() {
     String query = _searchController.text.trim().toLowerCase();
     if (query.isNotEmpty) {
@@ -234,19 +267,28 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    getClientData();
-    super.didChangeDependencies();
+  Future<void> saveSearchHistory(String searchTerm) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (!searchHistory.contains(searchTerm)) {
+        searchHistory.add(searchTerm);
+        await prefs.setStringList('searchHistory', searchHistory);
+        setState(() {});
+      }
+    } catch (e) {
+      print('Error saving search history: $e');
+    }
   }
 
-  // Function to remove a search history item
   void removeSearchItem(int index) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    searchHistory.removeAt(index); // Remove from local list
-    await prefs.setStringList(
-        'searchHistory', searchHistory); // Update SharedPreferences
-    setState(() {}); // Update UI
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      searchHistory.removeAt(index);
+      await prefs.setStringList('searchHistory', searchHistory);
+      setState(() {});
+    } catch (e) {
+      print('Error removing search item: $e');
+    }
   }
 
   @override
@@ -460,53 +502,80 @@ class _SearchPageState extends State<SearchPage> {
                     ],
                     if (_isSearching) ...[
                       _resultList.isEmpty
-                          ? Center(child: Text("No services match your requirements :("))
+                          ? Center(
+                              child: Column(
+                              children: [
+                                Text("Contact us if the service is not listed"),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      Get.toNamed(AppRoutes.CHATSCREEN);
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Colors.blue),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15, vertical: 10),
+                                          child: Text(
+                                            "Contact us",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        )))
+                              ],
+                            ))
                           : ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: _resultList.length,
-                        itemBuilder: (context, index) {
-                          var service = _resultList[index];
-                          return InkWell(
-                            onTap: () {
-                              Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                                  arguments: service);
-                            },
-                            splashColor: Colors.grey.withOpacity(0.3),
-                            child: Container(
-                              height: 90,
-                              width: double.infinity,
-                              margin: EdgeInsets.symmetric(vertical: 4),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: ExtendedImage.network(
-                                      service.image,
-                                      fit: BoxFit.cover,
-                                      cache: true,
-                                      height: 80,
-                                      width: 80,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: _resultList.length,
+                              itemBuilder: (context, index) {
+                                var service = _resultList[index];
+                                return InkWell(
+                                  onTap: () {
+                                    Get.toNamed(AppRoutes.SERVICE_DETAIL,
+                                        arguments: service);
+                                  },
+                                  splashColor: Colors.grey.withOpacity(0.3),
+                                  child: Container(
+                                    height: 90,
+                                    width: double.infinity,
+                                    margin: EdgeInsets.symmetric(vertical: 4),
+                                    child: Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          child: ExtendedImage.network(
+                                            service.image,
+                                            fit: BoxFit.cover,
+                                            cache: true,
+                                            height: 80,
+                                            width: 80,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            '${service.name} in ${service.category}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      '${service.name} in ${service.category}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ]
                   ],
                 ),

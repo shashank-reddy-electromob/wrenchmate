@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -23,9 +21,9 @@ class _MapScreenState extends State<MapScreen> {
   loc.LocationData? currentLocation;
   LatLng? initialCameraPosition;
   String? address;
-  bool? isExist=false;
-  bool? isnew=false;
-  late Placemark place;
+  bool? isExist = false;
+  bool? isnew = false;
+  Placemark? place; // Change to nullable
 
   TextEditingController flatnubercontroller = TextEditingController();
   TextEditingController localitycontroller = TextEditingController();
@@ -52,10 +50,8 @@ class _MapScreenState extends State<MapScreen> {
     if (args != null && args.containsKey('address')) {
       final address = args['address'] as String?;
       if (address != null) {
-        print("in map screen, address: $address");
         List<String> addressParts = address.split(',');
         addressParts = addressParts.map((part) => part.trim()).toList();
-        print(addressParts[0]);
         setState(() {
           isExist = true;
           flatnubercontroller.text = addressParts[0];
@@ -77,7 +73,6 @@ class _MapScreenState extends State<MapScreen> {
 
   void _fetchCurrentLocation() async {
     var location = loc.Location();
-    loc.LocationData? currentLocation;
 
     try {
       currentLocation = await location.getLocation();
@@ -90,10 +85,11 @@ class _MapScreenState extends State<MapScreen> {
       setState(() {
         initialCameraPosition = LatLng(
           currentLocation!.latitude!,
-          currentLocation.longitude!,
+          currentLocation!.longitude!,
         );
       });
-      _getAddressFromLatLng(initialCameraPosition!);
+      await _getAddressFromLatLng(initialCameraPosition!);
+      showBottomDrawer(context);
     }
   }
 
@@ -107,18 +103,10 @@ class _MapScreenState extends State<MapScreen> {
       setState(() {
         address =
             "${place?.street}, ${place?.locality}, ${place?.postalCode}, ${place?.country}";
+        flatnubercontroller.text = place?.name ?? '';
+        localitycontroller.text = place?.locality ?? '';
+        landmarkcontroller.text = place?.subLocality ?? '';
       });
-      print("");
-      print("");
-      print("");
-      print("");
-      print("");
-      print(address);
-      print("");
-      print("");
-      print("");
-      print("");
-      print("");
     } catch (e) {
       print('Error getting address: $e');
       setState(() {
@@ -162,7 +150,7 @@ class _MapScreenState extends State<MapScreen> {
         leading: Custombackbutton(),
         title: Text("Add Address",
             style: TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.w400,
                 fontFamily: 'Poppins')),
       ),
@@ -236,152 +224,152 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-
   void showBottomDrawer(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: Colors.white,
       isScrollControlled: true,
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20),
         ),
       ),
       builder: (context) => StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.85,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 16,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
                 ),
-                const Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: Custombackbutton(),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          "Add Address",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 20,
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 16),
+                  const Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Custombackbutton(),
+                      ),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            "Add Address",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 48),
-                  ],
-                ),
-                ClipOval(
-                  child: Container(
-                    height: 100,
-                    width: 100,
-                    child: GoogleMap(
-                      onMapCreated: _onMapCreated,
-                      initialCameraPosition: CameraPosition(
-                        target: initialCameraPosition!,
-                        zoom: 16.0,
-                      ),
-                      onTap: (LatLng latLng) {
-                        setState(() {
-                          initialCameraPosition = latLng;
-                        });
-                        _getAddressFromLatLng(latLng);
-                      },
-                      zoomControlsEnabled: false,
-                      markers: {
-                        Marker(
-                          markerId: MarkerId('selected-location'),
-                          position: initialCameraPosition!,
-                          draggable: false,
-                          onDragEnd: (LatLng newPosition) {
-                            setState(() {
-                              initialCameraPosition = newPosition;
-                            });
-                            _getAddressFromLatLng(newPosition);
-                          },
+                      SizedBox(width: 48),
+                    ],
+                  ),
+                  ClipOval(
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      child: GoogleMap(
+                        onMapCreated: _onMapCreated,
+                        initialCameraPosition: CameraPosition(
+                          target: initialCameraPosition!,
+                          zoom: 16.0,
                         ),
+                        onTap: (LatLng latLng) {
+                          setState(() {
+                            initialCameraPosition = latLng;
+                          });
+                          _getAddressFromLatLng(latLng);
+                        },
+                        zoomControlsEnabled: false,
+                        markers: {
+                          Marker(
+                            markerId: MarkerId('selected-location'),
+                            position: initialCameraPosition!,
+                            draggable: false,
+                            onDragEnd: (LatLng newPosition) {
+                              setState(() {
+                                initialCameraPosition = newPosition;
+                              });
+                              _getAddressFromLatLng(newPosition);
+                            },
+                          ),
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        color: Colors.black,
+                        size: 16,
+                      ),
+                      Text(
+                        place?.locality ?? "",
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                  CustomErrorField(
+                    controller: flatnubercontroller,
+                    hintText: "Flat Number",
+                    errorText:
+                        isFlatNumberEmpty ? "Flat Number is required" : null,
+                  ),
+                  CustomErrorField(
+                    controller: localitycontroller,
+                    hintText: "Locality",
+                    errorText: isLocalityEmpty ? "Locality is required" : null,
+                  ),
+                  CustomErrorField(
+                    controller: landmarkcontroller,
+                    hintText: "Landmark",
+                    errorText: isLandmarkEmpty ? "Landmark is required" : null,
+                  ),
+
+                  Spacer(), // This pushes the button to the bottom
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: BlueButton(
+                      text: "SAVE",
+                      onTap: () {
+                        setState(() {
+                          isFlatNumberEmpty = flatnubercontroller.text.isEmpty;
+                          isLocalityEmpty = localitycontroller.text.isEmpty;
+                          isLandmarkEmpty = landmarkcontroller.text.isEmpty;
+                        });
+
+                        if (!isFlatNumberEmpty &&
+                            !isLocalityEmpty &&
+                            !isLandmarkEmpty) {
+                          address = "${flatnubercontroller.text}, "
+                              "${place?.name}, "
+                              "${landmarkcontroller.text}, "
+                              "${localitycontroller.text}, "
+                              "${place?.subLocality}, "
+                              "${place?.locality}, "
+                              "${place?.administrativeArea}, "
+                              "${place?.postalCode}, "
+                              "${place?.country}";
+                          _saveAddress();
+                        }
                       },
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      color: Colors.black,
-                      size: 16,
-                    ),
-                    Text(
-                      place.locality ?? "",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-                CustomErrorField(
-                  controller: flatnubercontroller,
-                  hintText: "Flat Number",
-                  errorText:
-                      isFlatNumberEmpty ? "Flat Number is required" : null,
-                ),
-                CustomErrorField(
-                  controller: localitycontroller,
-                  hintText: "Locality",
-                  errorText: isLocalityEmpty ? "Locality is required" : null,
-                ),
-                CustomErrorField(
-                  controller: landmarkcontroller,
-                  hintText: "Landmark",
-                  errorText: isLandmarkEmpty ? "Landmark is required" : null,
-                ),
-
-                Spacer(), // This pushes the button to the bottom
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: blueButton(
-                    text: "SAVE",
-                    onTap: () {
-                      setState(() {
-                        isFlatNumberEmpty = flatnubercontroller.text.isEmpty;
-                        isLocalityEmpty = localitycontroller.text.isEmpty;
-                        isLandmarkEmpty = landmarkcontroller.text.isEmpty;
-                      });
-
-                      if (!isFlatNumberEmpty &&
-                          !isLocalityEmpty &&
-                          !isLandmarkEmpty) {
-                        address = "${flatnubercontroller.text}, "
-                            "${place.name}, "
-                            "${landmarkcontroller.text}, "
-                            "${localitycontroller.text}, "
-                            "${place.subLocality}, "
-                            "${place.locality}, "
-                            "${place.administrativeArea}, "
-                            "${place.postalCode}, "
-                            "${place.country}";
-                        _saveAddress();
-                      }
-                    },
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

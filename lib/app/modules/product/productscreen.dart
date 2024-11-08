@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/auth_controller.dart';
@@ -41,7 +43,7 @@ class _ProductScreenState extends State<ProductScreen> {
         automaticallyImplyLeading: false,
         flexibleSpace: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
             child: Text(
               "Products",
               style: AppTextStyle.semiboldRaleway19,
@@ -51,8 +53,7 @@ class _ProductScreenState extends State<ProductScreen> {
       ),
       body: Column(
         children: [
-          //searchbar(),
-          SizedBox(height: 16.0),
+          // searchbar(),
           Expanded(
             child: Obx(() {
               if (productController.isLoading.value) {
@@ -78,7 +79,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     onTap: () {
                       Get.toNamed(AppRoutes.PRODUCT_DETAILS,
                           arguments: product);
-                                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
                     },
                     child: Stack(
                       children: [
@@ -148,11 +149,18 @@ class _ProductScreenState extends State<ProductScreen> {
                                               )
                                             : CustomElevatedButton(
                                                 onPressed: () {
-                                                  Get.toNamed(AppRoutes.CART);
-                                                  ScaffoldMessenger.of(context)
-                                                      .hideCurrentSnackBar();
+                                                  cartController
+                                                      .deleteProductsFromCart(
+                                                          product.id,
+                                                          product.quantity);
+                                                  setState(() {
+                                                    setState(() {
+                                                      addToCartStates[index] =
+                                                          false;
+                                                    });
+                                                  });
                                                 },
-                                                text: 'Go to cart',
+                                                text: 'Remove',
                                               ),
                                       ),
                                     ],
@@ -183,6 +191,23 @@ class _ProductScreenState extends State<ProductScreen> {
             }),
           ),
         ],
+      ),
+      floatingActionButton: Obx(
+        () => Visibility(
+          visible: !cartController.cartItems.isEmpty,
+          child: FloatingActionButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.CART);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+            backgroundColor: primaryColor,
+            child: Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            shape: CircleBorder(),
+          ),
+        ),
       ),
     );
   }

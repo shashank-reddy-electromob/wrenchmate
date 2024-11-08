@@ -322,7 +322,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                   ),
                   Expanded(
-                    child: blueButton(
+                    child: BlueButton(
                       buttonHeight: 8,
                       text: "Proceed",
                       onTap: () {},

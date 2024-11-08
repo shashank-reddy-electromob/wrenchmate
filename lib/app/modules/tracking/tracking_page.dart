@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/globalVariables.dart';
@@ -40,11 +41,13 @@ class _TrackingPageState extends State<TrackingPage> {
   late TextEditingController pucExpController;
 
   final CarController carController = Get.put(CarController());
+  BookingController bookingController = Get.put(BookingController());
 
   @override
   void initState() {
     super.initState();
     fetchUserCurrentCarIndex();
+    bookingController.fetchUserBookings();
   }
 
   void fetchUserCurrentCarIndex() async {
@@ -80,6 +83,23 @@ class _TrackingPageState extends State<TrackingPage> {
       carPlate = userCars[userCurrentCarIndex]['registration_number'];
     }
     setState(() {});
+  }
+
+  String currentStatus = 'confirmed';
+
+  double getCarPosition(String status) {
+    switch (status.toLowerCase()) {
+      case 'confirmed':
+        return 0.0;
+      case 'pickedup':
+        return 0.1;
+      case 'serviceongoing':
+        return 0.54;
+      case 'beingdelivered':
+        return 1.0;
+      default:
+        return 0.0;
+    }
   }
 
   /*
@@ -173,10 +193,13 @@ class _TrackingPageState extends State<TrackingPage> {
                                 builder: (c, s) =>
                                     s.connectionState == ConnectionState.done
                                         ? Container(
-                                      height: MediaQuery.of(context).size.height/9,
-                                          child: Image.asset(
-                                              "assets/car/$carTypeImage.png"),
-                                        )
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                9,
+                                            child: Image.asset(
+                                                "assets/car/$carTypeImage.png"),
+                                          )
                                         : CircularProgressIndicator(),
                               ),
                             ],
@@ -239,68 +262,153 @@ class _TrackingPageState extends State<TrackingPage> {
                           style: AppTextStyle.boldRaleway15.copyWith(
                               color: primaryColor, fontWeight: FontWeight.w500),
                         ),
-                        SizedBox(height: 30),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                color:
-                                    currentStep >= 1 ? primaryColor : greyColor,
-                                thickness: 4,
+                        SizedBox(height: 10),
+                        Container(
+                          height: 60,
+                          child: Stack(
+                            children: [
+                              // Progress line
+
+                              Align(
+                                alignment: Alignment.center,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Divider(
+                                          color: currentStep >= 1
+                                              ? primaryColor
+                                              : greyColor,
+                                          thickness: 4,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Divider(
+                                          color: currentStep == 2
+                                              ? primaryColor
+                                              : greyColor,
+                                          thickness: 4,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.height / 16,
-                              child: Image(
-                                image:
-                                    AssetImage("assets/tracking/small_car.png"),
+
+                              AnimatedPositioned(
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                                left: bookingController.BookingList.isEmpty
+                                    ? 0
+                                    : getCarPosition(bookingController
+                                            .BookingList[bookingController
+                                                .BookingList.length -
+                                            1]['status']) *
+                                        (MediaQuery.of(context).size.width -
+                                            120),
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 16,
+                                  child: Image(
+                                    image: AssetImage(
+                                        "assets/tracking/small_car.png"),
+                                  ),
+                                ),
                               ),
-                            ),
-                            // Container(
-                            //   width: 40,
-                            //   height: 40,
-                            //   decoration: BoxDecoration(
-                            //     color: currentStep == 1
-                            //         ? Colors.blue
-                            //         : Colors.grey,
-                            //     shape: BoxShape.circle,
-                            //   ),
-                            //   child: Icon(Icons.directions_car,
-                            //       color: Colors.white),
-                            // ),
-                            Expanded(
-                              child: Divider(
-                                color:
-                                    currentStep == 2 ? primaryColor : greyColor,
-                                thickness: 4,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 20),
+
+                        // Update the status column widgets to be clickable for testing
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Expanded(
                               child: buildStatusColumn(
-                                  "Picked\nup", currentStep >= 0),
+                                "Picked\nup",
+                                currentStatus == 'pickedup',
+                              ),
                             ),
-                            SizedBox(
-                              width: 20,
-                            ),
+                            SizedBox(width: 20),
                             Expanded(
                               child: buildStatusColumn(
-                                  "Service ongoing", currentStep >= 1),
+                                "Service ongoing",
+                                currentStatus == 'serviceongoing',
+                              ),
                             ),
-                            SizedBox(
-                              width: 20,
-                            ),
+                            SizedBox(width: 20),
                             Expanded(
                               child: buildStatusColumn(
-                                  "Being Delivered", currentStep >= 2),
+                                "Being Delivered",
+                                currentStatus == 'beingdelivered',
+                              ),
                             ),
                           ],
                         ),
+
+                        // Row(
+                        //   children: [
+                        //     Expanded(
+                        //       child: Divider(
+                        //         color:
+                        //             currentStep >= 1 ? primaryColor : greyColor,
+                        //         thickness: 4,
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       height: MediaQuery.of(context).size.height / 16,
+                        //       child: Image(
+                        //         image:
+                        //             AssetImage("assets/tracking/small_car.png"),
+                        //       ),
+                        //     ),
+                        //     // Container(
+                        //     //   width: 40,
+                        //     //   height: 40,
+                        //     //   decoration: BoxDecoration(
+                        //     //     color: currentStep == 1
+                        //     //         ? Colors.blue
+                        //     //         : Colors.grey,
+                        //     //     shape: BoxShape.circle,
+                        //     //   ),
+                        //     //   child: Icon(Icons.directions_car,
+                        //     //       color: Colors.white),
+                        //     // ),
+                        //     Expanded(
+                        //       child: Divider(
+                        //         color:
+                        //             currentStep == 2 ? primaryColor : greyColor,
+                        //         thickness: 4,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // SizedBox(height: 20),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        //   children: [
+                        //     Expanded(
+                        //       child: buildStatusColumn(
+                        //           "Picked\nup", currentStep >= 0),
+                        //     ),
+                        //     SizedBox(
+                        //       width: 20,
+                        //     ),
+                        //     Expanded(
+                        //       child: buildStatusColumn(
+                        //           "Service ongoing", currentStep >= 1),
+                        //     ),
+                        //     SizedBox(
+                        //       width: 20,
+                        //     ),
+                        //     Expanded(
+                        //       child: buildStatusColumn(
+                        //           "Being Delivered", currentStep >= 2),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),

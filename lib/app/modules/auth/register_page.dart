@@ -24,7 +24,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
-  final TextEditingController alternateNumberController = TextEditingController();
+  final TextEditingController alternateNumberController =
+      TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
@@ -81,9 +82,9 @@ class _RegisterPageState extends State<RegisterPage> {
     String? address =
         addressController.text.isNotEmpty ? addressController.text : '';
     String? profileImagePath;
-      prefs?.setBool(LocalStorage.isLogin, true) ?? false;
-      print(
-          "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
+    prefs?.setBool(LocalStorage.isLogin, true) ?? false;
+    print(
+        "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
     if (_image != null) {
       profileImagePath = await uploadImageToStorage(_image!);
     }
@@ -134,6 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -154,7 +156,6 @@ class _RegisterPageState extends State<RegisterPage> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              SizedBox(height: 30),
               Row(
                 children: [
                   Custombackbutton(),
@@ -212,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(height: 20),
               _isLoading
                   ? CircularProgressIndicator(color: Color(0xff1671D8))
-                  : blueButton(
+                  : BlueButton(
                       text: "CONTINUE",
                       onTap: () async {
                         await register();

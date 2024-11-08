@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
-import 'package:get/get.dart'; // Ensure you have this import
+import 'package:get/get.dart';
 
 import '../../controllers/car_controller.dart';
-import '../../routes/app_routes.dart';
 import '../../widgets/custombackbutton.dart';
 
 class CarDetails extends StatefulWidget {
-  const CarDetails({super.key}); // Remove selectedIndex from constructor
+  const CarDetails({super.key});
 
   @override
   State<CarDetails> createState() => _CarDetailsState();
@@ -22,7 +21,7 @@ class _CarDetailsState extends State<CarDetails> {
   TextEditingController regYearController = TextEditingController();
   TextEditingController insuranceExpController = TextEditingController();
   TextEditingController pucExpDateController = TextEditingController();
-  CarController? carController;
+  CarController? carController = Get.put(CarController());
   int? selectedIndex = 0;
 
   @override
@@ -31,7 +30,7 @@ class _CarDetailsState extends State<CarDetails> {
     carController = Get.put(CarController());
     selectedIndex = Get.arguments as int?;
     if (selectedIndex == null) {
-      selectedIndex = 0; // Or any default value
+      selectedIndex = 0;
     }
   }
 
@@ -61,8 +60,7 @@ class _CarDetailsState extends State<CarDetails> {
     if (selectedCarModel == null ||
         selectedTransmissionType == null ||
         selectedFuelType == null ||
-        regNoController.text.isEmpty ||
-        insuranceExpController.text.isEmpty) {
+        regNoController.text.isEmpty) {
       Get.snackbar('Error', 'Please fill all required fields');
       return;
     }
@@ -70,17 +68,62 @@ class _CarDetailsState extends State<CarDetails> {
     await carController?.addCar(
       fuelType: selectedFuelType ?? '',
       registrationNumber: regNoController.text,
-      insuranceExpiration: DateFormat('dd/MM/yyyy').parse(insuranceExpController.text),
+      insuranceExpiration: insuranceExpController.text.isNotEmpty
+          ? DateFormat('dd/MM/yyyy').parse(insuranceExpController.text)
+          : null,
       transmission: selectedTransmissionType ?? '',
       carType: carNames[selectedIndex ?? 0],
       carModel: selectedCarModel ?? '',
-      registrationYear: regYearController.text.isNotEmpty 
-          ? DateFormat('dd/MM/yyyy').parse(regYearController.text) 
+      registrationYear: regYearController.text.isNotEmpty
+          ? DateFormat('yyyy').parse(regYearController.text)
           : null,
-      pucExpiration: pucExpDateController.text.isNotEmpty 
-          ? DateFormat('dd/MM/yyyy').parse(pucExpDateController.text) 
+      pucExpiration: pucExpDateController.text.isNotEmpty
+          ? DateFormat('dd/MM/yyyy').parse(pucExpDateController.text)
           : null,
     );
+  }
+
+  Future<void> _selectYear(
+      BuildContext context, TextEditingController controller) async {
+    final int? selectedYear = await showModalBottomSheet<int>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) {
+        final currentYear = DateTime.now().year;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                "Select Year",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Divider(),
+            SizedBox(
+              height: 300, // Height for scrolling
+              child: ListView.builder(
+                itemCount: 101, // 2000 to 2100
+                itemBuilder: (BuildContext context, int index) {
+                  final year = 2000 + index;
+                  return ListTile(
+                    title: Text(year.toString()),
+                    onTap: () => Navigator.pop(context, year),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selectedYear != null) {
+      final selectedDate = DateTime(selectedYear, 1, 1);
+
+      controller.text = DateFormat('yyyy').format(selectedDate);
+    }
   }
 
   @override
@@ -198,7 +241,7 @@ class _CarDetailsState extends State<CarDetails> {
                             controller: regYearController,
                             label: "Reg Year",
                             onTap: () =>
-                                _selectDate(context, regYearController),
+                                _selectYear(context, regYearController),
                           ),
                         ),
                         Padding(
@@ -224,7 +267,7 @@ class _CarDetailsState extends State<CarDetails> {
                     CustomDropdown(
                       label: "Car Transmission Type",
                       value: selectedTransmissionType,
-                      items: ["Manual", "Automatic","IMT"],
+                      items: ["Manual", "Automatic", "IMT"],
                       onChanged: (value) {
                         setState(() {
                           selectedTransmissionType = value;
@@ -232,9 +275,9 @@ class _CarDetailsState extends State<CarDetails> {
                       },
                     ),
                     Spacer(),
-                    blueButton(
-                        text: 'COMPLETED',
-                        onTap: addCar, // Call the new addCar function
+                    BlueButton(
+                      text: 'SAVE',
+                      onTap: addCar, // Call the new addCar function
                     ),
                     SizedBox(
                       width: 16,

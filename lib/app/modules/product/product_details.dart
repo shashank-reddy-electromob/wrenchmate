@@ -60,20 +60,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: addtocart == true
-          ? FloatingActionButton(
-              onPressed: () {
-                Get.toNamed(AppRoutes.CART);
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              backgroundColor: primaryColor, // Adjust the background color
-              child: Icon(
-                Icons.shopping_cart, // Cart icon
-                color: Colors.white, // Icon color
-              ),
-              shape: CircleBorder(), // Ensures the button remains circular
-            )
-          : null,
+      floatingActionButton: Obx(
+        () => Visibility(
+          visible: !cartController.cartItems.isEmpty,
+          child: FloatingActionButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.CART);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+            backgroundColor: primaryColor,
+            child: Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            shape: CircleBorder(),
+          ),
+        ),
+      ),
       key: scaffoldMessengerKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -250,35 +253,37 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   style: TextStyle(color: Colors.black54)),
               Spacer(),
               Positioned(
-                  top: MediaQuery.of(context).size.height * 0.055,
-                  right: MediaQuery.of(context).size.width * 0.04,
-                  child:
-                      //  addtocart == false
-                      //     ?
-                      CustomElevatedButton(
-                    onPressed: () {
-                      cartController.addProductToCartSnackbar(
-                        context,
-                        cartController,
-                        product,
-                        selectedQuantity ?? product.quantity,
-                        scaffoldMessengerKey,
-                      );
-                      setState(() {
-                        addtocart = true;
-                      });
-                    },
-                    text: '+Add',
-                  )
-                  // : CustomElevatedButton(
-                  //     onPressed: () {
-                  //       Get.toNamed(AppRoutes.CART);
-                  //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                  //     },
-                  //     textSize: 12,
-                  //     text: 'Go to cart',
-                  //   ),
-                  ),
+                top: MediaQuery.of(context).size.height * 0.055,
+                right: MediaQuery.of(context).size.width * 0.04,
+                child: addtocart == false
+                    ? CustomElevatedButton(
+                        onPressed: () {
+                          cartController.addProductToCartSnackbar(
+                            context,
+                            cartController,
+                            product,
+                            selectedQuantity ?? product.quantity,
+                            scaffoldMessengerKey,
+                          );
+                          setState(() {
+                            addtocart = true;
+                          });
+                        },
+                        text: '+Add',
+                      )
+                    : CustomElevatedButton(
+                        onPressed: () {
+                          cartController.deleteProductsFromCart(
+                              product.id, product.quantity);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          setState(() {
+                            addtocart = false;
+                          });
+                        },
+                        textSize: 12,
+                        text: 'Remove',
+                      ),
+              ),
             ],
           ),
           SizedBox(height: 8),

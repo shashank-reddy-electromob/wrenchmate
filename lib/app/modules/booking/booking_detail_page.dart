@@ -27,11 +27,11 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   @override
   void initState() {
     super.initState();
-    final args = Get.arguments; // Get all arguments
-    service = args['service']; // Retrieve service
-    booking = args['booking']; // Retrieve booking
+    final args = Get.arguments; 
+    service = args['service']; 
+    booking = args['booking']; 
 
-    print("Current status: ${booking.status ?? "unknown"}"); // Debugging line
+    print("Current status: ${booking.status ?? "unknown"}");
   }
 
   String _getCarImage(String carType) {

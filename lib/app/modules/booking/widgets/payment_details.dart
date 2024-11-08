@@ -10,10 +10,18 @@ class PaymentDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3.0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(text,style: TextStyle(color: Colors.grey, fontSize: 16),),
-          Text(amount,style: TextStyle(color: Colors.grey, fontSize: 16),)
+          Text(
+            text,
+            style: TextStyle(color: Colors.grey, fontSize: 13),
+          ),
+          Text(
+            amount,
+            style: TextStyle(
+                color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w400),
+          )
         ],
       ),
     );

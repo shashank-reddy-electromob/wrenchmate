@@ -83,6 +83,7 @@ class _optpageState extends State<optpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -164,9 +165,9 @@ class _optpageState extends State<optpage> {
             _isLoading
                 ? Center(
                     child: CircularProgressIndicator(color: Color(0xff1671D8)))
-                : blueButton(
+                : BlueButton(
                     text: "VERIFY",
-                    onTap: _isLoading ? null : _verifyotp,
+                    onTap: _isLoading ? () {} : _verifyotp,
                   ),
             Container(
               height: 20,

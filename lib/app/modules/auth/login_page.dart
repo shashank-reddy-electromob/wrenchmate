@@ -108,9 +108,9 @@ class _LoginPageState extends State<LoginPage> {
                 'assets/images/logo.png',
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 64.0),
+              const SizedBox(height: 64.0),
               //text
-              Text(
+              const Text(
                 "Log In",
                 style: TextStyle(
                     fontFamily: 'Raleway',
@@ -118,16 +118,16 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold,
                     color: Color(0xff120D26)),
               ),
-              SizedBox(height: 12.0),
-              Text(
+              const SizedBox(height: 12.0),
+              const Text(
                 "Hello, Welcome back to your account.",
                 style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     color: Color(0xff969696),
                     fontFamily: 'Poppins'),
               ),
               //textfield
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Container(
@@ -166,12 +166,12 @@ class _LoginPageState extends State<LoginPage> {
                             LengthLimitingTextInputFormatter(
                                 10), // Limit to 10 digits
                           ],
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: 'Enter number',
                             hintStyle: TextStyle(
                                 fontFamily: 'Poppins',
                                 color: Colors.grey,
-                                fontSize: 22.0), // Increased hint text size
+                                fontSize: 16.0), // Increased hint text size
                             border: OutlineInputBorder(
                               borderSide: BorderSide.none,
                             ),
@@ -181,39 +181,42 @@ class _LoginPageState extends State<LoginPage> {
                                 vertical: 0), // Remove vertical padding
                           ),
                           style: TextStyle(
-                              fontSize: 22.0), // Increased entered text size
+                              fontSize: 16.0), // Increased entered text size
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: 32.0),
+              const SizedBox(height: 32.0),
               //submit
               Container(
                   width: MediaQuery.of(context).size.width * 0.85,
                   child: _isLoading
-                      ? Center(
+                      ? const Center(
                           child: CircularProgressIndicator(
                           color: Color(0xff1671D8),
                         )) // Show loader
-                      : blueButton(
+                      : BlueButton(
+                          fontSize: 17,
                           text: 'REQUEST OTP',
-                          onTap: _isLoading ? null : _login)),
+                          onTap: _isLoading ? () {} : _login,
+                          icon: Icons.arrow_forward_outlined,
+                        )),
               SizedBox(height: 32.0),
               Text(
                 "OR",
                 style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 17,
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: Color(0xff969696)),
               ),
               SizedBox(height: 32.0),
               //google
               Container(
                 width: MediaQuery.of(context).size.width * 0.85,
-                height: 60,
+                height: 50,
                 child: _isLoadingGoogle
                     ? Center(
                         child: CircularProgressIndicator(
@@ -242,7 +245,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(
                                   fontFamily: 'Poppins',
                                   color: Color(0xff120D26),
-                                  fontSize: 16),
+                                  fontSize: 15),
                             ),
                           ],
                         ),
@@ -252,7 +255,7 @@ class _LoginPageState extends State<LoginPage> {
               //facebook
               Container(
                 width: MediaQuery.of(context).size.width * 0.85,
-                height: 60,
+                height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     elevation: 1,
@@ -276,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                             fontFamily: 'Poppins',
                             color: Color(0xff120D26),
-                            fontSize: 16),
+                            fontSize: 15),
                       ),
                     ],
                   ),

@@ -44,7 +44,7 @@ class AuthController extends GetxController {
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: "");
       } else {
-        Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
+        Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
           'tracking_button': false,
         });
       }
@@ -70,40 +70,42 @@ class AuthController extends GetxController {
   // }
 
   Future<bool> updateUserAddress(String address) async {
-  try {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
 
-    List<dynamic> userAddressArray = userDoc['User_address'];
-    int currentAddressIndex = userDoc['current_address'];
+      List<dynamic> userAddressArray = userDoc['User_address'];
+      int currentAddressIndex = userDoc['current_address'];
 
-    userAddressArray[currentAddressIndex] = address;
+      userAddressArray[currentAddressIndex] = address;
 
-    await _firestore.collection('User').doc(userId).update({
-      'User_address': userAddressArray,
-    });
+      await _firestore.collection('User').doc(userId).update({
+        'User_address': userAddressArray,
+      });
 
-    print("User address updated at index $currentAddressIndex");
-    return true; // Indicate success
-  } catch (e) {
-    print("Failed to update address: $e");
-    Get.snackbar("Error", "Failed to update address: ${e.toString()}");
-    return false; // Indicate failure
+      print("User address updated at index $currentAddressIndex");
+      return true; // Indicate success
+    } catch (e) {
+      print("Failed to update address: $e");
+      Get.snackbar("Error", "Failed to update address: ${e.toString()}");
+      return false; // Indicate failure
+    }
   }
-}
 
   Future<bool> addAddressToList(String newAddress) async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
 
       List<dynamic> userAddressArray = userDoc['User_address'] ?? [];
-      int userAddressArrayLen =  userAddressArray.length;
+      int userAddressArrayLen = userAddressArray.length;
       userAddressArray.add(newAddress);
 
       await _firestore.collection('User').doc(userId).update({
         'User_address': userAddressArray,
-        'current_address':userAddressArrayLen
+        'current_address': userAddressArrayLen
       });
 
       print("New address added to the list");
@@ -168,9 +170,11 @@ class AuthController extends GetxController {
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
       } else {
-        Get.toNamed(AppRoutes.BOTTOMNAV,arguments: {
-          'tracking_button': false,
-        });
+        Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
+
+        // Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+        //   'tracking_button': false,
+        // });
       }
     } catch (e) {
       print("OTP verification failed: $e");
@@ -216,7 +220,8 @@ class AuthController extends GetxController {
         'User_email': email,
         'current_address': 0,
         'User_address': [""],
-        if (profileImagePath != null && profileImagePath.isNotEmpty)'User_profile_image': profileImagePath,
+        if (profileImagePath != null && profileImagePath.isNotEmpty)
+          'User_profile_image': profileImagePath,
         'User_carDetails': [],
         'User_currentCar': 0,
       });
@@ -263,7 +268,8 @@ class AuthController extends GetxController {
       print("Current address updated to index $selectedAddressIndex");
     } catch (e) {
       print("Failed to update current address: $e");
-      Get.snackbar("Error", "Failed to update current address: ${e.toString()}");
+      Get.snackbar(
+          "Error", "Failed to update current address: ${e.toString()}");
     }
   }
 }

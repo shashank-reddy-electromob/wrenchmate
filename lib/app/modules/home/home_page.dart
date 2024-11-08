@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -120,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.vertical,
                   child: Column(
                     children: [
-                      Container(height: 40),
+                      Container(height: 10),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
@@ -303,6 +305,9 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+
+      //  : Container(),
+
       // floatingActionButton: tracking_button ? DraggableFab(
       //     child: ClipOval(
       //   child: Container(

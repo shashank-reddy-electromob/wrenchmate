@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/searchbar_filter.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/elevatedbutton.dart';
+import 'package:wrenchmate_user_app/app/modules/service/widgits/seperator.dart';
 import 'package:wrenchmate_user_app/app/modules/service/widgits/subservice.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:wrenchmate_user_app/app/widgets/bluebuttoncircular.dart';
@@ -50,7 +51,7 @@ class _ServicePageState extends State<ServicePage> {
   void fetchUserCurrentCarIndex() async {
     String userId = FirebaseAuth.instance.currentUser!.uid;
     DocumentSnapshot userDoc =
-    await FirebaseFirestore.instance.collection('User').doc(userId).get();
+        await FirebaseFirestore.instance.collection('User').doc(userId).get();
     if (userDoc.exists) {
       setState(() {
         userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
@@ -93,9 +94,7 @@ class _ServicePageState extends State<ServicePage> {
       print(userCar);
       List<String> list = (userCar.split(",")).cast<String>().toList();
 
-      serviceController
-          .fetchServicesForUser(service, list)
-          .then((_) {
+      serviceController.fetchServicesForUser(service, list).then((_) {
         setState(() {
           addToCartStates =
               List<bool>.filled(serviceController.services.length, false);
@@ -138,6 +137,23 @@ class _ServicePageState extends State<ServicePage> {
           ),
           leading: Padding(
               padding: const EdgeInsets.all(6.0), child: Custombackbutton()),
+        ),
+        floatingActionButton: Obx(
+          () => Visibility(
+            visible: !cartController.cartItems.isEmpty,
+            child: FloatingActionButton(
+              onPressed: () {
+                Get.toNamed(AppRoutes.CART);
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+              backgroundColor: primaryColor,
+              child: Icon(
+                Icons.shopping_cart,
+                color: Colors.white,
+              ),
+              shape: CircleBorder(),
+            ),
+          ),
         ),
         body: service != "Repairs" && service != "Body Parts"
             ? Column(
@@ -390,30 +406,53 @@ class _ServicePageState extends State<ServicePage> {
                                                             ),
                                                           );
                                                         } else {
-                                                          cartController
-                                                              .addToCartSnackbar(
-                                                            context,
-                                                            cartController,
-                                                            service,
-                                                            scaffoldMessengerKey,
-                                                          );
-                                                          // setState(() {
-                                                            addToCartStates[
-                                                                index] = true;
-                                                          // });
+                                                          if (service.category ==
+                                                                  'Denting and Painting' ||
+                                                              service.category ==
+                                                                  'Detailing') {
+                                                            showCustomBottomSheet(
+                                                                service.price,
+                                                                service,
+                                                                index);
+                                                          } else {
+                                                            cartController
+                                                                .addToCartSnackbar(
+                                                              context,
+                                                              cartController,
+                                                              service,
+                                                              scaffoldMessengerKey,
+                                                            );
+                                                            setState(() {
+                                                              addToCartStates[
+                                                                  index] = true;
+                                                            });
+                                                            // setState(() => addtocart = true);
+                                                          }
+                                                          // cartController
+                                                          //     .addToCartSnackbar(
+                                                          //   context,
+                                                          //   cartController,
+                                                          //   service,
+                                                          //   scaffoldMessengerKey,
+                                                          // );
                                                         }
                                                       },
                                                       text: '+Add',
                                                     )
                                                   : CustomElevatedButton(
                                                       onPressed: () {
-                                                        Get.toNamed(
-                                                            AppRoutes.CART);
                                                         ScaffoldMessenger.of(
                                                                 context)
                                                             .hideCurrentSnackBar();
+                                                        cartController
+                                                            .deleteServicesFromCart(
+                                                                service.id);
+                                                        setState(() {
+                                                          addToCartStates[
+                                                              index] = false;
+                                                        });
                                                       },
-                                                      text: 'Go to cart',
+                                                      text: 'Remove',
                                                     ),
                                             )
                                           ],
@@ -442,6 +481,115 @@ class _ServicePageState extends State<ServicePage> {
                   ),
                 ),
               ));
+  }
+
+  void showCustomBottomSheet(double price, Servicefirebase service, int index) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: 4,
+                  width: 60,
+                  decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Choose Service Type',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Showroom Quality',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w500)),
+                        Text('₹ ${price}',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                    CustomElevatedButton(
+                      onPressed: () {
+                        cartController.addToCartSnackbar(
+                          context,
+                          cartController,
+                          service,
+                          scaffoldMessengerKey,
+                        );
+                        Navigator.pop(context);
+                        setState(() {
+                          addToCartStates[index] = true;
+                        });
+                      },
+                      text: '+Add',
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: MySeparator(),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Normal Quality',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w500)),
+                        Text('₹ ${price}',
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                    CustomElevatedButton(
+                      onPressed: () {
+                        cartController.addToCartSnackbar(
+                          context,
+                          cartController,
+                          service,
+                          scaffoldMessengerKey,
+                        );
+                        Navigator.pop(context);
+                        setState(() {
+                          addToCartStates[index] = true;
+                        });
+                      },
+                      text: '+Add',
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget subservicesRepairing() {

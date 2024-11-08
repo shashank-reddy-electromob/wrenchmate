@@ -1,0 +1,31 @@
+class Subscription {
+  final String subscriptionId;
+  final int price;
+  final bool hasSub;
+  final DateTime startDate;
+  final DateTime endDate;
+  final int unitsQuantity;
+  final String userId;
+
+  Subscription({
+    required this.subscriptionId,
+    required this.price,
+    required this.hasSub,
+    required this.startDate,
+    required this.endDate,
+    required this.unitsQuantity,
+    required this.userId,
+  });
+
+  factory Subscription.fromDocument(Map<String, dynamic> doc) {
+    return Subscription(
+      subscriptionId: doc['subscriptionId'] ?? '',
+      price: doc['price'] ?? 0,
+      hasSub: doc['haveSub'] ?? false,
+      startDate: (doc['startDate'] is DateTime) ? doc['startDate'] : DateTime.now(),
+      endDate: (doc['endDate'] is DateTime) ? doc['endDate'] : DateTime.now(),
+      unitsQuantity: doc['unitsquantity'] ?? 0,
+      userId: doc['userId'] ?? '',
+    );
+  }
+}
