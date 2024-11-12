@@ -57,7 +57,7 @@ class _MenuTabState extends State<MenuTab> {
                 widget.text,
                 style: TextStyle(
                   fontFamily: 'Raleway',
-                  color: isSelected ? Colors.white : Color(0xff797979),
+                  color: isSelected ? Colors.white : Colors.black,
                 ),
               ),
             ],

@@ -14,7 +14,7 @@ class CarRegister extends StatefulWidget {
 }
 
 class _CarRegisterState extends State<CarRegister> {
-  int _selectedCardIndex=0;
+  int _selectedCardIndex = 0;
 
   void _onCardTap(int index) {
     setState(() {
@@ -39,18 +39,25 @@ class _CarRegisterState extends State<CarRegister> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height-100,
+          height: MediaQuery.of(context).size.height - 100,
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal:  16.0,vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
                 child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("Your car comes under?",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: Color(0xff969696)),)),
+                    child: Text(
+                      "Your car comes under?",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff969696)),
+                    )),
               ),
               //cards
               Container(
-                height: MediaQuery.of(context).size.height*0.48,
+                height: MediaQuery.of(context).size.height * 0.48,
                 margin: EdgeInsets.symmetric(horizontal: 16),
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -83,10 +90,13 @@ class _CarRegisterState extends State<CarRegister> {
                 ),
               ),
               Spacer(),
-              BlueButton(text: "CONTINUE", onTap: (){
-                Get.toNamed(AppRoutes.CAR_DETALS,arguments:_selectedCardIndex);
-              }),
-              SizedBox(height: 8),
+              BlueButton(
+                  text: "CONTINUE",
+                  onTap: () {
+                    Get.toNamed(AppRoutes.CAR_DETALS,
+                        arguments: _selectedCardIndex);
+                  }),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.06),
             ],
           ),
         ),
@@ -129,11 +139,13 @@ class CarCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(imagePath, height: MediaQuery.of(context).size.height*0.09), // Use the provided image path
+            Image.asset(imagePath,
+                height: MediaQuery.of(context).size.height *
+                    0.09), // Use the provided image path
             SizedBox(height: 8),
             Text(
               name, // Use the provided name
-              style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ],
         ),

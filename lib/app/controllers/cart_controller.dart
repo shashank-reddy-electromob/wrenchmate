@@ -343,7 +343,6 @@ class CartController extends GetxController {
           .collection('Cart')
           .where('userId', isEqualTo: userId)
           .get();
-
       for (var doc in snapshot.docs) {
         await doc.reference.delete();
       }

@@ -502,6 +502,7 @@ class _CartPageState extends State<CartPage> {
                         ],
                       ),
                     ),
+
                     GestureDetector(
                         onTap: () async {
                           var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
@@ -791,13 +792,83 @@ class _CartPageState extends State<CartPage> {
                     }),
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        'View Detailed Bill',
-                        style: TextStyle(
-                            color: primaryColor,
-                            fontSize: 14,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500),
+                      child: GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20)),
+                            ),
+                            builder: (context) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20)),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Pricing(
+                                        text: "Subtotal",
+                                        price: totalAmount.toStringAsFixed(2),
+                                      ),
+                                      Pricing(
+                                        text: "Tax",
+                                        price: tax!.toStringAsFixed(2),
+                                      ),
+                                      if (cartController.discountAmount.value >
+                                          0)
+                                        Pricing(
+                                          text: "Discount Applied:",
+                                          price:
+                                              '-${cartController.discountAmount.value.toStringAsFixed(2)}',
+                                        ),
+                                      Divider(
+                                        color: Color(0xFFF0F0F0),
+                                        thickness: 1,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Total",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontFamily: 'Raleway',
+                                            ),
+                                          ),
+                                          Text(
+                                            '₹ ${cartController.totalPayableAmount.value}',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: 'Poppins',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Text(
+                          'View Detailed Bill',
+                          style: TextStyle(
+                              color: primaryColor,
+                              fontSize: 14,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500),
+                        ),
                       ),
                     ),
                   ],
@@ -817,90 +888,18 @@ class _CartPageState extends State<CartPage> {
                     ),
                     onPressed: () async {
                       try {
-                        List<String> serviceIds = List<String>.from(
-                          cartController.cartItems
-                              .map((item) => item['serviceId']),
-                        );
+                        onProceedToPayPressed();
 
-                        bool hasServices = cartController.cartItems
-                            .any((item) => item['serviceId'] != "NA");
-                        print("hasServices :: $hasServices");
-
-                        if (hasServices &&
-                            bookingController.bookingStatus.value !=
-                                'confirmed') {
-                          print("hasServices :: $hasServices");
-
-                          var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
-                          if (result != null) {
-                            setState(() {
-                              selectedDate = result['selectedDate'] ?? '';
-                              selectedTimeRange =
-                                  result['selectedTimeRange'] ?? '';
-                              selectedAddress = result['selectAddress'] ?? '';
-                            });
-                          }
-                          log('testing add booking');
-                          await bookingController.addBooking(
-                            serviceIds,
-                            'confirmed',
-                            DateTime.now(),
-                            null,
-                            null,
-                            '',
-                            '',
-                            '',
-                            currentCar!,
-                            selectedAddress!,
-                            selectedDate,
-                            selectedTimeRange,
-                          );
-                        } else if (!hasServices ||
-                            bookingController.bookingStatus.value ==
-                                'confirmed') {
-                          print("Proceed to pay");
-                          print("environment :: $environment");
-                          print("appId :: $appId");
-                          print("merchantId :: $merchantId");
-                          print("enableLogging :: $enableLogging");
-                          print("transactionId :: $transactionId");
-                          body = getChecksum().toString();
-                          print("body :: $body");
-
-                          if (cartController.cartSubsItems.isNotEmpty) {
-                            await bookingController.addSubscriptionBooking(
-                                cartController.cartSubsItems[0]['packDesc']
-                                    .toString(),
-                                cartController.cartSubsItems[0]['price'],
-                                cartController.cartSubsItems[0]['startDate'],
-                                cartController.cartSubsItems[0]['endDate'],
-                                "confirmed",
-                                DateTime.now(),
-                                null,
-                                null,
-                                currentCar!,
-                                selectedAddress!,
-                                selectedDate,
-                                selectedTimeRange,
-                                cartController.cartSubsItems[0]
-                                    ['subscriptionId'],
-                                cartController.cartSubsItems[0]
-                                    ['subscriptionName'],
-                                context);
-                          }
-
-                          startPgTransaction();
-
-                          // _proceedToPayment(context);
-                          // await paymentService.makeTestPayment(
-                          //     "MT7850590068188104",
-                          //     "MUID123",
-                          //     10000,
-                          //     "https://webhook.site/callback-url");
-                        } else {
-                          Get.snackbar(
-                              "Error", "Please confirm your booking first.");
-                        }
+                        //   // _proceedToPayment(context);
+                        // await paymentService.makeTestPayment(
+                        //     "MT7850590068188104",
+                        //     "MUID123",
+                        //     10000,
+                        //     "https://webhook.site/callback-url");
+                        // } else {
+                        //   Get.snackbar(
+                        //       "Error", "Please confirm your booking first.");
+                        // }
                       } catch (e) {
                         Get.snackbar("Error", "Failed to confirm booking: $e");
                       }
@@ -925,7 +924,7 @@ class _CartPageState extends State<CartPage> {
 
   String environment = "PRODUCTION";
   String appId = "";
-  String transactionId = DateTime.now().millisecondsSinceEpoch.toString();
+  // String transactionId = DateTime.now().millisecondsSinceEpoch.toString();
   String merchantId = "M22JKU8ER0YL4";
   bool enableLogging = true;
   String checksum = "";
@@ -940,7 +939,131 @@ class _CartPageState extends State<CartPage> {
 
   Object? result;
 
-  getChecksum() {
+  void onProceedToPayPressed() async {
+    try {
+      final transactionId = bookingController.generateUniqueTransactionId();
+
+      List<String> serviceIds = List<String>.from(
+        cartController.cartItems.map((item) => item['serviceId']),
+      );
+
+      bool hasServices =
+          cartController.cartItems.any((item) => item['serviceId'] != "NA");
+      print("hasServices :: $hasServices");
+
+      if (hasServices && bookingController.bookingStatus.value != 'confirmed') {
+        var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+        if (result != null) {
+          setState(() {
+            selectedDate = result['selectedDate'] ?? '';
+            selectedTimeRange = result['selectedTimeRange'] ?? '';
+            selectedAddress = result['selectAddress'] ?? '';
+          });
+        }
+      } else if (!hasServices ||
+          bookingController.bookingStatus.value == 'confirmed') {
+        print("Proceed to pay");
+        print("environment :: $environment");
+        print("appId :: $appId");
+        print("merchantId :: $merchantId");
+        print("enableLogging :: $enableLogging");
+        print("transactionId :: $transactionId");
+        body = getChecksum(transactionId).toString();
+        print("body :: $body");
+
+        // await initiatePaymentFlow();
+        print("Simulating payment success...");
+        await initiatePaymentFlow();
+      } else {
+        Get.snackbar("Error", "Please confirm your booking first.");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Failed to process payment: $e");
+    }
+  }
+
+  Future<void> initiatePaymentFlow() async {
+    try {
+      String base64Body = body;
+      print("base64Body :: $base64Body");
+
+      final response = await PhonePePaymentSdk.startTransaction(
+          base64Body, callbackUrl, checksum, 'com.phonepe');
+
+      if (response != null) {
+        String status = response['status'].toString();
+        String error = response['error'].toString();
+
+        if (status == 'SUCCESS') {
+          result = "Flow complete - status : SUCCESS";
+
+          // Only add booking/subscription after successful payment
+          if (cartController.cartItems.isNotEmpty) {
+            List<String> serviceIds = List<String>.from(
+              cartController.cartItems.map((item) => item['serviceId']),
+            );
+
+            if (serviceIds.isNotEmpty) {
+              await bookingController.addBooking(
+                serviceIds,
+                'confirmed',
+                DateTime.now(),
+                null,
+                null,
+                '',
+                '',
+                '',
+                currentCar!,
+                selectedAddress!,
+                selectedDate,
+                selectedTimeRange,
+              );
+            }
+          }
+
+          // Handle subscription bookings if present
+          if (cartController.cartSubsItems.isNotEmpty) {
+            await bookingController.addSubscriptionBooking(
+                cartController.cartSubsItems[0]['packDesc'].toString(),
+                cartController.cartSubsItems[0]['price'],
+                cartController.cartSubsItems[0]['startDate'],
+                cartController.cartSubsItems[0]['endDate'],
+                "confirmed",
+                DateTime.now(),
+                null,
+                null,
+                currentCar!,
+                selectedAddress!,
+                selectedDate,
+                selectedTimeRange,
+                cartController.cartSubsItems[0]['subscriptionId'],
+                cartController.cartSubsItems[0]['subscriptionName'],
+                context);
+          }
+          await cartController.clearCart();
+          cartController.totalAmount.value = 0;
+
+          Get.back();
+          await Future.delayed(Duration(milliseconds: 50), () async {
+            await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+              'tracking_button': true,
+            });
+          });
+        } else {
+          result = "Flow complete - status : $status and error $error";
+          Get.snackbar("Error", "Payment failed. Please try again.");
+        }
+      } else {
+        result = "Flow Incomplete";
+        Get.snackbar("Error", "Payment process was incomplete");
+      }
+    } catch (error) {
+      handleError(error);
+      Get.snackbar("Error", "Payment processing failed: $error");
+    }
+  }
+
+  getChecksum(String transactionId) {
     final requestData = {
       "merchantId": merchantId,
       "merchantTransactionId": transactionId,
@@ -989,6 +1112,7 @@ class _CartPageState extends State<CartPage> {
 
           if (status == 'SUCCESS') {
             result = "Flow complete - status : SUCCESS";
+
             await cartController.clearCart();
             await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
               'tracking_button': true,

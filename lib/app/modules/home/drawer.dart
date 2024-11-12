@@ -34,7 +34,7 @@ class _drawerPageState extends State<drawerPage> {
     if (index == 0) {
       Get.toNamed(AppRoutes.CAR);
     } else if (index == 1) {
-      Get.toNamed(AppRoutes.SUBSCRIPTION);
+      Get.toNamed(AppRoutes.BOOKING);
     } else if (index == 2) {
       Get.toNamed(AppRoutes.TERMSANDCONDITIONS);
     } else if (index == 3) {
@@ -142,7 +142,7 @@ class _drawerPageState extends State<drawerPage> {
                 selectedIndex: _selectedIndex,
                 onTap: _onTabTapped,
                 icon: Icons.subscriptions,
-                text: 'Your Subscription',
+                text: 'Bookings',
               ),
               MenuTab(
                 index: 2,

@@ -29,7 +29,8 @@ class _searchbarState extends State<searchbar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
+          Expanded(
+            child: Container(
               decoration: BoxDecoration(
                 color: Color(0xffF7F7F7),
                 borderRadius: BorderRadius.circular(10), // Rounded corners
@@ -38,7 +39,6 @@ class _searchbarState extends State<searchbar> {
                   width: 1.0, // Border width
                 ),
               ),
-              width: MediaQuery.of(context).size.width * 0.75,
               height: 50,
               child: Center(
                 child: TextField(
@@ -59,7 +59,12 @@ class _searchbarState extends State<searchbar> {
                     focusedBorder: InputBorder.none,
                   ),
                 ),
-              )),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10,
+          ),
           //filter
           if (widget.showFilter)
             CustomIconButton(

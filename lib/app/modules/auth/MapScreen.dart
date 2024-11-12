@@ -23,7 +23,7 @@ class _MapScreenState extends State<MapScreen> {
   String? address;
   bool? isExist = false;
   bool? isnew = false;
-  Placemark? place; // Change to nullable
+  Placemark? place; 
 
   TextEditingController flatnubercontroller = TextEditingController();
   TextEditingController localitycontroller = TextEditingController();

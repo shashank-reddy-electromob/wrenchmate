@@ -121,6 +121,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 12.0),
               const Text(
                 "Hello, Welcome back to your account.",
+                textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 15,
                     color: Color(0xff969696),

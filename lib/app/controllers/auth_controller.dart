@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -155,11 +157,9 @@ class AuthController extends GetxController {
 
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
           verificationId: verificationid.value, smsCode: otp);
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      bool isNewUser =
-          FirebaseAuth.instance.currentUser!.metadata.creationTime ==
-              FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
-
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      User? user = userCredential.user;
       if (prefs == null) {
         throw Exception("Preferences object is null");
       }
@@ -167,14 +167,24 @@ class AuthController extends GetxController {
       print(
           "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
 
-      if (isNewUser) {
-        Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
-      } else {
-        Get.toNamed(AppRoutes.REGISTER, arguments: phoneNumber);
-
-        // Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-        //   'tracking_button': false,
-        // });
+      if (user != null) {
+        try {
+          DocumentSnapshot userDoc = await _firestore
+              .collection('User') 
+              .doc(user.uid)
+              .get();
+          log(userDoc.id);
+          if (!userDoc.exists) {
+            Get.toNamed(AppRoutes.REGISTER, arguments: "");
+          } else {
+            Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+              'tracking_button': false,
+            });
+          }
+        } catch (firestoreError) {
+          Get.snackbar("Error",
+              "Failed to verify user status: ${firestoreError.toString()}");
+        }
       }
     } catch (e) {
       print("OTP verification failed: $e");

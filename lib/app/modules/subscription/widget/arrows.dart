@@ -41,15 +41,15 @@ class _PremiumToggleState extends State<PremiumToggle> {
           onTap: togglePremium,
           child: Icon(
             Icons.arrow_back_ios_new_rounded,
-            size: 20,
+            size: MediaQuery.of(context).size.width * 0.051,
           ),
         ),
-        SizedBox(width: 20),
+        SizedBox(width: MediaQuery.of(context).size.width * 0.044),
         GestureDetector(
           onTap: togglePremium,
           child: Icon(
             Icons.arrow_forward_ios_rounded,
-            size: 20,
+            size: MediaQuery.of(context).size.width * 0.051,
           ),
         ),
       ],

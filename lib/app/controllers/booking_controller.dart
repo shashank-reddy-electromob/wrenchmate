@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +19,23 @@ class BookingController extends GetxController {
       <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> benefitsList = <Map<String, dynamic>>[].obs;
 
+  String? _lastTransactionId;
+  
+  String generateUniqueTransactionId() {
+    // Format: TX_YYYYMMDD_HHMMSS_RANDOM
+    final now = DateTime.now();
+    final dateStr = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
+    final timeStr = "${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}";
+    final random = Random().nextInt(9999).toString().padLeft(4, '0');
+    
+    _lastTransactionId = "TX_${dateStr}_${timeStr}_$random";
+    return _lastTransactionId!;
+  }
+
+  String? get currentTransactionId => _lastTransactionId;
+
   Future<void> updateBookingDetails(
       DateTime confirmationDate, double start, double end) async {
-    log('subId is: ${subId.value}');
     QuerySnapshot bookingSnapshot = await FirebaseFirestore.instance
         .collection('Booking')
         .where('user_id', isEqualTo: userId)
@@ -111,7 +126,6 @@ class BookingController extends GetxController {
     SfRangeValues? selectedTimeRange,
   ) async {
     try {
-      log('message');
       await _firestore.collection('Booking').add({
         'user_id': userId,
         'service_list': serviceIds,
@@ -167,7 +181,6 @@ class BookingController extends GetxController {
         DateTime existingEndDate =
             (subscriptionDoc['endDate'] as Timestamp).toDate();
         DateTime currentDate = DateTime.now();
-        log('date is ${existingStartDate} and ${existingEndDate}');
         if (currentDate.isAfter(existingStartDate) &&
             currentDate.isBefore(existingEndDate)) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -222,12 +235,10 @@ class BookingController extends GetxController {
         'subscription_id': subscriptionId,
       });
 
-      log("Subscription and booking added successfully");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("booking added successfully.")),
       );
     } catch (e) {
-      log("Failed to add subscription and booking: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed to add subscription and booking: $e")),
       );

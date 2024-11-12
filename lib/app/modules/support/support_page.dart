@@ -232,14 +232,24 @@ class _SupportPageState extends State<SupportPage> {
               ),
               // Display content based on selected tab
               if (selectedTab == 'FAQ')
-                Expanded(child: ExpandingListFAQs()) // Call the FAQ list method
+                Expanded(child: ExpandingListFAQs())
               else
                 Column(
                   children: [
                     CustomContainer(
                         imagePath: 'assets/socials/chatus.png',
                         text: "Chat with Us",
-                        onTap: () {}), // Provide a valid function
+                        onTap: () async {
+                          final String phoneNumber = "7386565050";
+                          final Uri whatsappUri =
+                              Uri.parse("https://wa.me/$phoneNumber");
+
+                          if (await canLaunchUrl(whatsappUri)) {
+                            await launchUrl(whatsappUri);
+                          } else {
+                            print("Could not open WhatsApp.");
+                          }
+                        }),
                     CustomContainer(
                         imagePath: 'assets/socials/facebook.png',
                         text: "Facebook",

@@ -68,6 +68,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        
         backgroundColor: Colors.white,
         body: Stack(
           children: [

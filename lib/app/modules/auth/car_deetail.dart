@@ -279,9 +279,7 @@ class _CarDetailsState extends State<CarDetails> {
                       text: 'SAVE',
                       onTap: addCar, // Call the new addCar function
                     ),
-                    SizedBox(
-                      width: 16,
-                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.06),
                   ],
                 ),
               ),

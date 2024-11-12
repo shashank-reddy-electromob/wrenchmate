@@ -332,7 +332,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                             "Essential Need Pack",
                                             style: TextStyle(
                                                 fontFamily: 'Raleway',
-                                                fontSize: 20,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.05,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           PremiumToggle(
@@ -377,7 +380,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                             "Ultimate Wash Package",
                                             style: TextStyle(
                                                 fontFamily: 'Raleway',
-                                                fontSize: 20,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.05,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           PremiumToggle(
@@ -519,13 +525,17 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                               "Premium Need Pack",
                                               style: TextStyle(
                                                   fontFamily: 'Raleway',
-                                                  fontSize: 20,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.05,
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             PremiumToggle(
                                                 isPremium: premium,
                                                 onToggle: togglePremium,
-                                                pricesetMethod: pricesetMethod)
+                                                pricesetMethod: pricesetMethod),
                                           ],
                                         ),
                                         SizedBox(height: 8),
@@ -595,7 +605,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                               "Deluxe Maintenance Pack",
                                               style: TextStyle(
                                                   fontFamily: 'Raleway',
-                                                  fontSize: 20,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.05,
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             PremiumToggle(
