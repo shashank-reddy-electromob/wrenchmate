@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wrenchmate_user_app/app/modules/support/widgets/socialmediatabs.dart';
+import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import '../../controllers/support_controller.dart';
 import '../booking/widgets/tabButton.dart';
 
@@ -240,15 +241,16 @@ class _SupportPageState extends State<SupportPage> {
                         imagePath: 'assets/socials/chatus.png',
                         text: "Chat with Us",
                         onTap: () async {
-                          final String phoneNumber = "7386565050";
-                          final Uri whatsappUri =
-                              Uri.parse("https://wa.me/$phoneNumber");
+                          // final String phoneNumber = "7386565050";
+                          // final Uri whatsappUri =
+                          //     Uri.parse("https://wa.me/$phoneNumber");
 
-                          if (await canLaunchUrl(whatsappUri)) {
-                            await launchUrl(whatsappUri);
-                          } else {
-                            print("Could not open WhatsApp.");
-                          }
+                          // if (await canLaunchUrl(whatsappUri)) {
+                          //   await launchUrl(whatsappUri);
+                          // } else {
+                          //   print("Could not open WhatsApp.");
+                          // }
+                          Get.toNamed(AppRoutes.CHATSCREEN);
                         }),
                     CustomContainer(
                         imagePath: 'assets/socials/facebook.png',

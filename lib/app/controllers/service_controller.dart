@@ -288,4 +288,6 @@ class ServiceController extends GetxController {
       loading.value = false;
     }
   }
+
+
 }

@@ -28,11 +28,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialBinding: InitialBinding(),
       builder: (context, child) {
-        return Container(
-          color: Colors.grey[200],
-          child: SafeArea(
-            // bottom: false,
-            child: child ?? const SizedBox(),
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.white, 
+            statusBarIconBrightness: Brightness.dark, 
+          ),
+          child: Container(
+            color: Colors.white,
+            child: SafeArea(
+              child: child ?? const SizedBox(),
+            ),
           ),
         );
       },

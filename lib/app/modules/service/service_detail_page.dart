@@ -27,13 +27,16 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
   late List<bool> _isVisibleList;
   final ServiceController controller = Get.find();
   late Servicefirebase service;
+  late String currService;
   bool addtocart = false;
   late CartController cartController;
 
   @override
   void initState() {
     super.initState();
-    service = Get.arguments;
+    final args = Get.arguments;
+    service = args['service'];
+    currService = args['currService'];
     log(service.category);
     cartController = Get.put(CartController());
     fetchData(service);
@@ -345,7 +348,31 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                 service.name,
                 style: AppTextStyle.semibold18,
               ),
-              Text("₹ ${service.price}", style: AppTextStyle.semibold14),
+              currService != "Repairs"
+                  ? Text('₹${service.price}  ', style: AppTextStyle.semibold14)
+                  : GestureDetector(
+                      onTap: () {
+                        Get.toNamed(AppRoutes.CHATSCREEN);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 7,
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text('Get Quotation',
+                              style: AppTextStyle.semiboldpurple12),
+                        ),
+                      ),
+                    ),
               SizedBox(
                 height: 5,
               ),

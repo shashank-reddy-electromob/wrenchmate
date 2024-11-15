@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wrenchmate_user_app/app/data/models/car_detail_model.dart';
 import 'package:wrenchmate_user_app/app/modules/car/widget/imagePopup.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
@@ -125,6 +126,7 @@ class _CarPageState extends State<CarPage> {
         _drivingLicImage = file;
       }
     });
+    log(_drivingLicImage.toString());
     String? regCardImagePath;
     String? drivLicImagePath;
 
@@ -250,67 +252,86 @@ class _CarPageState extends State<CarPage> {
                     ],
                   ),
                   Spacer(),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.chevron_left,
-                            color: userCurrentCarIndex == 0
-                                ? Colors.grey
-                                : Colors.black),
-                        onPressed: userCurrentCarIndex == 0
-                            ? null
-                            : () => navigateCarDetails(-1),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.chevron_right,
-                            color: userCurrentCarIndex == userCars.length - 1
-                                ? Colors.grey
-                                : Colors.black),
-                        onPressed: userCurrentCarIndex == userCars.length - 1
-                            ? null
-                            : () => navigateCarDetails(1),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     IconButton(
+                  //       icon: Icon(Icons.chevron_left,
+                  //           color: userCurrentCarIndex == 0
+                  //               ? Colors.grey
+                  //               : Colors.black),
+                  //       onPressed: userCurrentCarIndex == 0
+                  //           ? null
+                  //           : () => navigateCarDetails(-1),
+                  //     ),
+                  //     IconButton(
+                  //       icon: Icon(Icons.chevron_right,
+                  //           color: userCurrentCarIndex == userCars.length - 1
+                  //               ? Colors.grey
+                  //               : Colors.black),
+                  //       onPressed: userCurrentCarIndex == userCars.length - 1
+                  //           ? null
+                  //           : () => navigateCarDetails(1),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               SizedBox(height: 20),
               Center(
-                child: SizedBox(
-                  height: 150,
-                  child: PageView.builder(
-                    itemCount: userCars.length,
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() {
-                        userCurrentCarIndex = index;
-                        updateCarDetails(index);
-                        updateUserCurrentCarIndexInFirebase(index);
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      var car = userCars[index];
-                      return Image.asset(
-                        car['car_type'] == 'Sedan'
-                            ? 'assets/car/sedan.png'
-                            : car['car_type'] == 'SUV'
-                                ? 'assets/car/suv.png'
-                                : car['car_type'] == 'Compact SUV'
-                                    ? 'assets/car/compact_suv.png'
-                                    : car['car_type'] == 'Hatchback'
-                                        ? 'assets/car/hatchback.png'
-                                        : "",
-                        height: 150,
-                        errorBuilder: (BuildContext context, Object exception,
-                            StackTrace? stackTrace) {
-                          return CircularProgressIndicator();
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 150,
+                      child: PageView.builder(
+                        itemCount: userCars.length,
+                        controller: _pageController,
+                        onPageChanged: (index) {
+                          setState(() {
+                            userCurrentCarIndex = index;
+                            updateCarDetails(index);
+                            updateUserCurrentCarIndexInFirebase(index);
+                          });
                         },
-                      );
-                    },
-                  ),
+                        itemBuilder: (context, index) {
+                          var car = userCars[index];
+                          return Image.asset(
+                            car['car_type'] == 'Sedan'
+                                ? 'assets/car/sedan.png'
+                                : car['car_type'] == 'SUV'
+                                    ? 'assets/car/suv.png'
+                                    : car['car_type'] == 'Compact SUV'
+                                        ? 'assets/car/compact_suv.png'
+                                        : car['car_type'] == 'Hatchback'
+                                            ? 'assets/car/hatchback.png'
+                                            : "",
+                            height: 150,
+                            errorBuilder: (BuildContext context,
+                                Object exception, StackTrace? stackTrace) {
+                              return CircularProgressIndicator();
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    if (userCars.length > 1)
+                      SmoothPageIndicator(
+                        controller:
+                            _pageController, // The PageController for PageView
+                        count: userCars.length, // Number of dots (cars)
+                        effect: WormEffect(
+                          dotHeight: 8,
+                          dotWidth: 8,
+                          activeDotColor: Colors.blue, // Active dot color
+                          dotColor: Colors.grey, // Inactive dot color
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -543,13 +564,14 @@ class _CarPageState extends State<CarPage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        _regCardImageUrl != null
-                                            ? carController.getFileNameFromUrl(
-                                                _regCardImageUrl!)
-                                            : _regCardImage?.path
-                                                    .split('/')
-                                                    .last ??
-                                                '',
+                                        // _regCardImageUrl != null
+                                        //     ? carController.getFileNameFromUrl(
+                                        //         _regCardImageUrl!)
+                                        //     : _regCardImage?.path
+                                        //             .split('/')
+                                        //             .last ??
+                                        //         '',
+                                        'Your Registration card',
                                         style: TextStyle(color: Colors.black),
                                       ),
                                       Row(
@@ -692,15 +714,19 @@ class _CarPageState extends State<CarPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        _drivingLicImageUrl != null
-                                            ? carController.getFileNameFromUrl(
-                                                _drivingLicImageUrl!)
-                                            : _drivingLicImage?.path
-                                                    .split('/')
-                                                    .last ??
-                                                '',
-                                        style: TextStyle(color: Colors.black),
+                                      Flexible(
+                                        child: Text(
+                                          // _drivingLicImageUrl != null
+                                          //     ? carController.getFileNameFromUrl(
+                                          //         _drivingLicImageUrl!)
+                                          //     : _drivingLicImage?.path
+                                          //             .split('/')
+                                          //             .last ??
+                                          //         '',
+                                          'Your driving license',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(color: Colors.black),
+                                        ),
                                       ),
                                       Row(
                                         children: [

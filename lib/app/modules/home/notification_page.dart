@@ -1,17 +1,16 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
-import '../../controllers/home_controller.dart';
-import '../../data/providers/notifications_provider.dart';
-
-List readList = [];
-List archiveList = [];
 
 class NotificationPage extends StatelessWidget {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
-    final HomeController controller = Get.find();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -22,7 +21,16 @@ class NotificationPage extends StatelessWidget {
         ),
         actions: [
           GestureDetector(
-            onTap: () {},
+            onTap: () async {
+              var notifications = await _firestore
+                  .collection('notifications')
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .collection('user_notifications')
+                  .get();
+              for (var doc in notifications.docs) {
+                await doc.reference.delete();
+              }
+            },
             child: Text(
               "Mark all as read",
               style: TextStyle(
@@ -31,122 +39,61 @@ class NotificationPage extends StatelessWidget {
                   fontFamily: 'Poppins'),
             ),
           ),
-          SizedBox(
-            width: 20,
-          )
+          SizedBox(width: 20),
         ],
         backgroundColor: Colors.transparent,
       ),
-      body: ListView.builder(
-        itemCount: dummyNotifications.length,
-        itemBuilder: (context, index) {
-          return Dismissible(
-            key: ValueKey(dummyNotifications[index]),
-            //left
-            background: Container(
-              color: Color(0xff039855),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.mark_chat_read,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          "Read",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore
+            .collection('notifications')
+            .doc(FirebaseAuth
+                .instance.currentUser!.uid)
+            .collection('user_notifications')
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          var notifications = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: notifications.length,
+            itemBuilder: (context, index) {
+              var notification = notifications[index];
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.4),
+                            offset: Offset(0, 5),
+                            spreadRadius: 3,
+                            blurRadius: 5)
+                      ]),
+                  child: ListTile(
+                    title: Text(
+                      notification['title'],
+                      style: TextStyle(fontWeight: FontWeight.w400),
                     ),
-                  ],
-                ),
-              ),
-            ),
-            //right
-            secondaryBackground: Container(
-              color: Color(0xff1671D8),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 35, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.archive_outlined,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          "Archive",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            onDismissed: (direction) {
-              if (direction == DismissDirection.startToEnd) {
-                readList.add(dummyNotifications[index]);
-              } else if (direction == DismissDirection.endToStart) {
-                archiveList.add(dummyNotifications[index]);
-              }
-            },
-            child: Container(
-              margin: EdgeInsets.all(4),
-              width: double.infinity,
-              height: 100,
-              child: Row(
-                children: [
-                  // Icon based on category
-                  Container(
-                      width: MediaQuery.of(context).size.width * 0.15,
-                      child: Icon(Icons.notifications)),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.82,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(dummyNotifications[index].title,
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 16,
-                                  color: Color(0xff1E293B),
-                                  fontWeight: FontWeight.w500)),
-                          Expanded(
-                            child: Text(
-                              dummyNotifications[index].description,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Poppins',
-                                  color: Color(0xff334155),
-                                  fontWeight: FontWeight.w100),
-                              softWrap:
-                                  true, // Allow description to wrap to the next line
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    subtitle: Text(notification['description']),
+                    onTap: () async {
+                      Get.toNamed(AppRoutes.CHATSCREEN);
+
+                      await _firestore
+                          .collection('notifications')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection('user_notifications')
+                          .doc(notification.id)
+                          .delete();
+                    },
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
       ),

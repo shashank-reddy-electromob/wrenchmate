@@ -83,15 +83,14 @@ class CarController extends GetxController {
     }
   }
 
-String getFileNameFromUrl(String url) {
-  final decodedUrl = Uri.decodeFull(url);
-  final segments = decodedUrl.split('/');
-  final fileNameWithParams = segments.last;
-  final fullFileName = fileNameWithParams.split('?').first;
-  final match = RegExp(r'(\d+\.\w+)$').firstMatch(fullFileName);
-  return match?.group(0) ?? fullFileName;
-}
-
+  String getFileNameFromUrl(String url) {
+    final decodedUrl = Uri.decodeFull(url);
+    final segments = decodedUrl.split('/');
+    final fileNameWithParams = segments.last;
+    final fullFileName = fileNameWithParams.split('?').first;
+    final match = RegExp(r'(\d+\.\w+)$').firstMatch(fullFileName);
+    return match?.group(0) ?? fullFileName;
+  }
 
   Future<void> deleteCar({
     required String carId,
@@ -120,12 +119,11 @@ String getFileNameFromUrl(String url) {
 
       await _firestore.collection('User').doc(userId).update({
         'User_carDetails': currentCarDetails,
+        'User_currentCar': 0,
         if (userCurrentCarId.value == carId) 'User_currentCar': 0,
       });
 
-      print("Car deleted successfully.");
-
-     
+      print("Car deleted successfully. ");
     } catch (e) {
       print("Error deleting car: $e");
       throw e;
@@ -171,91 +169,28 @@ String getFileNameFromUrl(String url) {
     }
   }
 
-Future<void> addImageUrlsToCar({
-  required String carId,
-  required String carType,
-  required String carModel,
-  String? drivLicUrl,
-  String? regCardUrl,
-}) async {
-  try {
-    if (drivLicUrl == null && regCardUrl == null) {
-      print("No URLs provided for updating.");
-      return;
-    }
-
-    Map<String, dynamic> imageUrlsData = {};
-    if (drivLicUrl != null) {
-      imageUrlsData['drivLic'] = drivLicUrl;
-    }
-    if (regCardUrl != null) {
-      imageUrlsData['regCard'] = regCardUrl;
-    }
-
-    String carTypeId = carTypeToIdMap[carType]!;
-    
-    await _firestore
-        .collection('car')
-        .doc('PeVE6MdvLwzcePpmZfp0')
-        .collection(carType)
-        .doc(carTypeId)
-        .collection(carModel)
-        .doc(carId)
-        .update(imageUrlsData);
-
-    print("Image URLs added successfully.");
-
-    Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-      'tracking_button': false,
-    });
-  } catch (e) {
-    print("Error adding image URLs: $e");
-  }
-}
-
-Future deleteCardImageUrl({
-  required String carId,
-  required String carType,
-  required String carModel,
-  required String imageType, 
-}) async {
-  try {
-    if (imageType != 'drivLic' && imageType != 'regCard') {
-      print("Invalid image type. Must be 'drivLic' or 'regCard'");
-      return;
-    }
-
-    String carTypeId = carTypeToIdMap[carType]!;
-    
-    DocumentSnapshot docSnapshot = await _firestore
-        .collection('car')
-        .doc('PeVE6MdvLwzcePpmZfp0')
-        .collection(carType)
-        .doc(carTypeId)
-        .collection(carModel)
-        .doc(carId)
-        .get();
-
-    if (docSnapshot.exists) {
-      Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
-      String? imageUrl = data[imageType] as String?;
-
-      if (imageUrl != null) {
-        try {
-          Uri uri = Uri.parse(imageUrl);
-          String path = Uri.decodeFull(uri.path.split('/o/')[1]);
-          
-          final storageRef = FirebaseStorage.instance.ref().child(path);
-          await storageRef.delete();
-          print("File deleted from storage successfully");
-        } catch (storageError) {
-          print("Error deleting file from storage: $storageError");
-        }
+  Future<void> addImageUrlsToCar({
+    required String carId,
+    required String carType,
+    required String carModel,
+    String? drivLicUrl,
+    String? regCardUrl,
+  }) async {
+    try {
+      if (drivLicUrl == null && regCardUrl == null) {
+        print("No URLs provided for updating.");
+        return;
       }
 
-      Map<String, dynamic> updateData = {
-        imageType: FieldValue.delete()
-      };
+      Map<String, dynamic> imageUrlsData = {};
+      if (drivLicUrl != null) {
+        imageUrlsData['drivLic'] = drivLicUrl;
+      }
+      if (regCardUrl != null) {
+        imageUrlsData['regCard'] = regCardUrl;
+      }
+
+      String carTypeId = carTypeToIdMap[carType]!;
 
       await _firestore
           .collection('car')
@@ -264,22 +199,81 @@ Future deleteCardImageUrl({
           .doc(carTypeId)
           .collection(carModel)
           .doc(carId)
-          .update(updateData);
+          .update(imageUrlsData);
 
-      print("Image URL deleted successfully from Firestore");
-      
+      print("Image URLs added successfully.");
+
       Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
         'tracking_button': false,
       });
-    } else {
-      print("Document does not exist");
+    } catch (e) {
+      print("Error adding image URLs: $e");
     }
-  } catch (e) {
-    print("Error in deletion process: $e");
   }
-}
 
+  Future deleteCardImageUrl({
+    required String carId,
+    required String carType,
+    required String carModel,
+    required String imageType,
+  }) async {
+    try {
+      if (imageType != 'drivLic' && imageType != 'regCard') {
+        print("Invalid image type. Must be 'drivLic' or 'regCard'");
+        return;
+      }
 
+      String carTypeId = carTypeToIdMap[carType]!;
+
+      DocumentSnapshot docSnapshot = await _firestore
+          .collection('car')
+          .doc('PeVE6MdvLwzcePpmZfp0')
+          .collection(carType)
+          .doc(carTypeId)
+          .collection(carModel)
+          .doc(carId)
+          .get();
+
+      if (docSnapshot.exists) {
+        Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+        String? imageUrl = data[imageType] as String?;
+
+        if (imageUrl != null) {
+          try {
+            Uri uri = Uri.parse(imageUrl);
+            String path = Uri.decodeFull(uri.path.split('/o/')[1]);
+
+            final storageRef = FirebaseStorage.instance.ref().child(path);
+            await storageRef.delete();
+            print("File deleted from storage successfully");
+          } catch (storageError) {
+            print("Error deleting file from storage: $storageError");
+          }
+        }
+
+        Map<String, dynamic> updateData = {imageType: FieldValue.delete()};
+
+        await _firestore
+            .collection('car')
+            .doc('PeVE6MdvLwzcePpmZfp0')
+            .collection(carType)
+            .doc(carTypeId)
+            .collection(carModel)
+            .doc(carId)
+            .update(updateData);
+
+        print("Image URL deleted successfully from Firestore");
+
+        Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+          'tracking_button': false,
+        });
+      } else {
+        print("Document does not exist");
+      }
+    } catch (e) {
+      print("Error in deletion process: $e");
+    }
+  }
 
   Future<void> updateCar({
     required String carId,

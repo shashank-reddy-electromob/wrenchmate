@@ -30,7 +30,7 @@ class ServicePage extends StatefulWidget {
 
 class _ServicePageState extends State<ServicePage> {
   String selectedCategory = 'Show All';
-  late String service;
+  late String currService;
   late CartController cartController;
   final ServiceController serviceController = Get.put(ServiceController());
   final AuthController authController = Get.put(AuthController());
@@ -83,8 +83,8 @@ class _ServicePageState extends State<ServicePage> {
     super.initState();
     fetchUserCurrentCarIndex();
     cartController = Get.put(CartController());
-    service = Get.arguments;
-    print(service);
+    currService = Get.arguments;
+    print('service category is: ${currService}');
 
     addToCartStates =
         List<bool>.filled(serviceController.services.length, false);
@@ -94,7 +94,7 @@ class _ServicePageState extends State<ServicePage> {
       print(userCar);
       List<String> list = (userCar.split(",")).cast<String>().toList();
 
-      serviceController.fetchServicesForUser(service, list).then((_) {
+      serviceController.fetchServicesForUser(currService, list).then((_) {
         setState(() {
           addToCartStates =
               List<bool>.filled(serviceController.services.length, false);
@@ -128,11 +128,11 @@ class _ServicePageState extends State<ServicePage> {
         key: scaffoldMessengerKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: service == "Repairs" || service == "Body Parts"
+          backgroundColor: currService == "Body Parts"
               ? Color(0xffE4F7FF)
               : Colors.transparent,
           title: Text(
-            service,
+            currService,
             style: AppTextStyle.semiboldRaleway19,
           ),
           leading: Padding(
@@ -155,53 +155,53 @@ class _ServicePageState extends State<ServicePage> {
             ),
           ),
         ),
-        body: service != "Repairs" && service != "Body Parts"
+        body: currService != "Body Parts"
             ? Column(
                 children: [
                   SizedBox(
                     height: 8,
                   ),
-                  service != "Repairs"
-                      ? Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.05),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.75,
-                                color: Color(0xffF7F7F7),
-                                child: Center(
-                                  child: TextField(
-                                    cursorColor: Colors.grey,
-                                    decoration: InputDecoration(
-                                      hintText: "Search services and Packages",
-                                      hintStyle: AppTextStyle.mediumRaleway12
-                                          .copyWith(color: greyColor),
-                                      prefixIcon: Icon(
-                                        Icons.search,
-                                        color: Color(0xff838383),
-                                      ),
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                    ),
-                                    style: TextStyle(
-                                      fontSize:
-                                          20, // Increase the font size for the entered text
-                                    ),
-                                  ),
+                  // service != "Repairs"?
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.05),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.75,
+                          color: Color(0xffF7F7F7),
+                          child: Center(
+                            child: TextField(
+                              cursorColor: Colors.grey,
+                              decoration: InputDecoration(
+                                hintText: "Search services and Packages",
+                                hintStyle: AppTextStyle.mediumRaleway12
+                                    .copyWith(color: greyColor),
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: Color(0xff838383),
                                 ),
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
                               ),
-                              //filter
-                              CustomIconButton(
-                                onPressed: () {},
+                              style: TextStyle(
+                                fontSize:
+                                    20, // Increase the font size for the entered text
                               ),
-                            ],
+                            ),
                           ),
-                        )
-                      : Container(),
+                        ),
+                        //filter
+                        CustomIconButton(
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  )
+                  // : Container(),
+                  ,
                   SizedBox(
                     height: 8,
                   ),
@@ -210,7 +210,7 @@ class _ServicePageState extends State<ServicePage> {
                       scrollDirection: Axis.vertical,
                       child: Column(
                         children: [
-                          service == 'Accessories'
+                          currService == 'Accessories'
                               ? subservicesAccessories()
                               : Container(),
                           Obx(() {
@@ -235,7 +235,10 @@ class _ServicePageState extends State<ServicePage> {
                                     child: GestureDetector(
                                       onTap: () {
                                         Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                                            arguments: service);
+                                            arguments: {
+                                              'service': service,
+                                              'currService': currService
+                                            });
                                         ScaffoldMessenger.of(context)
                                             .hideCurrentSnackBar();
                                       },
@@ -292,10 +295,53 @@ class _ServicePageState extends State<ServicePage> {
                                                         SizedBox(height: 8),
                                                         Row(
                                                           children: [
-                                                            Text(
-                                                                '\₹${service.price}  ',
-                                                                style: AppTextStyle
-                                                                    .semibold14),
+                                                            currService !=
+                                                                    "Repairs"
+                                                                ? Text(
+                                                                    '\₹${service.price}  ',
+                                                                    style: AppTextStyle
+                                                                        .semibold14)
+                                                                : GestureDetector(
+                                                                    onTap: () {
+                                                                      Get.toNamed(
+                                                                        AppRoutes
+                                                                            .CHATSCREEN,
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                        boxShadow: [
+                                                                          BoxShadow(
+                                                                            color:
+                                                                                Colors.grey.withOpacity(0.2),
+                                                                            spreadRadius:
+                                                                                1,
+                                                                            blurRadius:
+                                                                                4,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            4.0),
+                                                                        child: Text(
+                                                                            'Get Quotation',
+                                                                            style:
+                                                                                AppTextStyle.semiboldpurple12),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                            SizedBox(
+                                                              width: 3,
+                                                            ),
                                                             Icon(
                                                                 CupertinoIcons
                                                                     .star,

@@ -244,7 +244,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             children: [
               Text("₹ ${selectedPrice ?? product.price}",
                   style: AppTextStyle.semibold14),
-              // Spacer(),
               Icon(Icons.star, color: Colors.yellow, size: 16),
               Text("${product.averageReview}",
                   style: TextStyle(
@@ -252,38 +251,34 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               Text("(${product.numberOfReviews} reviews)",
                   style: TextStyle(color: Colors.black54)),
               Spacer(),
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.055,
-                right: MediaQuery.of(context).size.width * 0.04,
-                child: addtocart == false
-                    ? CustomElevatedButton(
-                        onPressed: () {
-                          cartController.addProductToCartSnackbar(
-                            context,
-                            cartController,
-                            product,
-                            selectedQuantity ?? product.quantity,
-                            scaffoldMessengerKey,
-                          );
-                          setState(() {
-                            addtocart = true;
-                          });
-                        },
-                        text: '+Add',
-                      )
-                    : CustomElevatedButton(
-                        onPressed: () {
-                          cartController.deleteProductsFromCart(
-                              product.id, product.quantity);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          setState(() {
-                            addtocart = false;
-                          });
-                        },
-                        textSize: 12,
-                        text: 'Remove',
-                      ),
-              ),
+              addtocart == false
+                  ? CustomElevatedButton(
+                      onPressed: () {
+                        cartController.addProductToCartSnackbar(
+                          context,
+                          cartController,
+                          product,
+                          selectedQuantity ?? product.quantity,
+                          scaffoldMessengerKey,
+                        );
+                        setState(() {
+                          addtocart = true;
+                        });
+                      },
+                      text: '+Add',
+                    )
+                  : CustomElevatedButton(
+                      onPressed: () {
+                        cartController.deleteProductsFromCart(
+                            product.id, product.quantity);
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        setState(() {
+                          addtocart = false;
+                        });
+                      },
+                      textSize: 12,
+                      text: 'Remove',
+                    ),
             ],
           ),
           SizedBox(height: 8),
