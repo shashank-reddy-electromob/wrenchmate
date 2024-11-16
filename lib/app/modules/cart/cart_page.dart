@@ -101,11 +101,22 @@ class _CartPageState extends State<CartPage> {
           // Update totalAmount based on price and quantity
           totalAmount += price * unitsQuantity;
         }
+        for (var item in cartController.cartSubsItems) {
+          double price = item['price'] != null
+              ? double.parse(item['price'].toString())
+              : 0.0;
+          int unitsQuantity =
+              item['unitsquantity'] ?? 1; // Default to 1 if null
+
+          // Update totalAmount based on price and quantity
+          totalAmount += price * unitsQuantity;
+        }
 
         // Calculate tax as 10% of totalAmount
         tax = totalAmount * 0.1;
         // Final amount is totalAmount + tax
         finalAmount = totalAmount + tax!;
+        log('final amount from cart page ${finalAmount.toString()}');
       });
     } catch (e) {
       print("Error calculating total: $e");

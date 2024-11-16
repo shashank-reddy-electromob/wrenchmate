@@ -27,9 +27,9 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   @override
   void initState() {
     super.initState();
-    final args = Get.arguments; 
-    service = args['service']; 
-    booking = args['booking']; 
+    final args = Get.arguments;
+    service = args['service'];
+    booking = args['booking'];
 
     print("Current status: ${booking.status ?? "unknown"}");
   }
@@ -56,8 +56,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     final String statusName = booking.status ?? "unknown";
     final String carType = booking.car_details ?? "unknown";
     final double servicePrice = service.price; // Use service price
-    final String bookingDate = booking.confirmationDate != null 
-        ? formatDateTime(booking.confirmationDate!) 
+    final String bookingDate = booking.confirmationDate != null
+        ? formatDateTime(booking.confirmationDate!)
         : "No Date"; // Use booking confirmation date
     final double itemTotal = 100.0;
     final double discount = 10.0;
@@ -72,9 +72,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         title: Text(
           "Booking Details",
           style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-              color: Colors.black),
+              fontSize: 24, fontWeight: FontWeight.w500, color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(
@@ -137,18 +135,21 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                   margin: EdgeInsets.symmetric(horizontal: 8.0),
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      Get.toNamed(AppRoutes.REVIEW, arguments: service);
+                                      Get.toNamed(AppRoutes.REVIEW,
+                                          arguments: service);
                                     },
                                     child: Text(
                                       'WRITE A REVIEW',
-                                      style: TextStyle(color: Color(0xff1671D8)),
+                                      style:
+                                          TextStyle(color: Color(0xff1671D8)),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
                                       side: BorderSide(
                                           color: Color(0xff1671D8), width: 1),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
                                       ),
                                     ),
                                   ),
@@ -169,7 +170,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                       side: BorderSide(
                                           color: Colors.white, width: 1),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
                                       ),
                                     ),
                                   ),
@@ -199,8 +201,7 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
               TimeLineTile(
                 isFirst: false,
                 isLast: false,
-                isPast: statusName == "ongoing" ||
-                    statusName == "completed",
+                isPast: statusName == "ongoing" || statusName == "completed",
                 timeLineText: "Out For Service",
                 date: bookingDate,
               ),

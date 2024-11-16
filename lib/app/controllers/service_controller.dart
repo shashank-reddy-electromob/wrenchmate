@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import '../data/models/Service_firebase.dart';
@@ -7,16 +9,17 @@ import '../data/models/user_module.dart';
 
 class ServiceController extends GetxController {
   var services = <Servicefirebase>[].obs;
+  var filteredServices = <Servicefirebase>[].obs;
   var reviews = <Review>[].obs; // Use Review model
   var users = <User>[].obs; // Use User model
   var faqs = <FAQ>[].obs; // Use FAQ model
-  var loading = true.obs; // Loading state
+  var loading = false.obs; // Loading state
   var selectedService = Rxn<Servicefirebase>(); // To store the selected service
-  var isFiltering=false.obs;
+  var isFiltering = false.obs;
 
   Future<void> fetchServices(String category) async {
     try {
-      loading.value = true; // Start loading
+      // loading.value = true; // Start loading
       print("Fetching services for category: $category");
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('Service')
@@ -48,7 +51,7 @@ class ServiceController extends GetxController {
     } catch (e) {
       print("Error fetching services: $e");
     } finally {
-      loading.value = false;
+      // loading.value = false;
     }
   }
 
@@ -61,14 +64,13 @@ class ServiceController extends GetxController {
       print(
           "Number of reviews fetched for service ${service.id}: ${reviewSnapshot.size}");
 
-      List<String> userIds = []; 
+      List<String> userIds = [];
 
       for (var doc in reviewSnapshot.docs) {
         var reviewData = doc.data() as Map<String, dynamic>;
         print("Review Data for service ${service.id}: $reviewData");
         reviews.add(Review(
           productId: "NA",
-
           serviceId: reviewData['serviceId'],
           userId: reviewData['userId'],
           message: reviewData['message'],
@@ -151,7 +153,7 @@ class ServiceController extends GetxController {
   Future<void> fetchServiceById(String serviceId) async {
     try {
       print("Fetching service by ID: $serviceId");
-      loading.value = true;
+      // loading.value = true;
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('Service')
           .doc(serviceId)
@@ -187,14 +189,14 @@ class ServiceController extends GetxController {
     } catch (e) {
       print("Error fetching service by ID: $e");
     } finally {
-      loading.value = false;
+      // loading.value = false;
     }
   }
 
   Future<void> fetchServiceDataById(String serviceId) async {
     try {
       print("Fetching service data by ID: $serviceId");
-      loading.value = true;
+      // loading.value = true;
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('Service')
           .doc(serviceId)
@@ -221,7 +223,7 @@ class ServiceController extends GetxController {
     } catch (e) {
       print("Error fetching service data by ID: $e");
     } finally {
-      loading.value = false; // Stop loading
+      // loading.value = false; // Stop loading
     }
   }
 
@@ -257,7 +259,6 @@ class ServiceController extends GetxController {
       // Fetch services
       services.value = querySnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
-        print("Service Data: $data");
         return Servicefirebase(
           id: doc.id,
           category: data['category'] ?? '',
@@ -281,7 +282,9 @@ class ServiceController extends GetxController {
             return carDetail.split(';')[0] == model;
           });
         });
-      }).toList(); // Ensure the list type is correct
+      }).toList();
+
+      filteredServices.value = List.from(services);
     } catch (e) {
       print("Error fetching services: $e");
     } finally {
@@ -289,5 +292,14 @@ class ServiceController extends GetxController {
     }
   }
 
-
+  void filterServices(String query) {
+    if (query.isEmpty) {
+      filteredServices.assignAll(services);
+    } else {
+      filteredServices.assignAll(
+        services.where((service) =>
+            service.name.toLowerCase().contains(query.toLowerCase())),
+      );
+    }
+  }
 }

@@ -183,6 +183,7 @@ class _SupportPageState extends State<SupportPage> {
   @override
   Widget build(BuildContext context) {
     // final SupportController controller = Get.find();
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -191,7 +192,7 @@ class _SupportPageState extends State<SupportPage> {
             'Help and Support',
             style: TextStyle(
                 fontWeight: FontWeight.w500,
-                fontSize: 24,
+                fontSize: width * 0.055,
                 fontFamily: 'Raleway'),
           ),
         ),

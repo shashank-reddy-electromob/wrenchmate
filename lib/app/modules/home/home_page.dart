@@ -225,16 +225,67 @@ class _HomePageState extends State<HomePage> {
                                   width: 1.0,
                                 ),
                               ),
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.notifications_none_outlined,
-                                  color: Color(0xff515151),
-                                ),
-                                onPressed: () {
-                                  Get.toNamed(AppRoutes.NOTIFICATIONS);
-                                  // ScaffoldMessenger.of(context)
-                                  //     .hideCurrentSnackBar();
-                                },
+                              child: Stack(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.notifications_none_outlined,
+                                      color: Color(0xff515151),
+                                    ),
+                                    onPressed: () {
+                                      Get.toNamed(AppRoutes.NOTIFICATIONS);
+                                    },
+                                  ),
+                                  StreamBuilder<QuerySnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('notifications')
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser!.uid)
+                                        .collection('user_notifications')
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return SizedBox
+                                            .shrink(); // Empty badge while loading
+                                      }
+
+                                      int notificationCount =
+                                          snapshot.data!.docs.length;
+
+                                      if (notificationCount == 0) {
+                                        return SizedBox
+                                            .shrink(); // Hide badge if count is 0
+                                      }
+
+                                      return Positioned(
+                                        right:
+                                            8, // Adjust as needed for proper placement
+                                        top:
+                                            8, // Adjust as needed for proper placement
+                                        child: Container(
+                                          height: 15,
+                                          width: 15,
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              '$notificationCount',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ],

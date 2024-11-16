@@ -184,7 +184,7 @@ class _drawerPageState extends State<drawerPage> {
                 child: GestureDetector(
                   onTap: logout,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     width: MediaQuery.of(context).size.width * 0.3,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
@@ -195,6 +195,7 @@ class _drawerPageState extends State<drawerPage> {
                       ),
                     ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.logout_rounded,
@@ -206,7 +207,7 @@ class _drawerPageState extends State<drawerPage> {
                           " Log out",
                           style: TextStyle(
                             fontFamily: 'Raleway',
-                            fontSize: 16,
+                            fontSize: MediaQuery.of(context).size.width * 0.035,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
                           ),

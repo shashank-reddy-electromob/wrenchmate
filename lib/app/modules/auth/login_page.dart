@@ -80,7 +80,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -101,14 +103,14 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 80),
+              SizedBox(height: height * 0.08),
               //logo
               Image.asset(
                 height: 140,
                 'assets/images/logo.png',
                 fit: BoxFit.cover,
               ),
-              const SizedBox(height: 64.0),
+              SizedBox(height: height * 0.065),
               //text
               const Text(
                 "Log In",
@@ -128,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                     fontFamily: 'Poppins'),
               ),
               //textfield
-              const SizedBox(height: 24.0),
+              SizedBox(height: height * 0.025),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Container(
@@ -189,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 32.0),
+              SizedBox(height: height * 0.035),
               //submit
               Container(
                   width: MediaQuery.of(context).size.width * 0.85,
@@ -204,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                           onTap: _isLoading ? () {} : _login,
                           icon: Icons.arrow_forward_outlined,
                         )),
-              SizedBox(height: 32.0),
+              SizedBox(height: height * 0.04),
               Text(
                 "OR",
                 style: TextStyle(
@@ -213,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.w600,
                     color: Color(0xff969696)),
               ),
-              SizedBox(height: 32.0),
+              SizedBox(height: height * 0.035),
               //google
               Container(
                 width: MediaQuery.of(context).size.width * 0.85,

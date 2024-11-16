@@ -173,6 +173,9 @@ class _ServicePageState extends State<ServicePage> {
                           color: Color(0xffF7F7F7),
                           child: Center(
                             child: TextField(
+                              onChanged: (val) {
+                                serviceController.filterServices(val);
+                              },
                               cursorColor: Colors.grey,
                               decoration: InputDecoration(
                                 hintText: "Search services and Packages",
@@ -223,12 +226,14 @@ class _ServicePageState extends State<ServicePage> {
                               return ListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
-                                itemCount: filteredServices.length,
+                                itemCount:
+                                    serviceController.filteredServices.length,
                                 itemBuilder: (context, index) {
                                   if (index >= addToCartStates.length) {
                                     return Container();
                                   }
-                                  final service = filteredServices[index];
+                                  final service =
+                                      serviceController.filteredServices[index];
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16.0),
@@ -296,49 +301,14 @@ class _ServicePageState extends State<ServicePage> {
                                                         Row(
                                                           children: [
                                                             currService !=
-                                                                    "Repairs"
+                                                                        "Repairs" &&
+                                                                    currService !=
+                                                                        "General Service"
                                                                 ? Text(
                                                                     '\₹${service.price}  ',
                                                                     style: AppTextStyle
                                                                         .semibold14)
-                                                                : GestureDetector(
-                                                                    onTap: () {
-                                                                      Get.toNamed(
-                                                                        AppRoutes
-                                                                            .CHATSCREEN,
-                                                                      );
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                        boxShadow: [
-                                                                          BoxShadow(
-                                                                            color:
-                                                                                Colors.grey.withOpacity(0.2),
-                                                                            spreadRadius:
-                                                                                1,
-                                                                            blurRadius:
-                                                                                4,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            4.0),
-                                                                        child: Text(
-                                                                            'Get Quotation',
-                                                                            style:
-                                                                                AppTextStyle.semiboldpurple12),
-                                                                      ),
-                                                                    ),
-                                                                  ),
+                                                                : SizedBox(),
                                                             SizedBox(
                                                               width: 3,
                                                             ),
@@ -427,79 +397,115 @@ class _ServicePageState extends State<ServicePage> {
                                               right: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.04,
-                                              child: !addToCartStates[index]
-                                                  ? CustomElevatedButton(
-                                                      onPressed: () async {
-                                                        String serviceId =
-                                                            service.id;
-                                                        bool isInCart =
-                                                            await cartController
-                                                                .isServiceInCart(
-                                                                    serviceId);
+                                                  0.03,
+                                              child: currService == 'Repairs' ||
+                                                      currService ==
+                                                          'General Service'
+                                                  ? GestureDetector(
+                                                      onTap: () {
+                                                        Get.toNamed(
+                                                          AppRoutes.CHATSCREEN,
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xff3778F2),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      12,
+                                                                  vertical: 8),
+                                                          child: Text(
+                                                              'Get Quotation',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white)),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : !addToCartStates[index]
+                                                      ? CustomElevatedButton(
+                                                          onPressed: () async {
+                                                            String serviceId =
+                                                                service.id;
+                                                            bool isInCart =
+                                                                await cartController
+                                                                    .isServiceInCart(
+                                                                        serviceId);
 
-                                                        if (isInCart) {
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                            SnackBar(
-                                                              content: Text(
-                                                                  'Service already in cart'),
-                                                              duration:
-                                                                  Duration(
-                                                                      seconds:
-                                                                          2),
-                                                            ),
-                                                          );
-                                                        } else {
-                                                          if (service.category ==
-                                                                  'Denting and Painting' ||
-                                                              service.category ==
-                                                                  'Detailing') {
-                                                            showCustomBottomSheet(
-                                                                service.price,
-                                                                service,
-                                                                index);
-                                                          } else {
+                                                            if (isInCart) {
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .showSnackBar(
+                                                                SnackBar(
+                                                                  content: Text(
+                                                                      'Service already in cart'),
+                                                                  duration:
+                                                                      Duration(
+                                                                          seconds:
+                                                                              2),
+                                                                ),
+                                                              );
+                                                            } else {
+                                                              if (service.category ==
+                                                                      'Denting and Painting' ||
+                                                                  service.category ==
+                                                                      'Detailing') {
+                                                                showCustomBottomSheet(
+                                                                    service
+                                                                        .price,
+                                                                    service,
+                                                                    index);
+                                                              } else {
+                                                                cartController
+                                                                    .addToCartSnackbar(
+                                                                  context,
+                                                                  cartController,
+                                                                  service,
+                                                                  scaffoldMessengerKey,
+                                                                );
+                                                                setState(() {
+                                                                  addToCartStates[
+                                                                          index] =
+                                                                      true;
+                                                                });
+                                                                // setState(() => addtocart = true);
+                                                              }
+                                                              // cartController
+                                                              //     .addToCartSnackbar(
+                                                              //   context,
+                                                              //   cartController,
+                                                              //   service,
+                                                              //   scaffoldMessengerKey,
+                                                              // );
+                                                            }
+                                                          },
+                                                          text: '+Add',
+                                                        )
+                                                      : CustomElevatedButton(
+                                                          onPressed: () {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .hideCurrentSnackBar();
                                                             cartController
-                                                                .addToCartSnackbar(
-                                                              context,
-                                                              cartController,
-                                                              service,
-                                                              scaffoldMessengerKey,
-                                                            );
+                                                                .deleteServicesFromCart(
+                                                                    service.id);
                                                             setState(() {
                                                               addToCartStates[
-                                                                  index] = true;
+                                                                      index] =
+                                                                  false;
                                                             });
-                                                            // setState(() => addtocart = true);
-                                                          }
-                                                          // cartController
-                                                          //     .addToCartSnackbar(
-                                                          //   context,
-                                                          //   cartController,
-                                                          //   service,
-                                                          //   scaffoldMessengerKey,
-                                                          // );
-                                                        }
-                                                      },
-                                                      text: '+Add',
-                                                    )
-                                                  : CustomElevatedButton(
-                                                      onPressed: () {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .hideCurrentSnackBar();
-                                                        cartController
-                                                            .deleteServicesFromCart(
-                                                                service.id);
-                                                        setState(() {
-                                                          addToCartStates[
-                                                              index] = false;
-                                                        });
-                                                      },
-                                                      text: 'Remove',
-                                                    ),
+                                                          },
+                                                          text: 'Remove',
+                                                        ),
                                             )
                                           ],
                                         ),

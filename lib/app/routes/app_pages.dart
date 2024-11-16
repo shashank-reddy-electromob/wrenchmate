@@ -83,7 +83,6 @@ class AppPages {
         name: AppRoutes.PRIVACYPOLICY,
         page: () => privacyPolicy(),
         binding: HomeBinding()),
-    
     GetPage(
         name: AppRoutes.REFUNDPOLICY,
         page: () => refundPolicy(),
@@ -139,10 +138,8 @@ class AppPages {
         binding: BookingBinding()),
     GetPage(name: AppRoutes.CAR, page: () => CarPage(), binding: CarBinding()),
     GetPage(
-        name: AppRoutes.CAR_EDIT,
-        page: () => CarEdit(),
-        binding: CarBinding()),
-      GetPage(
+        name: AppRoutes.CAR_EDIT, page: () => CarEdit(), binding: CarBinding()),
+    GetPage(
         name: AppRoutes.CAR_REGISTER,
         page: () => CarRegister(),
         binding: CarBinding()),

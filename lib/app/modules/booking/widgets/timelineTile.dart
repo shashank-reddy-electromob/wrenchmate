@@ -23,8 +23,8 @@ class TimeLineTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 140.0,
+    return Container(
+      color: Colors.white,
       child: TimelineTile(
         isFirst: isFirst,
         isLast: isLast,
@@ -38,11 +38,11 @@ class TimeLineTile extends StatelessWidget {
         ),
         indicatorStyle: IndicatorStyle(
           color: isPast ? Color(0xff1671D8) : Colors.blue.shade100,
-          width: 20.0, // Adjust the size of the indicator
-          height: 20.0, // Adjust the size of the indicator
+          width: 20.0,
+          height: 20.0,
         ),
         endChild: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          padding: const EdgeInsets.symmetric(vertical: 20.0),
           child: TimeLineText(
             isPast: isPast,
             time: date,

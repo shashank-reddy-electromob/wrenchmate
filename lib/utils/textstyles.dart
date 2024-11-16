@@ -54,7 +54,7 @@ class AppTextStyle {
   );
   static const TextStyle semibold18 = TextStyle(
     fontFamily: 'Poppins',
-    fontSize: 18,
+    fontSize: 16,
     color: blackColor,
     letterSpacing: 1,
     fontWeight: FontWeight.w600,

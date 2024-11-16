@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/data/models/product_model.dart';
@@ -6,7 +8,7 @@ import 'package:wrenchmate_user_app/app/data/models/user_module.dart';
 
 class ProductController extends GetxController {
   var products = <Product>[].obs;
-  var isLoading = true.obs;
+  var isLoading = false.obs;
   var errorMessage = ''.obs;
   var reviews = <Review>[].obs;
 
@@ -16,33 +18,33 @@ class ProductController extends GetxController {
     fetchProducts();
   }
 
-Future<void> fetchProducts() async {
-  try {
-    isLoading(true);
-    final snapshot = await FirebaseFirestore.instance.collection('Product').get();
+  Future<void> fetchProducts() async {
+    try {
+      isLoading(true);
+      log('is loading is : ${isLoading.toString()}');
+      final snapshot =
+          await FirebaseFirestore.instance.collection('Product').get();
 
-    final productList = snapshot.docs
-        .map((doc) {
-          print('Fetched Document: ${doc.data()}'); 
-          return Product.fromDocument(doc.data(), doc.id);
-        })
-        .toList();
+      final productList = snapshot.docs.map((doc) {
+        print('Fetched Document: ${doc.data()}');
+        return Product.fromDocument(doc.data(), doc.id);
+      }).toList();
 
-    products.assignAll(productList);
-  } catch (e) {
-    errorMessage.value = 'Failed to fetch products: $e';
-    print("errorMessage.value :: ${errorMessage.value}");
-  } finally {
-    isLoading(false);
+      products.assignAll(productList);
+    } catch (e) {
+      errorMessage.value = 'Failed to fetch products: $e';
+      print("errorMessage.value :: ${errorMessage.value}");
+    } finally {
+      isLoading(false);
+    }
   }
-}
 
-  var selectedProduct = Rxn<Product>(); 
+  var selectedProduct = Rxn<Product>();
 
   Future<void> fetchProductById(String productId) async {
     try {
       print("Fetching product data by ID: $productId");
-      isLoading(true);
+      // isLoading(true);
       DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('Product')
           .doc(productId)
@@ -75,7 +77,7 @@ Future<void> fetchProducts() async {
     } catch (e) {
       print("Error fetching product by ID: $e");
     } finally {
-      isLoading(false);
+      // isLoading(false);
     }
   }
 

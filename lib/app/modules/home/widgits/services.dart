@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -112,11 +114,14 @@ class ServicesType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: MediaQuery.of(context).size.width / 4,
-        width: MediaQuery.of(context).size.width / 4 - 10,
+        height: width / 4,
+        width: width / 4 - 10,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: _createBorder(),
@@ -129,7 +134,7 @@ class ServicesType extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: Image.asset(
-                width: 35,
+                width: width > 300 ? width * 0.09 : width * 0.08,
                 imagePath,
                 fit: BoxFit.fill,
               ),
@@ -142,7 +147,7 @@ class ServicesType extends StatelessWidget {
                 style: AppTextStyle.mediumRaleway12.copyWith(
                     fontWeight: FontWeight.w600,
                     overflow: TextOverflow.fade,
-                    fontSize: MediaQuery.of(context).size.width * 0.027),
+                    fontSize: width > 300 ? width * 0.026 : width * 0.022),
               ),
             ),
           ],

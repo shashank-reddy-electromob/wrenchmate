@@ -77,6 +77,7 @@ dependencies:
   fluttertoast: ^8.2.8
   syncfusion_flutter_core: ^26.2.9
   glass: ^2.0.0+1
+  cached_network_image: ^3.4.0
   
   # geolocator: ^12.0.0
   # geocoding: ^3.0.0

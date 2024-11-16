@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/auth_controller.dart';
@@ -175,11 +176,32 @@ class _ProductScreenState extends State<ProductScreen> {
                           top: 35.0,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              product.image,
+                            child: CachedNetworkImage(
+                              imageUrl: product.image,
                               width: 100,
                               height: 100,
                               fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                width: 100,
+                                height: 100,
+                                color: Colors.grey.shade300,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                width: 100,
+                                height: 100,
+                                color: Colors.grey.shade300,
+                                child: Icon(
+                                  Icons.broken_image,
+                                  color: Colors.grey,
+                                  size: 40,
+                                ),
+                              ),
                             ),
                           ),
                         ),

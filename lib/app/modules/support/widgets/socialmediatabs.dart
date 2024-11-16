@@ -14,6 +14,7 @@ class CustomContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: GestureDetector(
@@ -43,17 +44,17 @@ class CustomContainer extends StatelessWidget {
                     child: ClipOval(
                       child: Image.asset(
                         imagePath,
-                        width: 50,
-                        height: 50,
+                        width: width * 0.1,
+                        height: width * 0.1,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   Text(
                     text,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontFamily: 'Raleway',
-                        fontSize: 16,
+                        fontSize: width * 0.04,
                         color: Color(0xff1F1F1F),
                         fontWeight: FontWeight.w600),
                   ),

@@ -344,38 +344,24 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
               SizedBox(
                 height: 10,
               ),
-              Text(
-                service.name,
-                style: AppTextStyle.semibold18,
+              Container(
+                width: MediaQuery.of(context).size.width * 0.45,
+                child: Text(
+                  service.name,
+                  style: AppTextStyle.semibold18,
+                  overflow: TextOverflow.clip,
+                ),
               ),
-              currService != "Repairs"
+              currService != "Repairs" && currService != "General Service"
                   ? Text('₹${service.price}  ', style: AppTextStyle.semibold14)
-                  : GestureDetector(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.CHATSCREEN);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 1,
-                              blurRadius: 7,
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text('Get Quotation',
-                              style: AppTextStyle.semiboldpurple12),
-                        ),
-                      ),
+                  : SizedBox(),
+              currService == 'Repairs' || currService == "General Service"
+                  ? SizedBox(
+                      height: 30,
+                    )
+                  : SizedBox(
+                      height: 10,
                     ),
-              SizedBox(
-                height: 5,
-              ),
               MySeparator(),
               SizedBox(
                 height: 5,
@@ -409,34 +395,54 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
         Positioned(
           top: MediaQuery.of(context).size.height * 0.055,
           right: MediaQuery.of(context).size.width * 0.04,
-          child: (addtocart == false)
-              ? CustomElevatedButton(
-                  onPressed: () {
-                    if (service.category == 'Denting and Painting' ||
-                        service.category == 'Detailing') {
-                      showCustomBottomSheet(service.price);
-                    } else {
-                      cartController.addToCartSnackbar(
-                        context,
-                        cartController,
-                        service,
-                        scaffoldMessengerKey,
-                      );
-                      setState(() => addtocart = true);
-                    }
+          child: currService == 'Repairs' || currService == "General Service"
+              ? GestureDetector(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.CHATSCREEN,
+                    );
                   },
-                  text: '+Add',
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xff3778F2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      child: Text('Get Quotation',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
                 )
-              : CustomElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    cartController.deleteServicesFromCart(service.id);
-                    setState(() {
-                      addtocart = false;
-                    });
-                  },
-                  text: 'Remove',
-                ),
+              : (addtocart == false)
+                  ? CustomElevatedButton(
+                      onPressed: () {
+                        if (service.category == 'Denting and Painting' ||
+                            service.category == 'Detailing') {
+                          showCustomBottomSheet(service.price);
+                        } else {
+                          cartController.addToCartSnackbar(
+                            context,
+                            cartController,
+                            service,
+                            scaffoldMessengerKey,
+                          );
+                          setState(() => addtocart = true);
+                        }
+                      },
+                      text: '+Add',
+                    )
+                  : CustomElevatedButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        cartController.deleteServicesFromCart(service.id);
+                        setState(() {
+                          addtocart = false;
+                        });
+                      },
+                      text: 'Remove',
+                    ),
           // child: CustomElevatedButton(
           //   onPressed: () {
           //
