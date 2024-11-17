@@ -255,10 +255,14 @@ class ServiceController extends GetxController {
           .where('category', isEqualTo: category)
           .get();
       print("Number of services fetched: ${querySnapshot.size}");
-
+      filteredServices.clear();
+      services.clear();
       // Fetch services
       services.value = querySnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
+        // final temp = Servicefirebase.fromMap(data, doc.id);
+        // print(temp);
+        // print(data.toString());
         return Servicefirebase(
           id: doc.id,
           category: data['category'] ?? '',
@@ -269,7 +273,7 @@ class ServiceController extends GetxController {
           price: (data['price'] is int)
               ? (data['price'] as int).toDouble()
               : data['price']?.toDouble() ?? 0.0,
-          time: data['time'] ?? '',
+          time: data['time'].toString() ?? '',
           warranty: data['warranty'] ?? '',
           averageReview: data['averageReview']?.toDouble() ?? 0.0,
           numberOfReviews: data['numberOfReviews'] ?? 0,
