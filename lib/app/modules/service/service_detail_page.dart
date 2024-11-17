@@ -352,10 +352,16 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                   overflow: TextOverflow.clip,
                 ),
               ),
-              currService != "Repairs" && currService != "General Service"
+              currService != "Repairs" &&
+                      currService != "General Service" &&
+                      currService == 'Denting and Painting' &&
+                      currService == 'Body Parts'
                   ? Text('₹${service.price}  ', style: AppTextStyle.semibold14)
                   : SizedBox(),
-              currService == 'Repairs' || currService == "General Service"
+              currService == 'Repairs' ||
+                      currService == "General Service" ||
+                      currService == 'Denting and Painting' ||
+                      currService == 'Body Parts'
                   ? SizedBox(
                       height: 30,
                     )
@@ -395,11 +401,15 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
         Positioned(
           top: MediaQuery.of(context).size.height * 0.055,
           right: MediaQuery.of(context).size.width * 0.04,
-          child: currService == 'Repairs' || currService == "General Service"
+          child: currService == 'Repairs' ||
+                  currService == "General Service" ||
+                  currService == 'Denting and Painting' ||
+                  currService == 'Body Parts'
               ? GestureDetector(
                   onTap: () {
                     Get.toNamed(
                       AppRoutes.CHATSCREEN,
+                      arguments: "I need more clarity on $currService",
                     );
                   },
                   child: Container(

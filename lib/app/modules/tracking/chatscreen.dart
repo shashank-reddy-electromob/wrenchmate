@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
@@ -22,6 +23,10 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     userID = FirebaseAuth.instance.currentUser!.uid;
+    final argument = Get.arguments;
+    if (argument != null && argument is String && argument.isNotEmpty) {
+      _controller.text = argument;
+    }
 
     // Set isInChat to true when entering the screen
     _firestore.collection('chats').doc(userID).set({
@@ -33,32 +38,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    // Set isInChat to false when leaving the screen
     _firestore.collection('chats').doc(userID).update({
       'isInChat': false,
       'lastActive': FieldValue.serverTimestamp(),
     });
     super.dispose();
   }
-
-  // void _sendMessage() {
-  //   if (_controller.text.isNotEmpty) {
-  //     final userID = FirebaseAuth.instance.currentUser!.uid;
-  //     final timestamp = FieldValue.serverTimestamp();
-  //     log(_controller.text);
-  //     _firestore.collection('chats').doc(userID).set({
-  //       'lastActive': timestamp,
-  //       'userId': userID,
-  //     }, SetOptions(merge: true)).then((_) {
-  //       _firestore.collection('chats').doc(userID).collection('messages').add({
-  //         'text': _controller.text,
-  //         'isSentByMe': true,
-  //         'timestamp': timestamp,
-  //       });
-  //       _controller.clear();
-  //     });
-  //   }
-  // }
 
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
