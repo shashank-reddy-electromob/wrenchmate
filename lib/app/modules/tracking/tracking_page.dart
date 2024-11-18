@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
@@ -233,29 +234,46 @@ class _TrackingPageState extends State<TrackingPage> {
                     child: Column(
                       children: [
                         SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              driverName,
-                              style: AppTextStyle.boldRaleway15
-                                  .copyWith(color: primaryColor),
-                            ),
-                            Text(
-                              '  •  ',
-                              style: AppTextStyle.boldRaleway15
-                                  .copyWith(color: primaryColor),
-                            ),
-                            Icon(Icons.star_border,
-                                color: Colors.yellow, size: 20),
-                            SizedBox(width: 5),
-                            Text(
-                              driverRating.toString(),
-                              style: AppTextStyle.boldRaleway15
-                                  .copyWith(color: primaryColor),
-                            ),
-                          ],
-                        ),
+                        bookingController.BookingList.isEmpty
+                            ? const SizedBox()
+                            : bookingController.BookingList[0]
+                                            ['assignedDriverName'] ==
+                                        null &&
+                                    bookingController.BookingList[0]
+                                            ['assignedDriverPhone'] ==
+                                        null
+                                ? Text(
+                                    'Driver Not Assigned',
+                                    style: AppTextStyle.boldRaleway15
+                                        .copyWith(color: primaryColor),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        bookingController.BookingList.isEmpty
+                                            ? ''
+                                            : bookingController.BookingList[0]
+                                                    ['assignedDriverName'] ??
+                                                'Driver not assigned',
+                                        style: AppTextStyle.boldRaleway15
+                                            .copyWith(color: primaryColor),
+                                      ),
+                                      Text(
+                                        '  •  ',
+                                        style: AppTextStyle.boldRaleway15
+                                            .copyWith(color: primaryColor),
+                                      ),
+                                      Icon(Icons.star_border,
+                                          color: Colors.yellow, size: 20),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        driverRating.toString(),
+                                        style: AppTextStyle.boldRaleway15
+                                            .copyWith(color: primaryColor),
+                                      ),
+                                    ],
+                                  ),
                         SizedBox(height: 10),
                         Text(
                           '$carModel • $carPlate',
@@ -453,7 +471,20 @@ class _TrackingPageState extends State<TrackingPage> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.phone, color: Colors.white, size: 30),
-                        onPressed: () {},
+                        onPressed: () {
+                          final driverPhone = bookingController.BookingList[0]
+                              ['assignedDriverPhone'];
+                          if (driverPhone != null && driverPhone.isNotEmpty) {
+                            _makePhoneCall(driverPhone);
+                          } else {
+                            // Optionally show a message if the number is not available
+                            Get.snackbar(
+                              'Error',
+                              'No phone number assigned to the driver.',
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                          }
+                        },
                       ),
                       IconButton(
                         icon: Icon(Icons.chat, color: Colors.white, size: 30),
@@ -471,6 +502,14 @@ class _TrackingPageState extends State<TrackingPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    await launchUrl(phoneUri);
   }
 
   Container buildStatusColumn(String label, bool isActive) {

@@ -77,311 +77,335 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          drawerPage(
-            userProfileImage: userData?['User_profile_image'] ?? '',
-            userName: userData?['User_name'] ?? 'Unknown User',
-            userNumber: userData?['User_number'] != null &&
-                    userData!['User_number'].isNotEmpty
-                ? userData!['User_number'][0]
-                : 'No number available',
-            userEmail: userData?['User_email'] ?? 'No email available',
-          ),
-          GestureDetector(
-            onTap: () {
-              if (isDrawerOpen) {
-                setState(() {
-                  xOffSet = 0;
-                  yOffSet = 0;
-                  scaleFactor = 1;
-                  isDrawerOpen = false;
-                });
-              }
-            },
-            child: AnimatedContainer(
-              decoration: isDrawerOpen
-                  ? BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 20,
-                          blurRadius: 35,
-                        ),
-                      ],
-                    )
-                  : BoxDecoration(color: Colors.white),
-              duration: Duration(microseconds: 100),
-              transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
-                ..scale(scaleFactor),
-              child: IgnorePointer(
-                ignoring: isDrawerOpen,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: [
-                      Container(height: 10),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        ScaffoldMessenger.of(context)
-                                            .hideCurrentSnackBar();
+        body: Stack(
+          children: [
+            drawerPage(
+              userProfileImage: userData?['User_profile_image'] ?? '',
+              userName: userData?['User_name'] ?? 'Unknown User',
+              userNumber: userData?['User_number'] != null &&
+                      userData!['User_number'].isNotEmpty
+                  ? userData!['User_number'][0]
+                  : 'No number available',
+              userEmail: userData?['User_email'] ?? 'No email available',
+            ),
+            GestureDetector(
+              onTap: () {
+                if (isDrawerOpen) {
+                  setState(() {
+                    xOffSet = 0;
+                    yOffSet = 0;
+                    scaleFactor = 1;
+                    isDrawerOpen = false;
+                  });
+                }
+              },
+              child: AnimatedContainer(
+                decoration: isDrawerOpen
+                    ? BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 20,
+                            blurRadius: 35,
+                          ),
+                        ],
+                      )
+                    : BoxDecoration(color: Colors.white),
+                duration: Duration(microseconds: 100),
+                transform: Matrix4.translationValues(xOffSet, yOffSet, 0)
+                  ..scale(scaleFactor),
+                child: IgnorePointer(
+                  ignoring: isDrawerOpen,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      children: [
+                        Container(height: 10),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          ScaffoldMessenger.of(context)
+                                              .hideCurrentSnackBar();
 
-                                        xOffSet = 230;
-                                        yOffSet =
-                                            MediaQuery.of(context).size.height *
-                                                0.15;
-                                        scaleFactor = 0.7;
-                                        isDrawerOpen = true;
-                                      });
-                                    },
-                                    child: ClipOval(
-                                      child: userData?['User_profile_image'] !=
-                                                  null &&
-                                              userData!['User_profile_image']
-                                                  .isNotEmpty
-                                          ? Image.network(
-                                              userData!['User_profile_image'],
-                                              fit: BoxFit.cover,
-                                              height: 45.0,
-                                              width: 45.0,
-                                            )
-                                          : Image.asset(
-                                              'assets/images/person.png',
-                                              fit: BoxFit.cover,
-                                              height: 45.0,
-                                              width: 45.0,
-                                            ),
+                                          xOffSet = 230;
+                                          yOffSet = MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.15;
+                                          scaleFactor = 0.7;
+                                          isDrawerOpen = true;
+                                        });
+                                      },
+                                      child: ClipOval(
+                                        child: userData?[
+                                                        'User_profile_image'] !=
+                                                    null &&
+                                                userData!['User_profile_image']
+                                                    .isNotEmpty
+                                            ? Image.network(
+                                                userData!['User_profile_image'],
+                                                fit: BoxFit.cover,
+                                                height: 45.0,
+                                                width: 45.0,
+                                              )
+                                            : Image.asset(
+                                                'assets/images/person.png',
+                                                fit: BoxFit.cover,
+                                                height: 45.0,
+                                                width: 45.0,
+                                              ),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Hello, ${userData?['User_name'] ?? 'User'}',
-                                          style: AppTextStyle.boldRaleway15,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            print("address");
-                                            Get.toNamed(
-                                              AppRoutes.MAPSCREEN,
-                                              arguments: {
-                                                'isnew': false,
-                                                'address':
-                                                    userData?['User_address']
-                                                        [addressIndex]
-                                              },
-                                            );
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.location_on_outlined,
-                                                size: 16,
-                                                color: Color(0xffFF5402),
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  userData?['User_address'] !=
-                                                          null
-                                                      ? userData!['User_address']
-                                                              [addressIndex]
-                                                          .split(',')
-                                                          .take(3)
-                                                          .join(', ')
-                                                      : 'Location not available',
-                                                  style: AppTextStyle.medium10,
-                                                ),
-                                              ),
-                                            ],
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Hello, ${userData?['User_name'] ?? 'User'}',
+                                            style: AppTextStyle.boldRaleway15,
                                           ),
-                                        ),
-                                      ],
+                                          GestureDetector(
+                                            onTap: () {
+                                              print("address");
+                                              Get.toNamed(
+                                                AppRoutes.MAPSCREEN,
+                                                arguments: {
+                                                  'isnew': false,
+                                                  'address':
+                                                      userData?['User_address']
+                                                          [addressIndex]
+                                                },
+                                              );
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.location_on_outlined,
+                                                  size: 16,
+                                                  color: Color(0xffFF5402),
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    userData?['User_address'] !=
+                                                            null
+                                                        ? userData!['User_address']
+                                                                [addressIndex]
+                                                            .split(',')
+                                                            .take(3)
+                                                            .join(', ')
+                                                        : 'Location not available',
+                                                    style:
+                                                        AppTextStyle.medium10,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                  color: Color(0xffE7E7E7),
-                                  width: 1.0,
+                                  ],
                                 ),
                               ),
-                              child: Stack(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.notifications_none_outlined,
-                                      color: Color(0xff515151),
-                                    ),
-                                    onPressed: () {
-                                      Get.toNamed(AppRoutes.NOTIFICATIONS);
-                                    },
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(
+                                    color: Color(0xffE7E7E7),
+                                    width: 1.0,
                                   ),
-                                  StreamBuilder<QuerySnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('notifications')
-                                        .doc(FirebaseAuth
-                                            .instance.currentUser!.uid)
-                                        .collection('user_notifications')
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return SizedBox
-                                            .shrink(); // Empty badge while loading
-                                      }
+                                ),
+                                child: Stack(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.notifications_none_outlined,
+                                        color: Color(0xff515151),
+                                      ),
+                                      onPressed: () {
+                                        Get.toNamed(AppRoutes.NOTIFICATIONS);
+                                      },
+                                    ),
+                                    StreamBuilder<QuerySnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('notifications')
+                                          .doc(FirebaseAuth
+                                              .instance.currentUser!.uid)
+                                          .collection('user_notifications')
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return SizedBox
+                                              .shrink(); // Empty badge while loading
+                                        }
 
-                                      int notificationCount =
-                                          snapshot.data!.docs.length;
+                                        int notificationCount =
+                                            snapshot.data!.docs.length;
 
-                                      if (notificationCount == 0) {
-                                        return SizedBox
-                                            .shrink(); // Hide badge if count is 0
-                                      }
+                                        if (notificationCount == 0) {
+                                          return SizedBox
+                                              .shrink(); // Hide badge if count is 0
+                                        }
 
-                                      return Positioned(
-                                        right:
-                                            8, // Adjust as needed for proper placement
-                                        top:
-                                            8, // Adjust as needed for proper placement
-                                        child: Container(
-                                          height: 15,
-                                          width: 15,
-                                          decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              '$notificationCount',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold,
+                                        return Positioned(
+                                          right:
+                                              8, // Adjust as needed for proper placement
+                                          top:
+                                              8, // Adjust as needed for proper placement
+                                          child: Container(
+                                            height: 15,
+                                            width: 15,
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '$notificationCount',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
                                               ),
-                                              textAlign: TextAlign.center,
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 12),
-                      searchbar(readonly: true),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.26,
-                        child: OffersSliders(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Services",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                        SizedBox(height: 12),
+                        searchbar(readonly: true),
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.26,
+                          child: OffersSliders(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Services",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      serviceswidgit(),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 5),
-                        child: Row(
-                          children: [
-                            Text(
-                              "Top Recommended Services",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                        serviceswidgit(),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 0, 5),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Top Recommended Services",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: toprecommendedservices(),
-                      ),
-                      isDrawerOpen
-                          ? SizedBox(
-                              height: 2,
-                            )
-                          : SizedBox(
-                              height: MediaQuery.of(context).size.height / 10,
-                            ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: toprecommendedservices(),
+                        ),
+                        isDrawerOpen
+                            ? SizedBox(
+                                height: 2,
+                              )
+                            : SizedBox(
+                                height: MediaQuery.of(context).size.height / 10,
+                              ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: isDrawerOpen
-                ? SizedBox.shrink()
-                : PersistentNotification(
-                    totalAmount: cartController.totalAmount,
-                    discountAmount: cartController.discountAmount,
-                  ),
-          ),
-        ],
-      ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: isDrawerOpen
+                  ? SizedBox.shrink()
+                  : PersistentNotification(
+                      totalAmount: cartController.totalAmount,
+                      discountAmount: cartController.discountAmount,
+                    ),
+            ),
+          ],
+        ),
+        // floatingActionButton: DraggableFab(
+        //     child: ClipOval(
+        //   child: Container(
+        //     width: 80,
+        //     height: 80,
+        //     child: Material(
+        //       color: Colors.transparent,
+        //       child: InkWell(
+        //         splashColor: Colors.blueAccent,
+        //         onTap: () {
+        //           Get.toNamed(AppRoutes.TRACKING);
+        //         },
+        //         child: SizedBox(
+        //           width: 80,
+        //           height: 80,
+        //           child: Image(
+        //             image: AssetImage("assets/images/track_icon.png"),
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ))
 
-      //  : Container(),
-
-      // floatingActionButton: tracking_button ? DraggableFab(
-      //     child: ClipOval(
-      //   child: Container(
-      //     width: 80,
-      //     height: 80,
-      //     child: Material(
-      //       color: Colors.transparent,
-      //       child: InkWell(
-      //         splashColor: Colors.blueAccent,
-      //         onTap: () {
-      //           Get.toNamed(AppRoutes.TRACKING);
-      //         },
-      //         child: SizedBox(
-      //           width: 80,
-      //           height: 80,
-      //           child: Image(
-      //             image: AssetImage("assets/images/track_icon.png"),
-      //           ),
-      //         ),
-      //       ),
-      //     ),
-      //   ),
-      // )) : Container(),
-    );
+        // floatingActionButton: tracking_button ? DraggableFab(
+        //     child: ClipOval(
+        //   child: Container(
+        //     width: 80,
+        //     height: 80,
+        //     child: Material(
+        //       color: Colors.transparent,
+        //       child: InkWell(
+        //         splashColor: Colors.blueAccent,
+        //         onTap: () {
+        //           Get.toNamed(AppRoutes.TRACKING);
+        //         },
+        //         child: SizedBox(
+        //           width: 80,
+        //           height: 80,
+        //           child: Image(
+        //             image: AssetImage("assets/images/track_icon.png"),
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // )) : Container(),
+        );
   }
 }

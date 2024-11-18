@@ -33,6 +33,8 @@ class _ChatScreenState extends State<ChatScreen> {
       'isInChat': true,
       'lastActive': FieldValue.serverTimestamp(),
       'userId': userID,
+      'isAdminInChat': false,
+      'hasUnreadMessages': false,
     }, SetOptions(merge: true));
   }
 
@@ -45,22 +47,36 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
     if (_controller.text.isNotEmpty) {
       final timestamp = FieldValue.serverTimestamp();
       log(_controller.text);
-      _firestore.collection('chats').doc(userID).set({
+
+      DocumentSnapshot chatDoc = await _firestore.collection('chats').doc(userID).get();
+      bool isAdminInChat = chatDoc.get('isAdminInChat') ?? false;
+      bool hasUnreadMessages = chatDoc.get('hasUnreadMessages') ?? false;
+
+      Map<String, dynamic> chatUpdate = {
         'lastActive': timestamp,
         'userId': userID,
         'isInChat': true,
-      }, SetOptions(merge: true)).then((_) {
-        _firestore.collection('chats').doc(userID).collection('messages').add({
-          'text': _controller.text,
-          'isSentByMe': true,
-          'timestamp': timestamp,
-        });
-        _controller.clear();
+      };
+      if (!isAdminInChat && !hasUnreadMessages) {
+        chatUpdate['hasUnreadMessages'] = true;
+      }
+
+      await _firestore.collection('chats').doc(userID).set(
+        chatUpdate,
+        SetOptions(merge: true)
+      );
+
+      await _firestore.collection('chats').doc(userID).collection('messages').add({
+        'text': _controller.text,
+        'isSentByMe': true,
+        'timestamp': timestamp,
       });
+
+      _controller.clear();
     }
   }
 

@@ -63,7 +63,13 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
           children: [
             GestureDetector(
               onTap: () {
-                Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: wash_service);
+                Get.toNamed(AppRoutes.SERVICE_DETAIL,
+
+                    // arguments: wash_service
+                    arguments: {
+                      'service': wash_service,
+                      'currService': 'General Wash'
+                    });
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
               },
               child: ServiceCard(
@@ -86,7 +92,12 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
             GestureDetector(
               onTap: () {
                 Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                    arguments: ceramic_service);
+                    // arguments:
+                    //  ceramic_service
+                    arguments: {
+                      'service': wash_service,
+                      'currService': 'General Wash'
+                    });
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
               },
               child: ServiceCard(
@@ -94,10 +105,7 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
                 price: "14,000",
                 rating: 4.9,
                 imagePath: 'assets/car/toprecommended2.png',
-                colors: [
-                  Color(0xffFEA563),
-                  Color(0xffFF5F81)
-                ], // Make sure you have an image in your assets
+                colors: [Color(0xffFEA563), Color(0xffFF5F81)],
               ),
             ),
             // GradientContainer(

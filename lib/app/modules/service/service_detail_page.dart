@@ -352,12 +352,12 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                   overflow: TextOverflow.clip,
                 ),
               ),
-              currService != "Repairs" &&
-                      currService != "General Service" &&
-                      currService == 'Denting and Painting' &&
+              currService == "Repairs" ||
+                      currService == "General Service" ||
+                      currService == 'Denting and Painting' ||
                       currService == 'Body Parts'
-                  ? Text('₹${service.price}  ', style: AppTextStyle.semibold14)
-                  : SizedBox(),
+                  ? SizedBox()
+                  : Text('₹${service.price}  ', style: AppTextStyle.semibold14),
               currService == 'Repairs' ||
                       currService == "General Service" ||
                       currService == 'Denting and Painting' ||
