@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
@@ -45,6 +46,7 @@ class _ServicePageState extends State<ServicePage> {
   late TextEditingController regNoController;
   late TextEditingController insuranceExpController;
   late TextEditingController pucExpController;
+  bool isCarLoading = true;
 
   final CarController carController = Get.put(CarController());
 
@@ -61,18 +63,31 @@ class _ServicePageState extends State<ServicePage> {
   }
 
   void fetchCarDetails() async {
-    userCars = await carController.fetchUserCarDetails();
-    carType = userCars[userCurrentCarIndex]['car_type'];
-    if (carType == "Sedan") {
-      carTypeImage = "sedan";
-    } else if (carType == "Hatchback") {
-      carTypeImage = "hatchback";
-    } else if (carType == "Compact SUV") {
-      carTypeImage = "compact_suv";
-    } else if (carType == "SUV") {
-      carTypeImage = "suv";
+    try {
+      userCars = await carController.fetchUserCarDetails();
+
+      if (userCars.isNotEmpty) {
+        carType = userCars[userCurrentCarIndex]['car_type'];
+        if (carType == "Sedan") {
+          carTypeImage = "sedan";
+        } else if (carType == "Hatchback") {
+          carTypeImage = "hatchback";
+        } else if (carType == "Compact SUV") {
+          carTypeImage = "compact_suv";
+        } else if (carType == "SUV") {
+          carTypeImage = "suv";
+        }
+      }
+
+      setState(() {
+        isCarLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching car details: $e");
+      setState(() {
+        isCarLoading = false;
+      });
     }
-    setState(() {});
   }
 
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -98,6 +113,7 @@ class _ServicePageState extends State<ServicePage> {
         setState(() {
           addToCartStates =
               List<bool>.filled(serviceController.services.length, false);
+          // isCarLoading = false;
         });
       });
     });
@@ -155,366 +171,437 @@ class _ServicePageState extends State<ServicePage> {
             ),
           ),
         ),
-        body:
-            // currService != "Body Parts"?
-            Column(
-          children: [
-            SizedBox(
-              height: 8,
-            ),
-            // service != "Repairs"?
-            Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    color: Color(0xffF7F7F7),
-                    child: Center(
-                      child: TextField(
-                        onChanged: (val) {
-                          serviceController.filterServices(val);
-                        },
-                        cursorColor: Colors.grey,
-                        decoration: InputDecoration(
-                          hintText: "Search services and Packages",
-                          hintStyle: AppTextStyle.mediumRaleway12
-                              .copyWith(color: greyColor),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: Color(0xff838383),
-                          ),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
-                        style: TextStyle(
-                          fontSize:
-                              20, // Increase the font size for the entered text
-                        ),
-                      ),
-                    ),
-                  ),
-                  //filter
-                  CustomIconButton(
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            )
-            // : Container(),
-            ,
-            SizedBox(
-              height: 8,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(
-                  children: [
-                    currService == 'Accessories'
-                        ? subservicesAccessories()
-                        : Container(),
-                    Obx(() {
-                      if (serviceController.loading.value) {
-                        return Center(
-                            child: CircularProgressIndicator(
-                          color: Colors.blue,
-                        ));
-                      } else {
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: serviceController.filteredServices.length,
-                          itemBuilder: (context, index) {
-                            if (index >= addToCartStates.length) {
-                              return Container();
-                            }
-                            final service =
-                                serviceController.filteredServices[index];
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                                      arguments: {
-                                        'service': service,
-                                        'currService': currService
-                                      });
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Color(0xffF7F7F7)),
-                                  child: Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ExtendedImage.network(
-                                              service.image,
-                                              fit: BoxFit.fitWidth,
-                                              cache: true,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width -
-                                                  32,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.17,
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0,
-                                                      vertical: 8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        service.name,
-                                                        style: AppTextStyle
-                                                            .semibold18,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 8),
-                                                  Row(
-                                                    children: [
-                                                      currService !=
-                                                                  "Repairs" &&
-                                                              currService !=
-                                                                  "General Service" &&
-                                                              currService !=
-                                                                  'Denting and Painting' &&
-                                                              currService !=
-                                                                  'Body Parts'
-                                                          ? Text(
-                                                              '\₹${service.price}  ',
-                                                              style: AppTextStyle
-                                                                  .semibold14)
-                                                          : SizedBox(),
-                                                      SizedBox(
-                                                        width: 3,
-                                                      ),
-                                                      Icon(CupertinoIcons.star,
-                                                          size: 16,
-                                                          color: Color(
-                                                              0xffFFE262)),
-                                                      Text(
-                                                        ' ${service.averageReview.toStringAsFixed(1)}',
-                                                        style: AppTextStyle
-                                                            .mediumdmsans13
-                                                            .copyWith(
-                                                                color:
-                                                                    greyColor),
-                                                      ),
-                                                      Text(
-                                                        ' (${service.numberOfReviews} reviews)',
-                                                        style: AppTextStyle
-                                                            .mediumdmsans11
-                                                            .copyWith(
-                                                                color:
-                                                                    greyColor),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 8),
-                                                  //TIME AND WARRANTY
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      //TIME
-                                                      Row(
-                                                        children: [
-                                                          Icon(
-                                                              CupertinoIcons
-                                                                  .clock,
-                                                              size: 16,
-                                                              color: Color(
-                                                                  0xff797979)),
-                                                          Text(
-                                                              ' Takes ${service.time} Hours',
-                                                              style: AppTextStyle
-                                                                  .mediumRaleway12
-                                                                  .copyWith(
-                                                                      color: Color(
-                                                                          0xff797979),
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700)),
-                                                        ],
-                                                      ),
-                                                      //WARRANTY
-                                                      Row(
-                                                        children: [
-                                                          Icon(
-                                                              CupertinoIcons
-                                                                  .checkmark_shield,
-                                                              size: 18,
-                                                              color: Color(
-                                                                  0xff797979)),
-                                                          Text(
-                                                              ' ${service.warranty} Warranty',
-                                                              style: AppTextStyle
-                                                                  .mediumRaleway12
-                                                                  .copyWith(
-                                                                      color: Color(
-                                                                          0xff797979),
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700)),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top:
-                                            MediaQuery.of(context).size.height *
-                                                0.18,
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.03,
-                                        child: currService == 'Repairs' ||
-                                                currService ==
-                                                    'General Service' ||
-                                                currService ==
-                                                    'Denting and Painting' ||
-                                                currService == 'Body Parts'
-                                            ? GestureDetector(
-                                                onTap: () {
-                                                  Get.toNamed(
-                                                    AppRoutes.CHATSCREEN,
-                                                    arguments:
-                                                        "I need more clarity on $currService",
-                                                  );
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xff3778F2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 12,
-                                                        vertical: 8),
-                                                    child: Text('Get Quotation',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white)),
-                                                  ),
-                                                ),
-                                              )
-                                            : !addToCartStates[index]
-                                                ? CustomElevatedButton(
-                                                    onPressed: () async {
-                                                      String serviceId =
-                                                          service.id;
-                                                      bool isInCart =
-                                                          await cartController
-                                                              .isServiceInCart(
-                                                                  serviceId);
+        body: isCarLoading
+            ? Center(
+                child: CircularProgressIndicator(), // Show loader while loading
+              )
+            : userCars.isEmpty
+                // serviceController.filteredServices.isEmpty
 
-                                                      if (isInCart) {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Service already in cart'),
-                                                            duration: Duration(
-                                                                seconds: 2),
-                                                          ),
-                                                        );
-                                                      } else {
-                                                        if (service.category ==
-                                                                'Denting and Painting' ||
-                                                            service.category ==
-                                                                'Detailing') {
-                                                          showCustomBottomSheet(
-                                                              service.price,
-                                                              service,
-                                                              index);
-                                                        } else {
-                                                          cartController
-                                                              .addToCartSnackbar(
-                                                            context,
-                                                            cartController,
-                                                            service,
-                                                            scaffoldMessengerKey,
-                                                          );
-                                                          setState(() {
-                                                            addToCartStates[
-                                                                index] = true;
-                                                          });
-                                                          // setState(() => addtocart = true);
-                                                        }
-                                                        // cartController
-                                                        //     .addToCartSnackbar(
-                                                        //   context,
-                                                        //   cartController,
-                                                        //   service,
-                                                        //   scaffoldMessengerKey,
-                                                        // );
-                                                      }
-                                                    },
-                                                    text: '+Add',
-                                                  )
-                                                : CustomElevatedButton(
-                                                    onPressed: () {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .hideCurrentSnackBar();
-                                                      cartController
-                                                          .deleteServicesFromCart(
-                                                              service.id);
-                                                      setState(() {
-                                                        addToCartStates[index] =
-                                                            false;
-                                                      });
-                                                    },
-                                                    text: 'Remove',
-                                                  ),
-                                      )
-                                    ],
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                            'Please enter your car details to avail any service'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(AppRoutes.CAR);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8),
+                              child: Text(
+                                'Add Car',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                :
+                // currService != "Body Parts"?
+                Column(
+                    children: [
+                      SizedBox(
+                        height: 8,
+                      ),
+                      // service != "Repairs"?
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.05),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.75,
+                              color: Color(0xffF7F7F7),
+                              child: Center(
+                                child: TextField(
+                                  onChanged: (val) {
+                                    serviceController.filterServices(val);
+                                  },
+                                  cursorColor: Colors.grey,
+                                  decoration: InputDecoration(
+                                    hintText: "Search services and Packages",
+                                    hintStyle: AppTextStyle.mediumRaleway12
+                                        .copyWith(color: greyColor),
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      color: Color(0xff838383),
+                                    ),
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                  ),
+                                  style: TextStyle(
+                                    fontSize:
+                                        20, // Increase the font size for the entered text
                                   ),
                                 ),
                               ),
-                            );
-                          },
-                        );
-                      }
-                    }),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        )
+                            ),
+                            //filter
+                            CustomIconButton(
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                      )
+                      // : Container(),
+                      ,
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            children: [
+                              currService == 'Accessories'
+                                  ? subservicesAccessories()
+                                  : Container(),
+                              Obx(() {
+                                if (serviceController.loading.value) {
+                                  return Center(
+                                      child: CircularProgressIndicator(
+                                    color: Colors.blue,
+                                  ));
+                                } else {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: serviceController
+                                        .filteredServices.length,
+                                    itemBuilder: (context, index) {
+                                      if (index >= addToCartStates.length) {
+                                        return Container();
+                                      }
+                                      final service = serviceController
+                                          .filteredServices[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Get.toNamed(
+                                                AppRoutes.SERVICE_DETAIL,
+                                                arguments: {
+                                                  'service': service,
+                                                  'currService': currService
+                                                });
+                                            ScaffoldMessenger.of(context)
+                                                .hideCurrentSnackBar();
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                color: Color(0xffF7F7F7)),
+                                            child: Stack(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      ExtendedImage.network(
+                                                        service.image,
+                                                        fit: BoxFit.fitWidth,
+                                                        cache: true,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width -
+                                                            32,
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            0.17,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                    12.0,
+                                                                vertical: 8.0),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  service.name,
+                                                                  style: AppTextStyle
+                                                                      .semibold18,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Row(
+                                                              children: [
+                                                                currService !=
+                                                                            "Repairs" &&
+                                                                        currService !=
+                                                                            "General Service" &&
+                                                                        currService !=
+                                                                            'Denting and Painting' &&
+                                                                        currService !=
+                                                                            'Body Parts'
+                                                                    ? Text(
+                                                                        '\₹${service.price}  ',
+                                                                        style: AppTextStyle
+                                                                            .semibold14)
+                                                                    : SizedBox(),
+                                                                SizedBox(
+                                                                  width: 3,
+                                                                ),
+                                                                Icon(
+                                                                    CupertinoIcons
+                                                                        .star,
+                                                                    size: 16,
+                                                                    color: Color(
+                                                                        0xffFFE262)),
+                                                                Text(
+                                                                  ' ${service.averageReview.toStringAsFixed(1)}',
+                                                                  style: AppTextStyle
+                                                                      .mediumdmsans13
+                                                                      .copyWith(
+                                                                          color:
+                                                                              greyColor),
+                                                                ),
+                                                                Text(
+                                                                  ' (${service.numberOfReviews} reviews)',
+                                                                  style: AppTextStyle
+                                                                      .mediumdmsans11
+                                                                      .copyWith(
+                                                                          color:
+                                                                              greyColor),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            //TIME AND WARRANTY
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                //TIME
+                                                                Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        CupertinoIcons
+                                                                            .clock,
+                                                                        size:
+                                                                            16,
+                                                                        color: Color(
+                                                                            0xff797979)),
+                                                                    Text(
+                                                                        ' Takes ${service.time} Hours',
+                                                                        style: AppTextStyle.mediumRaleway12.copyWith(
+                                                                            color:
+                                                                                Color(0xff797979),
+                                                                            fontWeight: FontWeight.w700)),
+                                                                  ],
+                                                                ),
+                                                                //WARRANTY
+                                                                Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        CupertinoIcons
+                                                                            .checkmark_shield,
+                                                                        size:
+                                                                            18,
+                                                                        color: Color(
+                                                                            0xff797979)),
+                                                                    Text(
+                                                                        ' ${service.warranty} Warranty',
+                                                                        style: AppTextStyle.mediumRaleway12.copyWith(
+                                                                            color:
+                                                                                Color(0xff797979),
+                                                                            fontWeight: FontWeight.w700)),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.18,
+                                                  right: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.03,
+                                                  child: currService ==
+                                                              'Repairs' ||
+                                                          currService ==
+                                                              'General Service' ||
+                                                          currService ==
+                                                              'Denting and Painting' ||
+                                                          currService ==
+                                                              'Body Parts'
+                                                      ? GestureDetector(
+                                                          onTap: () {
+                                                            Get.toNamed(
+                                                              AppRoutes
+                                                                  .CHATSCREEN,
+                                                              arguments:
+                                                                  "I need more clarity on ${service.name}",
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Color(
+                                                                  0xff3778F2),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          8),
+                                                              child: Text(
+                                                                  'Get Quotation',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white)),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : !addToCartStates[index]
+                                                          ? CustomElevatedButton(
+                                                              onPressed:
+                                                                  () async {
+                                                                String
+                                                                    serviceId =
+                                                                    service.id;
+                                                                bool isInCart =
+                                                                    await cartController
+                                                                        .isServiceInCart(
+                                                                            serviceId);
+
+                                                                if (isInCart) {
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                    SnackBar(
+                                                                      content: Text(
+                                                                          'Service already in cart'),
+                                                                      duration: Duration(
+                                                                          seconds:
+                                                                              2),
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  if (service.category ==
+                                                                          'Denting and Painting' ||
+                                                                      service.category ==
+                                                                          'Detailing') {
+                                                                    showCustomBottomSheet(
+                                                                        service
+                                                                            .price,
+                                                                        service,
+                                                                        index);
+                                                                  } else {
+                                                                    cartController
+                                                                        .addToCartSnackbar(
+                                                                      context,
+                                                                      cartController,
+                                                                      service,
+                                                                      scaffoldMessengerKey,
+                                                                    );
+                                                                    setState(
+                                                                        () {
+                                                                      addToCartStates[
+                                                                              index] =
+                                                                          true;
+                                                                    });
+                                                                    // setState(() => addtocart = true);
+                                                                  }
+                                                                  // cartController
+                                                                  //     .addToCartSnackbar(
+                                                                  //   context,
+                                                                  //   cartController,
+                                                                  //   service,
+                                                                  //   scaffoldMessengerKey,
+                                                                  // );
+                                                                }
+                                                              },
+                                                              text: '+Add',
+                                                            )
+                                                          : CustomElevatedButton(
+                                                              onPressed: () {
+                                                                ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .hideCurrentSnackBar();
+                                                                cartController
+                                                                    .deleteServicesFromCart(
+                                                                        service
+                                                                            .id);
+                                                                setState(() {
+                                                                  addToCartStates[
+                                                                          index] =
+                                                                      false;
+                                                                });
+                                                              },
+                                                              text: 'Remove',
+                                                            ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                              }),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
         // : Container(
         //     height: double.infinity,
         //     width: MediaQuery.of(context).size.width,

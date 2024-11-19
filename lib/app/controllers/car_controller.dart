@@ -12,6 +12,7 @@ class CarController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String userId = FirebaseAuth.instance.currentUser!.uid;
   var userCurrentCarId = ''.obs;
+  var loadCar=false.obs;
 
   final Map<String, String> carTypeToIdMap = {
     "Compact SUV": "WAW1MUSfq8nCJezAVWcc",
