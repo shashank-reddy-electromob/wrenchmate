@@ -14,6 +14,7 @@ import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservi
 import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 import 'package:google_api_availability/google_api_availability.dart';
 import 'package:wrenchmate_user_app/globalVariables.dart';
+import 'package:wrenchmate_user_app/notification_services.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/home_controller.dart';
@@ -27,6 +28,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  NotificationServicesFCM notificationServices=NotificationServicesFCM();
   late final user;
   HomeController? controller;
   Map<String, dynamic>? userData;
@@ -35,9 +37,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    notificationServices.requestNotificationPermission();
+    notificationServices.createNotificationChannel();
+    notificationServices.FirebaseInit(context);
+    notificationServices.isTokenRefreshed();
+    notificationServices.getDeviceToken().then((value){
+      print('device token: ${value}');
+    });
     cartController = Get.put(CartController());
     user = FirebaseAuth.instance.currentUser!;
     controller = Get.put(HomeController());
+
     fetchUserData();
     initalCall();
   }

@@ -193,7 +193,7 @@ class _ServicePageState extends State<ServicePage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.toNamed(AppRoutes.CAR);
+                            Get.toNamed(AppRoutes.CAR_REGISTER);
                           },
                           child: Container(
                             decoration: BoxDecoration(

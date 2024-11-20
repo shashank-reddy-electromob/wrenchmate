@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wrenchmate_user_app/app/localstorage/localstorage.dart';
 import 'package:wrenchmate_user_app/main.dart';
 import '../routes/app_routes.dart';
@@ -212,6 +213,41 @@ class AuthController extends GetxController {
       throw e;
     }
   }
+
+Future<void> signInWithApple() async {
+  try {
+    AppleAuthProvider appleProvider = AppleAuthProvider();
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithProvider(appleProvider);
+
+    bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
+    prefs?.setBool(LocalStorage.isLogin, true) ?? false;
+    print(
+        "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
+
+    if (isNewUser == true) {
+      Get.toNamed(AppRoutes.REGISTER, arguments: "");
+    } else {
+      Get.toNamed(AppRoutes.BOTTOMNAV);
+    }
+    // if (user != null && isNewUser == true) {
+    //   await _firestore.collection('User').doc(user.uid).set({
+    //     'User_name': appleCredential.givenName ?? "",
+    //     'User_email': appleCredential.email ?? "",
+    //     'User_number': [], // Placeholder, if phone number is used later
+    //     'User_address': [""],
+    //     'current_address': 0,
+    //     'User_carDetails': [],
+    //     'User_currentCar': 0,
+    //   });
+    //   print("New Apple user added to Firestore");
+    // }
+  } catch (e) {
+    print("Apple Sign-In failed: $e");
+    Get.snackbar("Error", "Apple Sign-In failed: ${e.toString()}");
+    throw e;
+  }
+}
 
   Future<void> addUserToFirestore({
     required String name,

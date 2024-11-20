@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -86,25 +88,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           padding: const EdgeInsets.all(6.0),
           child: Custombackbutton(),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xffF6F6F5),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: IconButton(
-                icon: Icon(
-                  CupertinoIcons.suit_heart,
-                  color: Color(0xff1E1E1E),
-                  size: 22,
-                ),
-                onPressed: () {},
-              ),
-            ),
-          ),
-        ],
       ),
       body: Obx(() {
         if (addToCartStates.isEmpty) {
@@ -304,7 +287,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       onTap: () {
         setState(() {
           selectedQuantity = quantity;
-          selectedPrice = price; // Update the selected price
+          selectedPrice = price;
         });
       },
       child: Padding(
@@ -345,12 +328,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   }
 
   Widget ReviewWidget() {
-    if (controller.reviews.isEmpty) {
+    if (controller.reviews.isEmpty || controller.users.isEmpty) {
       return Center(
         child: Text("No review yet"),
       );
     }
-
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),

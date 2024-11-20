@@ -70,25 +70,6 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
           padding: const EdgeInsets.all(6.0),
           child: Custombackbutton(),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xffF6F6F5),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: IconButton(
-                icon: Icon(
-                  CupertinoIcons.suit_heart,
-                  color: Color(0xff1E1E1E),
-                  size: 22,
-                ),
-                onPressed: () {},
-              ),
-            ),
-          ),
-        ],
       ),
       floatingActionButton: Obx(
         () => Visibility(

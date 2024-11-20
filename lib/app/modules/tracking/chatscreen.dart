@@ -52,25 +52,38 @@ class _ChatScreenState extends State<ChatScreen> {
       final timestamp = FieldValue.serverTimestamp();
       log(_controller.text);
 
-      DocumentSnapshot chatDoc = await _firestore.collection('chats').doc(userID).get();
-      bool isAdminInChat = chatDoc.get('isAdminInChat') ?? false;
-      bool hasUnreadMessages = chatDoc.get('hasUnreadMessages') ?? false;
+      DocumentSnapshot chatDoc =
+          await _firestore.collection('chats').doc(userID).get();
+      bool isAdminInChat = false;
+      bool hasUnreadMessages = false;
+
+      // Check if the document exists
+      if (chatDoc.exists) {
+        isAdminInChat = chatDoc.get('isAdminInChat') ?? false;
+        hasUnreadMessages = chatDoc.get('hasUnreadMessages') ?? false;
+      }
 
       Map<String, dynamic> chatUpdate = {
         'lastActive': timestamp,
         'userId': userID,
         'isInChat': true,
+        'isAdminInChat': false,
+        'hasUnreadMessages': false
       };
       if (!isAdminInChat && !hasUnreadMessages) {
         chatUpdate['hasUnreadMessages'] = true;
       }
 
-      await _firestore.collection('chats').doc(userID).set(
-        chatUpdate,
-        SetOptions(merge: true)
-      );
+      await _firestore
+          .collection('chats')
+          .doc(userID)
+          .set(chatUpdate, SetOptions(merge: true));
 
-      await _firestore.collection('chats').doc(userID).collection('messages').add({
+      await _firestore
+          .collection('chats')
+          .doc(userID)
+          .collection('messages')
+          .add({
         'text': _controller.text,
         'isSentByMe': true,
         'timestamp': timestamp,

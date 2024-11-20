@@ -268,17 +268,20 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await controller.signInWithApple();
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/facebok_logo.png',
+                        'assets/images/apple_logo.png',
+                        height: 30,
                         fit: BoxFit.cover,
                       ),
                       SizedBox(width: 18),
                       Text(
-                        'Login With Facebook',
+                        'Login With Apple',
                         style: TextStyle(
                             fontFamily: 'Poppins',
                             color: Color(0xff120D26),

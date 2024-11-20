@@ -128,18 +128,16 @@ class ProductController extends GetxController {
 
       if (userSnapshot.exists) {
         var userData = userSnapshot.data() as Map<String, dynamic>;
-        print("User Data for user $userId: $userData");
-
         if (!users.any((user) => user.userEmail == userData['User_email'])) {
           users.add(User(
-            userAddress: userData['User_address'] ?? '',
+            userAddress:
+                userData.isNotEmpty ? userData['User_address'][0] ?? '' : '',
             userEmail: userData['User_email'] ?? '',
             userName: userData['User_name'] ?? '',
             userNumber: List<int>.from(userData['User_number'].map((num) {
-              // Ensure each number is parsed correctly
               if (num is int) return num;
               return int.tryParse(num.toString()) ?? 0;
-            })), // Convert to List<int>
+            })),
             userProfileImage: userData['User_profile_image'] ?? '',
           ));
         }

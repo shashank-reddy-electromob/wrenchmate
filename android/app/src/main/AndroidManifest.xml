@@ -41,6 +41,9 @@
                 android:value="AIzaSyD0t0NNq1DwKmqZeSZQci5Ht_WFxOj5F1g" />   
         <meta-data
             android:name="com.google.firebase.appcheck.androidPlayIntegrity"
-            android:value="true"/>         
+            android:value="true"/>    
+        <meta-data
+           android:name="com.google.firebase.messaging.default_notification_channel_id"
+           android:value="high_importance_channel" />     
     </application>
 </manifest>
