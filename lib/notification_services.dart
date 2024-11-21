@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,6 +12,7 @@ import 'package:get/get.dart';
 // import 'package:location_app/ui/controller/home_controller.dart';
 // import 'package:location_app/ui/location2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wrenchmate_user_app/app/routes/app_routes.dart';
 // import '../ui/homepage.dart';
 
 class NotificationServicesFCM {
@@ -91,7 +94,7 @@ class NotificationServicesFCM {
             ticker: 'ticker');
 
     final DarwinNotificationDetails darwinNotificationDetails =
-         DarwinNotificationDetails(
+        DarwinNotificationDetails(
             presentAlert: true, presentBadge: true, presentSound: true);
 
     NotificationDetails notificationDetails =
@@ -107,10 +110,12 @@ class NotificationServicesFCM {
   }
 
   void handleMessage(BuildContext context, RemoteMessage message) async {
-    int index = 0;
+    if (message.data.containsKey('target_page')) {
+      String targetPage = message.data['target_page'];
 
-    if (message.data.containsKey("index")) {
-      index = int.parse(message.data["index"]);
+      if (targetPage == 'chat') {
+        Get.toNamed(AppRoutes.CHATSCREEN);
+      }
     }
   }
 
@@ -130,15 +135,24 @@ class NotificationServicesFCM {
   Future<String> getDeviceToken() async {
     String? token = await messaging.getToken();
     print('device token ${token}');
+    if (token != null) {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      FirebaseFirestore.instance.collection('User').doc(userId).update({
+        'fcmToken': token,
+      });
+    }
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('deviceToken', token ?? '');
     return token!;
   }
 
   void isTokenRefreshed() async {
-    messaging.onTokenRefresh.listen((event) {
-      event.toString();
-      print('refresh');
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      await FirebaseFirestore.instance
+          .collection('User')
+          .doc(userId)
+          .update({'fcmToken': newToken});
     });
   }
 }

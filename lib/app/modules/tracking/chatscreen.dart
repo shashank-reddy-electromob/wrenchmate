@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/controllers/chat_controller.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
@@ -14,7 +16,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController controller = TextEditingController();
+  ChatController cc = Get.put(ChatController());
   List<Map<String, dynamic>> messages = [];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late String userID;
@@ -25,10 +28,8 @@ class _ChatScreenState extends State<ChatScreen> {
     userID = FirebaseAuth.instance.currentUser!.uid;
     final argument = Get.arguments;
     if (argument != null && argument is String && argument.isNotEmpty) {
-      _controller.text = argument;
+      controller.text = argument;
     }
-
-    // Set isInChat to true when entering the screen
     _firestore.collection('chats').doc(userID).set({
       'isInChat': true,
       'lastActive': FieldValue.serverTimestamp(),
@@ -48,9 +49,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _sendMessage() async {
-    if (_controller.text.isNotEmpty) {
+    if (controller.text.isNotEmpty) {
       final timestamp = FieldValue.serverTimestamp();
-      log(_controller.text);
+      log(controller.text);
 
       DocumentSnapshot chatDoc =
           await _firestore.collection('chats').doc(userID).get();
@@ -72,6 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
       };
       if (!isAdminInChat && !hasUnreadMessages) {
         chatUpdate['hasUnreadMessages'] = true;
+        cc.sendNotification(controller);
       }
 
       await _firestore
@@ -84,12 +86,12 @@ class _ChatScreenState extends State<ChatScreen> {
           .doc(userID)
           .collection('messages')
           .add({
-        'text': _controller.text,
+        'text': controller.text,
         'isSentByMe': true,
         'timestamp': timestamp,
       });
 
-      _controller.clear();
+      controller.clear();
     }
   }
 
@@ -158,7 +160,7 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _controller,
+                    controller: controller,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Color(0xffEBEBEB),

@@ -22,7 +22,7 @@ class optpage extends StatefulWidget {
 class _optpageState extends State<optpage> {
   final otpcontroller = TextEditingController();
   final number = Get.arguments;
-  int _start = 60;
+  int _start = 30;
   late Timer _timer;
   bool buttonVisiblity = false;
   bool _isLoading = false; // Add loading state
@@ -74,7 +74,7 @@ class _optpageState extends State<optpage> {
   void _resendotp() {
     setState(() {
       buttonVisiblity = false;
-      _start = 60;
+      _start = 30;
     });
     final AuthController controller = Get.find();
     controller.resendOTP(number, otpcontroller);
