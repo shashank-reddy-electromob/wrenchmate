@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:location/location.dart' as loc;
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
@@ -77,6 +81,34 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getLocation();
+    super.initState();
+  }
+
+
+  Future<void> getLocation() async {
+    try {
+      var location = loc.Location();
+      final currentLocation = await location.getLocation();
+      if (currentLocation != null) {
+        saveLocationToSharedPreferences(currentLocation!);
+      }
+    } catch (e) {
+      print('Error fetching location: $e');
+    }
+  }
+
+  Future<void> saveLocationToSharedPreferences(
+      loc.LocationData location) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('latitude', location.latitude ?? 0.0);
+    await prefs.setDouble('longitude', location.longitude ?? 0.0);
+  }
+
 
   @override
   Widget build(BuildContext context) {

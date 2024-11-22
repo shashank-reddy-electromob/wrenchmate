@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/home_controller.dart';
@@ -27,6 +29,87 @@ class drawerPage extends StatefulWidget {
 
 class _drawerPageState extends State<drawerPage> {
   int? _selectedIndex;
+
+  void _deleteAccount() async {
+    try {
+      bool? confirmDelete = await Get.defaultDialog<bool>(
+        title: "Delete Account",
+        titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        content: Center(
+            child: const Text(
+          "Are you sure you want to delete your account?",
+          textAlign: TextAlign.center,
+        )),
+        confirm: ElevatedButton(
+          child: const Text("Yes"),
+          onPressed: () => Get.back(result: true),
+        ),
+        cancel: ElevatedButton(
+          child: const Text("No"),
+          onPressed: () => Get.back(result: false),
+        ),
+      );
+
+      if (confirmDelete == true) {
+        final User? currentUser = FirebaseAuth.instance.currentUser;
+
+        if (currentUser != null) {
+          try {
+            // Delete user document from Firestore
+            await FirebaseFirestore.instance
+                .collection('User')
+                .doc(currentUser.uid)
+                .delete();
+
+            // Attempt to delete the Firebase Authentication user
+            await currentUser.delete();
+
+            // Navigate to login page
+            prefs?.setBool(LocalStorage.isLogin, false) ?? false;
+            Get.toNamed(AppRoutes.LOGIN);
+
+            Get.snackbar("Success", "Account deleted successfully.");
+          } on FirebaseAuthException catch (e) {
+            if (e.code == 'requires-recent-login') {
+              _handleReauthentication(currentUser);
+            } else {
+              throw e; // Rethrow unexpected errors
+            }
+          }
+        } else {
+          Get.snackbar("Error", "No user is currently logged in.");
+        }
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Account deletion failed: ${e.toString()}");
+    }
+  }
+
+  void _handleReauthentication(User currentUser) {
+    // Identify the sign-in provider
+    String provider = currentUser.providerData.first.providerId;
+
+    String message;
+    if (provider == 'google.com') {
+      message = "Please sign in with Google again to confirm account deletion.";
+    } else if (provider == 'apple.com') {
+      message = "Please sign in with Apple again to confirm account deletion.";
+    } else if (provider == 'phone') {
+      message =
+          "Please sign in with your phone number again to confirm account deletion.";
+    } else {
+      message = "Please log in again to confirm account deletion.";
+    }
+
+    // Show a toast or snackbar with the message
+    Get.snackbar("Re-authentication Required", message,
+        snackPosition: SnackPosition.BOTTOM, duration: Duration(seconds: 5));
+
+    // Redirect to login page for re-authentication
+    prefs?.setBool(LocalStorage.isLogin, false) ?? false;
+    Get.toNamed(AppRoutes.LOGIN);
+  }
+
   void _onTabTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -45,6 +128,8 @@ class _drawerPageState extends State<drawerPage> {
       Get.toNamed(AppRoutes.SUPPORT);
     } else if (index == 6) {
       print("rate us");
+    } else if (index == 7) {
+      _deleteAccount();
     } else {}
   }
 
@@ -178,6 +263,13 @@ class _drawerPageState extends State<drawerPage> {
                 onTap: _onTabTapped,
                 icon: Icons.star,
                 text: 'Rate us',
+              ),
+              MenuTab(
+                index: 7,
+                selectedIndex: _selectedIndex,
+                onTap: _onTabTapped,
+                icon: Icons.no_accounts_outlined,
+                text: 'Delete Account',
               ),
               Padding(
                 padding: EdgeInsets.only(left: 30, top: 20),

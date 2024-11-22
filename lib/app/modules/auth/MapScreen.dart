@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geocoding/geocoding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/widgets/CustomErrorFields.dart';
 import '../../controllers/auth_controller.dart';
@@ -23,7 +26,7 @@ class _MapScreenState extends State<MapScreen> {
   String? address;
   bool? isExist = false;
   bool? isnew = false;
-  Placemark? place; 
+  Placemark? place;
 
   TextEditingController flatnubercontroller = TextEditingController();
   TextEditingController localitycontroller = TextEditingController();
@@ -73,25 +76,67 @@ class _MapScreenState extends State<MapScreen> {
 
   void _fetchCurrentLocation() async {
     var location = loc.Location();
-
     try {
-      currentLocation = await location.getLocation();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      double? savedLatitude = prefs.getDouble('latitude');
+      double? savedLongitude = prefs.getDouble('longitude');
+      log('longitude is : ${savedLongitude.toString()}');
+      if (savedLatitude != null && savedLongitude != null) {
+        final LatLng savedPosition = LatLng(savedLatitude, savedLongitude);
+        log('saved position is: ${savedPosition.toString()}');
+        setState(() {
+          log('in setstate');
+          initialCameraPosition = savedPosition;
+        });
+        print(
+            "Using saved location from SharedPreferences: $savedLatitude, $savedLongitude");
+        await _getAddressFromLatLng(savedPosition);
+        showBottomDrawer(context);
+      } else {
+        currentLocation = await location.getLocation();
+        if (currentLocation != null) {
+          final LatLng newPosition = LatLng(
+            currentLocation!.latitude!,
+            currentLocation!.longitude!,
+          );
+          setState(() {
+            initialCameraPosition = newPosition;
+          });
+          await _getAddressFromLatLng(initialCameraPosition!);
+          showBottomDrawer(context);
+        }
+      }
     } catch (e) {
       print('Could not get the location: $e');
       currentLocation = null;
     }
-
-    if (currentLocation != null) {
-      setState(() {
-        initialCameraPosition = LatLng(
-          currentLocation!.latitude!,
-          currentLocation!.longitude!,
-        );
-      });
-      await _getAddressFromLatLng(initialCameraPosition!);
-      showBottomDrawer(context);
-    }
   }
+
+  // void _fetchCurrentLocation() async {
+  //   var location = loc.Location();
+  //   try {
+  //     currentLocation = await location.getLocation();
+  //   } catch (e) {
+  //     print('Could not get the location: $e');
+  //     currentLocation = null;
+  //   }
+
+  //   if (currentLocation != null) {
+  //     final LatLng newPosition = LatLng(
+  //       currentLocation!.latitude!,
+  //       currentLocation!.longitude!,
+  //     );
+  //     // Update the camera positio
+  //     mapController.animateCamera(CameraUpdate.newLatLng(newPosition));
+
+  //     setState(() {
+  //       initialCameraPosition = newPosition;
+  //     });
+  //     await _getAddressFromLatLng(initialCameraPosition!);
+  //     showBottomDrawer(context);
+  //   }
+  // }
 
   Future<void> _getAddressFromLatLng(LatLng position) async {
     try {
@@ -119,7 +164,7 @@ class _MapScreenState extends State<MapScreen> {
     mapController = controller;
   }
 
-  void _saveAddress() {
+  Future<void> _saveAddress() async {
     if (isnew == false) {
       controller.updateUserAddress(address!).then((success) {
         if (success && isExist == true) {

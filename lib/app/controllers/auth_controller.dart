@@ -110,7 +110,6 @@ class AuthController extends GetxController {
         'User_address': userAddressArray,
         'current_address': userAddressArrayLen
       });
-
       print("New address added to the list");
       return true; // Indicate success
     } catch (e) {
@@ -170,10 +169,8 @@ class AuthController extends GetxController {
 
       if (user != null) {
         try {
-          DocumentSnapshot userDoc = await _firestore
-              .collection('User') 
-              .doc(user.uid)
-              .get();
+          DocumentSnapshot userDoc =
+              await _firestore.collection('User').doc(user.uid).get();
           log(userDoc.id);
           if (!userDoc.exists) {
             Get.toNamed(AppRoutes.REGISTER, arguments: "");
@@ -214,40 +211,74 @@ class AuthController extends GetxController {
     }
   }
 
-Future<void> signInWithApple() async {
-  try {
-    AppleAuthProvider appleProvider = AppleAuthProvider();
+  Future<void> signInWithApple() async {
+    try {
+      final AuthorizationCredentialAppleID credential =
+          await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.fullName,
+          AppleIDAuthorizationScopes.email,
+        ],
+      );
+      
+      final oAuthProvider = OAuthProvider("apple.com");
+      final authCredential = oAuthProvider.credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      );
+
       UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithProvider(appleProvider);
+          await FirebaseAuth.instance.signInWithCredential(authCredential);
+      User? user = userCredential.user;
+      bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
+      prefs?.setBool(LocalStorage.isLogin, true) ?? false;
+      print(
+          "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
+      
+      String? firstName = credential.givenName;
+      String? lastName = credential.familyName;
+      String? email = credential.email ?? user?.email;
+      String appleUserName = "${firstName ?? ''} ${lastName ?? ''}".trim();
 
-    bool? isNewUser = userCredential.additionalUserInfo?.isNewUser;
-    prefs?.setBool(LocalStorage.isLogin, true) ?? false;
-    print(
-        "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
+      if (firstName != null || lastName != null) {
+        String fullName = "${firstName ?? ''} ${lastName ?? ''}".trim();
+        await prefs?.setString('apple_user_name', fullName );
+        await prefs?.setString('apple_user_email', email ?? '');
+      }
 
-    if (isNewUser == true) {
-      Get.toNamed(AppRoutes.REGISTER, arguments: "");
-    } else {
-      Get.toNamed(AppRoutes.BOTTOMNAV);
+      String? storedName = prefs?.getString('apple_user_name');
+      String? storedEmail = prefs?.getString('apple_user_email');
+      String userName = storedName ?? user?.phoneNumber ?? 'User';
+      String userEmail = storedEmail ?? user?.email ?? 'No email provided';
+
+      print('Apple User Name: $userName');
+      print('Apple User Email: $userEmail');
+
+      print('apple user name is ${appleUserName}');
+
+      if (isNewUser == true) {
+        Get.toNamed(AppRoutes.REGISTER, arguments: "");
+      } else {
+        Get.toNamed(AppRoutes.BOTTOMNAV);
+      }
+      // if (user != null && isNewUser == true) {
+      //   await _firestore.collection('User').doc(user.uid).set({
+      //     'User_name': appleCredential.givenName ?? "",
+      //     'User_email': appleCredential.email ?? "",
+      //     'User_number': [], // Placeholder, if phone number is used later
+      //     'User_address': [""],
+      //     'current_address': 0,
+      //     'User_carDetails': [],
+      //     'User_currentCar': 0,
+      //   });
+      //   print("New Apple user added to Firestore");
+      // }
+    } catch (e) {
+      print("Apple Sign-In failed: $e");
+      Get.snackbar("Error", "Apple Sign-In failed: ${e.toString()}");
+      throw e;
     }
-    // if (user != null && isNewUser == true) {
-    //   await _firestore.collection('User').doc(user.uid).set({
-    //     'User_name': appleCredential.givenName ?? "",
-    //     'User_email': appleCredential.email ?? "",
-    //     'User_number': [], // Placeholder, if phone number is used later
-    //     'User_address': [""],
-    //     'current_address': 0,
-    //     'User_carDetails': [],
-    //     'User_currentCar': 0,
-    //   });
-    //   print("New Apple user added to Firestore");
-    // }
-  } catch (e) {
-    print("Apple Sign-In failed: $e");
-    Get.snackbar("Error", "Apple Sign-In failed: ${e.toString()}");
-    throw e;
   }
-}
 
   Future<void> addUserToFirestore({
     required String name,

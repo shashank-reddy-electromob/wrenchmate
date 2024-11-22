@@ -356,6 +356,48 @@ class CartController extends GetxController {
     }
   }
 
+  Future<void> deleteAddress(int index) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
+
+      List<dynamic> userAddressArray = userDoc['User_address'];
+
+      // Remove the address from the array
+      userAddressArray.removeAt(index);
+
+      // Update the current address index if necessary
+      int currentAddressIndex = userDoc['current_address'];
+      if (currentAddressIndex == index) {
+        // If the deleted address was the current one, reset it
+        currentAddressIndex = 0;
+      } else if (currentAddressIndex > index) {
+        // Adjust current index if necessary
+        currentAddressIndex -= 1;
+      }
+
+      // Update Firestore
+      await _firestore.collection('User').doc(userId).update({
+        'User_address': userAddressArray,
+        'current_address': currentAddressIndex,
+      });
+
+      // Update local controller
+      addresses.removeAt(index);
+      if (currentAddressIndex == index) {
+        currentAddressIndex = 0; // Default to the first address
+      } else if (currentAddressIndex > index) {
+        currentAddressIndex -= 1;
+      }
+
+      Get.snackbar("Success", "Address deleted successfully");
+    } catch (e) {
+      print("Failed to delete address: $e");
+      Get.snackbar("Error", "Failed to delete address: ${e.toString()}");
+    }
+  }
+
   void addToCartSnackbar(
     BuildContext context,
     CartController cartController,

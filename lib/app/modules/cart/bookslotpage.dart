@@ -160,8 +160,8 @@ class _BookSlotState extends State<BookSlot> {
                                 children: [
                                   Expanded(
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start, // Align icon and text properly
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Icon(
                                           Icons.location_on_outlined,
@@ -177,33 +177,41 @@ class _BookSlotState extends State<BookSlot> {
                                                 .visible, // Prevents clipping
                                             style: TextStyle(
                                                 fontSize:
-                                                    16), // Optional: Adjust font size
+                                                    16), // Adjust font size
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  Obx(() => Radio<int>(
-                                        value: index,
-                                        groupValue: cartController
-                                            .currentAddressIndex.value,
-                                        onChanged: (int? value) {
-                                          cartController.currentAddressIndex
-                                              .value = value!;
+                                  Row(
+                                    children: [
+                                      Obx(() => Radio<int>(
+                                            value: index,
+                                            groupValue: cartController
+                                                .currentAddressIndex.value,
+                                            onChanged: (int? value) {
+                                              cartController.currentAddressIndex
+                                                  .value = value!;
+                                            },
+                                            activeColor: Color(0XFF1671D8),
+                                            fillColor: MaterialStateProperty
+                                                .resolveWith<Color>((states) {
+                                              return states.contains(
+                                                      MaterialState.selected)
+                                                  ? Color(0XFF1671D8)
+                                                  : Color(0XFF1671D8);
+                                            }),
+                                          )),
+                                      IconButton(
+                                        icon: Icon(Icons.delete,
+                                            color: Colors.red),
+                                        onPressed: () async {
+                                          await cartController
+                                              .deleteAddress(index);
                                         },
-                                        activeColor: Color(
-                                            0XFF1671D8), // Active color when selected
-                                        fillColor: MaterialStateProperty
-                                            .resolveWith<Color>((states) {
-                                          if (states.contains(
-                                              MaterialState.selected)) {
-                                            return Color(
-                                                0XFF1671D8); // Active color
-                                          }
-                                          return Color(
-                                              0XFF1671D8); // Inactive color
-                                        }),
-                                      )),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             );
@@ -214,7 +222,7 @@ class _BookSlotState extends State<BookSlot> {
                         padding: const EdgeInsets.only(left: 12.0, top: 4),
                         child: GestureDetector(
                           onTap: () {
-                            Get.toNamed(
+                           Get.toNamed(
                               AppRoutes.MAPSCREEN,
                               arguments: {
                                 'isnew': true,
@@ -222,6 +230,7 @@ class _BookSlotState extends State<BookSlot> {
                                     .addresses[selectedAddressIndex]
                               },
                             );
+                          
                           },
                           child: Row(
                             children: [
