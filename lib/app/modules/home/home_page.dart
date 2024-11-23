@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   late final user;
   HomeController? controller;
   Map<String, dynamic>? userData;
+
   late int addressIndex;
 
   @override
@@ -228,9 +229,15 @@ class _HomePageState extends State<HomePage> {
                                               Expanded(
                                                 child: Text(
                                                   userData?['User_address'] !=
-                                                          null
-                                                      ? userData!['User_address']
-                                                              [addressIndex]
+                                                              null && // Ensure this is not null
+                                                          (userData?['User_address']
+                                                                      as List<
+                                                                          dynamic>? ??
+                                                                  [])
+                                                              .isNotEmpty
+                                                      ? (userData!['User_address']
+                                                                  [addressIndex]
+                                                              as String)
                                                           .split(',')
                                                           .take(3)
                                                           .join(', ')

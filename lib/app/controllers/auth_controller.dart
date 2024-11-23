@@ -98,6 +98,7 @@ class AuthController extends GetxController {
 
   Future<bool> addAddressToList(String newAddress) async {
     try {
+      log('new address is: ${newAddress}');
       String userId = FirebaseAuth.instance.currentUser!.uid;
       DocumentSnapshot userDoc =
           await _firestore.collection('User').doc(userId).get();
@@ -220,7 +221,7 @@ class AuthController extends GetxController {
           AppleIDAuthorizationScopes.email,
         ],
       );
-      
+
       final oAuthProvider = OAuthProvider("apple.com");
       final authCredential = oAuthProvider.credential(
         idToken: credential.identityToken,
@@ -234,7 +235,7 @@ class AuthController extends GetxController {
       prefs?.setBool(LocalStorage.isLogin, true) ?? false;
       print(
           "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
-      
+
       String? firstName = credential.givenName;
       String? lastName = credential.familyName;
       String? email = credential.email ?? user?.email;
@@ -242,7 +243,7 @@ class AuthController extends GetxController {
 
       if (firstName != null || lastName != null) {
         String fullName = "${firstName ?? ''} ${lastName ?? ''}".trim();
-        await prefs?.setString('apple_user_name', fullName );
+        await prefs?.setString('apple_user_name', fullName);
         await prefs?.setString('apple_user_email', email ?? '');
       }
 

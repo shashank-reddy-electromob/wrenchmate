@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
 import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
@@ -41,7 +42,7 @@ class _CartPageState extends State<CartPage> {
   final ProductController productController = Get.put(ProductController());
   final BookingController bookingController = Get.put(BookingController());
   final HomeController homeController = Get.put(HomeController());
-
+  Razorpay _razorpay = Razorpay();
   double totalAmount = 0.0;
   double? tax;
   double? finalAmount;
@@ -57,7 +58,10 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
-    phonepeInit();
+    // phonepeInit();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -950,18 +954,162 @@ class _CartPageState extends State<CartPage> {
 
   Object? result;
 
+  // void onProceedToPayPressed() async {
+  //   try {
+  //     final transactionId = bookingController.generateUniqueTransactionId();
+
+  //     List<String> serviceIds = List<String>.from(
+  //       cartController.cartItems.map((item) => item['serviceId']),
+  //     );
+
+  //     bool hasServices =
+  //         cartController.cartItems.any((item) => item['serviceId'] != "NA");
+  //     print("hasServices :: $hasServices");
+
+  //     if (hasServices && bookingController.bookingStatus.value != 'confirmed') {
+  //       var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
+  //       if (result != null) {
+  //         setState(() {
+  //           selectedDate = result['selectedDate'] ?? '';
+  //           selectedTimeRange = result['selectedTimeRange'] ?? '';
+  //           selectedAddress = result['selectAddress'] ?? '';
+  //         });
+  //       }
+  //     } else if (!hasServices ||
+  //         bookingController.bookingStatus.value == 'confirmed') {
+  //       print("Proceed to pay");
+  //       print("environment :: $environment");
+  //       print("appId :: $appId");
+  //       print("merchantId :: $merchantId");
+  //       print("enableLogging :: $enableLogging");
+  //       print("transactionId :: $transactionId");
+  //       body = getChecksum(transactionId).toString();
+  //       print("body :: $body");
+
+  //       // await initiatePaymentFlow();
+  //       print("Simulating payment success...");
+  //       await initiatePaymentFlow();
+  //     } else {
+  //       Get.snackbar("Error", "Please confirm your booking first.");
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar("Error", "Failed to process payment: $e");
+  //   }
+  // }
+
+  // Future<void> initiatePaymentFlow() async {
+  //   try {
+  //     String base64Body = body;
+  //     print("base64Body :: $base64Body");
+
+  //     final response = await PhonePePaymentSdk.startTransaction(
+  //         base64Body, callbackUrl, checksum, 'com.phonepe');
+
+  //     if (response != null) {
+  //       String status = response['status'].toString();
+  //       String error = response['error'].toString();
+
+  //       if (status == 'SUCCESS') {
+  //         result = "Flow complete - status : SUCCESS";
+
+  //         // Only add booking/subscription after successful payment
+  //         if (cartController.cartItems.isNotEmpty) {
+  //           List<String> serviceIds = List<String>.from(
+  //             cartController.cartItems.map((item) => item['serviceId']),
+  //           );
+
+  //           if (serviceIds.isNotEmpty) {
+  //             await bookingController.addBooking(
+  //               serviceIds,
+  //               'confirmed',
+  //               DateTime.now(),
+  //               null,
+  //               null,
+  //               '',
+  //               '',
+  //               '',
+  //               currentCar!,
+  //               selectedAddress!,
+  //               selectedDate,
+  //               selectedTimeRange,
+  //             );
+  //           }
+  //         }
+
+  //         // Handle subscription bookings if present
+  //         if (cartController.cartSubsItems.isNotEmpty) {
+  //           await bookingController.addSubscriptionBooking(
+  //               cartController.cartSubsItems[0]['packDesc'].toString(),
+  //               cartController.cartSubsItems[0]['price'],
+  //               cartController.cartSubsItems[0]['startDate'],
+  //               cartController.cartSubsItems[0]['endDate'],
+  //               "confirmed",
+  //               DateTime.now(),
+  //               null,
+  //               null,
+  //               currentCar!,
+  //               selectedAddress!,
+  //               selectedDate,
+  //               selectedTimeRange,
+  //               cartController.cartSubsItems[0]['subscriptionId'],
+  //               cartController.cartSubsItems[0]['subscriptionName'],
+  //               context);
+  //         }
+  //         await cartController.clearCart();
+  //         cartController.totalAmount.value = 0;
+
+  //         Get.back();
+  //         await Future.delayed(Duration(milliseconds: 50), () async {
+  //           await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+  //             'tracking_button': true,
+  //           });
+  //         });
+  //       } else {
+  //         result = "Flow complete - status : $status and error $error";
+  //         Get.snackbar("Error", "Payment failed. Please try again.");
+  //       }
+  //     } else {
+  //       result = "Flow Incomplete";
+  //       Get.snackbar("Error", "Payment process was incomplete");
+  //     }
+  //   } catch (error) {
+  //     handleError(error);
+  //     Get.snackbar("Error", "Payment processing failed: $error");
+  //   }
+  // }
+
+  // getChecksum(String transactionId) {
+  //   final requestData = {
+  //     "merchantId": merchantId,
+  //     "merchantTransactionId": transactionId,
+  //     "merchantUserId": "90223250",
+  //     "amount": (cartController.totalPayableAmount.value.round()) * 100,
+  //     // "amount": 100,
+
+  //     "mobileNumber": "8058965210",
+  //     "callbackUrl": callbackUrl,
+  //     "paymentInstrument": {"type": "PAY_PAGE"}
+  //   };
+
+  //   String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
+
+  //   checksum =
+  //       '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
+  //   print("checksum :: $checksum");
+  //   return base64Body;
+  // }
+
   void onProceedToPayPressed() async {
     try {
       final transactionId = bookingController.generateUniqueTransactionId();
-
+      int amount = (cartController.totalPayableAmount.value *
+          100).toInt(); // Razorpay accepts amount in paise
       List<String> serviceIds = List<String>.from(
         cartController.cartItems.map((item) => item['serviceId']),
       );
 
       bool hasServices =
           cartController.cartItems.any((item) => item['serviceId'] != "NA");
-      print("hasServices :: $hasServices");
-
       if (hasServices && bookingController.bookingStatus.value != 'confirmed') {
         var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
         if (result != null) {
@@ -973,18 +1121,21 @@ class _CartPageState extends State<CartPage> {
         }
       } else if (!hasServices ||
           bookingController.bookingStatus.value == 'confirmed') {
-        print("Proceed to pay");
-        print("environment :: $environment");
-        print("appId :: $appId");
-        print("merchantId :: $merchantId");
-        print("enableLogging :: $enableLogging");
-        print("transactionId :: $transactionId");
-        body = getChecksum(transactionId).toString();
-        print("body :: $body");
+        var options = {
+          'key': 'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
+          'amount': amount, // Amount in paise
+          'name': 'Wrenchmate',
+          'description': 'Payment for Services',
+          'prefill': {
+            'contact': '8058965210',
+            'email': 'customer@example.com',
+          },
+          'external': {
+            'wallets': ['paytm']
+          }
+        };
 
-        // await initiatePaymentFlow();
-        print("Simulating payment success...");
-        await initiatePaymentFlow();
+        _razorpay.open(options);
       } else {
         Get.snackbar("Error", "Please confirm your booking first.");
       }
@@ -993,119 +1144,92 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  Future<void> initiatePaymentFlow() async {
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    // On successful payment
+    print("Payment Success: ${response.paymentId}");
+
     try {
-      String base64Body = body;
-      print("base64Body :: $base64Body");
+      List<String> serviceIds = List<String>.from(
+        cartController.cartItems.map((item) => item['serviceId']),
+      );
 
-      final response = await PhonePePaymentSdk.startTransaction(
-          base64Body, callbackUrl, checksum, 'com.phonepe');
-
-      if (response != null) {
-        String status = response['status'].toString();
-        String error = response['error'].toString();
-
-        if (status == 'SUCCESS') {
-          result = "Flow complete - status : SUCCESS";
-
-          // Only add booking/subscription after successful payment
-          if (cartController.cartItems.isNotEmpty) {
-            List<String> serviceIds = List<String>.from(
-              cartController.cartItems.map((item) => item['serviceId']),
-            );
-
-            if (serviceIds.isNotEmpty) {
-              await bookingController.addBooking(
-                serviceIds,
-                'confirmed',
-                DateTime.now(),
-                null,
-                null,
-                '',
-                '',
-                '',
-                currentCar!,
-                selectedAddress!,
-                selectedDate,
-                selectedTimeRange,
-              );
-            }
-          }
-
-          // Handle subscription bookings if present
-          if (cartController.cartSubsItems.isNotEmpty) {
-            await bookingController.addSubscriptionBooking(
-                cartController.cartSubsItems[0]['packDesc'].toString(),
-                cartController.cartSubsItems[0]['price'],
-                cartController.cartSubsItems[0]['startDate'],
-                cartController.cartSubsItems[0]['endDate'],
-                "confirmed",
-                DateTime.now(),
-                null,
-                null,
-                currentCar!,
-                selectedAddress!,
-                selectedDate,
-                selectedTimeRange,
-                cartController.cartSubsItems[0]['subscriptionId'],
-                cartController.cartSubsItems[0]['subscriptionName'],
-                context);
-          }
-          await cartController.clearCart();
-          cartController.totalAmount.value = 0;
-
-          Get.back();
-          await Future.delayed(Duration(milliseconds: 50), () async {
-            await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-              'tracking_button': true,
-            });
-          });
-        } else {
-          result = "Flow complete - status : $status and error $error";
-          Get.snackbar("Error", "Payment failed. Please try again.");
-        }
-      } else {
-        result = "Flow Incomplete";
-        Get.snackbar("Error", "Payment process was incomplete");
+      if (serviceIds.isNotEmpty) {
+        await bookingController.addBooking(
+          serviceIds,
+          'confirmed',
+          DateTime.now(),
+          null,
+          null,
+          '',
+          '',
+          '',
+          currentCar!,
+          selectedAddress!,
+          selectedDate,
+          selectedTimeRange,
+        );
       }
-    } catch (error) {
-      handleError(error);
-      Get.snackbar("Error", "Payment processing failed: $error");
+
+      if (cartController.cartSubsItems.isNotEmpty) {
+        await bookingController.addSubscriptionBooking(
+          cartController.cartSubsItems[0]['packDesc'].toString(),
+          cartController.cartSubsItems[0]['price'],
+          cartController.cartSubsItems[0]['startDate'],
+          cartController.cartSubsItems[0]['endDate'],
+          "confirmed",
+          DateTime.now(),
+          null,
+          null,
+          currentCar!,
+          selectedAddress!,
+          selectedDate,
+          selectedTimeRange,
+          cartController.cartSubsItems[0]['subscriptionId'],
+          cartController.cartSubsItems[0]['subscriptionName'],
+          context,
+        );
+      }
+
+      await cartController.clearCart();
+      cartController.totalAmount.value = 0;
+
+      Get.back();
+      await Future.delayed(Duration(milliseconds: 50), () async {
+        await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+          'tracking_button': true,
+        });
+      });
+    } catch (e) {
+      Get.snackbar("Error", "Failed to save booking: $e");
     }
   }
 
-  getChecksum(String transactionId) {
-    final requestData = {
-      "merchantId": merchantId,
-      "merchantTransactionId": transactionId,
-      "merchantUserId": "90223250",
-      "amount": (cartController.totalPayableAmount.value.round()) * 100,
-      // "amount": 100,
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // On payment error
+    print("Payment Error: ${response.code} - ${response.message}");
+    Get.snackbar("Error", "Payment failed: ${response.message}");
+  }
 
-      "mobileNumber": "8058965210",
-      "callbackUrl": callbackUrl,
-      "paymentInstrument": {"type": "PAY_PAGE"}
-    };
-
-    String base64Body = base64.encode(utf8.encode(json.encode(requestData)));
-
-    checksum =
-        '${sha256.convert(utf8.encode(base64Body + apiEndPoint + saltKey)).toString()}###$saltIndex';
-    print("checksum :: $checksum");
-    return base64Body;
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // On external wallet selected
+    print("External Wallet: ${response.walletName}");
+    Get.snackbar("Info", "External wallet selected: ${response.walletName}");
   }
 
   void phonepeInit() {
-    PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
-        .then((val) => {
-              setState(() {
-                result = 'PhonePe SDK Initialized - $val';
-              })
-            })
-        .catchError((error) {
-      handleError(error);
-      return <dynamic>{};
-    });
+    // PhonePePaymentSdk.init(environment, appId, merchantId, enableLogging)
+    //     .then((val) => {
+    //           setState(() {
+    //             result = 'PhonePe SDK Initialized - $val';
+    //           })
+    //         })
+    //     .catchError((error) {
+    //   handleError(error);
+    //   return <dynamic>{};
+    // });
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   void startPgTransaction() async {

@@ -64,6 +64,7 @@ class _BookSlotState extends State<BookSlot> {
   @override
   void initState() {
     super.initState();
+    print('init;');
     _scrollController.addListener(_scrollListener);
     cartController.fetchUserAddresses();
     cartController.fetchUserCurrentAddressIndex();
@@ -90,6 +91,7 @@ class _BookSlotState extends State<BookSlot> {
 
   @override
   Widget build(BuildContext context) {
+    print('nihal;');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -222,15 +224,15 @@ class _BookSlotState extends State<BookSlot> {
                         padding: const EdgeInsets.only(left: 12.0, top: 4),
                         child: GestureDetector(
                           onTap: () {
-                           Get.toNamed(
+                            Get.toNamed(
                               AppRoutes.MAPSCREEN,
                               arguments: {
                                 'isnew': true,
-                                'address': cartController
-                                    .addresses[selectedAddressIndex]
+                                if (cartController.addresses.isNotEmpty)
+                                  'address': cartController
+                                      .addresses[selectedAddressIndex]
                               },
                             );
-                          
                           },
                           child: Row(
                             children: [

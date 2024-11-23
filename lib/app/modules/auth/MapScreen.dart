@@ -9,6 +9,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/modules/auth/widgets/CustomErrorFields.dart';
+import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
 import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/blueButton.dart';
@@ -33,7 +34,7 @@ class _MapScreenState extends State<MapScreen> {
   TextEditingController landmarkcontroller = TextEditingController();
 
   late final AuthController controller;
-  late final CartController Cartcontroller;
+  late final CartController cartController=Get.find();
 
   bool isFlatNumberEmpty = false;
   bool isLocalityEmpty = false;
@@ -178,7 +179,12 @@ class _MapScreenState extends State<MapScreen> {
     } else {
       controller.addAddressToList(address!).then((success) {
         if (success && isExist == true) {
-          Get.toNamed(AppRoutes.BOOK_SLOT);
+          // Get.toNamed(AppRoutes.BOOK_SLOT);
+          Navigator.of(context)
+            ..pop()
+            ..pop()
+            ..pushReplacement(
+                MaterialPageRoute(builder: (context) => BookSlot()));
         } else {
           print('Failed to add address');
         }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -39,6 +41,7 @@ class _BookingPageState extends State<BookingPage> {
     final ServiceController serviceController = Get.put(ServiceController());
     for (var booking in bookings) {
       for (var serviceId in booking['service_list']) {
+        log('service id is: $serviceId}');
         Servicefirebase service =
             await _fetchServiceDetails(serviceController, serviceId);
         if (booking['status'] == 'confirmed' ||

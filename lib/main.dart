@@ -28,7 +28,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print(message.notification!.title.toString());
 }
 
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

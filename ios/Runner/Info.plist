@@ -67,11 +67,12 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to your photo library to allow you to upload and manage your photos.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to your location to provide location-based services while using the app.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app requires your location to provide continuous location-based services.</string>
+	<string>Wrenchmate needs access to your photo library to upload car-related documents and images for services.</string>
 
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Wrenchmate uses your location to connect you with nearby car services and offers while the app is in use.</string>
+
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Wrenchmate requires location access to track ongoing car services and ensure seamless service updates.</string>
 </dict>
 </plist>
