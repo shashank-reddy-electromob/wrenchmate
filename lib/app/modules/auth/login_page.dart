@@ -89,7 +89,6 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-
   Future<void> getLocation() async {
     try {
       var location = loc.Location();
@@ -108,7 +107,6 @@ class _LoginPageState extends State<LoginPage> {
     await prefs.setDouble('latitude', location.latitude ?? 0.0);
     await prefs.setDouble('longitude', location.longitude ?? 0.0);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +234,9 @@ class _LoginPageState extends State<LoginPage> {
                           fontSize: 17,
                           text: 'REQUEST OTP',
                           onTap: _isLoading ? () {} : _login,
+                          // onTap: () {
+                          //   Get.toNamed(AppRoutes.REGISTER, arguments: "");
+                          // },
                           icon: Icons.arrow_forward_outlined,
                         )),
               SizedBox(height: height * 0.04),

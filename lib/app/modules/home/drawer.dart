@@ -115,7 +115,7 @@ class _drawerPageState extends State<drawerPage> {
       _selectedIndex = index;
     });
     if (index == 0) {
-      Get.toNamed(AppRoutes.CAR);
+      Get.toNamed(AppRoutes.CAR,arguments: {'via':'drawer'});
     } else if (index == 1) {
       Get.toNamed(AppRoutes.BOOKING);
     } else if (index == 2) {

@@ -13,6 +13,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wrenchmate_user_app/app/data/models/car_detail_model.dart';
 import 'package:wrenchmate_user_app/app/modules/car/widget/imagePopup.dart';
 import 'package:wrenchmate_user_app/app/modules/home/widgits/toprecommendedservices.dart';
+import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
 import 'package:wrenchmate_user_app/globalVariables.dart';
 import '../../routes/app_routes.dart';
 import '../../controllers/car_controller.dart';
@@ -40,12 +41,16 @@ class _CarPageState extends State<CarPage> {
   String? _drivingLicImageUrl;
 
   final CarController carController = Get.put(CarController());
-
+  String via = '';
   late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
+    final args = Get.arguments;
+    if(args!=null){
+      via = args?['via'];
+    }
     regYearController = TextEditingController();
     regNoController = TextEditingController();
     insuranceExpController = TextEditingController();
@@ -221,6 +226,19 @@ class _CarPageState extends State<CarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: via == ''
+          ? null // No AppBar when `via` is empty
+          : AppBar(
+              backgroundColor: Colors.transparent,
+              title: Text(
+                'Your Car',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              leading: Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: Custombackbutton(),
+              ),
+            ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),

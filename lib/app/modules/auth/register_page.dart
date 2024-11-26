@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -118,6 +119,12 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
+    final args = Get.arguments;
+    if (args != null ) {
+      nameController.text = args['fullname'] == 'User' ? '' : args['fullname'];
+      emailController.text = args['email'];
+      numberController.text = args['phone'];
+    }
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       userId = currentUser.phoneNumber;

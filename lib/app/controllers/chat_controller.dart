@@ -1,15 +1,19 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+  RxBool isLoading = false.obs;
 
   Future<void> sendNotification(TextEditingController controller) async {
     try {
@@ -113,6 +117,66 @@ class ChatController extends GetxController {
       }
     } catch (e) {
       log('Exception in FCM Notification: $e');
+    }
+  }
+
+  Future<void> sendImage(String userID) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        isLoading.value = true;
+        File imageFile = File(pickedFile.path);
+        String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+        DocumentReference tempMessageRef = await _firestore
+            .collection('chats')
+            .doc(userID)
+            .collection('messages')
+            .add({
+          'text': null,
+          'imageUrl': null,
+          'isSentByMe': true,
+          'timestamp': FieldValue.serverTimestamp(),
+          'isUploading': true, 
+        });
+
+        // Upload the image to Firebase Storage
+        Reference ref = _firebaseStorage
+            .ref()
+            .child('chat_images')
+            .child(userID)
+            .child(fileName);
+        UploadTask uploadTask = ref.putFile(imageFile);
+
+        final snapshot = await uploadTask.whenComplete(() => null);
+        final downloadUrl = await snapshot.ref.getDownloadURL();
+
+        log('Image uploaded: $downloadUrl');
+
+        // Save the image message in Firestore
+        // await _firestore
+        //     .collection('chats')
+        //     .doc(userID)
+        //     .collection('messages')
+        //     .add({
+        //   'text': null, // Indicate this is an image message
+        //   'imageUrl': downloadUrl,
+        //   'isSentByMe': true,
+        //   'timestamp': FieldValue.serverTimestamp(),
+        // });
+        await tempMessageRef.update({
+        'imageUrl': downloadUrl,
+        'isUploading': false, // Upload completed
+      });
+      } else {
+        log('No image selected.');
+      }
+    } catch (e) {
+      log('Error uploading image: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 }

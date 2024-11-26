@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +17,6 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController controller = TextEditingController();
   ChatController cc = Get.put(ChatController());
-  List<Map<String, dynamic>> messages = [];
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late String userID;
 
@@ -56,30 +54,14 @@ class _ChatScreenState extends State<ChatScreen> {
       DocumentSnapshot chatDoc =
           await _firestore.collection('chats').doc(userID).get();
       bool isAdminInChat = false;
-      bool hasUnreadMessages = false;
 
-      // Check if the document exists
       if (chatDoc.exists) {
         isAdminInChat = chatDoc.get('isAdminInChat') ?? false;
-        hasUnreadMessages = chatDoc.get('hasUnreadMessages') ?? false;
       }
 
-      Map<String, dynamic> chatUpdate = {
-        'lastActive': timestamp,
-        'userId': userID,
-        'isInChat': true,
-        'isAdminInChat': false,
-        'hasUnreadMessages': false
-      };
-      if (!isAdminInChat && !hasUnreadMessages) {
-        chatUpdate['hasUnreadMessages'] = true;
+      if (!isAdminInChat) {
         cc.sendNotification(controller);
       }
-
-      await _firestore
-          .collection('chats')
-          .doc(userID)
-          .set(chatUpdate, SetOptions(merge: true));
 
       await _firestore
           .collection('chats')
@@ -89,10 +71,17 @@ class _ChatScreenState extends State<ChatScreen> {
         'text': controller.text,
         'isSentByMe': true,
         'timestamp': timestamp,
+        'imageUrl': null, // Indicate this is a text message
+        'isUploading': false
       });
 
       controller.clear();
     }
+  }
+
+  Future<void> _sendImage() async {
+    await cc
+        .sendImage(userID); // Calls the image sending logic in the controller
   }
 
   @override
@@ -116,24 +105,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData)
+                if (!snapshot.hasData) {
                   return Center(
-                    child: SizedBox(
-                      width: 30.0,
-                      height: 30.0,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.0,
-                      ),
-                    ),
+                    child: CircularProgressIndicator(),
                   );
+                }
+
                 var messages = snapshot.data!.docs;
                 return ListView.builder(
                   reverse: true,
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     var message = messages[index];
+                    bool isSentByMe = message['isSentByMe'] ?? false;
+                    bool isUploading = message['isUploading'] ?? false;
+
                     return Align(
-                      alignment: message['isSentByMe']
+                      alignment: isSentByMe
                           ? Alignment.centerRight
                           : Alignment.centerLeft,
                       child: Container(
@@ -141,12 +129,33 @@ class _ChatScreenState extends State<ChatScreen> {
                         margin: EdgeInsets.symmetric(
                             vertical: 4.0, horizontal: 8.0),
                         decoration: BoxDecoration(
-                          color: message['isSentByMe']
-                              ? Colors.blue[100]
-                              : Colors.grey[200],
+                          color:
+                              isSentByMe ? Colors.blue[100] : Colors.grey[200],
                           borderRadius: BorderRadius.circular(16.0),
                         ),
-                        child: Text(message['text']),
+                        child: isUploading
+                            ? SizedBox(
+                                width: 100,
+                                height: 100,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              )
+                            : message['imageUrl'] != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: ExtendedImage.network(
+                                      message['imageUrl'],
+                                      width: 200,
+                                      height: 200,
+                                      fit: BoxFit.cover,
+                                      cache: true,
+                                    ),
+                                  )
+                                : Text(message['text'] ?? ''),
                       ),
                     );
                   },
@@ -158,6 +167,10 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8),
             child: Row(
               children: [
+                IconButton(
+                  icon: Icon(Icons.image, color: primaryColor),
+                  onPressed: _sendImage,
+                ),
                 Expanded(
                   child: TextField(
                     controller: controller,
@@ -172,20 +185,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         borderRadius: BorderRadius.circular(24.0),
                         borderSide: BorderSide.none,
                       ),
-                      hintText: 'Ask me anything..',
+                      hintText: 'Type your message...',
                       hintStyle: AppTextStyle.medium14,
-                      prefixIcon: IconButton(
-                        icon: Icon(Icons.add),
-                        color: blackColor,
-                        onPressed: () {},
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.mic),
-                        color: blackColor,
-                        onPressed: () {
-                          // Voice input action
-                        },
-                      ),
                     ),
                   ),
                 ),
@@ -207,7 +208,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     icon: Icon(Icons.send, color: Colors.white),
                     onPressed: _sendMessage,
                   ),
-                )
+                ),
               ],
             ),
           ),

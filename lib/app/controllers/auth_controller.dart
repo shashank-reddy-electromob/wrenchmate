@@ -45,7 +45,7 @@ class AuthController extends GetxController {
           FirebaseAuth.instance.currentUser!.metadata.creationTime ==
               FirebaseAuth.instance.currentUser!.metadata.lastSignInTime;
       if (isNewUser) {
-        Get.toNamed(AppRoutes.REGISTER, arguments: "");
+        Get.toNamed(AppRoutes.REGISTER);
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
           'tracking_button': false,
@@ -174,7 +174,7 @@ class AuthController extends GetxController {
               await _firestore.collection('User').doc(user.uid).get();
           log(userDoc.id);
           if (!userDoc.exists) {
-            Get.toNamed(AppRoutes.REGISTER, arguments: "");
+            Get.toNamed(AppRoutes.REGISTER);
           } else {
             Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
               'tracking_button': false,
@@ -201,7 +201,7 @@ class AuthController extends GetxController {
       print(
           "prefs?.getBool(LocalStorage.isLogin) :: ${prefs?.getBool(LocalStorage.isLogin)}");
       if (isNewUser == true) {
-        Get.toNamed(AppRoutes.REGISTER, arguments: "");
+        Get.toNamed(AppRoutes.REGISTER);
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV);
       }
@@ -258,7 +258,7 @@ class AuthController extends GetxController {
       print('apple user name is ${appleUserName}');
 
       if (isNewUser == true) {
-        Get.toNamed(AppRoutes.REGISTER, arguments: "");
+        Get.toNamed(AppRoutes.REGISTER, arguments: {'fullname':'${userName}','phone':user?.phoneNumber?? '', 'email':'${userEmail}'});
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV);
       }
