@@ -48,7 +48,7 @@ class _CarPageState extends State<CarPage> {
   void initState() {
     super.initState();
     final args = Get.arguments;
-    if(args!=null){
+    if (args != null) {
       via = args?['via'];
     }
     regYearController = TextEditingController();
@@ -847,10 +847,13 @@ class _CarPageState extends State<CarPage> {
                         child: GradientContainer(
                           colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
                           width: MediaQuery.of(context).size.width / 2 - 36,
+                          height: MediaQuery.of(context).size.width * 0.33,
                           child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 18.0, vertical: 8),
                               child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Image.asset(
@@ -881,10 +884,12 @@ class _CarPageState extends State<CarPage> {
                         child: GradientContainer(
                           colors: [Color(0xffFEA563), Color(0xffFF5F81)],
                           width: MediaQuery.of(context).size.width / 2 - 36,
+                          height: MediaQuery.of(context).size.width * 0.33,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 18.0, vertical: 8),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Image.asset(

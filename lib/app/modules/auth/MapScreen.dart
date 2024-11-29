@@ -53,6 +53,7 @@ class _MapScreenState extends State<MapScreen> {
     final args = Get.arguments as Map<String, dynamic>?;
     if (args != null && args.containsKey('address')) {
       final address = args['address'] as String?;
+      log('address is: ${address.toString()}');
       if (address != null) {
         List<String> addressParts = address.split(',');
         addressParts = addressParts.map((part) => part.trim()).toList();
@@ -186,7 +187,12 @@ class _MapScreenState extends State<MapScreen> {
             ..pushReplacement(
                 MaterialPageRoute(builder: (context) => BookSlot()));
         } else {
-          print('Failed to add address');
+          print('Failed to add address from map screen');
+           Navigator.of(context)
+            ..pop()
+            ..pop()
+            ..pushReplacement(
+                MaterialPageRoute(builder: (context) => BookSlot()));
         }
       });
     }

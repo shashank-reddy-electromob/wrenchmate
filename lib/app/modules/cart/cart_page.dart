@@ -901,24 +901,95 @@ class _CartPageState extends State<CartPage> {
                         borderRadius: BorderRadius.circular(18),
                       ),
                     ),
+                    // onPressed: () async {
+                    //   try {
+                    //     log('current address is $selectedAddress');
+
+                    //     // Extract the pin code from the selected address
+                    //     final RegExp pinCodeRegex =
+                    //         RegExp(r'\b\d{6}\b'); // Matches a 6-digit number
+                    //     final match =
+                    //         pinCodeRegex.firstMatch(selectedAddress ?? '');
+                    //     final pinCode = match?.group(0); // Extracted pin code
+
+                    //     // List of serviceable pin codes (Hyderabad example)
+                    //     final List<String> serviceablePinCodes = [
+                    //       "500001", "500002",
+                    //       "500003", // Add all relevant Hyderabad pin codes
+                    //     ];
+
+                    //     if (pinCode == null ||
+                    //         !serviceablePinCodes.contains(pinCode)) {
+                    //       // Show a popup for unavailable service
+                    //       showDialog(
+                    //         context: context,
+                    //         builder: (context) => AlertDialog(
+                    //           title: Text("Service Unavailable"),
+                    //           content: Text(
+                    //             "Sorry, this service is not available at your location (Pin: $pinCode) at this moment. We are working on it!",
+                    //           ),
+                    //           actions: [
+                    //             TextButton(
+                    //               onPressed: () => Navigator.of(context)
+                    //                   .pop(), // Close dialog
+                    //               child: Text("OK"),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       );
+                    //     } else {
+                    //       // Proceed to payment if the pin code is valid
+                    //       onProceedToPayPressed();
+                    //     }
+
+                    //     // log('current address is ${selectedAddress}');
+                    //     // onProceedToPayPressed();
+
+                    //     // //   // _proceedToPayment(context);
+                    //     // // await paymentService.makeTestPayment(
+                    //     // //     "MT7850590068188104",
+                    //     // //     "MUID123",
+                    //     // //     10000,
+                    //     // //     "https://webhook.site/callback-url");
+                    //     // // } else {
+                    //     // //   Get.snackbar(
+                    //     // //       "Error", "Please confirm your booking first.");
+                    //     // // }
+                    //   } catch (e) {
+                    //     Get.snackbar("Error", "Failed to confirm booking: $e");
+                    //   }
+                    // },
                     onPressed: () async {
                       try {
+                        //   log('current address is $selectedAddress');
+                        //   if (!selectedAddress!
+                        //       .toLowerCase()
+                        //       .contains("hyderabad")) {
+                        //     showDialog(
+                        //       context: context,
+                        //       builder: (context) => AlertDialog(
+                        //         title: Text("Service Unavailable"),
+                        //         content: Text(
+                        //           "Sorry, this service is not available at your location at this moment. We are working on it!",
+                        //         ),
+                        //         actions: [
+                        //           TextButton(
+                        //             onPressed: () => Navigator.of(context)
+                        //                 .pop(), // Close dialog
+                        //             child: Text("OK"),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     );
+                        //   } else {
+                        // Proceed to payment if the address is within Hyderabad
                         onProceedToPayPressed();
-
-                        //   // _proceedToPayment(context);
-                        // await paymentService.makeTestPayment(
-                        //     "MT7850590068188104",
-                        //     "MUID123",
-                        //     10000,
-                        //     "https://webhook.site/callback-url");
-                        // } else {
-                        //   Get.snackbar(
-                        //       "Error", "Please confirm your booking first.");
                         // }
                       } catch (e) {
                         Get.snackbar("Error", "Failed to confirm booking: $e");
                       }
                     },
+
                     child: Text(
                       "Proceed to Pay",
                       style: TextStyle(
@@ -1102,8 +1173,8 @@ class _CartPageState extends State<CartPage> {
   void onProceedToPayPressed() async {
     try {
       final transactionId = bookingController.generateUniqueTransactionId();
-      int amount = (cartController.totalPayableAmount.value *
-          100).toInt(); // Razorpay accepts amount in paise
+      int amount = (cartController.totalPayableAmount.value * 100)
+          .toInt(); // Razorpay accepts amount in paise
       List<String> serviceIds = List<String>.from(
         cartController.cartItems.map((item) => item['serviceId']),
       );
@@ -1122,7 +1193,8 @@ class _CartPageState extends State<CartPage> {
       } else if (!hasServices ||
           bookingController.bookingStatus.value == 'confirmed') {
         var options = {
-          'key': 'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
+          'key':
+              'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
           'amount': amount, // Amount in paise
           'name': 'Wrenchmate',
           'description': 'Payment for Services',
@@ -1134,6 +1206,28 @@ class _CartPageState extends State<CartPage> {
             'wallets': ['paytm']
           }
         };
+
+        if (hasServices) {
+          if (!selectedAddress!.toLowerCase().contains("hyderabad")) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text("Service Unavailable"),
+                content: Text(
+                  "Sorry, this service is not available at your location at this moment. We are working on it!",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () =>
+                        Navigator.of(context).pop(), // Close dialog
+                    child: Text("OK"),
+                  ),
+                ],
+              ),
+            );
+            return;
+          }
+        }
 
         _razorpay.open(options);
       } else {

@@ -114,7 +114,7 @@ class AuthController extends GetxController {
       print("New address added to the list");
       return true; // Indicate success
     } catch (e) {
-      print("Failed to add address: $e");
+      print("Failed to add address from auth controller: $e");
       Get.snackbar("Error", "Failed to add address: ${e.toString()}");
       return false; // Indicate failure
     }

@@ -55,6 +55,7 @@ class _bottomnavigationState extends State<bottomnavigation> {
     final fabSize = screenWidth * 0.080;
     final fabPadding = screenHeight * 0.02;
     final fabTopPadding = screenHeight * 0.05;
+    // final iconSize = screenWidth * 0.045;
     final iconSize = screenWidth * 0.065;
 
     try {
@@ -68,7 +69,6 @@ class _bottomnavigationState extends State<bottomnavigation> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        
         backgroundColor: Colors.white,
         body: Stack(
           children: [

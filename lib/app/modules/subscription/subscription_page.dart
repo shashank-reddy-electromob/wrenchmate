@@ -49,30 +49,37 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   final monthlyPlans = [
     {
-      'title': 'Essential Need Pack',
+      // 'title': 'Essential Need Pack',
+      'title': 'Monthly Revive',
       'type': 'basic',
       'details': [
         {
-          'title': '-> 4 washes',
-          'description': '- Basic exterior cleaning to remove dust and dirt.',
+          'title': '4 washes',
+          'description':
+              '- Each wash features an exterior foam wash, basic interior vacuum, plastic trims polishing, and lavender-scented dashboard polish \n\n- Perfect for essential maintenance to keep your car looking and feeling great throughout the month',
         },
       ],
     },
     {
-      'title': 'Premium Need Pack',
+      // 'title': 'Premium Need Pack',
+      'title': 'Wrenchmate Wellness',
+
       'type': 'premium',
       'details': [
         {
-          'title': '-> 2 washes',
-          'description': '- Comprehensive exterior wash for a clean finish.',
+          'title': '3 washes',
+          'description':
+              '- Comprehensive exterior foam wash, basic interior vacuum, plastic trims polishing, and lavender-scented dashboard polish',
         },
         {
-          'title': '-> 1 hydrophobic',
-          'description': '- Water-repellent coating to protect your car.',
+          'title': '1 Wax Wash',
+          'description':
+              '- Adds a shiny, protective layer to your car’s exterior',
         },
         {
-          'title': '-> 1 wax',
-          'description': '- Adds shine and shields the paint from damage.',
+          'title': 'Hydrophobic Glass Coating (Front Glass)',
+          'description':
+              '- Long-lasting (6 months) coating that repels water and improves visibility during rains\n\n- Ideal for those seeking premium care and added protection for their vehicle.',
         },
       ],
     },
@@ -80,35 +87,44 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   final quarterlyPlans = [
     {
-      'title': 'Ultimate Wash Package',
+      // 'title': 'Deluxe Maintenance Pack',
+      'title': 'Wrenchmate Prime',
       'type': 'basic',
       'details': [
         {
-          'title': '-> 12 washes',
+          'title': '8 Car Washes',
           'description':
-              '- Regular washes to maintain your car\'s cleanliness.',
+              '- A total of 8 exterior washes with interior vacuuming to keep your car spotless throughout the quarter',
         },
       ],
     },
     {
-      'title': 'Deluxe Maintenance Pack',
+      // 'title': 'Ultimate Wash Package',
+      'title': 'Seasonal Spark',
       'type': 'premium',
       'details': [
         {
-          'title': '-> 6 washes',
-          'description': '- Regular cleaning to keep your car looking fresh.',
-        },
-        {
-          'title': '-> 1 scrubbing',
+          'title': '6 Car Washes',
           'description':
-              '- Detailed scrubbing for deep cleaning and spot removal.',
+              '- Regular exterior and interior cleaning to keep your car looking pristine',
         },
         {
-          'title': '-> 1 Wheel alignment',
-          'description': '- Ensure proper alignment for a smooth ride.',
+          'title': '2 Car Washes',
+          'description':
+              '- Provides an extra layer of protection, making your car’s paint shine and protecting against environmental elements'
         },
+        {
+          'title': '1 Hydrophobic Liquid Application to All Glass Surfaces:',
+          'description':
+              '- Improves visibility by making water bead off the glass, especially useful during rain, and reduces the need for frequent cleaning.'
+        },
+        {
+          'title': 'Wheel Alignment:',
+          'description':
+              "- Ensures proper alignment of your vehicle's wheels for improved handling, tire longevity, and overall safety"
+        }
       ],
-    },
+    }
   ];
 
   void _handlePageChange(int index) {

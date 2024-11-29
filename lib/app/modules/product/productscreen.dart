@@ -176,30 +176,59 @@ class _ProductScreenState extends State<ProductScreen> {
                           top: 35.0,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
-                            child: CachedNetworkImage(
-                              imageUrl: product.image,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                    backgroundColor: Colors
+                                        .transparent, // Makes the dialog background transparent
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: CachedNetworkImage(
+                                        imageUrl: product.image,
+                                        placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator(
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(
+                                          Icons.broken_image,
+                                          color: Colors.grey,
+                                          size: 50,
+                                        ),
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: CachedNetworkImage(
+                                imageUrl: product.image,
                                 width: 100,
                                 height: 100,
-                                color: Colors.grey.shade300,
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.blue,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  width: 100,
+                                  height: 100,
+                                  color: Colors.grey.shade300,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.blue,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                width: 100,
-                                height: 100,
-                                color: Colors.grey.shade300,
-                                child: Icon(
-                                  Icons.broken_image,
-                                  color: Colors.grey,
-                                  size: 40,
+                                errorWidget: (context, url, error) => Container(
+                                  width: 100,
+                                  height: 100,
+                                  color: Colors.grey.shade300,
+                                  child: Icon(
+                                    Icons.broken_image,
+                                    color: Colors.grey,
+                                    size: 40,
+                                  ),
                                 ),
                               ),
                             ),

@@ -529,6 +529,8 @@ class _SearchPageState extends State<SearchPage> {
                                         )))
                               ],
                             ))
+                          
+                          
                           : ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),

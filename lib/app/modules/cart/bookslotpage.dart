@@ -60,11 +60,17 @@ class _BookSlotState extends State<BookSlot> {
     String formattedTime = '${hours.toString().padLeft(2, '0')}:00';
     return formattedTime;
   }
+  late double _currentHour;
 
   @override
   void initState() {
     super.initState();
     print('init;');
+    final now = DateTime.now();
+    _currentHour = now.hour.toDouble(); // Set minimum time based on current hour
+
+    // Initialize the range slider values, starting at current hour and +1 hour
+    _rangeValues = SfRangeValues(_currentHour, _currentHour + 1.0);
     _scrollController.addListener(_scrollListener);
     cartController.fetchUserAddresses();
     cartController.fetchUserCurrentAddressIndex();
@@ -88,6 +94,13 @@ class _BookSlotState extends State<BookSlot> {
   void _updateCurrentAddress(int selectedAddressIndex) {
     authcontroller.updateCurrentAddress(selectedAddressIndex);
   }
+
+  //  String _formatTime(double value) {
+  //   final int hour = value.toInt();
+  //   final int minutes = ((value - hour) * 60).round();
+  //   final formattedTime = TimeOfDay(hour: hour, minute: minutes).format(context);
+  //   return formattedTime;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -337,7 +350,7 @@ class _BookSlotState extends State<BookSlot> {
                           tooltipBackgroundColor: Colors.blue,
                         ),
                         child: SfRangeSlider(
-                          min: 9.0,
+                          min: _currentHour,
                           max: 21.0,
                           values: _rangeValues,
                           interval: 1.0,
