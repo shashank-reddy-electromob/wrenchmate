@@ -208,7 +208,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 imageUrl: product.image,
                                 width: 100,
                                 height: 100,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fill,
                                 placeholder: (context, url) => Container(
                                   width: 100,
                                   height: 100,

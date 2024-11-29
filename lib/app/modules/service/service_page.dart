@@ -370,8 +370,12 @@ class _ServicePageState extends State<ServicePage> {
                                                             ExtendedImage
                                                                 .network(
                                                               service.image,
-                                                              fit: BoxFit
-                                                                  .fitWidth,
+                                                              fit: currService ==
+                                                                      'Repairs'
+                                                                  ? BoxFit
+                                                                      .contain
+                                                                  : BoxFit
+                                                                      .fitWidth,
                                                               cache: true,
                                                               width: MediaQuery.of(
                                                                           context)
