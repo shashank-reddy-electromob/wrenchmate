@@ -182,7 +182,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                   context: context,
                                   builder: (context) => Dialog(
                                     backgroundColor: Colors
-                                        .transparent, // Makes the dialog background transparent
+                                        .transparent,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16.0),
                                       child: CachedNetworkImage(
@@ -204,6 +204,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                   ),
                                 );
                               },
+                              
                               child: CachedNetworkImage(
                                 imageUrl: product.image,
                                 width: 100,

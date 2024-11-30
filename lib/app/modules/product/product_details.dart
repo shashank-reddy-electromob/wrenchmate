@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -107,14 +108,41 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     height: MediaQuery.of(context).size.height * 0.45,
                     width: MediaQuery.of(context).size.width,
                     child: Stack(children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: ExtendedImage.network(
-                          product.image,
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          fit: BoxFit.cover,
-                          cache: true,
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                      child: CachedNetworkImage(
+                                        imageUrl: product.image,
+                                        placeholder: (context, url) => Center(
+                                          child: CircularProgressIndicator(
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(
+                                          Icons.broken_image,
+                                          color: Colors.grey,
+                                          size: 50,
+                                        ),
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ));
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: ExtendedImage.network(
+                            product.image,
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            fit: BoxFit.contain,
+                            cache: true,
+                          ),
                         ),
                       ),
                       Positioned(
