@@ -146,6 +146,7 @@ class _BookingPageState extends State<BookingPage> {
                       bookings[bookingIndex]; // Access the booking
                   final booking =
                       Booking.fromMap(bookingMap); // Convert to Booking object
+                  log('status is: ${booking.status}');
                   return BookingTile(
                     service: service,
                     booking: booking,
@@ -267,8 +268,8 @@ class BookingTile extends StatelessWidget {
                             ],
                           ),
                           Container(
-                            // height: 40,
-                            // width: 100,
+                            height: 40,
+                            width: MediaQuery.of(context).size.width * 0.28,
                             decoration: BoxDecoration(
                               color: Color(0xffE9FFED),
                               borderRadius: BorderRadius.circular(7),
@@ -277,11 +278,13 @@ class BookingTile extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 10),
                               child: Text(
-                                "something",
+                                // "something",
+                                booking.order_id ?? 'Order_id',
                                 style: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.width *
                                             0.032),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             alignment: Alignment.center,

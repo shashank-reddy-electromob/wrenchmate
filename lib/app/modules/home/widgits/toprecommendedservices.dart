@@ -59,65 +59,79 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
         SizedBox(
           height: 8,
         ),
-        Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(AppRoutes.SERVICE_DETAIL,
-
-                    // arguments: wash_service
-                    arguments: {
-                      'service': wash_service,
-                      'currService': 'General Wash'
-                    });
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              child: ServiceCard(
-                serviceName: "General Wash",
-                price: "700",
-                rating: 4.9,
-                imagePath: 'assets/car/toprecommended1.png',
-                colors: [
-                  Color(0xff9DB3E5),
-                  Color(0xff3E31BF)
-                ], // Make sure you have an image in your assets
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: {
+                    'service': wash_service,
+                    'currService': 'General Wash'
+                  });
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+                child: ServiceCard(
+                  serviceName: "General Wash",
+                  price: "700",
+                  rating: 4.9,
+                  imagePath: 'assets/car/toprecommended1.png',
+                  colors: [Color(0xff9DB3E5), Color(0xff3E31BF)],
+                ),
               ),
-            ),
-            // GradientContainer(
-            //   width: MediaQuery.of(context).size.width/2-36,
-            //   height: 120,
-            //   colors: [Color(0xff9DB3E5), Color(0xff3E31BF)], // Define the gradient colors
-            //   child: Text(""),
-            // ),
-            GestureDetector(
-              onTap: () {
-                Get.toNamed(AppRoutes.SERVICE_DETAIL,
-                    // arguments:
-                    //  ceramic_service
-                    arguments: {
-                      'service': wash_service,
-                      'currService': 'General Wash'
-                    });
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              child: ServiceCard(
-                serviceName: "Ceramic Coating",
-                price: "14,000",
-                rating: 4.9,
-                imagePath: 'assets/car/toprecommended2.png',
-                colors: [Color(0xffFEA563), Color(0xffFF5F81)],
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: {
+                    'service': ceramic_service,
+                    'currService': 'Ceramic Coating'
+                  });
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+                child: ServiceCard(
+                  serviceName: "Ceramic Coating",
+                  price: "14,000",
+                  rating: 4.9,
+                  imagePath: 'assets/car/toprecommended2.png',
+                  colors: [Color(0xffFEA563), Color(0xffFF5F81)],
+                ),
               ),
-            ),
-            // GradientContainer(
-            //   width: MediaQuery.of(context).size.width / 2 - 36,
-            //   height: 120,
-            //   colors: [
-            //     Color(0xffFEA563),
-            //     Color(0xffFF5F81)
-            //   ], // Define the gradient colors
-            //   child: Text(""),
-            // ),
-          ],
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: {
+                    'service': wash_service,
+                    'currService': 'Plastic Trim Restorer'
+                  });
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+                child: ServiceCard(
+                  serviceName: "Plastic Trim Restorer",
+                  price: "1,400",
+                  rating: 4.7,
+                  imagePath: 'assets/car/toprecommended3.png',
+                  colors: [
+                    Color(0xff86E3CE),
+                    Color.fromARGB(255, 34, 162, 135)
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: {
+                    'service': ceramic_service,
+                    'currService': 'Glass Repellent'
+                  });
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+                child: ServiceCard(
+                  serviceName: "Glass Repellent",
+                  price: "1,400",
+                  rating: 4.8,
+                  imagePath: 'assets/car/toprecommended4.png',
+                  colors: [Color(0xffF3C5C5), Color.fromARGB(255, 181, 14, 14)],
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -180,7 +194,7 @@ class ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GradientContainer(
-      width: MediaQuery.of(context).size.width / 2 - 36,
+      width: MediaQuery.of(context).size.width / 2 - 28,
       height: MediaQuery.of(context).size.width * 0.35,
       colors: colors,
       child: Padding(

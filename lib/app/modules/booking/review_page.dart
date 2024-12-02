@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/data/models/booking_model.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/review%20widgets/deliveryReview.dart';
 
 import '../../controllers/service_controller.dart';
@@ -16,14 +17,27 @@ class reviewPage extends StatefulWidget {
 }
 
 class _reviewPageState extends State<reviewPage> {
-  final Servicefirebase services = Get.arguments;
-  final ServiceController serviceController = Get.find(); // Get the ServiceController instance
+  final Servicefirebase services = Get.arguments['service'];
+  final Booking booking = Get.arguments['booking'];
+
+  final ServiceController serviceController =
+      Get.find(); // Get the ServiceController instance
   TextEditingController _controller = TextEditingController();
+  TextEditingController _driverReviewcontroller = TextEditingController();
+
   int _rating = 0;
 
   void _setRating(int rating) {
     setState(() {
       _rating = rating;
+    });
+  }
+
+  int _driverRating = 0;
+
+  void _setDriverRating(int rating) {
+    setState(() {
+      _driverRating = rating;
     });
   }
 
@@ -35,6 +49,17 @@ class _reviewPageState extends State<reviewPage> {
         size: 28,
       ),
       onPressed: () => _setRating(index + 1),
+    );
+  }
+
+  Widget _buildDriverStar(int index) {
+    return IconButton(
+      icon: Icon(
+        index < _driverRating ? Icons.star_rounded : Icons.star_border_rounded,
+        color: Color(0xff1671D8),
+        size: 28,
+      ),
+      onPressed: () => _setDriverRating(index + 1),
     );
   }
 
@@ -67,6 +92,17 @@ class _reviewPageState extends State<reviewPage> {
     }
   }
 
+  void submitDriverReview(String review, double rating) {
+    if (review.isNotEmpty && rating > 0) {
+      serviceController.addDriverReview(
+        FirebaseAuth.instance.currentUser!.uid,
+        review,
+        booking.assignedDriverPhone ?? '',
+        booking.assignedDriverName ?? '',
+        rating,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +116,7 @@ class _reviewPageState extends State<reviewPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 40,
+                height: 20,
               ),
               //appbar
               Row(
@@ -131,16 +167,19 @@ class _reviewPageState extends State<reviewPage> {
                   ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24.0,horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 24.0, horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '${_getRatingText()} Service',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Row(
-                        children: List.generate(5, (index) => _buildStar(index)),
+                        children:
+                            List.generate(5, (index) => _buildStar(index)),
                       ),
                       SizedBox(height: 8.0),
                       TextField(
@@ -159,13 +198,16 @@ class _reviewPageState extends State<reviewPage> {
                             fontSize: 18.0, // Hint text font size
                           ),
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey,width: 0.3),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 0.3),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey,width: 0.3),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 0.3),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey,width: 0.3),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 0.3),
                           ),
                         ),
                       ),
@@ -177,14 +219,102 @@ class _reviewPageState extends State<reviewPage> {
               SizedBox(
                 height: 32,
               ),
-              deliveryReview(),
+              // deliveryReview(),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 5,
+                      blurRadius: 15,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 24.0, horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        child: Row(
+                          children: [
+                            ClipOval(
+                              child: Image.asset(
+                                'assets/images/weekend.png',
+                                fit: BoxFit.cover,
+                                height: 65.0,
+                                width: 65.0,
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "   ${booking.assignedDriverName}",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Row(
+                                  children: List.generate(
+                                      5, (index) => _buildDriverStar(index)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      TextField(
+                        controller: _driverReviewcontroller,
+                        maxLines: null,
+                        minLines: 4,
+                        keyboardType: TextInputType.multiline,
+                        style: const TextStyle(
+                          color: Colors.grey, // Text color
+                          fontSize: 18.0, // Text font size
+                        ),
+                        decoration: const InputDecoration(
+                          hintText: 'Write your thoughts',
+                          hintStyle: TextStyle(
+                            color: Colors.grey, // Hint text color
+                            fontSize: 18.0, // Hint text font size
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 0.3),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 0.3),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 0.3),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 32,
+              ),
               SizedBox(
                 height: 32,
               ),
               BlueButton(
                 text: 'SUBMIT REVIEW',
                 onTap: () {
-                  _printServiceReview(_controller.text,_rating.toDouble()); // Print the review text
+                  _printServiceReview(_controller.text, _rating.toDouble());
+                  submitDriverReview(_driverReviewcontroller.text,
+                      _driverRating.toDouble()); // Print the review text
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
@@ -193,6 +323,9 @@ class _reviewPageState extends State<reviewPage> {
                     },
                   );
                 },
+              ),
+              SizedBox(
+                height: 20,
               )
             ],
           ),

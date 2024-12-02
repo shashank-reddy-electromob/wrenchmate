@@ -14,12 +14,14 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wrenchmate_user_app/app/controllers/productcontroller.dart';
 import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
 import 'package:wrenchmate_user_app/app/data/models/product_model.dart';
+import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/bookslotpage.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/api/paymemtapi.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/containerButton.dart';
 import 'package:wrenchmate_user_app/app/modules/cart/widgets/pricing.dart';
 import 'package:wrenchmate_user_app/globalVariables.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
+import 'package:wrenchmate_user_app/utils/order_api.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/service_controller.dart';
@@ -344,10 +346,10 @@ class _CartPageState extends State<CartPage> {
 
                                           if (cartController
                                               .cartItems.isEmpty) {
-                                            Get.toNamed(AppRoutes.BOTTOMNAV,
-                                                arguments: {
-                                                  'tracking_button': false,
-                                                });
+                                            // Get.toNamed(AppRoutes.BOTTOMNAV,
+                                            //     arguments: {
+                                            //       'tracking_button': false,
+                                            //     });
                                           } else {
                                             calculateTotal();
                                           }
@@ -1170,11 +1172,18 @@ class _CartPageState extends State<CartPage> {
   //   return base64Body;
   // }
 
+  _getOrderId(String txnId, String amount) async {
+    print('call start here');
+  }
+
   void onProceedToPayPressed() async {
     try {
       final transactionId = bookingController.generateUniqueTransactionId();
+
       int amount = (cartController.totalPayableAmount.value * 100)
           .toInt(); // Razorpay accepts amount in paise
+      String OrderId = await OrderAPI.generateOrderID(amount);
+      
       List<String> serviceIds = List<String>.from(
         cartController.cartItems.map((item) => item['serviceId']),
       );
@@ -1195,7 +1204,9 @@ class _CartPageState extends State<CartPage> {
         var options = {
           'key':
               'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
+          // 'key': 'rzp_test_IKSbnD4HWUbUum',
           'amount': amount, // Amount in paise
+          'order_id':OrderId,
           'name': 'Wrenchmate',
           'description': 'Payment for Services',
           'prefill': {
@@ -1243,6 +1254,7 @@ class _CartPageState extends State<CartPage> {
     print("Payment Success: ${response.paymentId}");
 
     try {
+      String orderId = response.orderId ?? '';
       List<String> serviceIds = List<String>.from(
         cartController.cartItems.map((item) => item['serviceId']),
       );
@@ -1261,6 +1273,8 @@ class _CartPageState extends State<CartPage> {
           selectedAddress!,
           selectedDate,
           selectedTimeRange,
+          orderId
+          
         );
       }
 
@@ -1286,12 +1300,19 @@ class _CartPageState extends State<CartPage> {
 
       await cartController.clearCart();
       cartController.totalAmount.value = 0;
-
+      cartController.fetchCartItems();
       Get.back();
+
       await Future.delayed(Duration(milliseconds: 50), () async {
-        await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-          'tracking_button': true,
-        });
+        // await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+        //   'tracking_button': true,
+        // });
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => bottomnavigation(
+                    // tracking_button: true,
+                    )));
       });
     } catch (e) {
       Get.snackbar("Error", "Failed to save booking: $e");

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/payment_details.dart';
 import 'package:wrenchmate_user_app/app/modules/booking/widgets/timelineTile.dart';
 import 'package:wrenchmate_user_app/app/widgets/custombackbutton.dart';
@@ -23,6 +24,9 @@ class BookingDetailPage extends StatefulWidget {
 class _BookingDetailPageState extends State<BookingDetailPage> {
   late Servicefirebase service;
   late Booking booking;
+  CartController cartController = Get.put(CartController());
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
@@ -136,12 +140,13 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Get.toNamed(AppRoutes.REVIEW,
-                                          arguments: service);
+                                          arguments: {'service':service, 'booking':booking});
                                     },
                                     child: Text(
                                       'WRITE A REVIEW',
-                                      style:
-                                          TextStyle(color: Color(0xff1671D8)),
+                                      style: TextStyle(
+                                          color: Color(0xff1671D8),
+                                          fontSize: 13),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
@@ -160,10 +165,19 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                   margin: EdgeInsets.symmetric(horizontal: 8.0),
                                   height: 60,
                                   child: ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      await cartController.addToCartSnackbar(
+                                        context,
+                                        cartController,
+                                        service,
+                                        scaffoldMessengerKey,
+                                      );
+                                      Get.toNamed(AppRoutes.CART);
+                                    },
                                     child: Text(
                                       'BOOK AGAIN',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13),
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Color(0xff1671D8),

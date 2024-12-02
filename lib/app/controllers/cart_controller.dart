@@ -398,7 +398,7 @@ class CartController extends GetxController {
     }
   }
 
-  void addToCartSnackbar(
+  Future<void> addToCartSnackbar(
     BuildContext context,
     CartController cartController,
     Servicefirebase service,

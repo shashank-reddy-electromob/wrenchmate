@@ -130,7 +130,7 @@ class ServiceController extends GetxController {
 
         if (!users.any((user) => user.userEmail == userData['User_email'])) {
           users.add(User(
-            userAddress: userData['User_address'] ?? '',
+            userAddress: userData['User_address'][0] ?? '',
             userEmail: userData['User_email'] ?? '',
             userName: userData['User_name'] ?? '',
             userNumber: List<int>.from(userData['User_number'].map((num) {
@@ -245,6 +245,24 @@ class ServiceController extends GetxController {
     }
   }
 
+    Future<void> addDriverReview(
+      String userId, String message,String phone, String name, double rating) async {
+    try {
+      // Create a new review document
+      await FirebaseFirestore.instance.collection('DriverReview').add({
+        'userId': userId,
+        'phone':phone,
+        'name':name,
+        'message': message,
+        'rating': rating,
+      });
+      print("Review added successfully.");
+    } catch (e) {
+      print("Error adding review: $e");
+      // Handle error appropriately (e.g., show a message to the user)
+    }
+  }
+
   Future<void> fetchServicesForUser(
       String category, List<String> userCarDetails) async {
     try {
@@ -258,11 +276,42 @@ class ServiceController extends GetxController {
       filteredServices.clear();
       services.clear();
       // Fetch services
-      services.value = querySnapshot.docs.map((doc) {
+      // services.value = querySnapshot.docs.map((doc) {
+      //   var data = doc.data() as Map<String, dynamic>;
+      //   // final temp = Servicefirebase.fromMap(data, doc.id);
+      //   // print(temp);
+      //   // print(data.toString());
+      //   return Servicefirebase(
+      //     id: doc.id,
+      //     category: data['category'] ?? '',
+      //     description: data['description'] ?? '',
+      //     discount: data['discount'] ?? 0,
+      //     name: data['name'] ?? '',
+      //     image: data['image'] ?? '',
+      //     price: (data['price'] is int)
+      //         ? (data['price'] as int).toDouble()
+      //         : data['price']?.toDouble() ?? 0.0,
+      //     time: data['time'].toString() ?? '',
+      //     warranty: data['warranty'] ?? '',
+      //     averageReview: data['averageReview']?.toDouble() ?? 0.0,
+      //     numberOfReviews: data['numberOfReviews'] ?? 0,
+      //     carmodel: List<String>.from(data['carmodel'] ?? []),
+      //   );
+      // }).where((service) {
+      //   // Filter services based on user's car models
+      //   return service.carmodel.any((model) {
+      //     return userCarDetails.any((carDetail) {
+      //       return carDetail.split(';')[0] == model;
+      //     });
+      //   });
+      // }).toList();
+
+      List<Servicefirebase> allServices = querySnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
-        // final temp = Servicefirebase.fromMap(data, doc.id);
-        // print(temp);
-        // print(data.toString());
+
+        // print(
+        //     "Service Data for ${doc.id}: $data"); // Debug: log each service data
+
         return Servicefirebase(
           id: doc.id,
           category: data['category'] ?? '',
@@ -279,14 +328,44 @@ class ServiceController extends GetxController {
           numberOfReviews: data['numberOfReviews'] ?? 0,
           carmodel: List<String>.from(data['carmodel'] ?? []),
         );
-      }).where((service) {
-        // Filter services based on user's car models
-        return service.carmodel.any((model) {
-          return userCarDetails.any((carDetail) {
-            return carDetail.split(';')[0] == model;
-          });
-        });
       }).toList();
+
+      List<Servicefirebase> filteredServicesList = allServices.where((service) {
+        // print("Checking service: ${service.name}");
+        // print(
+        //     "Service car models: ${service.carmodel}"); // Debug: What are the car models for this service?
+
+        // Extract only the car models from userCarDetails for comparison
+        List<String> userCarModels = userCarDetails.map((carDetail) {
+          String carModel =
+              carDetail.split(';')[0]; // Extract the car model part
+          // print(
+          //     "Extracted user car model: $carModel"); // Debug: Ensure car models are correctly extracted
+          return carModel;
+        }).toList();
+
+        // print("User Car Models for comparison: $userCarModels");
+
+        // Check if service matches any user car model
+        bool matches = service.carmodel.any((serviceModel) {
+          // print(
+          //     "Comparing service model: $serviceModel with user models: $userCarModels"); // Debug
+          if (userCarModels.contains(serviceModel)) {
+            // print("Match found: $serviceModel matches with $userCarModels");
+            return true;
+          }
+          return false;
+        });
+
+        // if (!matches) {
+        //   print("Service '${service.name}' does not match any user car model.");
+        // }
+        return matches;
+      }).toList();
+
+      services.value = filteredServicesList;
+
+      print("Filtered services count: ${filteredServicesList.length}");
 
       filteredServices.value = List.from(services);
     } catch (e) {

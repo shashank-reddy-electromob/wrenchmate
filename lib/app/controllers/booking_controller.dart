@@ -18,16 +18,19 @@ class BookingController extends GetxController {
   RxList<Map<String, dynamic>> subscriptionDetailsList =
       <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> benefitsList = <Map<String, dynamic>>[].obs;
+  var driverRating = 0.0.obs;
 
   String? _lastTransactionId;
-  
+
   String generateUniqueTransactionId() {
     // Format: TX_YYYYMMDD_HHMMSS_RANDOM
     final now = DateTime.now();
-    final dateStr = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
-    final timeStr = "${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}";
+    final dateStr =
+        "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
+    final timeStr =
+        "${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}${now.second.toString().padLeft(2, '0')}";
     final random = Random().nextInt(9999).toString().padLeft(4, '0');
-    
+
     _lastTransactionId = "TX_${dateStr}_${timeStr}_$random";
     return _lastTransactionId!;
   }
@@ -112,19 +115,19 @@ class BookingController extends GetxController {
   }
 
   Future<void> addBooking(
-    List<String> serviceIds,
-    String status,
-    DateTime confirmationDate,
-    DateTime? outForServiceDate,
-    DateTime? completedDate,
-    String confirmationNote,
-    String outForServiceNote,
-    String completedNote,
-    String currentCar,
-    String address,
-    DateTime? selectedDate,
-    SfRangeValues? selectedTimeRange,
-  ) async {
+      List<String> serviceIds,
+      String status,
+      DateTime confirmationDate,
+      DateTime? outForServiceDate,
+      DateTime? completedDate,
+      String confirmationNote,
+      String outForServiceNote,
+      String completedNote,
+      String currentCar,
+      String address,
+      DateTime? selectedDate,
+      SfRangeValues? selectedTimeRange,
+      String? order_id) async {
     try {
       await _firestore.collection('Booking').add({
         'user_id': userId,
@@ -139,6 +142,7 @@ class BookingController extends GetxController {
         'car_details': currentCar,
         'address': address,
         'selected_date': selectedDate?.toIso8601String(),
+        'order_id': order_id,
         'selected_time_range': selectedTimeRange != null
             ? {
                 'start': selectedTimeRange.start,
@@ -299,11 +303,32 @@ class BookingController extends GetxController {
         }
       }
 
-      print(' booking is: ${bookings}');
       BookingList.assignAll(bookings);
+      await fetchDriverReview(BookingList[0]['assignedDriverPhone'] ?? '');
       return bookings;
     } catch (e) {
       throw Exception("Failed to fetch bookings: $e");
+    }
+  }
+
+  Future<void> fetchDriverReview(String driverPhone) async {
+    try {
+      driverRating.value = 0;
+      QuerySnapshot snapshot = await _firestore
+          .collection('DriverReview')
+          .where('phone', isEqualTo: driverPhone)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        // Assuming the field storing the rating is called 'rating'
+        print(snapshot.docs);
+        driverRating.value = snapshot.docs.first['rating'] ?? 0.0;
+        print('Driver Rating: $driverRating');
+      } else {
+        print('No reviews found for the driver with phone: $driverPhone');
+      }
+    } catch (e) {
+      print('Error fetching driver review: $e');
     }
   }
 

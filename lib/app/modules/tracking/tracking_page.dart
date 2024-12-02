@@ -63,6 +63,8 @@ class _TrackingPageState extends State<TrackingPage> {
     }
   }
 
+
+
   void fetchCarDetails() async {
     userCars = await carController.fetchUserCarDetails();
     carType = userCars[userCurrentCarIndex]['car_type'];
@@ -268,7 +270,7 @@ class _TrackingPageState extends State<TrackingPage> {
                                           color: Colors.yellow, size: 20),
                                       SizedBox(width: 5),
                                       Text(
-                                        driverRating.toString(),
+                                        bookingController.driverRating.value.toString(),
                                         style: AppTextStyle.boldRaleway15
                                             .copyWith(color: primaryColor),
                                       ),

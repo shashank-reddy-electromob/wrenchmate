@@ -68,6 +68,7 @@ class _ServicePageState extends State<ServicePage> {
 
       if (userCars.isNotEmpty) {
         carType = userCars[userCurrentCarIndex]['car_type'];
+        log('car type is: ${carType}');
         if (carType == "Sedan") {
           carTypeImage = "sedan";
         } else if (carType == "Hatchback") {
@@ -106,9 +107,10 @@ class _ServicePageState extends State<ServicePage> {
 
     authController.getUserCarDetails().then((userCarDetails) {
       String userCar = userCarDetails[userCurrentCarIndex];
-      print(userCar);
-      List<String> list = (userCar.split(",")).cast<String>().toList();
 
+      print('user car is : ${userCar}');
+      List<String> list = (userCar.split(",")).cast<String>().toList();
+      log('list is ${list}');
       serviceController.fetchServicesForUser(currService, list).then((_) {
         setState(() {
           addToCartStates =

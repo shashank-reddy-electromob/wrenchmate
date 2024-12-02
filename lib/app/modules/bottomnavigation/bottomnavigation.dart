@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:draggable_fab/draggable_fab.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +14,7 @@ import '../subscription/subscription_page.dart';
 import '../support/support_page.dart';
 
 class bottomnavigation extends StatefulWidget {
-  const bottomnavigation({super.key});
+  bottomnavigation({super.key});
 
   @override
   State<bottomnavigation> createState() => _bottomnavigationState();
@@ -34,6 +38,34 @@ class _bottomnavigationState extends State<bottomnavigation> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _checkForBooking();
+  }
+
+  Future<void> _checkForBooking() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      final bookingSnapshot = await FirebaseFirestore.instance
+          .collection('Booking')
+          .where('user_id', isEqualTo: userId)
+          .get();
+
+      final filteredBookings = bookingSnapshot.docs.where((doc) {
+        return doc['status'] != 'completed';
+      }).toList();
+
+      if (filteredBookings.isNotEmpty) {
+        setState(() {
+          tracking_button = true;
+        });
+      }
+    } catch (e) {
+      print("Error fetching bookings: $e");
+    }
+  }
+
   Future<bool> _onWillPop() async {
     if (_selectedIndex != 0) {
       setState(() {
@@ -50,22 +82,12 @@ class _bottomnavigationState extends State<bottomnavigation> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
     final bottomNavHeight = screenHeight * 0.085;
     final fabSize = screenWidth * 0.080;
     final fabPadding = screenHeight * 0.02;
     final fabTopPadding = screenHeight * 0.05;
     // final iconSize = screenWidth * 0.045;
     final iconSize = screenWidth * 0.065;
-
-    try {
-      final tracking_button_ = Get.arguments['tracking_button'];
-      setState(() {
-        tracking_button = tracking_button_;
-      });
-    } catch (exception) {
-      print("Error!!!");
-    }
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
