@@ -30,6 +30,36 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
       numberOfReviews: 3,
       carmodel: ['SUV', 'Compact SUV']);
 
+  Servicefirebase plastic_trim_service = new Servicefirebase(
+      id: "dq6joq3HSFf7EPcGR9De",
+      category: "Detailing",
+      description:
+          "A plastic trim restorer brings back the original color and shine of faded plastic and rubber trims on your car, making them look new while protecting them from future fading or cracking",
+      discount: 0,
+      name: "Plastic Trim Restorer",
+      image: "https://firebasestorage.googleapis.com/v0/b/user-app-6aaf1.appspot.com/o/Services%2Fplastictrimrestorer.jpg?alt=media&token=d5db623f-04db-4a4b-badc-dcb8e870babc",
+      price: 1800,
+      time: "1",
+      warranty: "",
+      averageReview: 4,
+      numberOfReviews: 3,
+      carmodel: ['SUV', 'Compact SUV', 'Hactchback']);
+
+  Servicefirebase glass_repellent_service = new Servicefirebase(
+      id: "zHWXW60AV3GTx6fh5QiT",
+      category: "Detailing",
+      description:
+          "A glass repellent keeps your windshield and windows clear by making water slide off quickly, improving visibility in rain and making it easier to clean dirt and grime.",
+      discount: 0,
+      name: "Glass Repellent",
+      image: "https://firebasestorage.googleapis.com/v0/b/user-app-6aaf1.appspot.com/o/Services%2Fglassrepellent.jpg?alt=media&token=68d995d8-24bb-4bec-a019-9d432ca770bf",
+      price: 1500,
+      time: "1",
+      warranty: "",
+      averageReview: 4,
+      numberOfReviews: 3,
+      carmodel: ['SUV', 'Compact SUV', 'Hactchback']);
+
   Servicefirebase ceramic_service = new Servicefirebase(
       id: "1Jnv4P0Klgx87esxlEbM",
       category: "Detailing",
@@ -98,7 +128,7 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
               GestureDetector(
                 onTap: () {
                   Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: {
-                    'service': wash_service,
+                    'service': plastic_trim_service,
                     'currService': 'Plastic Trim Restorer'
                   });
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -117,7 +147,7 @@ class _toprecommendedservicesState extends State<toprecommendedservices> {
               GestureDetector(
                 onTap: () {
                   Get.toNamed(AppRoutes.SERVICE_DETAIL, arguments: {
-                    'service': ceramic_service,
+                    'service': glass_repellent_service,
                     'currService': 'Glass Repellent'
                   });
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -194,8 +224,8 @@ class ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GradientContainer(
-      width: MediaQuery.of(context).size.width / 2 - 28,
-      height: MediaQuery.of(context).size.width * 0.35,
+      width: MediaQuery.of(context).size.width / 2 - 16,
+      height: MediaQuery.of(context).size.width * 0.32,
       colors: colors,
       child: Padding(
         padding: const EdgeInsets.all(8.0),

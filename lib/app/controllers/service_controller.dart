@@ -245,14 +245,14 @@ class ServiceController extends GetxController {
     }
   }
 
-    Future<void> addDriverReview(
-      String userId, String message,String phone, String name, double rating) async {
+  Future<void> addDriverReview(String userId, String message, String phone,
+      String name, double rating) async {
     try {
       // Create a new review document
       await FirebaseFirestore.instance.collection('DriverReview').add({
         'userId': userId,
-        'phone':phone,
-        'name':name,
+        'phone': phone,
+        'name': name,
         'message': message,
         'rating': rating,
       });
@@ -309,8 +309,7 @@ class ServiceController extends GetxController {
       List<Servicefirebase> allServices = querySnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
 
-        // print(
-        //     "Service Data for ${doc.id}: $data"); // Debug: log each service data
+        // print("Service Data for ${doc.id}:"); // Debug: log each service data
 
         return Servicefirebase(
           id: doc.id,
