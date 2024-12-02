@@ -109,7 +109,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               '- Regular exterior and interior cleaning to keep your car looking pristine',
         },
         {
-          'title': '2 Car Washes',
+          'title': '1 Wax Washes',
           'description':
               '- Provides an extra layer of protection, making your car’s paint shine and protecting against environmental elements'
         },
@@ -631,13 +631,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.26,
-                  child: OffersSlidersSub(),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+              //   child: Container(
+              //     height: MediaQuery.of(context).size.height * 0.26,
+              //     child: OffersSlidersSub(),
+              //   ),
+              // ),
               SizedBox(
                 height: 32,
               )
