@@ -79,7 +79,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': 'Hydrophobic Glass Coating (Front Glass)',
           'description':
-              '- Long-lasting (6 months) coating that repels water and improves visibility during rains\n\n- Ideal for those seeking premium care and added protection for their vehicle.',
+              '- 6 Months warranty \n- Long-lasting (6 months) coating that repels water and improves visibility during rains\n- Ideal for those seeking premium care and added protection for their vehicle.',
         },
       ],
     },
@@ -116,7 +116,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': '1 Hydrophobic Liquid Application to All Glass Surfaces:',
           'description':
-              '- Improves visibility by making water bead off the glass, especially useful during rain, and reduces the need for frequent cleaning.'
+              '- 6 Months warranty \n- Improves visibility by making water bead off the glass, especially useful during rain, and reduces the need for frequent cleaning.'
         },
         {
           'title': 'Wheel Alignment:',

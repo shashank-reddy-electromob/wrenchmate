@@ -63,8 +63,6 @@ class _TrackingPageState extends State<TrackingPage> {
     }
   }
 
-
-
   void fetchCarDetails() async {
     userCars = await carController.fetchUserCarDetails();
     carType = userCars[userCurrentCarIndex]['car_type'];

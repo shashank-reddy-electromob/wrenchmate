@@ -1364,9 +1364,7 @@ class _CartPageState extends State<CartPage> {
             result = "Flow complete - status : SUCCESS";
 
             await cartController.clearCart();
-            await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-              'tracking_button': true,
-            });
+            await Get.toNamed(AppRoutes.BOTTOMNAV);
           } else {
             result = "Flow complete - status : $status and error $error";
           }

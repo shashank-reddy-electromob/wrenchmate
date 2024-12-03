@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:get/get.dart';
 
@@ -81,6 +82,8 @@ class _CarDetailsState extends State<CarDetails> {
           ? DateFormat('dd/MM/yyyy').parse(pucExpDateController.text)
           : null,
     );
+      // Navigator.push(context, MaterialPageRoute(builder: (context)=>bottomnavigation()));
+
   }
 
   Future<void> _selectYear(

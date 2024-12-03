@@ -88,6 +88,15 @@ class _bottomnavigationState extends State<bottomnavigation> {
     final fabTopPadding = screenHeight * 0.05;
     // final iconSize = screenWidth * 0.045;
     final iconSize = screenWidth * 0.065;
+    try{
+      final tracking_button_ = Get.arguments['tracking_button'];
+      setState(() {
+        tracking_button = tracking_button_;
+      });
+    }
+    catch (exception) {
+      print("Error!!!");
+    }
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(

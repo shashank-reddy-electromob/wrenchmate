@@ -309,7 +309,7 @@ class ServiceController extends GetxController {
       List<Servicefirebase> allServices = querySnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
 
-        // print("Service Data for ${doc.id}:"); // Debug: log each service data
+        print("Raw Data for ${doc.id}: ${data}");
 
         return Servicefirebase(
           id: doc.id,

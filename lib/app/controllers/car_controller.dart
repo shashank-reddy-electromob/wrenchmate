@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -76,9 +77,7 @@ class CarController extends GetxController {
 
       print("Car added successfully.");
 
-      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-        'tracking_button': false,
-      });
+      Get.toNamed(AppRoutes.BOTTOMNAV);
     } catch (e) {
       print("Error adding car: $e");
     }
@@ -204,9 +203,7 @@ class CarController extends GetxController {
 
       print("Image URLs added successfully.");
 
-      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-        'tracking_button': false,
-      });
+      Get.toNamed(AppRoutes.BOTTOMNAV);
     } catch (e) {
       print("Error adding image URLs: $e");
     }
@@ -265,9 +262,7 @@ class CarController extends GetxController {
 
         print("Image URL deleted successfully from Firestore");
 
-        Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-          'tracking_button': false,
-        });
+        Get.toNamed(AppRoutes.BOTTOMNAV);
       } else {
         print("Document does not exist");
       }
@@ -316,9 +311,7 @@ class CarController extends GetxController {
 
       print("Car updated successfully.");
 
-      Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-        'tracking_button': false,
-      });
+      Get.toNamed(AppRoutes.BOTTOMNAV);
     } catch (e) {
       print("Error updating car: $e");
     }

@@ -47,9 +47,10 @@ class AuthController extends GetxController {
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER);
       } else {
-        Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-          'tracking_button': false,
-        });
+        // Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+        //   'tracking_button': false,
+        // });
+        Get.toNamed(AppRoutes.BOTTOMNAV);
       }
     } catch (e) {
       print("Auto sign-in failed: $e");
@@ -176,9 +177,10 @@ class AuthController extends GetxController {
           if (!userDoc.exists) {
             Get.toNamed(AppRoutes.REGISTER);
           } else {
-            Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-              'tracking_button': false,
-            });
+            // Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+            //   'tracking_button': false,
+            // });
+            Get.toNamed(AppRoutes.BOTTOMNAV);
           }
         } catch (firestoreError) {
           Get.snackbar("Error",
@@ -258,7 +260,11 @@ class AuthController extends GetxController {
       print('apple user name is ${appleUserName}');
 
       if (isNewUser == true) {
-        Get.toNamed(AppRoutes.REGISTER, arguments: {'fullname':'${userName}','phone':user?.phoneNumber?? '', 'email':'${userEmail}'});
+        Get.toNamed(AppRoutes.REGISTER, arguments: {
+          'fullname': '${userName}',
+          'phone': user?.phoneNumber ?? '',
+          'email': '${userEmail}'
+        });
       } else {
         Get.toNamed(AppRoutes.BOTTOMNAV);
       }

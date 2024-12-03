@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:wrenchmate_user_app/app/modules/bottomnavigation/bottomnavigation.dart';
 import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 import 'package:get/get.dart';
 
@@ -106,6 +107,8 @@ class _CarDetailsState extends State<CarEdit> {
           ? DateFormat('dd/MM/yyyy').parse(pucExpDateController.text)
           : null,
     );
+      // Navigator.push(context, MaterialPageRoute(builder: (context)=>bottomnavigation()));
+
   }
 
   @override
