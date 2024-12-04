@@ -47,10 +47,10 @@ class AuthController extends GetxController {
       if (isNewUser) {
         Get.toNamed(AppRoutes.REGISTER);
       } else {
-        // Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-        //   'tracking_button': false,
-        // });
-        Get.toNamed(AppRoutes.BOTTOMNAV);
+        Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+          'tracking_button': false,
+        });
+        // Get.toNamed(AppRoutes.BOTTOMNAV);
       }
     } catch (e) {
       print("Auto sign-in failed: $e");
@@ -177,10 +177,10 @@ class AuthController extends GetxController {
           if (!userDoc.exists) {
             Get.toNamed(AppRoutes.REGISTER);
           } else {
-            // Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
-            //   'tracking_button': false,
-            // });
-            Get.toNamed(AppRoutes.BOTTOMNAV);
+            Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
+              'tracking_button': false,
+            });
+            // Get.toNamed(AppRoutes.BOTTOMNAV);
           }
         } catch (firestoreError) {
           Get.snackbar("Error",
