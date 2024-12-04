@@ -54,14 +54,26 @@ class _ChatScreenState extends State<ChatScreen> {
       DocumentSnapshot chatDoc =
           await _firestore.collection('chats').doc(userID).get();
       bool isAdminInChat = false;
-
+      bool hasUnreadMessages = false;
       if (chatDoc.exists) {
         isAdminInChat = chatDoc.get('isAdminInChat') ?? false;
+        hasUnreadMessages = chatDoc.get('hasUnreadMessages') ?? false;
       }
 
       if (!isAdminInChat) {
         cc.sendNotification(controller);
       }
+
+      Map<String, dynamic> chatUpdate = {'hasUnreadMessages': false};
+
+      if (!isAdminInChat && !hasUnreadMessages) {
+        chatUpdate['hasUnreadMessages'] = true;
+      }
+
+      await _firestore
+          .collection('chats')
+          .doc(userID)
+          .set(chatUpdate, SetOptions(merge: true));
 
       await _firestore
           .collection('chats')
