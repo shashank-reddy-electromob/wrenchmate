@@ -19,12 +19,12 @@ class ChatController extends GetxController {
     try {
       DocumentSnapshot userDoc = await _firestore
           .collection('Admin')
-          .doc('7cBWtr3synaTWCwIOmVfqbtlXpx1')
+          .doc('ocOz6HW5cfRKSzQNOQ0jOjP8ybA2')
           .get();
       if (userDoc.exists) {
         DocumentSnapshot adminSnapshot = await FirebaseFirestore.instance
             .collection('Admin')
-            .doc('7cBWtr3synaTWCwIOmVfqbtlXpx1')
+            .doc('ocOz6HW5cfRKSzQNOQ0jOjP8ybA2')
             .get();
         String? fcmToken = adminSnapshot['fcmToken'];
 
@@ -139,7 +139,7 @@ class ChatController extends GetxController {
           'imageUrl': null,
           'isSentByMe': true,
           'timestamp': FieldValue.serverTimestamp(),
-          'isUploading': true, 
+          'isUploading': true,
         });
 
         // Upload the image to Firebase Storage
@@ -167,9 +167,9 @@ class ChatController extends GetxController {
         //   'timestamp': FieldValue.serverTimestamp(),
         // });
         await tempMessageRef.update({
-        'imageUrl': downloadUrl,
-        'isUploading': false, // Upload completed
-      });
+          'imageUrl': downloadUrl,
+          'isUploading': false, // Upload completed
+        });
       } else {
         log('No image selected.');
       }
