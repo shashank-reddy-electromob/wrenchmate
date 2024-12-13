@@ -83,6 +83,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   googleapis_auth: ^1.6.0
   razorpay_flutter: ^1.3.7
+  upgrader: ^11.3.1
   
   # geolocator: ^12.0.0
   # geocoding: ^3.0.0
@@ -122,7 +123,7 @@ flutter:
     - assets/services/accessories/
     - assets/tracking/
     - assets/json/M22JKU8ER0YL4_1.json
-    - assets/json/user-app-private-key.json
+#    - assets/json/user-app-private-key.json
 
   fonts:
     - family: Poppins

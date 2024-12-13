@@ -53,6 +53,6 @@ class Product {
     if (index != -1 && index < pricesAvailable.length) {
       return double.tryParse(pricesAvailable[index]) ?? 0.0;
     }
-    return 0.0;
+    return double.tryParse(pricesAvailable[0]) ?? 0.0;
   }
 }
