@@ -235,8 +235,18 @@ class _CartPageState extends State<CartPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(product.productName,
-                                          style: AppTextStyle.mediumRaleway12),
+                                      Container(
+                                        width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                            0.4, // Set your desired width here
+                                        child: Text(
+                                          product.productName,
+                                          style: AppTextStyle.mediumRaleway12,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ),
                                       SizedBox(height: 4),
                                       Text(
                                         cartItem['unitsquantity'] > 1
@@ -1183,7 +1193,7 @@ class _CartPageState extends State<CartPage> {
       int amount = (cartController.totalPayableAmount.value * 100)
           .toInt(); // Razorpay accepts amount in paise
       String OrderId = await OrderAPI.generateOrderID(amount);
-      
+
       List<String> serviceIds = List<String>.from(
         cartController.cartItems.map((item) => item['serviceId']),
       );
@@ -1206,7 +1216,7 @@ class _CartPageState extends State<CartPage> {
               'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
           // 'key': 'rzp_test_IKSbnD4HWUbUum',
           'amount': amount, // Amount in paise
-          'order_id':OrderId,
+          'order_id': OrderId,
           'name': 'Wrenchmate',
           'description': 'Payment for Services',
           'prefill': {
@@ -1261,21 +1271,19 @@ class _CartPageState extends State<CartPage> {
 
       if (serviceIds.isNotEmpty) {
         await bookingController.addBooking(
-          serviceIds,
-          'confirmed',
-          DateTime.now(),
-          null,
-          null,
-          '',
-          '',
-          '',
-          currentCar!,
-          selectedAddress!,
-          selectedDate,
-          selectedTimeRange,
-          orderId
-          
-        );
+            serviceIds,
+            'confirmed',
+            DateTime.now(),
+            null,
+            null,
+            '',
+            '',
+            '',
+            currentCar!,
+            selectedAddress!,
+            selectedDate,
+            selectedTimeRange,
+            orderId);
       }
 
       if (cartController.cartSubsItems.isNotEmpty) {

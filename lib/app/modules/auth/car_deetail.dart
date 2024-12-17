@@ -82,8 +82,7 @@ class _CarDetailsState extends State<CarDetails> {
           ? DateFormat('dd/MM/yyyy').parse(pucExpDateController.text)
           : null,
     );
-      // Navigator.push(context, MaterialPageRoute(builder: (context)=>bottomnavigation()));
-
+    // Navigator.push(context, MaterialPageRoute(builder: (context)=>bottomnavigation()));
   }
 
   Future<void> _selectYear(
@@ -201,6 +200,7 @@ class _CarDetailsState extends State<CarDetails> {
                             child: CustomDropdown(
                               label: "Car Model",
                               value: selectedCarModel,
+                              isStarred: true,
                               items: carModels,
                               onChanged: (value) {
                                 setState(() {
@@ -225,6 +225,7 @@ class _CarDetailsState extends State<CarDetails> {
                     CustomDropdown(
                       label: "Fuel Type",
                       value: selectedFuelType,
+                      isStarred: true,
                       items: ["Petrol", "Diesel", "CNG"],
                       onChanged: (value) {
                         setState(() {
@@ -234,6 +235,7 @@ class _CarDetailsState extends State<CarDetails> {
                     ),
                     CustomTextField(
                       controller: regNoController,
+                      isStarred: true,
                       hintText: 'Reg No.',
                     ),
                     Wrap(
@@ -269,6 +271,7 @@ class _CarDetailsState extends State<CarDetails> {
                     ),
                     CustomDropdown(
                       label: "Car Transmission Type",
+                      isStarred: true,
                       value: selectedTransmissionType,
                       items: ["Manual", "Automatic", "IMT"],
                       onChanged: (value) {
@@ -294,11 +297,13 @@ class _CarDetailsState extends State<CarDetails> {
   }
 }
 
+// CustomDropdown
 class CustomDropdown extends StatelessWidget {
   final String label;
   final String? value;
   final List<String> items;
   final ValueChanged<String?> onChanged;
+  final bool isStarred;
 
   const CustomDropdown({
     Key? key,
@@ -306,15 +311,30 @@ class CustomDropdown extends StatelessWidget {
     required this.value,
     required this.items,
     required this.onChanged,
+    this.isStarred = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
-        hintText: label,
-        hintStyle: TextStyle(color: Color(0xFFB8B8BC)),
-        contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+        label: RichText(
+          text: TextSpan(
+            text: label,
+            style: TextStyle(color: Color(0xFFB8B8BC), fontSize: 16.0),
+            children: isStarred
+                ? [
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ]
+                : [],
+          ),
+        ),
+        // contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+        contentPadding:
+            EdgeInsets.only(top: 16, bottom: 6, left: 12, right: 12),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Color(0xFFB8B8BC)),
         ),
@@ -339,16 +359,19 @@ class CustomDropdown extends StatelessWidget {
   }
 }
 
+// CustomDateField
 class CustomDateField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final VoidCallback onTap;
+  final bool isStarred;
 
   const CustomDateField({
     Key? key,
     required this.controller,
     required this.label,
     required this.onTap,
+    this.isStarred = false,
   }) : super(key: key);
 
   @override
@@ -359,10 +382,24 @@ class CustomDateField extends StatelessWidget {
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
-          hintText: label,
-          hintStyle: TextStyle(color: Color(0xFFB8B8BC)),
+          label: RichText(
+            text: TextSpan(
+              text: label,
+              style: TextStyle(color: Color(0xFFB8B8BC), fontSize: 16.0),
+              children: isStarred
+                  ? [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ]
+                  : [],
+            ),
+          ),
+          // contentPadding:
+          //     EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
           contentPadding:
-              EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+              EdgeInsets.only(top: 16.0, bottom: 10, left: 12.0, right: 12),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Color(0xFFB8B8BC)),
           ),
@@ -381,14 +418,17 @@ class CustomDateField extends StatelessWidget {
   }
 }
 
+// CustomTextField
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
+  final bool isStarred;
 
   const CustomTextField({
     Key? key,
     required this.controller,
     required this.hintText,
+    this.isStarred = false,
   }) : super(key: key);
 
   @override
@@ -397,9 +437,24 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       textCapitalization: TextCapitalization.characters,
       decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: TextStyle(color: Color(0xFFB8B8BC)),
-        contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+        label: RichText(
+          text: TextSpan(
+            text: hintText,
+            style: TextStyle(color: Color(0xFFB8B8BC), fontSize: 16.0),
+            children: isStarred
+                ? [
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ]
+                : [],
+          ),
+        ),
+        // contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+        contentPadding:
+            EdgeInsets.only(top: 16, bottom: 6, left: 12, right: 12),
+
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Color(0xFFB8B8BC)),
         ),

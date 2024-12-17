@@ -41,25 +41,25 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   final BookingController bookingController = Get.put(BookingController());
 
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-  GlobalKey<ScaffoldMessengerState>();
+      GlobalKey<ScaffoldMessengerState>();
 
   FirebaseFirestore db = FirebaseFirestore.instance;
   PageController _pageController = PageController();
   int currentIndex = 0;
 
   final monthlyPlans = [
-    {
-      // 'title': 'Essential Need Pack',
-      'title': 'Monthly Revive',
-      'type': 'basic',
-      'details': [
-        {
-          'title': '4 washes',
-          'description':
-          '- Each wash features an exterior foam wash, basic interior vacuum, plastic trims polishing, and lavender-scented dashboard polish \n\n- Perfect for essential maintenance to keep your car looking and feeling great throughout the month',
-        },
-      ],
-    },
+    // {
+    //   // 'title': 'Essential Need Pack',
+    //   'title': 'Monthly Revive',
+    //   'type': 'basic',
+    //   'details': [
+    //     {
+    //       'title': '4 washes',
+    //       'description':
+    //       '- Each wash features an exterior foam wash, basic interior vacuum, plastic trims polishing, and lavender-scented dashboard polish \n\n- Perfect for essential maintenance to keep your car looking and feeling great throughout the month',
+    //     },
+    //   ],
+    // },
     {
       // 'title': 'Premium Need Pack',
       'title': 'Wrenchmate Wellness',
@@ -69,17 +69,17 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': '3 washes',
           'description':
-          '- Comprehensive exterior foam wash, basic interior vacuum, plastic trims polishing, and lavender-scented dashboard polish',
+              '- Comprehensive exterior foam wash, basic interior vacuum, plastic trims polishing, and lavender-scented dashboard polish',
         },
         {
           'title': '1 Wax Wash',
           'description':
-          '- Adds a shiny, protective layer to your car’s exterior',
+              '- Adds a shiny, protective layer to your car’s exterior',
         },
         {
           'title': 'Hydrophobic Glass Coating (Front Glass)',
           'description':
-          '- 6 Months warranty \n- Long-lasting (6 months) coating that repels water and improves visibility during rains\n- Ideal for those seeking premium care and added protection for their vehicle.',
+              '- 6 Months warranty \n- Long-lasting (6 months) coating that repels water and improves visibility during rains\n- Ideal for those seeking premium care and added protection for their vehicle.',
         },
       ],
     },
@@ -91,12 +91,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': '4 times a week',
           'description':
-          '-  Exterior dusting (removal of surface dust and light cleaning)',
+              '-  Exterior dusting (removal of surface dust and light cleaning)',
         },
         {
           'title': '2 times a month',
-          'description':
-          '- Interior cleaning. ',
+          'description': '- Interior cleaning. ',
         },
       ],
     },
@@ -107,17 +106,16 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': '4 times a week',
           'description':
-          '-  Exterior dusting (removal of surface dust and light cleaning)',
+              '-  Exterior dusting (removal of surface dust and light cleaning)',
         },
         {
           'title': '2 times a month',
-          'description':
-          '- Interior cleaning. ',
+          'description': '- Interior cleaning. ',
         },
         {
           'title': '1 times a month',
           'description':
-          '- Deep wash (includes exterior foam wash, detailed cleaning, and dashboard polish).',
+              '- Deep wash (includes exterior foam wash, detailed cleaning, and dashboard polish).',
         },
       ],
     },
@@ -132,7 +130,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': '8 Car Washes',
           'description':
-          '- A total of 8 exterior washes with interior vacuuming to keep your car spotless throughout the quarter',
+              '- A total of 8 exterior washes with interior vacuuming to keep your car spotless throughout the quarter',
         },
       ],
     },
@@ -144,22 +142,22 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': '6 Car Washes',
           'description':
-          '- Regular exterior and interior cleaning to keep your car looking pristine',
+              '- Regular exterior and interior cleaning to keep your car looking pristine',
         },
         {
           'title': '1 Wax Washes',
           'description':
-          '- Provides an extra layer of protection, making your car’s paint shine and protecting against environmental elements'
+              '- Provides an extra layer of protection, making your car’s paint shine and protecting against environmental elements'
         },
         {
           'title': '1 Hydrophobic Liquid Application to All Glass Surfaces:',
           'description':
-          '- 6 Months warranty \n- Improves visibility by making water bead off the glass, especially useful during rain, and reduces the need for frequent cleaning.'
+              '- 6 Months warranty \n- Improves visibility by making water bead off the glass, especially useful during rain, and reduces the need for frequent cleaning.'
         },
         {
           'title': 'Wheel Alignment:',
           'description':
-          "- Ensures proper alignment of your vehicle's wheels for improved handling, tire longevity, and overall safety"
+              "- Ensures proper alignment of your vehicle's wheels for improved handling, tire longevity, and overall safety"
         }
       ],
     }
@@ -190,7 +188,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   void fetchUserCurrentCarIndex() async {
     String userId = FirebaseAuth.instance.currentUser!.uid;
     DocumentSnapshot userDoc =
-    await FirebaseFirestore.instance.collection('User').doc(userId).get();
+        await FirebaseFirestore.instance.collection('User').doc(userId).get();
     if (userDoc.exists) {
       setState(() {
         userCurrentCarIndex = userDoc['User_currentCar'] ?? 0;
@@ -200,7 +198,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   }
 
   int monthlyCurrentIndex = 0;
-  int quarterlyCurrentIndex =0;
+  int quarterlyCurrentIndex = 0;
 
   // Toggle between monthly and quarterly plans
 
@@ -226,12 +224,12 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   void _nextPlan() {
     setState(() {
-      if(isMonthly) {
+      if (isMonthly) {
         monthlyCurrentIndex = (monthlyCurrentIndex + 1) % currentPlans.length;
         pricesetMethod();
-      }
-      else{
-        quarterlyCurrentIndex = (quarterlyCurrentIndex + 1) % currentPlans.length;
+      } else {
+        quarterlyCurrentIndex =
+            (quarterlyCurrentIndex + 1) % currentPlans.length;
         pricesetMethod();
       }
     });
@@ -239,14 +237,14 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   void _previousPlan() {
     setState(() {
-      if(isMonthly){
-        monthlyCurrentIndex =
-            (monthlyCurrentIndex - 1 + currentPlans.length) % currentPlans.length;
+      if (isMonthly) {
+        monthlyCurrentIndex = (monthlyCurrentIndex - 1 + currentPlans.length) %
+            currentPlans.length;
         pricesetMethod();
-      }
-      else{
+      } else {
         quarterlyCurrentIndex =
-            (quarterlyCurrentIndex - 1 + currentPlans.length) % currentPlans.length;
+            (quarterlyCurrentIndex - 1 + currentPlans.length) %
+                currentPlans.length;
         pricesetMethod();
       }
     });
@@ -255,7 +253,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   void firebasePriceFetch() {
     final docRef = db.collection("Subscriptions").doc("sub-2024");
     docRef.get().then(
-          (DocumentSnapshot doc) {
+      (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         monthly_basic = data["monthly basic"];
         monthly_premium = data["monthly premium"];
@@ -290,107 +288,80 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     // final isBasic = currentPlan['type'] == 'basic';
 
     setState(() {
-      if(carType == "Sedan"){
-        if(isMonthly==true){
-          if(monthlyCurrentIndex == 0){
+      if (carType == "Sedan") {
+        if (isMonthly == true) {
+          if (monthlyCurrentIndex == 0) {
             price = 2499;
-          }
-          else if(monthlyCurrentIndex == 1){
+          } else if (monthlyCurrentIndex == 1) {
             price = monthly_premium;
-          }
-          else if(monthlyCurrentIndex == 2){
+          } else if (monthlyCurrentIndex == 2) {
             price = 899;
-          }
-          else if(monthlyCurrentIndex== 3){
+          } else if (monthlyCurrentIndex == 3) {
             price = 1299;
           }
-        }
-        else{
-          if(quarterlyCurrentIndex == 0){
+        } else {
+          if (quarterlyCurrentIndex == 0) {
             price = quaterely_basic;
-          }
-          else if(quarterlyCurrentIndex == 1){
+          } else if (quarterlyCurrentIndex == 1) {
             price = quaterley_premium;
           }
         }
-      }
-
-      else if(carType == "Compact SUV"){
-        if(isMonthly==true){
-          if(monthlyCurrentIndex == 0){
+      } else if (carType == "Compact SUV") {
+        if (isMonthly == true) {
+          if (monthlyCurrentIndex == 0) {
             price = monthly_basic;
-          }
-          else if(monthlyCurrentIndex == 1){
+          } else if (monthlyCurrentIndex == 1) {
             price = monthly_premium;
-          }
-          else if(monthlyCurrentIndex == 2){
+          } else if (monthlyCurrentIndex == 2) {
             price = 899;
-          }
-          else if(monthlyCurrentIndex== 3){
+          } else if (monthlyCurrentIndex == 3) {
             price = 1299;
           }
-        }
-        else{
-          if(quarterlyCurrentIndex == 0){
+        } else {
+          if (quarterlyCurrentIndex == 0) {
             price = quaterely_basic;
-          }
-          else if(quarterlyCurrentIndex == 1){
+          } else if (quarterlyCurrentIndex == 1) {
             price = quaterley_premium;
           }
         }
-      }
-
-      else if(carType == "Hatchback"){
-        if(isMonthly==true){
-          if(monthlyCurrentIndex == 0){
+      } else if (carType == "Hatchback") {
+        if (isMonthly == true) {
+          if (monthlyCurrentIndex == 0) {
             price = monthly_basic;
-          }
-          else if(monthlyCurrentIndex == 1){
+          } else if (monthlyCurrentIndex == 1) {
             price = monthly_premium;
-          }
-          else if(monthlyCurrentIndex == 2){
+          } else if (monthlyCurrentIndex == 2) {
             price = 699;
-          }
-          else if(monthlyCurrentIndex== 3){
+          } else if (monthlyCurrentIndex == 3) {
             price = 1199;
           }
-        }
-        else{
-          if(quarterlyCurrentIndex == 0){
+        } else {
+          if (quarterlyCurrentIndex == 0) {
             price = quaterely_basic;
-          }
-          else if(quarterlyCurrentIndex == 1){
+          } else if (quarterlyCurrentIndex == 1) {
             price = quaterley_premium;
           }
         }
-      }
-
-      else if(carType == "SUV"){
-        if(isMonthly==true){
-          if(monthlyCurrentIndex == 0){
+      } else if (carType == "SUV") {
+        if (isMonthly == true) {
+          if (monthlyCurrentIndex == 0) {
             price = monthly_basic;
-          }
-          else if(monthlyCurrentIndex == 1){
+          } else if (monthlyCurrentIndex == 1) {
             price = monthly_premium;
-          }
-          else if(monthlyCurrentIndex == 2){
+          } else if (monthlyCurrentIndex == 2) {
             price = 1099;
-          }
-          else if(monthlyCurrentIndex== 3){
+          } else if (monthlyCurrentIndex == 3) {
             price = 1399;
           }
-        }
-        else{
-          if(quarterlyCurrentIndex == 0){
+        } else {
+          if (quarterlyCurrentIndex == 0) {
             price = quaterely_basic;
-          }
-          else if(quarterlyCurrentIndex == 1){
+          } else if (quarterlyCurrentIndex == 1) {
             price = quaterley_premium;
           }
         }
       }
     });
-
   }
 
   void fetchCarDetails() async {
@@ -427,7 +398,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   decoration: BoxDecoration(
                     color: Colors.white, // Background color
                     borderRadius:
-                    BorderRadius.circular(12.0), // Rounded corners
+                        BorderRadius.circular(12.0), // Rounded corners
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.2),
@@ -444,80 +415,80 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                           Duration(seconds: 1),
                         ),
                         builder: (c, s) => s.connectionState ==
-                            ConnectionState.done
+                                ConnectionState.done
                             ? Container(
-                          width: MediaQuery.of(context).size.height / 8,
-                          child:
-                          Image.asset("assets/car/$carTypeImage.png"),
-                        )
+                                width: MediaQuery.of(context).size.height / 8,
+                                child:
+                                    Image.asset("assets/car/$carTypeImage.png"),
+                              )
                             : Container(
-                          child: CircularProgressIndicator(),
-                        ),
+                                child: CircularProgressIndicator(),
+                              ),
                       ),
                       SizedBox(width: 16),
                       Obx(() {
                         return bookingController.subsBookingList.isEmpty
                             ? Expanded(
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'Raleway',
-                                  fontWeight: FontWeight.w600),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 5,
-                            ),
-                          ),
-                        )
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: Text(
+                                    "Keep your car in top shape all year round with our hassle-free service subscription—convenience, savings, and expert care, all in one package!",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: 'Raleway',
+                                        fontWeight: FontWeight.w600),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 5,
+                                  ),
+                                ),
+                              )
                             : Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.toNamed(AppRoutes.BOOKING_DETAILS_SUBS);
-                            },
-                            child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Current Subscription',
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontFamily: 'Raleway',
-                                      fontWeight: FontWeight.w500),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 5,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed(AppRoutes.BOOKING_DETAILS_SUBS);
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Current Subscription',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w500),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        bookingController.subsBookingList[0]
+                                            ['subscriptionDetails']['packDesc'],
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w800),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        'Expiring on: ${bookingController.formatTimestamp(bookingController.subsBookingList[0]['subscriptionDetails']['endDate'])}',
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            fontFamily: 'Raleway',
+                                            fontWeight: FontWeight.w300),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  bookingController.subsBookingList[0]
-                                  ['subscriptionDetails']['packDesc'],
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'Raleway',
-                                      fontWeight: FontWeight.w800),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 5,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  'Expiring on: ${bookingController.formatTimestamp(bookingController.subsBookingList[0]['subscriptionDetails']['endDate'])}',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      fontFamily: 'Raleway',
-                                      fontWeight: FontWeight.w300),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 5,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                              );
                       })
                     ],
                   ),
@@ -553,8 +524,15 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                           }
                         },
                         child: Center(
-                          child: PlanCard(currentPlans[isMonthly?monthlyCurrentIndex:quarterlyCurrentIndex],
-                              isMonthly, currentPlans.length, isMonthly?monthlyCurrentIndex:quarterlyCurrentIndex),
+                          child: PlanCard(
+                              currentPlans[isMonthly
+                                  ? monthlyCurrentIndex
+                                  : quarterlyCurrentIndex],
+                              isMonthly,
+                              currentPlans.length,
+                              isMonthly
+                                  ? monthlyCurrentIndex
+                                  : quarterlyCurrentIndex),
                         ),
                       ),
                       Row(
@@ -573,8 +551,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                   : Color(0xffC6DFFE),
                               child: Container(
                                 width:
-                                (MediaQuery.of(context).size.width * 0.5) -
-                                    16,
+                                    (MediaQuery.of(context).size.width * 0.5) -
+                                        16,
                                 height: 52,
                                 decoration: BoxDecoration(
                                   color: isMonthly
@@ -582,36 +560,37 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                       : Colors.white,
                                   borderRadius: isMonthly
                                       ? BorderRadius.only(
-                                    bottomRight: Radius.circular(16),
-                                    bottomLeft: Radius.circular(16),
-                                  )
+                                          bottomRight: Radius.circular(16),
+                                          bottomLeft: Radius.circular(16),
+                                        )
                                       : BorderRadius.only(
-                                    topRight: Radius.circular(16),
-                                  ),
+                                          topRight: Radius.circular(16),
+                                        ),
                                 ),
                                 alignment: Alignment.center,
                                 child: Column(
                                   children: [
                                     isMonthly
                                         ? Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: List.generate(
-                                          currentPlans.length, (index) {
-                                        return Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          width: 8.0,
-                                          height: 8.0,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: monthlyCurrentIndex == index
-                                                ? Colors.blue
-                                                : Colors.grey,
-                                          ),
-                                        );
-                                      }),
-                                    )
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: List.generate(
+                                                currentPlans.length, (index) {
+                                              return Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 4.0),
+                                                width: 8.0,
+                                                height: 8.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: monthlyCurrentIndex ==
+                                                          index
+                                                      ? Colors.blue
+                                                      : Colors.grey,
+                                                ),
+                                              );
+                                            }),
+                                          )
                                         : SizedBox(),
                                     SizedBox(
                                       height: isMonthly ? 10 : 20,
@@ -638,8 +617,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                   : Color(0xffC6DFFE),
                               child: Container(
                                 width:
-                                (MediaQuery.of(context).size.width * 0.5) -
-                                    16,
+                                    (MediaQuery.of(context).size.width * 0.5) -
+                                        16,
                                 height: 52,
                                 decoration: BoxDecoration(
                                   color: !isMonthly
@@ -647,36 +626,38 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                       : Colors.white,
                                   borderRadius: !isMonthly
                                       ? BorderRadius.only(
-                                    bottomRight: Radius.circular(16),
-                                    bottomLeft: Radius.circular(16),
-                                  )
+                                          bottomRight: Radius.circular(16),
+                                          bottomLeft: Radius.circular(16),
+                                        )
                                       : BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                  ),
+                                          topLeft: Radius.circular(16),
+                                        ),
                                 ),
                                 alignment: Alignment.center,
                                 child: Column(
                                   children: [
                                     !isMonthly
                                         ? Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: List.generate(
-                                          currentPlans.length, (index) {
-                                        return Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 4.0),
-                                          width: 8.0,
-                                          height: 8.0,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: quarterlyCurrentIndex == index
-                                                ? Colors.blue
-                                                : Colors.grey,
-                                          ),
-                                        );
-                                      }),
-                                    )
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: List.generate(
+                                                currentPlans.length, (index) {
+                                              return Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 4.0),
+                                                width: 8.0,
+                                                height: 8.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color:
+                                                      quarterlyCurrentIndex ==
+                                                              index
+                                                          ? Colors.blue
+                                                          : Colors.grey,
+                                                ),
+                                              );
+                                            }),
+                                          )
                                         : SizedBox(),
                                     SizedBox(
                                       height: !isMonthly ? 10 : 20,
@@ -701,20 +682,29 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     // final currentPlan = currentPlans[_currentIndex];
                     // final isBasic = currentPlan['type'] == 'basic';
 
-                    final subscriptionCode = isMonthly ?
-                    monthlyCurrentIndex == 0 ? 'monthly-essential-need-pack' :
-                    monthlyCurrentIndex == 1 ? 'monthly-premium-need-pack' :
-                    monthlyCurrentIndex == 2 ? 'monthly-wrench-essential-pack' : 'monthly-wrench-premium-pack'
-                        :
-                    quarterlyCurrentIndex == 0 ? 'quarterly-ultimate-wash-package' : 'quarterly-deluxe-maintenance-pack' ;
+                    final subscriptionCode = isMonthly
+                        ? monthlyCurrentIndex == 0
+                            ? 'monthly-essential-need-pack'
+                            : monthlyCurrentIndex == 1
+                                ? 'monthly-premium-need-pack'
+                                : monthlyCurrentIndex == 2
+                                    ? 'monthly-wrench-essential-pack'
+                                    : 'monthly-wrench-premium-pack'
+                        : quarterlyCurrentIndex == 0
+                            ? 'quarterly-ultimate-wash-package'
+                            : 'quarterly-deluxe-maintenance-pack';
 
-
-                    final subscriptionName = isMonthly ?
-                    monthlyCurrentIndex == 0 ? "Monthly Revive" :
-                    monthlyCurrentIndex == 1 ? "Wrench Mate Wellness" :
-                    monthlyCurrentIndex == 2 ? "Wrench Mate Essential" : "Wrench Mate Premium"
-                        :
-                    quarterlyCurrentIndex == 0 ? "Wrench Mate Prime" : "Seasonal Spark" ;
+                    final subscriptionName = isMonthly
+                        ? monthlyCurrentIndex == 0
+                            ? "Monthly Revive"
+                            : monthlyCurrentIndex == 1
+                                ? "Wrench Mate Wellness"
+                                : monthlyCurrentIndex == 2
+                                    ? "Wrench Mate Essential"
+                                    : "Wrench Mate Premium"
+                        : quarterlyCurrentIndex == 0
+                            ? "Wrench Mate Prime"
+                            : "Seasonal Spark";
 
                     await cartController.addSubscriptionToCartSnackbar(
                       context,

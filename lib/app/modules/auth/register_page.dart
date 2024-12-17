@@ -120,7 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     super.initState();
     final args = Get.arguments;
-    if (args != null ) {
+    if (args != null) {
       nameController.text = args['fullname'] == 'User' ? '' : args['fullname'];
       emailController.text = args['email'];
       numberController.text = args['phone'];
@@ -204,10 +204,13 @@ class _RegisterPageState extends State<RegisterPage> {
               CustomTextField(
                 controller: nameController,
                 hintText: 'Full Name',
+                isStarred: true,
               ),
               CustomTextField(
                 controller: numberController,
-                hintText: userId ?? 'Enter your number', // Add null check here
+                // hintText: userId ?? 'Enter your number', // Add null check here
+                hintText: 'Phone Number',
+                isStarred: true,
               ),
               CustomTextField(
                 controller: alternateNumberController,
@@ -216,6 +219,7 @@ class _RegisterPageState extends State<RegisterPage> {
               CustomTextField(
                 controller: emailController,
                 hintText: 'Email Address',
+                isStarred: true,
               ),
               SizedBox(height: 20),
               _isLoading
