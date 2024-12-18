@@ -56,16 +56,18 @@ class HomeController extends GetxController {
   Future<String?> fetchUserCurrentCar() async {
     try {
       String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot userDoc = await _firestore.collection('User').doc(userId).get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('User').doc(userId).get();
 
       if (userDoc.exists) {
         int? currentCarIndex = userDoc['User_currentCar'] as int?;
         if (currentCarIndex != null) {
-          List<String> carDetails = (userDoc['User_carDetails'] as List<dynamic>).cast<String>();
+          List<String> carDetails =
+              (userDoc['User_carDetails'] as List<dynamic>).cast<String>();
           if (currentCarIndex < carDetails.length) {
             String carDetail = carDetails[currentCarIndex];
-            print("the car is: "+carDetail.split(';').first);
-            return carDetail.split(';').first;
+            print("the car is: " + carDetail.split(';').elementAt(1));
+            return carDetail;
           }
         }
       }
@@ -74,6 +76,7 @@ class HomeController extends GetxController {
     }
     return null;
   }
+
   Future<void> updateUserProfile(Map<String, dynamic> updatedData) async {
     try {
       print("in update user profile");
