@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wrenchmate_user_app/app/controllers/booking_controller.dart';
 import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
+import 'package:wrenchmate_user_app/app/controllers/service_controller.dart';
 import 'package:wrenchmate_user_app/app/modules/subscription/widget/planCard.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
 import '../../controllers/car_controller.dart';
@@ -293,12 +294,15 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           if (monthlyCurrentIndex == 0) {
             price = 2499;
           } else if (monthlyCurrentIndex == 1) {
-            price = monthly_premium;
-          } else if (monthlyCurrentIndex == 2) {
+            // price = monthly_premium;
             price = 899;
-          } else if (monthlyCurrentIndex == 3) {
-            price = 1299;
+          } else if (monthlyCurrentIndex == 2) {
+            // price = 899;
+            price = 1349;
           }
+          // else if (monthlyCurrentIndex == 3) {
+          //   price = 1299;
+          // }
         } else {
           if (quarterlyCurrentIndex == 0) {
             price = quaterely_basic;
@@ -311,12 +315,14 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           if (monthlyCurrentIndex == 0) {
             price = monthly_basic;
           } else if (monthlyCurrentIndex == 1) {
-            price = monthly_premium;
-          } else if (monthlyCurrentIndex == 2) {
+            // price = monthly_premium;
             price = 899;
-          } else if (monthlyCurrentIndex == 3) {
-            price = 1299;
+          } else if (monthlyCurrentIndex == 2) {
+            price = 1349;
           }
+          // else if (monthlyCurrentIndex == 3) {
+          //   price = 1299;
+          // }
         } else {
           if (quarterlyCurrentIndex == 0) {
             price = quaterely_basic;
@@ -329,12 +335,14 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           if (monthlyCurrentIndex == 0) {
             price = monthly_basic;
           } else if (monthlyCurrentIndex == 1) {
-            price = monthly_premium;
-          } else if (monthlyCurrentIndex == 2) {
+            // price = monthly_premium;
             price = 699;
-          } else if (monthlyCurrentIndex == 3) {
-            price = 1199;
+          } else if (monthlyCurrentIndex == 2) {
+            price = 1249;
           }
+          // else if (monthlyCurrentIndex == 3) {
+          //   price = 1199;
+          // }
         } else {
           if (quarterlyCurrentIndex == 0) {
             price = quaterely_basic;
@@ -347,12 +355,14 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           if (monthlyCurrentIndex == 0) {
             price = monthly_basic;
           } else if (monthlyCurrentIndex == 1) {
-            price = monthly_premium;
-          } else if (monthlyCurrentIndex == 2) {
+            // price = monthly_premium;
             price = 1099;
-          } else if (monthlyCurrentIndex == 3) {
-            price = 1399;
+          } else if (monthlyCurrentIndex == 2) {
+            price = 1449;
           }
+          // else if (monthlyCurrentIndex == 3) {
+          //   price = 1399;
+          // }
         } else {
           if (quarterlyCurrentIndex == 0) {
             price = quaterely_basic;
@@ -683,25 +693,29 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     // final isBasic = currentPlan['type'] == 'basic';
 
                     final subscriptionCode = isMonthly
-                        ? monthlyCurrentIndex == 0
-                            ? 'monthly-essential-need-pack'
+                        ?
+                        //  monthlyCurrentIndex == 0
+                        //     ? 'monthly-essential-need-pack'
+                        //     :
+                        monthlyCurrentIndex == 0
+                            ? 'wrench-mate-wellness-pack'
                             : monthlyCurrentIndex == 1
-                                ? 'monthly-premium-need-pack'
-                                : monthlyCurrentIndex == 2
-                                    ? 'monthly-wrench-essential-pack'
-                                    : 'monthly-wrench-premium-pack'
+                                ? 'wrench-mate-essential-pack'
+                                : 'wrench-mate-premium-pack'
                         : quarterlyCurrentIndex == 0
-                            ? 'quarterly-ultimate-wash-package'
-                            : 'quarterly-deluxe-maintenance-pack';
+                            ? 'wrench-mate-prime-pack'
+                            : 'wrench-mate-seasonal-spark-pack';
 
                     final subscriptionName = isMonthly
-                        ? monthlyCurrentIndex == 0
-                            ? "Monthly Revive"
+                        ?
+                        // monthlyCurrentIndex == 0
+                        //     ? "Monthly Revive"
+                        //     :
+                        monthlyCurrentIndex == 0
+                            ? "Wrench Mate Wellness"
                             : monthlyCurrentIndex == 1
-                                ? "Wrench Mate Wellness"
-                                : monthlyCurrentIndex == 2
-                                    ? "Wrench Mate Essential"
-                                    : "Wrench Mate Premium"
+                                ? "Wrench Mate Essential"
+                                : "Wrench Mate Premium"
                         : quarterlyCurrentIndex == 0
                             ? "Wrench Mate Prime"
                             : "Seasonal Spark";

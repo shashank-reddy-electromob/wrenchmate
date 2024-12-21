@@ -8,7 +8,7 @@ class OrderAPI {
       'Content-Type': 'application/json',
       'Authorization': 'Basic ${base64Encode(utf8.encode('rzp_live_l2WP2ZjwHh1Ltp:mxFZaLJqcPluV97ybcNT14lF'))}'
       // 'Authorization':
-      //     'Basic ${base64Encode(utf8.encode('rzp_test_IKSbnD4HWUbUum:14b8VGvIhLubiNKozVoF2zDx'))}'
+      //     'Basic ${base64Encode(utf8.encode('rzp_test_tNdWNcc8kiBbBY:Onbjo62f32xfyTxVY0cnOMl6'))}'
     };
   }
 

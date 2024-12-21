@@ -9,17 +9,17 @@ import 'package:wrenchmate_user_app/app/widgets/blueButton.dart';
 
 class BottomSheetContent extends StatefulWidget {
   final String title;
-  final DateTime startDate;
+  final Map<String, dynamic> benefit;
   final double startTime;
   final double endTime;
-  final int slots;
+  final int idx;
 
   BottomSheetContent(
       {required this.title,
-      required this.startDate,
       required this.startTime,
       required this.endTime,
-      required this.slots});
+      required this.benefit,
+      required this.idx});
 
   @override
   _BottomSheetContentState createState() => _BottomSheetContentState();
@@ -28,7 +28,9 @@ class BottomSheetContent extends StatefulWidget {
 class _BottomSheetContentState extends State<BottomSheetContent> {
   late SfRangeValues _rangeValues;
   BookingController bookingController = Get.find<BookingController>();
-  late DateTime selectedDate = widget.startDate;
+  late DateTime selectedDate =
+      DateTime.parse(widget.benefit['dates'][widget.benefit['index']]);
+
   String _formatTime(dynamic actualValue) {
     int hour = actualValue.toInt();
     return '$hour:00';
@@ -56,10 +58,10 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SubscriptionCard(
-                title: widget.title,
-                startDate: widget.startDate,
-                totalSlots: widget.slots,
-                selectedSlotIndex: 0),
+              title: widget.title,
+              benefits: widget.benefit,
+              // selectedSlotIndex: widget.idx
+            ),
             SizedBox(
               height: 10,
             ),
@@ -86,8 +88,10 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
                 ],
               ),
               child: DatePicker(
-                widget.startDate,
-                initialSelectedDate: widget.startDate,
+                DateTime.parse(
+                    widget.benefit['dates'][widget.benefit['index']]),
+                initialSelectedDate: DateTime.parse(
+                    widget.benefit['dates'][widget.benefit['index']]),
                 daysCount: 30,
                 onDateChange: (newDate) {
                   setState(() {
@@ -165,7 +169,7 @@ class _BottomSheetContentState extends State<BottomSheetContent> {
               text: 'Confirm',
               onTap: () async {
                 await bookingController.updateBookingDetails(
-                    selectedDate, _rangeValues.start, _rangeValues.end);
+                    selectedDate,widget.benefit, _rangeValues.start, _rangeValues.end);
                 Navigator.of(context).pop();
               },
             ),

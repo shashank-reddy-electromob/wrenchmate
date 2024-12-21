@@ -13,7 +13,7 @@ import 'service_controller.dart';
 
 class CartController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final ServiceController serviceController = Get.find();
+  final ServiceController serviceController = Get.put(ServiceController());
   final ProductController productController = Get.put(ProductController());
   var isLoading = true.obs;
   var cartItems = <Map<String, dynamic>>[].obs;
@@ -823,6 +823,7 @@ class CartController extends GetxController {
   RxDouble discountAmount = 0.0.obs;
 
   void applyCoupon(String couponCode, double amount) {
+    log('amount is: ${amount.toString()}');
     if (appliedCoupon.value.isNotEmpty) {
       totalAmount.value += discountAmount.value;
     }

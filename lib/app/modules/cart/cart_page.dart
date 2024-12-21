@@ -119,7 +119,7 @@ class _CartPageState extends State<CartPage> {
         }
 
         // Calculate tax as 10% of totalAmount
-        tax = totalAmount * 0.1;
+        tax = totalAmount * 0.03;
         // Final amount is totalAmount + tax
         finalAmount = totalAmount + tax!;
         log('final amount from cart page ${finalAmount.toString()}');
@@ -501,7 +501,9 @@ class _CartPageState extends State<CartPage> {
                           Pricing(
                               text: "Subtotal",
                               price: totalAmount.toStringAsFixed(2)),
-                          Pricing(text: "Tax", price: tax!.toStringAsFixed(2)),
+                          Pricing(
+                              text: "Additional Charges",
+                              price: tax!.toStringAsFixed(2)),
                           if (cartController.discountAmount.value > 0)
                             Pricing(
                               text: "Discount Applied:",
@@ -846,7 +848,7 @@ class _CartPageState extends State<CartPage> {
                                         price: totalAmount.toStringAsFixed(2),
                                       ),
                                       Pricing(
-                                        text: "Tax",
+                                        text: "Additional Charges",
                                         price: tax!.toStringAsFixed(2),
                                       ),
                                       if (cartController.discountAmount.value >
@@ -1214,7 +1216,7 @@ class _CartPageState extends State<CartPage> {
         var options = {
           'key':
               'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
-          // 'key': 'rzp_test_IKSbnD4HWUbUum',
+          // 'key': 'rzp_test_tNdWNcc8kiBbBY',
           'amount': amount, // Amount in paise
           'order_id': OrderId,
           'name': 'Wrenchmate',
@@ -1307,10 +1309,11 @@ class _CartPageState extends State<CartPage> {
       }
 
       await cartController.clearCart();
-      cartController.totalAmount.value = 0;
+      cartController.totalAmount.value = 0.0;
       cartController.fetchCartItems();
       Get.back();
-
+      cartController.totalAmount.refresh();
+      cartController.update();
       await Future.delayed(Duration(milliseconds: 50), () async {
         // await Get.toNamed(AppRoutes.BOTTOMNAV, arguments: {
         //   'tracking_button': true,

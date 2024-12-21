@@ -23,7 +23,6 @@ class BookingController extends GetxController {
   String? _lastTransactionId;
 
   String generateUniqueTransactionId() {
-    // Format: TX_YYYYMMDD_HHMMSS_RANDOM
     final now = DateTime.now();
     final dateStr =
         "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
@@ -37,8 +36,8 @@ class BookingController extends GetxController {
 
   String? get currentTransactionId => _lastTransactionId;
 
-  Future<void> updateBookingDetails(
-      DateTime confirmationDate, double start, double end) async {
+  Future<void> updateBookingDetails(DateTime confirmationDate,
+      Map<String, dynamic> benefit, double start, double end) async {
     QuerySnapshot bookingSnapshot = await FirebaseFirestore.instance
         .collection('Booking')
         .where('user_id', isEqualTo: userId)
@@ -47,8 +46,25 @@ class BookingController extends GetxController {
 
     try {
       for (DocumentSnapshot bookingDoc in bookingSnapshot.docs) {
+        List<dynamic> benefits = bookingDoc['benefits'];
+        int benefitIndex =
+            benefits.indexWhere((b) => b['name'] == benefit['name']);
+        if (benefitIndex == -1) {
+          print('Benefit not found');
+          continue;
+        }
+
+        List<dynamic> dates = benefits[benefitIndex]['dates'];
+        if (benefit['index'] < dates.length) {
+          dates[benefit['index']] = confirmationDate.toIso8601String();
+        } else {
+          print('Invalid index for dates array');
+          continue;
+        }
+
+        benefits[benefitIndex]['dates'] = dates;
         await bookingDoc.reference.update({
-          'confirmation_date': confirmationDate,
+          'benefits': benefits,
           'selected_time_range': {
             'start': start,
             'end': end,
@@ -97,8 +113,9 @@ class BookingController extends GetxController {
         }
       }
 
-      await fetchSubscriptionDetails(
-          subsBookingList[0]['subscriptionDetails']['subscriptionName']);
+      // await fetchSubscriptionDetails(
+      //     subsBookingList[0]['subscriptionDetails']['subscriptionName']);
+      await fetchSubscriptionDetails(subId.value);
 
       if (subsBookingList.isEmpty) {
         print('No bookings with non-empty subscription_id found.');
@@ -197,6 +214,42 @@ class BookingController extends GetxController {
         }
       }
 
+      // Step 2: Search for the subscription by subscriptionName
+      QuerySnapshot subscriptionQuery = await _firestore
+          .collection('Subscriptions')
+          .where('plan', isEqualTo: subscriptionName)
+          .get();
+
+      // if (subscriptionQuery.docs.isEmpty) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: Text("Subscription not found.")),
+      //   );
+      //   return;
+      // }
+
+      // Get the first document's data and cast it to a Map
+      var subscriptionData =
+          subscriptionQuery.docs.first.data() as Map<String, dynamic>?;
+
+      Map<String, dynamic> benefitsMap = subscriptionData?['benefits'] ?? {};
+
+      List<Map<String, dynamic>> transformedBenefits =
+          benefitsMap.entries.map((entry) {
+        int numSlots = int.tryParse(entry.value['num'] ?? '0') ?? 0;
+
+        return {
+          'name': entry.value['name'] ?? 'Unknown',
+          'status': 'confirmed',
+          'num': numSlots,
+          'index': 0,
+          'dates': [
+            selectedDate?.toIso8601String() ??
+                '', // First position filled with selectedDate
+            ...List<String>.generate(
+                numSlots - 1, (index) => ''), // Remaining empty slots
+          ],
+        };
+      }).toList();
       await _firestore.collection('UserSubscriptions').add({
         'user_id': userId,
         'packDesc': packName,
@@ -237,6 +290,7 @@ class BookingController extends GetxController {
               }
             : null,
         'subscription_id': subscriptionId,
+        'benefits': transformedBenefits,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -250,26 +304,25 @@ class BookingController extends GetxController {
     }
   }
 
-  Future<void> fetchSubscriptionDetails(String plan) async {
+  Future<void> fetchSubscriptionDetails(String subId) async {
     try {
       QuerySnapshot subSnapshot = await FirebaseFirestore.instance
-          .collection('Subscriptions')
-          .where('plan', isEqualTo: plan)
+          .collection('Booking')
+          .where('subscription_id', isEqualTo: subId)
           .get();
 
       if (subSnapshot.docs.isNotEmpty) {
-        Map<String, dynamic> subscriptionData =
+        Map<String, dynamic> subscriptionBookingData =
             subSnapshot.docs.first.data() as Map<String, dynamic>;
 
-        subscriptionDetailsList.add(subscriptionData);
+        subscriptionDetailsList.add(subscriptionBookingData);
 
-        Map<String, dynamic> benefits =
-            subscriptionData['benefits'] as Map<String, dynamic>;
+        List benefits = subscriptionBookingData['benefits'];
         benefitsList.clear();
-        for (var benefit in benefits.values) {
-          benefitsList.add(benefit as Map<String, dynamic>);
+        for (var benefit in benefits) {
+          benefitsList.add(benefit);
         }
-        print("Subscription details fetched and stored: $subscriptionData");
+        print("Benefit details fetched and stored: $benefitsList");
       } else {
         print("No subscription found for the specified plan.");
       }

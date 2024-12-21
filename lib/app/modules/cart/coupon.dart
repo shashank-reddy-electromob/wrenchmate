@@ -120,8 +120,8 @@ class _ApplyCouponScreenState extends State<ApplyCouponScreen> {
                           onApply: () {
                             String couponCode = coupon['name'];
                             if (couponCode.isNotEmpty) {
-                              cartController.applyCoupon(
-                                  couponCode, coupon['price']);
+                              cartController.applyCoupon(couponCode,
+                                  double.parse(coupon['price'].toString()));
                             } else {
                               Get.snackbar("Invalid Input",
                                   "Please enter a valid coupon code");

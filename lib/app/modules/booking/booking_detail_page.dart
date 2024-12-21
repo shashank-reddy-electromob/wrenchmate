@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -58,7 +60,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     // Use the booking and service details
     final String serviceName = service.name; // Use service name
     final String statusName = booking.status ?? "unknown";
-    final String carType = booking.car_details ?? "unknown";
+    final String carType = booking.car_details?.split(';').first ?? "unknown";
+    log('car is : ${carType}');
     final double servicePrice = service.price; // Use service price
     final String bookingDate = booking.confirmationDate != null
         ? formatDateTime(booking.confirmationDate!)
@@ -139,8 +142,10 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
                                   margin: EdgeInsets.symmetric(horizontal: 8.0),
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      Get.toNamed(AppRoutes.REVIEW,
-                                          arguments: {'service':service, 'booking':booking});
+                                      Get.toNamed(AppRoutes.REVIEW, arguments: {
+                                        'service': service,
+                                        'booking': booking
+                                      });
                                     },
                                     child: Text(
                                       'WRITE A REVIEW',
