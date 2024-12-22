@@ -178,7 +178,7 @@ class CartController extends GetxController {
 
       log('Total after adding subscriptions: $subtotal');
 
-      double tax = subtotal * 0.10;
+      double tax = subtotal * 0.03;
       double totalWithTax = subtotal + tax;
 
       log('Total with tax: $totalWithTax');

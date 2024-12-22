@@ -71,7 +71,7 @@ class ForceUpdateService {
                   final packageName = packageInfo.packageName;
 
                   final appStoreUrl = Platform.isIOS
-                      ? 'https://apps.apple.com/app/$packageName' // Replace with your iOS App Store URL
+                      ? 'https://apps.apple.com/app/in.wrenchmate.wrenchmateUserApp' // Replace with your iOS App Store URL
                       : 'https://play.google.com/store/apps/details?id=$packageName'; // Android Play Store URL
 
                   if (await canLaunch(appStoreUrl)) {
