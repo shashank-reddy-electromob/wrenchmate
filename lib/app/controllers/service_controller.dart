@@ -374,6 +374,45 @@ class ServiceController extends GetxController {
     }
   }
 
+  Future<Servicefirebase?> fetchServiceForChat(String serviceId) async {
+  try {
+    print("Fetching service by ID for chat: $serviceId");
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('Service')
+        .doc(serviceId)
+        .get();
+
+    if (doc.exists) {
+      var data = doc.data() as Map<String, dynamic>;
+      print("Service data fetched for chat: $data");
+
+      return Servicefirebase(
+        id: doc.id,
+        category: data['category'] ?? '',
+        description: data['description'] ?? '',
+        discount: data['discount'] ?? 0,
+        name: data['name'] ?? '',
+        image: data['image'] ?? '',
+        price: (data['price'] is int)
+            ? (data['price'] as int).toDouble()
+            : data['price']?.toDouble() ?? 0.0,
+        time: data['time'] ?? '',
+        warranty: data['warranty'] ?? '',
+        averageReview: data['averageReview']?.toDouble() ?? 0.0,
+        numberOfReviews: data['numberOfReviews'] ?? 0,
+        carmodel: List<String>.from(data['carmodel'] ?? []),
+      );
+    } else {
+      print("Service with ID $serviceId does not exist.");
+      return null;
+    }
+  } catch (e) {
+    print("Error fetching service for chat: $e");
+    return null;
+  }
+}
+
+
   void filterServices(String query) {
     if (query.isEmpty) {
       filteredServices.assignAll(services);

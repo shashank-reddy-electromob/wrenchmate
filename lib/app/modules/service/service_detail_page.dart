@@ -390,7 +390,13 @@ class _ServiceDetailPageState extends State<ServiceDetailPage> {
                   onTap: () {
                     Get.toNamed(
                       AppRoutes.CHATSCREEN,
-                      arguments: "I need more clarity on ${service.name}",
+                      // arguments:
+                      //     "I need more clarity on ${service.name} ${service.id}",
+
+                      arguments: {
+                        'message': 'I need more clarity on ${service.name}',
+                        'serviceId': service.id,
+                      },
                     );
                   },
                   child: Container(

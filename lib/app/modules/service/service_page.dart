@@ -516,11 +516,18 @@ class _ServicePageState extends State<ServicePage> {
                                                                     'Body Parts'
                                                             ? GestureDetector(
                                                                 onTap: () {
+                                                                  print(service
+                                                                      .id);
                                                                   Get.toNamed(
                                                                     AppRoutes
                                                                         .CHATSCREEN,
-                                                                    arguments:
-                                                                        "I need more clarity on ${service.name}",
+                                                                    // arguments:
+                                                                    //     "I need more clarity on ${service.name} ${service.id}",
+
+                                                                    arguments: {
+                                                                      'message': 'I need more clarity on ${service.name}',
+                                                                      'serviceId': service.id,
+                                                                    },
                                                                   );
                                                                 },
                                                                 child:

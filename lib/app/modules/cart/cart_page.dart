@@ -192,7 +192,7 @@ class _CartPageState extends State<CartPage> {
                           itemCount: cartController.cartItems.length,
                           itemBuilder: (context, index) {
                             var cartItem = cartController.cartItems[index];
-
+                            log(cartItem.toString());
                             if (cartItem['productId'] == "NA" &&
                                 cartItem['serviceId'] == "NA") {
                               return SizedBox.shrink();
@@ -275,7 +275,7 @@ class _CartPageState extends State<CartPage> {
                                   discount: 0,
                                   name: '',
                                   image: 'https://via.placeholder.com/150',
-                                  price: 0.0,
+                                  price: cartItem['price'],
                                   time: '',
                                   warranty: '',
                                   averageReview: 0.0,
@@ -283,6 +283,9 @@ class _CartPageState extends State<CartPage> {
                                   carmodel: [],
                                 ),
                               );
+                              if (service.price != cartItem['price']) {
+                                service.price = cartItem['price'].toDouble();
+                              }
 
                               itemWidget = Row(
                                 children: [

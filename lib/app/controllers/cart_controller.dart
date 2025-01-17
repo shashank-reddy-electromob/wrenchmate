@@ -18,6 +18,7 @@ class CartController extends GetxController {
   var isLoading = true.obs;
   var cartItems = <Map<String, dynamic>>[].obs;
   var cartSubsItems = <Map<String, dynamic>>[].obs;
+  var chat_loading = false.obs;
 
   RxDouble totalAmount = 0.0.obs;
   RxDouble totalPayableAmount = 0.0.obs;

@@ -90,7 +90,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       'type': 'premium',
       'details': [
         {
-          'title': '4 times a week',
+          'title': '6 times a week',
           'description':
               '-  Exterior dusting (removal of surface dust and light cleaning)',
         },
@@ -105,7 +105,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       'type': 'premium',
       'details': [
         {
-          'title': '4 times a week',
+          'title': '6 times a week',
           'description':
               '-  Exterior dusting (removal of surface dust and light cleaning)',
         },
@@ -295,10 +295,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             price = 2499;
           } else if (monthlyCurrentIndex == 1) {
             // price = monthly_premium;
-            price = 899;
+            // price = 899;
+            price=650;
+
           } else if (monthlyCurrentIndex == 2) {
             // price = 899;
-            price = 1349;
+            // price = 1349;
+            price = 1150;
           }
           // else if (monthlyCurrentIndex == 3) {
           //   price = 1299;
@@ -316,9 +319,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             price = monthly_basic;
           } else if (monthlyCurrentIndex == 1) {
             // price = monthly_premium;
-            price = 899;
+            // price = 899;
+            price=650;
           } else if (monthlyCurrentIndex == 2) {
-            price = 1349;
+            // price = 1349;
+            price=1150;
           }
           // else if (monthlyCurrentIndex == 3) {
           //   price = 1299;
@@ -336,9 +341,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             price = monthly_basic;
           } else if (monthlyCurrentIndex == 1) {
             // price = monthly_premium;
-            price = 699;
+            // price = 699;
+            price=550;
           } else if (monthlyCurrentIndex == 2) {
-            price = 1249;
+            // price = 1249;
+            price=1050;
           }
           // else if (monthlyCurrentIndex == 3) {
           //   price = 1199;
@@ -356,9 +363,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             price = monthly_basic;
           } else if (monthlyCurrentIndex == 1) {
             // price = monthly_premium;
-            price = 1099;
+            // price = 1099;
+            price=750;
           } else if (monthlyCurrentIndex == 2) {
-            price = 1449;
+            // price = 1449;
+            price = 1250;
           }
           // else if (monthlyCurrentIndex == 3) {
           //   price = 1399;

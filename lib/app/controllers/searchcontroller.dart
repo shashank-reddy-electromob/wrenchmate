@@ -224,6 +224,46 @@ class ServiceController extends GetxController {
     }
   }
 
+  // Function to fetch a service by ID and return the Servicefirebase object
+Future<Servicefirebase?> fetchServiceForChat(String serviceId) async {
+  try {
+    print("Fetching service by ID for chat: $serviceId");
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('Service')
+        .doc(serviceId)
+        .get();
+
+    if (doc.exists) {
+      var data = doc.data() as Map<String, dynamic>;
+      print("Service data fetched for chat: $data");
+
+      return Servicefirebase(
+        id: doc.id,
+        category: data['category'] ?? '',
+        description: data['description'] ?? '',
+        discount: data['discount'] ?? 0,
+        name: data['name'] ?? '',
+        image: data['image'] ?? '',
+        price: (data['price'] is int)
+            ? (data['price'] as int).toDouble()
+            : data['price']?.toDouble() ?? 0.0,
+        time: data['time'] ?? '',
+        warranty: data['warranty'] ?? '',
+        averageReview: data['averageReview']?.toDouble() ?? 0.0,
+        numberOfReviews: data['numberOfReviews'] ?? 0,
+        carmodel: List<String>.from(data['carmodel'] ?? []),
+      );
+    } else {
+      print("Service with ID $serviceId does not exist.");
+      return null;
+    }
+  } catch (e) {
+    print("Error fetching service for chat: $e");
+    return null;
+  }
+}
+
+
   // Function to add a new review
   Future<void> addReview(
       String serviceId, String userId, String message, double rating) async {

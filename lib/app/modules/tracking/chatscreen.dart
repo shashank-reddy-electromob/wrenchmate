@@ -4,7 +4,10 @@ import 'package:extended_image/extended_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wrenchmate_user_app/app/controllers/cart_controller.dart';
 import 'package:wrenchmate_user_app/app/controllers/chat_controller.dart';
+import 'package:wrenchmate_user_app/app/controllers/service_controller.dart';
+import 'package:wrenchmate_user_app/app/data/models/Service_firebase.dart';
 import 'package:wrenchmate_user_app/app/widgets/appbar.dart';
 import 'package:wrenchmate_user_app/utils/color.dart';
 import 'package:wrenchmate_user_app/utils/textstyles.dart';
@@ -17,16 +20,27 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController controller = TextEditingController();
   ChatController cc = Get.put(ChatController());
+  CartController cartController = Get.put(CartController());
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late String userID;
+  String? serviceId;
+
+  ServiceController sc = Get.put(ServiceController());
 
   @override
   void initState() {
     super.initState();
     userID = FirebaseAuth.instance.currentUser!.uid;
     final argument = Get.arguments;
-    if (argument != null && argument is String && argument.isNotEmpty) {
-      controller.text = argument;
+    // if (argument != null && argument is String && argument.isNotEmpty) {
+    //   controller.text = argument;
+    // }
+
+    if (argument != null &&
+        argument is Map<String, dynamic> &&
+        argument.isNotEmpty) {
+      controller.text = argument['message'] ?? '';
+      serviceId = argument['serviceId'];
     }
     _firestore.collection('chats').doc(userID).set({
       'isInChat': true,
@@ -80,6 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
           .doc(userID)
           .collection('messages')
           .add({
+        'serviceId': serviceId ?? '',
         'text': controller.text,
         'isSentByMe': true,
         'timestamp': timestamp,
@@ -131,6 +146,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     var message = messages[index];
                     bool isSentByMe = message['isSentByMe'] ?? false;
                     bool isUploading = message['isUploading'] ?? false;
+                    bool isQuotationMessage =
+                        message.data() is Map<String, dynamic> &&
+                            (message.data() as Map<String, dynamic>)
+                                .containsKey('type') &&
+                            (message.data() as Map<String, dynamic>)['type'] ==
+                                'quotation';
 
                     return Align(
                       alignment: isSentByMe
@@ -167,7 +188,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                       cache: true,
                                     ),
                                   )
-                                : Text(message['text'] ?? ''),
+                                : isQuotationMessage
+                                    ? _buildQuotationMessage(
+                                        message['quotation_service_price'],
+                                        isSentByMe)
+                                    : Text(message['text'] ?? ''),
                       ),
                     );
                   },
@@ -226,6 +251,61 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildQuotationMessage(
+      Map<String, dynamic> quotationData, bool isSentByMe) {
+    if (quotationData == null) return SizedBox.shrink();
+    final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+        GlobalKey<ScaffoldMessengerState>();
+    double price = quotationData['price'] ?? 0.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Service Quotation',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0,
+            color: isSentByMe ? Colors.blue : Colors.black,
+          ),
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          'Price: \$${price.toStringAsFixed(2)}',
+          style: TextStyle(fontSize: 14.0),
+        ),
+        SizedBox(height: 8.0),
+        if (!isSentByMe) // Only show the button on the user's side
+          ElevatedButton(
+            onPressed: () async {
+              Servicefirebase? service = await sc
+                  .fetchServiceForChat(quotationData['serviceId'] ?? '');
+              print(service);
+
+              if (service != null) {
+                // Update the service price with the quotation price
+                service.price = quotationData['price'] ??
+                    service.price; // Update price if available
+
+                // Add the updated service to the cart
+                await cartController.addToCartSnackbar(
+                    context, cartController, service, scaffoldMessengerKey);
+                Get.snackbar('Success', 'Service added to the cart');
+              } else {
+                Get.snackbar(
+                    'Error', 'Failed to fetch service. Please try again.');
+              }
+            },
+            child: Text(
+              'Add to Cart',
+              style: TextStyle(color: Colors.white),
+            ),
+            style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
+          ),
+      ],
     );
   }
 }
