@@ -92,11 +92,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': '6 times a week',
           'description':
-              '-  Exterior dusting (removal of surface dust and light cleaning)',
+              '-  Exterior cleaning (makes your car clean and removes hardwater stains)',
         },
         {
           'title': '2 times a month',
-          'description': '- Interior cleaning. ',
+          'description': '- Interior vaccum. ',
         },
       ],
     },
@@ -107,11 +107,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         {
           'title': '6 times a week',
           'description':
-              '-  Exterior dusting (removal of surface dust and light cleaning)',
+              '-  Exterior cleaning (makes your car clean and removes hardwater stains)',
         },
         {
           'title': '2 times a month',
-          'description': '- Interior cleaning. ',
+          'description': '- Interior vaccum. ',
         },
         {
           'title': '1 times a month',
