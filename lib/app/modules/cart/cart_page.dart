@@ -1222,9 +1222,9 @@ class _CartPageState extends State<CartPage> {
       } else if (!hasServices ||
           bookingController.bookingStatus.value == 'confirmed') {
         var options = {
-          // 'key':
-          //     'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
-          'key': 'rzp_test_d6elQRDiV2zs6e',
+          'key':
+              'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
+          // 'key': 'rzp_test_d6elQRDiV2zs6e',
           'amount': amount, // Amount in paise
           'order_id': OrderId,
           'name': 'Wrenchmate',
