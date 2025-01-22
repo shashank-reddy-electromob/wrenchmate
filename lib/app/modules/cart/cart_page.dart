@@ -1205,7 +1205,12 @@ class _CartPageState extends State<CartPage> {
 
       bool hasServices =
           cartController.cartItems.any((item) => item['serviceId'] != "NA");
-      if (hasServices && bookingController.bookingStatus.value != 'confirmed') {
+      // print('cart length is: ${cartController.cartSubsItems.length}');
+      bool hasSubscription = cartController.cartSubsItems
+          .any((item) => item['subscriptionId'] != "NA");
+      // log('hasServices :: $subscriptionServices');
+      if ((hasServices || hasSubscription) &&
+          bookingController.bookingStatus.value != 'confirmed') {
         var result = await Get.toNamed(AppRoutes.BOOK_SLOT);
         if (result != null) {
           setState(() {
@@ -1217,9 +1222,9 @@ class _CartPageState extends State<CartPage> {
       } else if (!hasServices ||
           bookingController.bookingStatus.value == 'confirmed') {
         var options = {
-          'key':
-              'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
-          // 'key': 'rzp_test_tNdWNcc8kiBbBY',
+          // 'key':
+          //     'rzp_live_l2WP2ZjwHh1Ltp', // Replace with your Razorpay API key
+          'key': 'rzp_test_d6elQRDiV2zs6e',
           'amount': amount, // Amount in paise
           'order_id': OrderId,
           'name': 'Wrenchmate',

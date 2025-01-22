@@ -296,10 +296,11 @@ class BookingController extends GetxController {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("booking added successfully.")),
       );
+
+      // Get.snackbar('Success', "Booking added Successfully");
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to add subscription and booking: $e")),
-      );
+      Get.snackbar('Success', "Failed to add subscription and booking: $e");
+
       throw Exception("Failed to add booking: $e");
     }
   }

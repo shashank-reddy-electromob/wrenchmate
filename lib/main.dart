@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
-            statusBarColor: Colors.white, 
+            statusBarColor: Colors.white,
             statusBarIconBrightness: Brightness.dark, 
           ),
           child: Container(
