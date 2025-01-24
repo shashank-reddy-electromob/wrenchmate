@@ -49,6 +49,7 @@ class _TrackingPageState extends State<TrackingPage> {
     super.initState();
     fetchUserCurrentCarIndex();
     bookingController.fetchUserBookings();
+    bookingController.fetchBookingsWithSubscriptionDetails();
   }
 
   void fetchUserCurrentCarIndex() async {
@@ -94,9 +95,11 @@ class _TrackingPageState extends State<TrackingPage> {
         return 0.0;
       case 'pickedup':
         return 0.1;
-      case 'serviceongoing':
+      // case 'serviceongoing':
+      case 'ongoing':
         return 0.54;
-      case 'beingdelivered':
+      // case 'beingdelivered':
+      case 'completed':
         return 1.0;
       default:
         return 0.0;
@@ -172,10 +175,16 @@ class _TrackingPageState extends State<TrackingPage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    'Deliver in ',
-                                    style: AppTextStyle.semibold16
-                                        .copyWith(color: Colors.black),
+                                  GestureDetector(
+                                    onTap: () {
+                                      print(
+                                          'sub list is: ${bookingController.subsBookingList[bookingController.subsBookingList.length - 1]['status']}');
+                                    },
+                                    child: Text(
+                                      'Deliver in ',
+                                      style: AppTextStyle.semibold16
+                                          .copyWith(color: Colors.black),
+                                    ),
                                   ),
                                   Text(
                                     '$deliveryTime min',
@@ -234,14 +243,21 @@ class _TrackingPageState extends State<TrackingPage> {
                     child: Column(
                       children: [
                         SizedBox(height: 16),
-                        bookingController.BookingList.isEmpty
+                        bookingController.BookingList.isEmpty ||
+                                bookingController.subsBookingList.isEmpty
                             ? const SizedBox()
-                            : bookingController.BookingList[0]
-                                            ['assignedDriverName'] ==
-                                        null &&
-                                    bookingController.BookingList[0]
-                                            ['assignedDriverPhone'] ==
-                                        null
+                            : (bookingController.BookingList[0]
+                                                ['assignedDriverName'] ==
+                                            null &&
+                                        bookingController.BookingList[0]
+                                                ['assignedDriverPhone'] ==
+                                            null) ||
+                                    (bookingController.subsBookingList[0]
+                                                ['assignedDriverName'] ==
+                                            null &&
+                                        bookingController.subsBookingList[0]
+                                                ['assignedDriverPhone'] ==
+                                            null)
                                 ? Text(
                                     'Driver Not Assigned',
                                     style: AppTextStyle.boldRaleway15
@@ -250,25 +266,40 @@ class _TrackingPageState extends State<TrackingPage> {
                                 : Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        bookingController.BookingList.isEmpty
-                                            ? ''
-                                            : bookingController.BookingList[0]
-                                                    ['assignedDriverName'] ??
-                                                'Driver not assigned',
-                                        style: AppTextStyle.boldRaleway15
-                                            .copyWith(color: primaryColor),
-                                      ),
-                                      Text(
-                                        '  •  ',
-                                        style: AppTextStyle.boldRaleway15
-                                            .copyWith(color: primaryColor),
-                                      ),
+                                      if (bookingController
+                                          .BookingList.isNotEmpty)
+                                        Text(
+                                          bookingController.BookingList[0]
+                                                  ['assignedDriverName'] ??
+                                              'Driver not assigned',
+                                          style: AppTextStyle.boldRaleway15
+                                              .copyWith(color: primaryColor),
+                                        ),
+                                      if (bookingController
+                                              .subsBookingList.isNotEmpty &&
+                                          bookingController
+                                              .BookingList.isNotEmpty)
+                                        Text(
+                                          '  •  ',
+                                          style: AppTextStyle.boldRaleway15
+                                              .copyWith(color: primaryColor),
+                                        ),
+                                      if (bookingController
+                                          .subsBookingList.isNotEmpty)
+                                        Text(
+                                          bookingController.subsBookingList[0]
+                                                  ['assignedDriverName'] ??
+                                              'Driver not assigned',
+                                          style: AppTextStyle.boldRaleway15
+                                              .copyWith(color: primaryColor),
+                                        ),
+                                      SizedBox(width: 5),
                                       Icon(Icons.star_border,
                                           color: Colors.yellow, size: 20),
                                       SizedBox(width: 5),
                                       Text(
-                                        bookingController.driverRating.value.toString(),
+                                        bookingController.driverRating.value
+                                            .toString(),
                                         style: AppTextStyle.boldRaleway15
                                             .copyWith(color: primaryColor),
                                       ),
@@ -318,14 +349,24 @@ class _TrackingPageState extends State<TrackingPage> {
                               AnimatedPositioned(
                                 duration: Duration(milliseconds: 500),
                                 curve: Curves.easeInOut,
-                                left: bookingController.BookingList.isEmpty
-                                    ? 0
-                                    : getCarPosition(bookingController
+                                left: bookingController.BookingList.isNotEmpty
+                                    ? getCarPosition(bookingController
                                             .BookingList[bookingController
                                                 .BookingList.length -
                                             1]['status']) *
                                         (MediaQuery.of(context).size.width -
-                                            120),
+                                            120)
+                                    : bookingController
+                                            .subsBookingList.isNotEmpty
+                                        ? getCarPosition(bookingController
+                                                    .subsBookingList[
+                                                bookingController
+                                                        .subsBookingList
+                                                        .length -
+                                                    1]['status']) *
+                                            (MediaQuery.of(context).size.width -
+                                                120)
+                                        : 0, // Default position if both lists are empty
                                 child: Container(
                                   height:
                                       MediaQuery.of(context).size.height / 16,
